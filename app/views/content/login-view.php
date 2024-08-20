@@ -12,7 +12,7 @@
 			}
 		?>
 
-		<label>SUCURSAL<?php echo CAMPO_OBLIGATORIO; ?></label><br>
+		<label>SUCURSAL<?php echo CAMPO_OBLIGATORIO ?></label><br>
 		<div class="select mb-5">
 			<select name="sucursal">
 				<?php

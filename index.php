@@ -35,8 +35,13 @@
         }else{
     ?>
 
-    <main>
+    <main class="page-container">
         <?php
+            
+            if((!isset($_SESSION['id_usuario']) || $_SESSION['id_usuario']=="") || (!isset($_SESSION['usuario_usuario']) || $_SESSION['usuario_usuario']=="")){
+                $insLogin->cerrarSesionControlador();
+                exit();
+            }
             
             require_once "./app/views/includes/sidebar.php";
         ?> 
@@ -56,4 +61,4 @@
 
     
 </body>
-</html>
+</html> 

@@ -1,0 +1,5 @@
+<?php
+
+    $insLogin->cerrarSesionControlador();
+    exit();
+?>
