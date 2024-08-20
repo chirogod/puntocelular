@@ -1,7 +1,7 @@
 <section class="full-width navLateral scroll" id="navLateral">
 	<div class="full-width navLateral-body">
 		<div class="full-width navLateral-body-logo has-text-centered tittles is-uppercase">
-			GESTION
+			PUNTO CELULAR
 		</div>
 		<figure class="full-width" style="height: 77px;">
 			<div class="navLateral-body-cl">
@@ -25,7 +25,7 @@
 							<i class="fab fa-dashcube fa-fw"></i>
 						</div>
 						<div class="navLateral-body-cr">
-							Inicio
+							INICIO
 						</div>
 					</a>
 				</li>
@@ -33,49 +33,7 @@
 				<?php if($_SESSION['usuario_rol']=="Administrador"){ ?>
 				<li class="full-width divider-menu-h"></li>
 
-				<li class="full-width">
-					<a href="#" class="full-width btn-subMenu">
-						<div class="navLateral-body-cl">
-							<i class="fas fa-cash-register fa-fw"></i>
-						</div>
-						<div class="navLateral-body-cr">
-							CAJAS
-						</div>
-						<span class="fas fa-chevron-down"></span>
-					</a>
-					<ul class="full-width menu-principal sub-menu-options">
-						<li class="full-width">
-							<a href="<?php echo APP_URL; ?>cashierNew/" class="full-width">
-								<div class="navLateral-body-cl">
-									<i class="fas fa-cash-register fa-fw"></i>
-								</div>
-								<div class="navLateral-body-cr">
-									Nueva caja
-								</div>
-							</a>
-						</li>
-						<li class="full-width">
-							<a href="<?php echo APP_URL; ?>cashierList/" class="full-width">
-								<div class="navLateral-body-cl">
-									<i class="fas fa-clipboard-list fa-fw"></i>
-								</div>
-								<div class="navLateral-body-cr">
-									Lista de cajas
-								</div>
-							</a>
-						</li>
-						<li class="full-width">
-							<a href="<?php echo APP_URL; ?>cashierSearch/" class="full-width">
-								<div class="navLateral-body-cl">
-									<i class="fas fa-search fa-fw"></i>
-								</div>
-								<div class="navLateral-body-cr">
-									Buscar caja
-								</div>
-							</a>
-						</li>
-					</ul>
-				</li>
+			
 
 				<li class="full-width divider-menu-h"></li>
 
