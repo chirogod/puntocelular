@@ -19,7 +19,7 @@
 
 
 	/*----------  Marcador de campos obligatorios (Font Awesome) ----------*/
-	const CAMPO_OBLIGATORIO='&nbsp; <i class="fas fa-edit"></i> &nbsp;';
+	const CAMPO_OBLIGATORIO='<span class="material-symbols-outlined">emergency</span>';
 
 	/*----------  Zona horaria  ----------*/
 	date_default_timezone_set("America/Argentina/Buenos_Aires");
