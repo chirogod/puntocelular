@@ -57,7 +57,7 @@
 
             //verificar si el email no existe ya
             if($usuario_email!=""){
-				if(filter_var($email, FILTER_VALIDATE_EMAIL)){
+				if(filter_var($usuario_email, FILTER_VALIDATE_EMAIL)){
 					$check_email=$this->ejecutarConsulta("SELECT usuario_email FROM usuario WHERE usuario_email='$usuario_email'");
 					if($check_email->rowCount()>0){
 						$alerta=[
@@ -309,7 +309,213 @@
         }
 
         public function actualizarUsuarioControlador(){
-            
+
+            $id_usuario = $this->limpiarCadena($_POST['id_usuario']);
+
+			$datos = $this->ejecutarConsulta("SELECT * FROM usuario where id_usuario = '$id_usuario'");
+			if ($datos->rowCount()<=0) {
+				$alerta=[
+					"tipo"=>"simple",
+					"titulo"=>"Ocurrió un error inesperado",
+					"texto"=>"No se encontro el usuario en el sistema",
+					"icono"=>"error"
+				];
+				return json_encode($alerta);
+		        exit();
+			}else{
+				$datos = $datos->fetch();
+			}
+
+			$usuario_nombre_completo = $this->limpiarCadena($_POST['usuario_nombre_completo']);
+			$usuario_usuario = $this->limpiarCadena($_POST['usuario_usuario']);
+			$usuario_email = $this->limpiarCadena($_POST['usuario_email']);
+			$usuario_telefono = $this->limpiarCadena($_POST['usuario_telefono']);
+			$usuario_rol = $this->limpiarCadena($_POST['usuario_rol']);
+			$usuario_activo = $this->limpiarCadena($_POST['usuario_activo']);
+			$usuario_clave_1 = $this->limpiarCadena($_POST['usuario_clave_2']);
+			$usuario_clave_2 = $this->limpiarCadena($_POST['usuario_clave_2']);
+
+
+            if ($this->verificarDatos("[a-zA-ZáéíóúÁÉÍÓÚñÑ ]{3,40}", $usuario_nombre_completo)) {
+                $alerta=[
+					"tipo"=>"simple",
+					"titulo"=>"Ocurrió un error inesperado",
+					"texto"=>"El nombre no cumple con el formato solicitado",
+					"icono"=>"error"
+				];
+				return json_encode($alerta);
+		        exit();
+            }else if($this->verificarDatos("[a-zA-Z0-9]{4,20}", $usuario_usuario)){
+                $alerta=[
+					"tipo"=>"simple",
+					"titulo"=>"Ocurrió un error inesperado",
+					"texto"=>"El usuario no cumple con el formato solicitado",
+					"icono"=>"error"
+				];
+				return json_encode($alerta);
+		        exit();
+            }elseif ($this->verificarDatos("[a-zA-Z0-9$@.-]{7,100}", $usuario_clave_1) || $this->verificarDatos("[a-zA-Z0-9$@.-]{7,100}", $usuario_clave_2)) {
+                $alerta=[
+					"tipo"=>"simple",
+					"titulo"=>"Ocurrió un error inesperado",
+					"texto"=>"Las claves no coinciden con el formato solicitado",
+					"icono"=>"error"
+				];
+				return json_encode($alerta);
+		        exit();
+            }
+
+            //verificar si el email no existe ya
+            if($usuario_email!=""){
+				if(filter_var($usuario_email, FILTER_VALIDATE_EMAIL)){
+					$check_email=$this->ejecutarConsulta("SELECT usuario_email FROM usuario WHERE usuario_email='$usuario_email'");
+					if($check_email->rowCount()>0){
+						$alerta=[
+							"tipo"=>"simple",
+							"titulo"=>"Ocurrió un error inesperado",
+							"texto"=>"El EMAIL que acaba de ingresar ya se encuentra registrado en el sistema, por favor verifique e intente nuevamente",
+							"icono"=>"error"
+						];
+						return json_encode($alerta);
+						exit();
+					}
+				}else{
+					$alerta=[
+						"tipo"=>"simple",
+						"titulo"=>"Ocurrió un error inesperado",
+						"texto"=>"Ha ingresado un correo electrónico no valido",
+						"icono"=>"error"
+					];
+					return json_encode($alerta);
+					exit();
+				}
+            }
+
+            //verificar igualdad de claves
+
+			if($usuario_clave_1!="" || $usuario_clave_2!=""){
+            	if($this->verificarDatos("[a-zA-Z0-9$@.-]{7,100}",$usuario_clave_1) || $this->verificarDatos("[a-zA-Z0-9$@.-]{7,100}", $usuario_clave_2)){
+
+			        $alerta=[
+						"tipo"=>"simple",
+						"titulo"=>"Ocurrió un error inesperado",
+						"texto"=>"Las CLAVES no coinciden con el formato solicitado",
+						"icono"=>"error"
+					];
+					return json_encode($alerta);
+			        exit();
+			    }else{
+			    	if($usuario_clave_1 != $usuario_clave_2){
+
+						$alerta=[
+							"tipo"=>"simple",
+							"titulo"=>"Ocurrió un error inesperado",
+							"texto"=>"Las nuevas CLAVES que acaba de ingresar no coinciden, por favor verifique e intente nuevamente",
+							"icono"=>"error"
+						];
+						return json_encode($alerta);
+						exit();
+			    	}else{
+			    		$clave = $usuario_clave_1;
+			    	}
+			    }
+			}else{
+				$clave=$datos['usuario_clave'];
+            }
+
+            //verificar usuario
+            $check_usuario =$this->ejecutarConsulta("SELECT * FROM usuario WHERE usuario_usuario = '$usuario_usuario'");
+            if ($check_usuario->rowCount() > 0) {
+                $alerta=[
+                    "tipo"=>"simple",
+                    "titulo"=>"Ocurrió un error inesperado",
+                    "texto"=>"El usuario ya existe",
+                    "icono"=>"error"
+                ];
+                return json_encode($alerta);
+                exit();
+            }
+
+            //verificar que el cargo exista
+            if ($usuario_rol != "Administrador" && $usuario_rol != "Empleado" && $usuario_rol != "Tecnico" && $usuario_rol != "Ventas") {
+                $alerta=[
+                    "tipo"=>"simple",
+                    "titulo"=>"Ocurrió un error inesperado",
+                    "texto"=>"El cargo no existe",
+                    "icono"=>"error"
+                ];
+                return json_encode($alerta);
+                exit();
+            }
+
+			$usuario_datos = [
+				[
+					"campo_nombre"=>"usuario_nombre_completo",
+					"campo_marcador"=>":NombreCompleto",
+					"campo_valor"=>$usuario_nombre_completo
+				],
+				[
+					"campo_nombre"=>"usuario_usuario",
+					"campo_marcador"=>":Usuario",
+					"campo_valor"=>$usuario_usuario
+				],
+				[
+					"campo_nombre"=>"usuario_email",
+					"campo_marcador"=>":Email",
+					"campo_valor"=>$usuario_email
+				],
+				[
+					"campo_nombre"=>"usuario_telefono",
+					"campo_marcador"=>":Telefono",
+					"campo_valor"=>$usuario_telefono
+				],
+				[
+					"campo_nombre"=>"usuario_rol",
+					"campo_marcador"=>":Rol",
+					"campo_valor"=>$usuario_rol
+				],
+				[
+					"campo_nombre"=>"usuario_clave",
+					"campo_marcador"=>":Clave",
+					"campo_valor"=>$clave
+				],
+				[
+					"campo_nombre"=>"usuario_activo",
+					"campo_marcador"=>":Activo",
+					"campo_valor"=>$usuario_activo
+				]
+			];
+
+			$condicion = [
+				"condicion_campo"=>"id_usuario",
+				"condicion_marcador"=>":ID",
+				"condicion_valor"=>$id_usuario
+			];
+
+			if($this->actualizarDatos("usuario",$usuario_datos,$condicion)){
+
+				if($id_usuario==$_SESSION['id_usuario']){
+					$_SESSION['usuario_nombre_completo']=$usuario_nombre_completo;
+					$_SESSION['usuario_usuario']=$usuario_usuario;
+				}
+
+				$alerta=[
+					"tipo"=>"recargar",
+					"titulo"=>"Usuario actualizado",
+					"texto"=>"Los datos del usuario ".$datos['usuario_nombre_completo']." se actualizaron correctamente",
+					"icono"=>"success"
+				];
+			}else{
+				$alerta=[
+					"tipo"=>"simple",
+					"titulo"=>"Ocurrió un error inesperado",
+					"texto"=>"No hemos podido actualizar los datos del usuario ".$datos['usuario_nombre_completo'].", por favor intente nuevamente",
+					"icono"=>"error"
+				];
+			}
+
+			return json_encode($alerta);
+
         }
     }
 

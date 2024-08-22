@@ -41,7 +41,7 @@
 		  	<div class="column">
 		    	<div class="control">
 					<label>TELEFONO</label>
-				  	<input class="input" type="tel" name="usuario_telefono" pattern="[0-9]{10,15}" maxlength="20">
+				  	<input class="input" type="tel" name="usuario_telefono" pattern="[0-9]{7,15}" maxlength="20">
 				</div>
 		  	</div>
 		  	<div class="column">
