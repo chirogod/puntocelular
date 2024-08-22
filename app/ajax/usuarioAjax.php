@@ -12,6 +12,14 @@
             echo $insUsuario->registrarUsuarioControlador();
         }
 
+        if ($_POST['modulo_usuario'] == "actualizar") {
+            echo $insUsuario->actualizarUsuarioControlador();
+        }
+
+        if ($_POST['modulo_usuario'] == "eliminar") {
+            echo $insUsuario->eliminarUsuarioControlador();
+        }
+
     }else{
         session_destroy();
         header("Location: ".APP_URL."login/");

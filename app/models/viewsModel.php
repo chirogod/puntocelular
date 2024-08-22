@@ -9,7 +9,10 @@
             $listaBlanca = [
                 "dashboard",
                 "logOut",
-                "userNew"
+                "userNew",
+                "userList",
+                "userSearch",
+                "userUpdate"
             ];
             //si la $vista esta en el array de las vistas que existe
             if (in_array($vista,$listaBlanca)){
