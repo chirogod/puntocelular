@@ -30,7 +30,7 @@
 
 	<h2 class="title has-text-centered"><?php echo $datos['usuario_nombre_completo'] ; ?></h2>
 
-	<form class="" action="<?php echo APP_URL; ?>app/ajax/usuarioAjax.php" method="POST" autocomplete="off" >
+	<form class="FormularioAjax" action="<?php echo APP_URL; ?>app/ajax/usuarioAjax.php" method="POST" autocomplete="off" >
 
 		<input type="hidden" name="modulo_usuario" value="actualizar">
 		<input type="hidden" name="id_usuario" value="<?php echo $datos['id_usuario']; ?>">
