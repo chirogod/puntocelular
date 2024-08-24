@@ -5,7 +5,16 @@
 	const APP_SESSION_NAME="GESTION";
 
 	/*----------  Tipos de documentos  ----------*/
-	const DOCUMENTOS_USUARIOS=["DNI","Cedula","Licencia","Pasaporte","Otro"];
+	const DOCUMENTOS=["DNI","Cedula","Licencia","Pasaporte","Otro"];
+
+	/*----------  Localidades  ----------*/
+	const LOCALIDADES=["Lujan"];	
+
+	/*----------  Provincias  ----------*/
+	const PROVINCIAS=["Buenos Aires"];
+
+	/*----------  Paises  ----------*/
+	const PAISES=["Argentina"];	
 
 	/*----------  Configuración de moneda  ----------*/
 	const MONEDA_SIMBOLO="$";
