@@ -231,7 +231,7 @@
 			$total = (int) $total->fetchColumn();
 
 			$numeroPaginas =ceil($total/$registros);
-
+            
 			$tabla.='
 		        <div class="table-container">
 		        <table class="table is-bordered is-striped is-narrow is-hoverable is-fullwidth">

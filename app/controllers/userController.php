@@ -227,11 +227,8 @@
 		                    <th class="has-text-centered">#</th>
 		                    <th class="has-text-centered">Nombre</th>
 		                    <th class="has-text-centered">Usuario</th>
-		                    <th class="has-text-centered">Email</th>
-		                    <th class="has-text-centered">Telefono</th>
-                            <th class="has-text-centered">Dni</th>
                             <th class="has-text-centered">Rol</th>
-		                    <th class="has-text-centered">Actualizar</th>
+		                    <th class="has-text-centered">Detalles</th>
 		                </tr>
 		            </thead>
 		            <tbody>
@@ -246,15 +243,12 @@
 							<td>'.$contador.'</td>
 							<td>'.$rows['usuario_nombre_completo'].'</td>
 							<td>'.$rows['usuario_usuario'].'</td>
-							<td>'.$rows['usuario_email'].'</td>
-                            <td>'.$rows['usuario_telefono'].'</td>
-                            <td>'.$rows['usuario_dni'].'</td>
                             <td>'.$rows['usuario_rol'].'</td>
                             
 							
 			                <td>
 			                    <a href="'.APP_URL.'userUpdate/'.$rows['id_usuario'].'/" class="button is-success is-rounded is-small">
-			                    	<i class="fas fa-sync fa-fw"></i>
+			                    	<i class="fas fa-search fa-fw"></i>
 			                    </a>
 			                </td>
 			                

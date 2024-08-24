@@ -1,23 +1,11 @@
-<div class="container is-fluid mb-6">
+<div class="">
 	<?php 
-
 		$id = $insLogin->limpiarCadena($url[1]);
-
-		if($_SESSION['usuario_rol']!="Administrador"){
-			include "./app/views/content/logOut-view.php";
-		}
-
-		if($id == $_SESSION['id_usuario']){ 
 	?>
-	<h1 class="title">Mi cuenta</h1>
-	<h2 class="subtitle"><i class="fas fa-sync-alt"></i> &nbsp; Actualizar cuenta</h2>
-	<?php }else{ ?>
-	<h1 class="title">Usuarios</h1>
-	<h2 class="subtitle"><i class="fas fa-sync-alt"></i> &nbsp; Actualizar usuario</h2>
-	<?php } ?>
+
 </div>
 
-<div class="container pb-6 pt-6">
+<div class="container is-max-desktop" >
 	<?php
 	
 		include "./app/views/includes/btn_back.php";
@@ -29,6 +17,9 @@
 	?>
 
 	<h2 class="title has-text-centered"><?php echo $datos['usuario_nombre_completo'] ; ?></h2>
+	<p class="has-text-centered">
+		SI desea actualizar informacion del usuario, solo realice los cambios y pulse en actualizar, SI NO dejar los campos como estan.
+	</p>
 
 	<form class="FormularioAjax" action="<?php echo APP_URL; ?>app/ajax/usuarioAjax.php" method="POST" autocomplete="off" >
 
