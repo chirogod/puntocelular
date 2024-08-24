@@ -232,7 +232,6 @@
                             <th class="has-text-centered">Dni</th>
                             <th class="has-text-centered">Rol</th>
 		                    <th class="has-text-centered">Actualizar</th>
-		                    <th class="has-text-centered">Eliminar</th>
 		                </tr>
 		            </thead>
 		            <tbody>
@@ -258,17 +257,7 @@
 			                    	<i class="fas fa-sync fa-fw"></i>
 			                    </a>
 			                </td>
-			                <td>
-			                	<form class="FormularioAjax" action="'.APP_URL.'app/ajax/usuarioAjax.php" method="POST" autocomplete="off" >
-
-			                		<input type="hidden" name="modulo_usuario" value="eliminar">
-			                		<input type="hidden" name="id_usuario" value="'.$rows['id_usuario'].'">
-
-			                    	<button type="submit" class="button is-danger is-rounded is-small">
-			                    		<i class="far fa-trash-alt fa-fw"></i>
-			                    	</button>
-			                    </form>
-			                </td>
+			                
 						</tr>
 					';
 					$contador++;
@@ -354,19 +343,23 @@
 				];
 				return json_encode($alerta);
 		        exit();
-            }elseif ($this->verificarDatos("[a-zA-Z0-9$@.-]{7,100}", $usuario_clave_1) || $this->verificarDatos("[a-zA-Z0-9$@.-]{7,100}", $usuario_clave_2)) {
-                $alerta=[
-					"tipo"=>"simple",
-					"titulo"=>"Ocurrió un error inesperado",
-					"texto"=>"Las claves no coinciden con el formato solicitado",
-					"icono"=>"error"
-				];
-				return json_encode($alerta);
-		        exit();
             }
+			if ($usuario_clave_1!="" && $usuario_clave_2 !="") {
+				if ($this->verificarDatos("[a-zA-Z0-9$@.-]{7,100}", $usuario_clave_1) || $this->verificarDatos("[a-zA-Z0-9$@.-]{7,100}", $usuario_clave_2)) {
+					$alerta=[
+						"tipo"=>"simple",
+						"titulo"=>"Ocurrió un error inesperado",
+						"texto"=>"Las claves no coinciden con el formato solicitado",
+						"icono"=>"error"
+					];
+					return json_encode($alerta);
+					exit();
+				}
+			}
+				
 
             //verificar si el email no existe ya
-            if($usuario_email!=""){
+            if($usuario_email!="" && $datos['usuario_email'] != $usuario_email){
 				if(filter_var($usuario_email, FILTER_VALIDATE_EMAIL)){
 					$check_email=$this->ejecutarConsulta("SELECT usuario_email FROM usuario WHERE usuario_email='$usuario_email'");
 					if($check_email->rowCount()>0){
@@ -392,7 +385,6 @@
             }
 
             //verificar igualdad de claves
-
 			if($usuario_clave_1!="" || $usuario_clave_2!=""){
             	if($this->verificarDatos("[a-zA-Z0-9$@.-]{7,100}",$usuario_clave_1) || $this->verificarDatos("[a-zA-Z0-9$@.-]{7,100}", $usuario_clave_2)){
 
@@ -424,18 +416,19 @@
             }
 
             //verificar usuario
-            $check_usuario =$this->ejecutarConsulta("SELECT * FROM usuario WHERE usuario_usuario = '$usuario_usuario'");
-            if ($check_usuario->rowCount() > 0) {
-                $alerta=[
-                    "tipo"=>"simple",
-                    "titulo"=>"Ocurrió un error inesperado",
-                    "texto"=>"El usuario ya existe",
-                    "icono"=>"error"
-                ];
-                return json_encode($alerta);
-                exit();
-            }
-
+			if($usuario_usuario!="" && $datos['usuario_usuario'] != $usuario_usuario){
+				$check_usuario =$this->ejecutarConsulta("SELECT * FROM usuario WHERE usuario_usuario = '$usuario_usuario'");
+				if ($check_usuario->rowCount() > 0) {
+					$alerta=[
+						"tipo"=>"simple",
+						"titulo"=>"Ocurrió un error inesperado",
+						"texto"=>"El usuario ya existe",
+						"icono"=>"error"
+					];
+					return json_encode($alerta);
+					exit();
+				}
+			}
             //verificar que el cargo exista
             if ($usuario_rol != "Administrador" && $usuario_rol != "Empleado" && $usuario_rol != "Tecnico" && $usuario_rol != "Ventas") {
                 $alerta=[

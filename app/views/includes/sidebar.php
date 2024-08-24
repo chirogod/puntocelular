@@ -80,7 +80,7 @@
 						</li>
 					</ul>
 				</li>
-				<?php // } ?>
+				<?php } ?>
 
 				<li class="full-width divider-menu-h"></li>
 
@@ -128,7 +128,7 @@
 					</ul>
 				</li>
 
-				<?php // if($_SESSION['cargo']=="Administrador"){ ?>
+				<?php if($_SESSION['usuario_rol']=="Administrador"){ ?>
 				<li class="full-width divider-menu-h"></li>
 
 				<li class="full-width">
@@ -230,7 +230,7 @@
 						</li>
 					</ul>
 				</li>
-				<?php // } ?>
+				<?php } ?>
 
 				<li class="full-width divider-menu-h"></li>
 
@@ -278,7 +278,7 @@
 					</ul>
 				</li>
 
-				<?php // if($_SESSION['cargo']=="Administrador"){ ?>
+				<?php if($_SESSION['usuario_rol']=="Administrador"){ ?>
 				<li class="full-width divider-menu-h"></li>
 
 				<li class="full-width">
@@ -342,7 +342,7 @@
 						</li>
 						<?php } ?>
 						<li class="full-width">
-							<a href=" #<?php // echo APP_URL."userUpdate/".$_SESSION['id']."/"; ?>" class="full-width">
+							<a href=" #<?php echo APP_URL."userUpdate/".$_SESSION['id']."/"; ?>" class="full-width">
 								<div class="navLateral-body-cl">
 									<i class="fas fa-user-tie fa-fw"></i>
 								</div>
