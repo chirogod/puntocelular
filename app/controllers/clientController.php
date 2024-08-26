@@ -241,15 +241,8 @@
 		                    <th class="has-text-centered">Nombre</th>
 		                    <th class="has-text-centered">Email</th>
 		                    <th class="has-text-centered">Telefono 1</th>
-		                    <th class="has-text-centered">Telefono 2</th>
-                            <th class="has-text-centered">Domicilio</th>
-                            <th class="has-text-centered">Localida</th>
-                            <th class="has-text-centered">Provincia</th>
-                            <th class="has-text-centered">Pais</th>
-                            <th class="has-text-centered">Tipo</th>
                             <th class="has-text-centered">Documento</th>
-                            <th class="has-text-centered">Nacimiento</th>
-		                    <th class="has-text-centered">Actualizar</th>
+		                    <th class="has-text-centered">Detalles</th>
 		                </tr>
 		            </thead>
 		            <tbody>
@@ -265,18 +258,11 @@
 							<td>'.$rows['cliente_nombre_completo'].'</td>
 							<td>'.$rows['cliente_email'].'</td>
                             <td>'.$rows['cliente_telefono_1'].'</td>
-                            <td>'.$rows['cliente_telefono_2'].'</td>
-                            <td>'.$rows['cliente_domicilio'].'</td>
-                            <td>'.$rows['cliente_localidad'].'</td>
-                            <td>'.$rows['cliente_provincia'].'</td>
-                            <td>'.$rows['cliente_pais'].'</td>
-                            <td>'.$rows['cliente_tipo_doc'].'</td>
                             <td>'.$rows['cliente_documento'].'</td>
-                            <td>'.$rows['cliente_nacimiento'].'</td>
 							
 			                <td>
 			                    <a href="'.APP_URL.'clientUpdate/'.$rows['id_cliente'].'/" class="button is-success is-rounded is-small">
-			                    	<i class="fas fa-sync fa-fw"></i>
+			                    	<i class="fas fa-search fa-fw"></i>
 			                    </a>
 			                </td>
 			                
@@ -301,6 +287,9 @@
 						<tr class="has-text-centered" >
 			                <td colspan="7">
 			                    No hay registros en el sistema
+								<div class="mt-1">
+									<a href="'.APP_URL.'clientNew/" class="button is-success is-rounded is-small">Registrar cliente</a>
+								</div>
 			                </td>
 			            </tr>
 					';
@@ -319,17 +308,16 @@
 			return $tabla;
         }
 
-        /*
-        public function actualizarUsuarioControlador(){
+        
+        public function actualizarClienteControlador(){
+            $id_cliente = $this->limpiarCadena($_POST['id_cliente']);
 
-            $id_usuario = $this->limpiarCadena($_POST['id_usuario']);
-
-			$datos = $this->ejecutarConsulta("SELECT * FROM usuario where id_usuario = '$id_usuario'");
+			$datos = $this->ejecutarConsulta("SELECT * FROM cliente where id_cliente = '$id_cliente'");
 			if ($datos->rowCount()<=0) {
 				$alerta=[
 					"tipo"=>"simple",
 					"titulo"=>"Ocurrió un error inesperado",
-					"texto"=>"No se encontro el usuario en el sistema",
+					"texto"=>"No se encontro el cliente en el sistema",
 					"icono"=>"error"
 				];
 				return json_encode($alerta);
@@ -338,17 +326,20 @@
 				$datos = $datos->fetch();
 			}
 
-			$usuario_nombre_completo = $this->limpiarCadena($_POST['usuario_nombre_completo']);
-			$usuario_usuario = $this->limpiarCadena($_POST['usuario_usuario']);
-			$usuario_email = $this->limpiarCadena($_POST['usuario_email']);
-			$usuario_telefono = $this->limpiarCadena($_POST['usuario_telefono']);
-			$usuario_rol = $this->limpiarCadena($_POST['usuario_rol']);
-			$usuario_activo = $this->limpiarCadena($_POST['usuario_activo']);
-			$usuario_clave_1 = $this->limpiarCadena($_POST['usuario_clave_2']);
-			$usuario_clave_2 = $this->limpiarCadena($_POST['usuario_clave_2']);
+			$cliente_nombre_completo = $this->limpiarCadena($_POST['cliente_nombre_completo']);
+			$cliente_email = $this->limpiarCadena($_POST['cliente_email']);
+			$cliente_telefono_1 = $this->limpiarCadena($_POST['cliente_telefono_1']);
+			$cliente_telefono_2 = $this->limpiarCadena($_POST['cliente_telefono_2']);
+			$cliente_domicilio = $this->limpiarCadena($_POST['cliente_domicilio']);
+			$cliente_localidad = $this->limpiarCadena($_POST['cliente_localidad']);
+			$cliente_provincia = $this->limpiarCadena($_POST['cliente_provincia']);
+			$cliente_pais = $this->limpiarCadena($_POST['cliente_pais']);
+			$cliente_tipo_doc = $this->limpiarCadena($_POST['cliente_tipo_doc']);
+			$cliente_documento = $this->limpiarCadena($_POST['cliente_documento']);
+			$cliente_nacimiento = $this->limpiarCadena($_POST['cliente_nacimiento']);
 
 
-            if ($this->verificarDatos("[a-zA-ZáéíóúÁÉÍÓÚñÑ ]{3,40}", $usuario_nombre_completo)) {
+            if ($this->verificarDatos("[a-zA-ZáéíóúÁÉÍÓÚñÑ ]{3,40}", $cliente_nombre_completo)) {
                 $alerta=[
 					"tipo"=>"simple",
 					"titulo"=>"Ocurrió un error inesperado",
@@ -357,34 +348,57 @@
 				];
 				return json_encode($alerta);
 		        exit();
-            }else if($this->verificarDatos("[a-zA-Z0-9]{4,20}", $usuario_usuario)){
+            }
+
+			if ($this->verificarDatos("[0-9]{4,20}", $cliente_telefono_1)) {
                 $alerta=[
 					"tipo"=>"simple",
 					"titulo"=>"Ocurrió un error inesperado",
-					"texto"=>"El usuario no cumple con el formato solicitado",
+					"texto"=>"El telefono 1 no cumple con el formato solicitado",
 					"icono"=>"error"
 				];
 				return json_encode($alerta);
 		        exit();
             }
-			if ($usuario_clave_1!="" && $usuario_clave_2 !="") {
-				if ($this->verificarDatos("[a-zA-Z0-9$@.-]{7,100}", $usuario_clave_1) || $this->verificarDatos("[a-zA-Z0-9$@.-]{7,100}", $usuario_clave_2)) {
-					$alerta=[
-						"tipo"=>"simple",
-						"titulo"=>"Ocurrió un error inesperado",
-						"texto"=>"Las claves no coinciden con el formato solicitado",
-						"icono"=>"error"
-					];
-					return json_encode($alerta);
-					exit();
-				}
-			}
+
+			if ($this->verificarDatos("[0-9]{4,20}", $cliente_telefono_2)) {
+                $alerta=[
+					"tipo"=>"simple",
+					"titulo"=>"Ocurrió un error inesperado",
+					"texto"=>"El telefono 2 no cumple con el formato solicitado",
+					"icono"=>"error"
+				];
+				return json_encode($alerta);
+		        exit();
+            }
+
+			if ($this->verificarDatos("[a-zA-Z0-9áéíóúÁÉÍÓÚñÑ().,#\- ]{4,70}", $cliente_domicilio)) {
+                $alerta=[
+					"tipo"=>"simple",
+					"titulo"=>"Ocurrió un error inesperado",
+					"texto"=>"El domicilio no cumple con el formato solicitado",
+					"icono"=>"error"
+				];
+				return json_encode($alerta);
+		        exit();
+            }
+
+			if ($this->verificarDatos("[0-9]{7,30}", $cliente_documento)) {
+                $alerta=[
+					"tipo"=>"simple",
+					"titulo"=>"Ocurrió un error inesperado",
+					"texto"=>"El documento no cumple con el formato solicitado",
+					"icono"=>"error"
+				];
+				return json_encode($alerta);
+		        exit();
+            }
 				
 
-            //verificar si el email no existe ya
-            if($usuario_email!="" && $datos['usuario_email'] != $usuario_email){
-				if(filter_var($usuario_email, FILTER_VALIDATE_EMAIL)){
-					$check_email=$this->ejecutarConsulta("SELECT usuario_email FROM usuario WHERE usuario_email='$usuario_email'");
+            //verificar si el email no existe ya si se quiere actualizar
+            if($cliente_email!="" && $datos['cliente_email'] != $cliente_email){
+				if(filter_var($cliente_email, FILTER_VALIDATE_EMAIL)){
+					$check_email=$this->ejecutarConsulta("SELECT cliente_email FROM cliente WHERE cliente_email='$cliente_email'");
 					if($check_email->rowCount()>0){
 						$alerta=[
 							"tipo"=>"simple",
@@ -407,132 +421,99 @@
 				}
             }
 
-            //verificar igualdad de claves
-			if($usuario_clave_1!="" || $usuario_clave_2!=""){
-            	if($this->verificarDatos("[a-zA-Z0-9$@.-]{7,100}",$usuario_clave_1) || $this->verificarDatos("[a-zA-Z0-9$@.-]{7,100}", $usuario_clave_2)){
-
-			        $alerta=[
-						"tipo"=>"simple",
-						"titulo"=>"Ocurrió un error inesperado",
-						"texto"=>"Las CLAVES no coinciden con el formato solicitado",
-						"icono"=>"error"
-					];
-					return json_encode($alerta);
-			        exit();
-			    }else{
-			    	if($usuario_clave_1 != $usuario_clave_2){
-
-						$alerta=[
-							"tipo"=>"simple",
-							"titulo"=>"Ocurrió un error inesperado",
-							"texto"=>"Las nuevas CLAVES que acaba de ingresar no coinciden, por favor verifique e intente nuevamente",
-							"icono"=>"error"
-						];
-						return json_encode($alerta);
-						exit();
-			    	}else{
-			    		$clave = $usuario_clave_1;
-			    	}
-			    }
-			}else{
-				$clave=$datos['usuario_clave'];
-            }
-
-            //verificar usuario
-			if($usuario_usuario!="" && $datos['usuario_usuario'] != $usuario_usuario){
-				$check_usuario =$this->ejecutarConsulta("SELECT * FROM usuario WHERE usuario_usuario = '$usuario_usuario'");
-				if ($check_usuario->rowCount() > 0) {
+			//verificar dni en caso de actualizarse
+			if($cliente_documento!="" && $datos['cliente_documento'] != $cliente_documento){
+				$check_documento =$this->ejecutarConsulta("SELECT * FROM cliente WHERE cliente_documento = '$cliente_documento'");
+				if ($check_documento->rowCount() > 0) {
 					$alerta=[
 						"tipo"=>"simple",
 						"titulo"=>"Ocurrió un error inesperado",
-						"texto"=>"El usuario ya existe",
+						"texto"=>"Ya hay un cliente registrado con ese documento",
 						"icono"=>"error"
 					];
 					return json_encode($alerta);
 					exit();
 				}
 			}
-            //verificar que el cargo exista
-            if ($usuario_rol != "Administrador" && $usuario_rol != "Empleado" && $usuario_rol != "Tecnico" && $usuario_rol != "Ventas") {
-                $alerta=[
-                    "tipo"=>"simple",
-                    "titulo"=>"Ocurrió un error inesperado",
-                    "texto"=>"El cargo no existe",
-                    "icono"=>"error"
-                ];
-                return json_encode($alerta);
-                exit();
-            }
-
-			$usuario_datos = [
+            
+			$cliente_datos = [
 				[
-					"campo_nombre"=>"usuario_nombre_completo",
+					"campo_nombre"=>"cliente_nombre_completo",
 					"campo_marcador"=>":NombreCompleto",
-					"campo_valor"=>$usuario_nombre_completo
+					"campo_valor"=>$cliente_nombre_completo
 				],
 				[
-					"campo_nombre"=>"usuario_usuario",
-					"campo_marcador"=>":Usuario",
-					"campo_valor"=>$usuario_usuario
-				],
-				[
-					"campo_nombre"=>"usuario_email",
+					"campo_nombre"=>"cliente_email",
 					"campo_marcador"=>":Email",
-					"campo_valor"=>$usuario_email
+					"campo_valor"=>$cliente_email
 				],
 				[
-					"campo_nombre"=>"usuario_telefono",
-					"campo_marcador"=>":Telefono",
-					"campo_valor"=>$usuario_telefono
+					"campo_nombre"=>"cliente_telefono_1",
+					"campo_marcador"=>":Telefono1",
+					"campo_valor"=>$cliente_telefono_1
 				],
 				[
-					"campo_nombre"=>"usuario_rol",
-					"campo_marcador"=>":Rol",
-					"campo_valor"=>$usuario_rol
+					"campo_nombre"=>"cliente_telefono_2",
+					"campo_marcador"=>":Telefono2",
+					"campo_valor"=>$cliente_telefono_2
 				],
 				[
-					"campo_nombre"=>"usuario_clave",
-					"campo_marcador"=>":Clave",
-					"campo_valor"=>$clave
+					"campo_nombre"=>"cliente_domicilio",
+					"campo_marcador"=>":Domicilio",
+					"campo_valor"=>$cliente_domicilio
 				],
 				[
-					"campo_nombre"=>"usuario_activo",
-					"campo_marcador"=>":Activo",
-					"campo_valor"=>$usuario_activo
+					"campo_nombre"=>"cliente_localidad",
+					"campo_marcador"=>":Localidad",
+					"campo_valor"=>$cliente_localidad
+				],
+				[
+					"campo_nombre"=>"cliente_provincia",
+					"campo_marcador"=>":Provincia",
+					"campo_valor"=>$cliente_provincia
+				],
+				[
+					"campo_nombre"=>"cliente_pais",
+					"campo_marcador"=>":Pais",
+					"campo_valor"=>$cliente_pais
+				],
+				[
+					"campo_nombre"=>"cliente_tipo_doc",
+					"campo_marcador"=>":TipoDoc",
+					"campo_valor"=>$cliente_tipo_doc
+				],
+				[
+					"campo_nombre"=>"cliente_documento",
+					"campo_marcador"=>":Documento",
+					"campo_valor"=>$cliente_documento
 				]
 			];
 
 			$condicion = [
-				"condicion_campo"=>"id_usuario",
+				"condicion_campo"=>"id_cliente",
 				"condicion_marcador"=>":ID",
-				"condicion_valor"=>$id_usuario
+				"condicion_valor"=>$id_cliente
 			];
 
-			if($this->actualizarDatos("usuario",$usuario_datos,$condicion)){
-
-				if($id_usuario==$_SESSION['id_usuario']){
-					$_SESSION['usuario_nombre_completo']=$usuario_nombre_completo;
-					$_SESSION['usuario_usuario']=$usuario_usuario;
-				}
-
+			if($this->actualizarDatos("cliente",$cliente_datos,$condicion)){
 				$alerta=[
 					"tipo"=>"recargar",
-					"titulo"=>"Usuario actualizado",
-					"texto"=>"Los datos del usuario ".$datos['usuario_nombre_completo']." se actualizaron correctamente",
+					"titulo"=>"Cliente actualizado",
+					"texto"=>"Los datos del cliente ".$datos['cliente_nombre_completo']." se actualizaron correctamente",
 					"icono"=>"success"
 				];
 			}else{
 				$alerta=[
 					"tipo"=>"simple",
 					"titulo"=>"Ocurrió un error inesperado",
-					"texto"=>"No hemos podido actualizar los datos del usuario ".$datos['usuario_nombre_completo'].", por favor intente nuevamente",
+					"texto"=>"No hemos podido actualizar los datos del cliente ".$datos['cliente_nombre_completo'].", por favor intente nuevamente",
 					"icono"=>"error"
 				];
 			}
 
 			return json_encode($alerta);
 
-        }*/
+        }
     } 
   
 ?>

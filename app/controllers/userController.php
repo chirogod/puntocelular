@@ -273,6 +273,9 @@
 						<tr class="has-text-centered" >
 			                <td colspan="7">
 			                    No hay registros en el sistema
+								<div class="mt-1">
+									<a href="'.APP_URL.'clientNew/" class="button is-success is-rounded is-small">Registrar cliente</a>
+								</div>
 			                </td>
 			            </tr>
 					';

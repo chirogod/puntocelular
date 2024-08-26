@@ -8,13 +8,13 @@
 	const DOCUMENTOS=["DNI","Cedula","Licencia","Pasaporte","Otro"];
 
 	/*----------  Localidades  ----------*/
-	const LOCALIDADES=["Lujan"];	
+	const LOCALIDADES=["Lujan", "Rodriguez", "Moron", "Moreno", "Pilar", "Otra"];	
 
 	/*----------  Provincias  ----------*/
-	const PROVINCIAS=["Buenos Aires"];
+	const PROVINCIAS=["Buenos Aires", "Cordoba", "Otra"];
 
 	/*----------  Paises  ----------*/
-	const PAISES=["Argentina"];	
+	const PAISES=["Argentina", "Bolivia", "Chile", "Venezuela", "Otro"];	
 
 	/*----------  Configuración de moneda  ----------*/
 	const MONEDA_SIMBOLO="$";
@@ -24,7 +24,7 @@
 	const MONEDA_SEPARADOR_DECIMAL=",";
 
 	/*---------- Formas de pago ----------*/
-	const FORMAS_PAGO = ["Efectivo, Transferencia"];
+	const FORMAS_PAGO = ["Efectivo, Transferencia", "Otro"];
 
 
 	/*----------  Marcador de campos obligatorios (Font Awesome) ----------*/

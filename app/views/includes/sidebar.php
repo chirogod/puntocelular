@@ -134,47 +134,49 @@
 				<li class="full-width">
 					<a href="#" class="full-width btn-subMenu">
 						<div class="navLateral-body-cl">
-							<i class="fas fa-tags fa-fw"></i>
+							<i class="fas fa-cubes fa-fw"></i>
 						</div>
 						<div class="navLateral-body-cr">
-							CATEGORIAS
+							RUBROS
 						</div>
 						<span class="fas fa-chevron-down"></span>
 					</a>
 					<ul class="full-width menu-principal sub-menu-options">
 						<li class="full-width">
-							<a href="<?php echo APP_URL; ?>categoryNew/" class="full-width">
+							<a href="<?php echo APP_URL; ?>rubroNew/" class="full-width">
 								<div class="navLateral-body-cl">
-									<i class="fas fa-tag fa-fw"></i>
+									<i class="fas fa-box fa-fw"></i>
 								</div>
 								<div class="navLateral-body-cr">
-									Nueva categoría
+									Nuevo rubro
 								</div>
 							</a>
 						</li>
 						<li class="full-width">
-							<a href="<?php echo APP_URL; ?>categoryList/" class="full-width">
+							<a href="<?php echo APP_URL; ?>rubroList/" class="full-width">
 								<div class="navLateral-body-cl">
 									<i class="fas fa-clipboard-list fa-fw"></i>
 								</div>
 								<div class="navLateral-body-cr">
-									Lista de categorías
+									Lista de rubros
 								</div>
 							</a>
 						</li>
 						<li class="full-width">
-							<a href="<?php echo APP_URL; ?>categorySearch/" class="full-width">
+							<a href="<?php echo APP_URL; ?>productRubro/" class="full-width">
 								<div class="navLateral-body-cl">
-									<i class="fas fa-search fa-fw"></i>
+									<i class="fas fa-boxes fa-fw"></i>
 								</div>
 								<div class="navLateral-body-cr">
-									Buscar categoría
+									Productos por rubro
 								</div>
 							</a>
 						</li>
 					</ul>
 				</li>
+				<?php } ?>
 
+				<?php if($_SESSION['usuario_rol']=="Administrador"){ ?>
 				<li class="full-width divider-menu-h"></li>
 
 				<li class="full-width">
