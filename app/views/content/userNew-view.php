@@ -1,9 +1,9 @@
-<div class="container is-fluid mb-6">
+<div class="container is-fluid mb-4">
 	<h1 class="title">Usuarios</h1>
 	<h2 class="subtitle"><i class="fas fa-user-tie fa-fw"></i> &nbsp; Nuevo usuario</h2>
 </div>
 
-<div class="container pb-6 pt-6">
+<div class="container pb-6 is-max-desktop">
 
 	<form class="FormularioAjax" action="<?php echo APP_URL; ?>app/ajax/usuarioAjax.php" method="POST" autocomplete="off" enctype="multipart/form-data" >
 

@@ -14,7 +14,7 @@
 
 	$total_ventas=$insLogin->seleccionarDatos("Normal","venta","id_venta",0);
 ?>
-<div class="container pb-6 pt-6">
+<div class="container pb-6 pt-6 is-max-desktop">
 
 	<div class="columns pb-6">
 		<div class="column">

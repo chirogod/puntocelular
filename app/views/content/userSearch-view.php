@@ -1,9 +1,9 @@
 <?php include "app/views/includes/admin_security.php"; ?>
-<div class="container is-fluid mb-6">
+<div class="container is-fluid mb-2">
     <h1 class="title">Usuarios</h1>
     <h2 class="subtitle"><i class="fas fa-search fa-fw"></i> &nbsp; Buscar usuarios</h2>
 </div>
-<div class="container pb-6 pt-6">
+<div class="container is-max-desktop">
     <?php
     
         use app\controllers\userController;
