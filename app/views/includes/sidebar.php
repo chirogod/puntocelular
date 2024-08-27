@@ -153,48 +153,48 @@
 							<i class="fas fa-cubes fa-fw"></i>
 						</div>
 						<div class="navLateral-body-cr">
-							PRODUCTOS
+							ARTICULOS
 						</div>
 						<span class="fas fa-chevron-down"></span>
 					</a>
 					<ul class="full-width menu-principal sub-menu-options">
 						<li class="full-width">
-							<a href="<?php echo APP_URL; ?>productNew/" class="full-width">
+							<a href="<?php echo APP_URL; ?>artNew/" class="full-width">
 								<div class="navLateral-body-cl">
 									<i class="fas fa-box fa-fw"></i>
 								</div>
 								<div class="navLateral-body-cr">
-									Nuevo producto
+									Nuevo articulo
 								</div>
 							</a>
 						</li>
 						<li class="full-width">
-							<a href="<?php echo APP_URL; ?>productList/" class="full-width">
+							<a href="<?php echo APP_URL; ?>artList/" class="full-width">
 								<div class="navLateral-body-cl">
 									<i class="fas fa-clipboard-list fa-fw"></i>
 								</div>
 								<div class="navLateral-body-cr">
-									Lista de productos
+									Lista de articulos
 								</div>
 							</a>
 						</li>
 						<li class="full-width">
-							<a href="<?php echo APP_URL; ?>productCategory/" class="full-width">
+							<a href="<?php echo APP_URL; ?>artRub/" class="full-width">
 								<div class="navLateral-body-cl">
 									<i class="fas fa-boxes fa-fw"></i>
 								</div>
 								<div class="navLateral-body-cr">
-									Productos por categoría
+									Productos por rubro
 								</div>
 							</a>
 						</li>
 						<li class="full-width">
-							<a href="<?php echo APP_URL; ?>productSearch/" class="full-width">
+							<a href="<?php echo APP_URL; ?>artSearch/" class="full-width">
 								<div class="navLateral-body-cl">
 									<i class="fas fa-search fa-fw"></i>
 								</div>
 								<div class="navLateral-body-cr">
-									Buscar producto
+									Buscar articulo
 								</div>
 							</a>
 						</li>
