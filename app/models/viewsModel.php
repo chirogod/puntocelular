@@ -18,8 +18,11 @@
                 "clientSearch",
                 "clientUpdate",
                 "rubroNew",
-                "rubroList",
-                "rubroUpdate",
+                "artNew",
+                "artList",
+                "artSearch",
+                "artRub",
+                "artUpdate"
             ];
             //si la $vista esta en el array de las vistas que existe
             if (in_array($vista,$listaBlanca)){
