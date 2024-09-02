@@ -129,9 +129,20 @@ class rubroController extends mainModel{
         $total = (int) $total->fetchColumn();
 
         $numeroPaginas =ceil($total/$registros);
-        
+
         $tabla.='
+
+            
             <div class="table-container">
+            <tr class="has-text-centered" >
+                        <td colspan="7">
+                            <a href="'.$url.'1/" class="button is-link is-rounded is-small mt-4 mb-4">
+                                Haga clic acá para recargar el listado
+                            </a>
+                        </td>
+                    </tr>
+            
+
             <table class="table is-bordered is-striped is-narrow is-hoverable is-fullwidth">
                 <thead>
                     <tr>
@@ -157,6 +168,8 @@ class rubroController extends mainModel{
                 $contador++;
             }
             $pag_final=$contador-1;
+            
+            
         }else{
             if($total>=1){
                 $tabla.='

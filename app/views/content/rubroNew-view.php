@@ -36,7 +36,7 @@
 			<button type="reset" class="button is-link is-light is-rounded"><i class="fas fa-paint-roller"></i> &nbsp; Limpiar</button>
 			<button type="submit" class="button is-info is-rounded"><i class="far fa-save"></i> &nbsp; Guardar</button>
 		</p>
-		<p class="has-text-centered pt-6">
+		<p class="has-text-centered pt-1">
             <small>Los campos marcados con <?php echo CAMPO_OBLIGATORIO; ?> son obligatorios</small>
         </p>
 	</form>
