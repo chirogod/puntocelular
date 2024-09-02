@@ -129,22 +129,6 @@
 				</li>
 
 				<?php if($_SESSION['usuario_rol']=="Administrador"){ ?>
-					<li class="full-width divider-menu-h"></li>
-
-				<li class="full-width">
-					<a href="<?php echo APP_URL; ?>rubroNew/" class="full-width">
-						<div class="navLateral-body-cl">
-							<i class="fas fa-cubes fa-fw"></i>
-						</div>
-						<div class="navLateral-body-cr">
-							RUBROS
-						</div>
-					</a>
-					
-				</li>
-				<?php } ?>
-
-				<?php if($_SESSION['usuario_rol']=="Administrador"){ ?>
 				<li class="full-width divider-menu-h"></li>
 
 				<li class="full-width">
@@ -158,6 +142,16 @@
 						<span class="fas fa-chevron-down"></span>
 					</a>
 					<ul class="full-width menu-principal sub-menu-options">
+						<li class="full-width">
+							<a href="<?php echo APP_URL; ?>rubroNew/" class="full-width">
+								<div class="navLateral-body-cl">
+									<i class="fas fa-cubes fa-fw"></i>
+								</div>
+								<div class="navLateral-body-cr">
+									RUBROS
+								</div>
+							</a>
+						</li>
 						<li class="full-width">
 							<a href="<?php echo APP_URL; ?>artNew/" class="full-width">
 								<div class="navLateral-body-cl">
@@ -178,16 +172,7 @@
 								</div>
 							</a>
 						</li>
-						<li class="full-width">
-							<a href="<?php echo APP_URL; ?>artRub/" class="full-width">
-								<div class="navLateral-body-cl">
-									<i class="fas fa-boxes fa-fw"></i>
-								</div>
-								<div class="navLateral-body-cr">
-									Productos por rubro
-								</div>
-							</a>
-						</li>
+						
 						<li class="full-width">
 							<a href="<?php echo APP_URL; ?>artSearch/" class="full-width">
 								<div class="navLateral-body-cl">

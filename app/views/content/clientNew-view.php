@@ -45,7 +45,6 @@
 		  	</div>
 		</div>
 		<div class="columns">
-		  	<div class="column">
                 <div class="column">
                     <div class="control">
                         <label>Provincia</label><br>
@@ -59,8 +58,6 @@
                         </div>
                     </div>
                 </div>
-		  	</div>
-		  	<div class="column">
                 <div class="column">
                     <div class="control">
                         <label>Localidad</label><br>
@@ -74,13 +71,12 @@
                         </div>
                     </div>
                 </div>
-		  	</div>
-		  	<div class="column">
-		    	<div class="control">
-					<label>Domicilio</label>
-				  	<input class="input" type="text" name="cliente_domicilio" pattern="[a-zA-Z0-9áéíóúÁÉÍÓÚñÑ().,#\- ]{4,70}" maxlength="70">
+				<div class="column">
+					<div class="control">
+						<label>Domicilio</label>
+						<input class="input" type="text" name="cliente_domicilio" pattern="[a-zA-Z0-9áéíóúÁÉÍÓÚñÑ().,#\- ]{4,70}" maxlength="70">
+					</div>
 				</div>
-		  	</div>
 		</div>
 		<div class="columns">
 		  	<div class="column">

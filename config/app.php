@@ -16,6 +16,9 @@
 	/*----------  Paises  ----------*/
 	const PAISES=["Argentina", "Bolivia", "Chile", "Venezuela", "Otro"];	
 
+	/*---------- Monedas ---------- */
+	const MONEDAS =["ARS", "USD"];
+
 	/*----------  Configuración de moneda  ----------*/
 	const MONEDA_SIMBOLO="$";
 	const MONEDA_NOMBRE="ARS";
