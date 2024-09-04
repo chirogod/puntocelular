@@ -5,7 +5,7 @@
 
 <div class="container pb-6 pt-6 is-max-desktop">
 
-	<form class="FormularioAjax" action="<?php echo APP_URL; ?>app/ajax/articuloAjax.php" method="POST" autocomplete="off" >
+	<form class="" action="<?php echo APP_URL; ?>app/ajax/articuloAjax.php" method="POST" autocomplete="off" >
 
 		<input type="hidden" name="modulo_articulo" value="registrar">
 
@@ -13,13 +13,13 @@
 		  	<div class="column">
 		    	<div class="control">
 					<label> Articulo <?php echo CAMPO_OBLIGATORIO; ?></label><br>
-                    <input class="input" type="text" name="articulo_descripcion" pattern="[a-zA-ZáéíóúÁÉÍÓÚñÑ0-9 -]{3,200}" maxlength="200" required >
+                    <input class="input" type="text" name="articulo_descripcion"  maxlength="200" required >
 				</div>
 		  	</div>
 		  	<div class="column">
 		    	<div class="control">
-					<label>Codigo <?php echo CAMPO_OBLIGATORIO; ?></label>
-				  	<input class="input" type="text" name="articulo_codigo" pattern="[a-zA-ZáéíóúÁÉÍÓÚñÑ0-9 -]{3,200}" required >
+					<label>Codigo <small>(para generar automaticamente dejar vacio)</small></label>
+				  	<input class="input" type="text" name="articulo_codigo" pattern="[a-zA-ZáéíóúÁÉÍÓÚñÑ0-9 -]{3,200}" >
 				</div>
 		  	</div>
 		</div>
@@ -98,7 +98,7 @@
 			<div class="column">
 		    	<div class="control">
 					<label>Observaciones</label>
-				  	<input class="input" type="text" name="articulo_observacion" pattern="^[a-zA-ZáéíóúÁÉÍÓÚñÑ0-9 ]*$">
+				  	<input class="input" type="text" name="articulo_observacion">
 				</div>
 		  	</div>
 		</div>

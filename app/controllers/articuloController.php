@@ -6,7 +6,6 @@ use app\models\mainModel;
 
 class articuloController extends mainModel{
     public function registrarArticuloControlador(){
-        $articulo_codigo = $this->limpiarCadena($_POST['articulo_codigo']);
         $articulo_descripcion = $this->limpiarCadena($_POST['articulo_descripcion']);
         $articulo_stock = $this->limpiarCadena($_POST['articulo_stock']);
         $articulo_stock_min = $this->limpiarCadena($_POST['articulo_stock_min']);
@@ -23,7 +22,7 @@ class articuloController extends mainModel{
         $articulo_modelo = $this->limpiarCadena($_POST['articulo_modelo']);
 
         //verificar campos obligatorios
-        if($articulo_descripcion == "" || $articulo_stock == "" || $id_rubro == "" || $id_sucursal == "" || $articulo_moneda == "" || $articulo_precio_compra == "" || $articulo_precio_venta == "" || $articulo_codigo == "" || $articulo_activo == ""){
+        if($articulo_descripcion == "" || $articulo_stock == "" || $id_rubro == "" || $id_sucursal == "" || $articulo_moneda == "" || $articulo_precio_compra == "" || $articulo_precio_venta == "" || $articulo_activo == ""){
             $alerta=[
                 "tipo"=>"simple",
                 "titulo"=>"Ocurrió un error inesperado",
@@ -35,7 +34,7 @@ class articuloController extends mainModel{
         }
 
         //verificar integridad datos
-        if($this->verificarDatos("[a-zA-ZáéíóúÁÉÍÓÚñÑ0-9 -]{3,200}", $articulo_descripcion)){
+        if($this->verificarDatos("a-zA-Z0-9!@#$%^&*()_+{}\\[\\]:;\"'<>,.?/\\|-", $articulo_descripcion)){
             $alerta=[
                 "tipo"=>"simple",
                 "titulo"=>"Ocurrió un error inesperado",
@@ -45,19 +44,35 @@ class articuloController extends mainModel{
             return json_encode($alerta);
             exit();
         }
+        
+        $articulo_codigo = $this->limpiarCadena($_POST['articulo_codigo']);
+        //verificar codigo si se puso manualmente
+        if ($articulo_codigo != "") {
+            $check_codigo =$this->ejecutarConsulta("SELECT * FROM articulo WHERE articulo_codigo = '$articulo_codigo'");
+            if ($check_codigo->rowCount() > 0) {
+                $alerta=[
+                    "tipo"=>"simple",
+                    "titulo"=>"Ocurrió un error inesperado",
+                    "texto"=>"El codigo del articulo ya existe",
+                    "icono"=>"error"
+                ];
+                return json_encode($alerta);
+                exit();
+            }
+        }else{
+            /*== sino generar aleatoriamente el codigo del producto ==*/
+            $correlativo=$this->ejecutarConsulta("SELECT id_articulo FROM articulo");
+            $correlativo=($correlativo->rowCount())+1;
+            $articulo_codigo=$this->generarCodigoAleatorio(7,$correlativo);
 
-        //verificar codigo
-        $check_codigo =$this->ejecutarConsulta("SELECT * FROM articulo WHERE articulo_codigo = '$articulo_codigo'");
-        if ($check_codigo->rowCount() > 0) {
-            $alerta=[
-                "tipo"=>"simple",
-                "titulo"=>"Ocurrió un error inesperado",
-                "texto"=>"El codigo del articulo ya existe",
-                "icono"=>"error"
-            ];
-            return json_encode($alerta);
-            exit();
+            // verificar que el codigo no exista ya
+            $check_codigo =$this->ejecutarConsulta("SELECT * FROM articulo WHERE articulo_codigo = '$articulo_codigo'");
+            if ($check_codigo->rowCount() > 0) {
+                // si ya existe generar otro
+                $articulo_codigo=$this->generarCodigoAleatorio(7,$correlativo);
+            }
         }
+        
 
         
         if($this->verificarDatos("^[0-9]+$", $articulo_stock)){
@@ -111,7 +126,7 @@ class articuloController extends mainModel{
         }
 
         if ($articulo_observacion != "") {
-            if($this->verificarDatos("^[a-zA-ZáéíóúÁÉÍÓÚñÑ0-9 ]*$", $articulo_observacion)){
+            if($this->verificarDatos("a-zA-Z0-9!@#$%^&*()_+{}\\[\\]:;\"'<>,.?/\\|-", $articulo_observacion)){
                 $alerta=[
                     "tipo"=>"simple",
                     "titulo"=>"Ocurrió un error inesperado",
