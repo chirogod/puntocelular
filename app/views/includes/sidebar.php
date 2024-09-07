@@ -148,7 +148,7 @@
 									<i class="fas fa-cubes fa-fw"></i>
 								</div>
 								<div class="navLateral-body-cr">
-									RUBROS
+									Rubros
 								</div>
 							</a>
 						</li>
@@ -286,7 +286,7 @@
 					<ul class="full-width menu-principal sub-menu-options">
 						<?php if($_SESSION['usuario_rol']=="Administrador"){ ?>
 						<li class="full-width">
-							<a href="<?php // echo APP_URL; ?>companyNew/" class="full-width">
+							<a href="<?php echo APP_URL; ?>sucursalNew/" class="full-width">
 								<div class="navLateral-body-cl">
 									<i class="fas fa-store-alt fa-fw"></i>
 								</div>
@@ -296,16 +296,7 @@
 							</a>
 						</li>
 						<?php } ?>
-						<li class="full-width">
-							<a href=" #<?php echo APP_URL."userUpdate/".$_SESSION['id']."/"; ?>" class="full-width">
-								<div class="navLateral-body-cl">
-									<i class="fas fa-user-tie fa-fw"></i>
-								</div>
-								<div class="navLateral-body-cr">
-									Mi cuenta
-								</div>
-							</a>
-						</li>
+						
 						
 					</ul>
 				</li>

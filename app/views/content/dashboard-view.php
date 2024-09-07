@@ -47,8 +47,11 @@
 		<div class="column">
 			<nav class="level is-mobile">
 				<?php if($_SESSION['usuario_rol']=="Administrador"){ ?>
-				<div class="level-item has-text-centered">
-				    ALGUNA ESTAdistica
+					<div class="level-item has-text-centered">
+			    	<a href="<?php echo APP_URL; ?>saleList/">
+			      		<p class="heading"><i class="fas fa-shopping-cart fa-fw"></i> &nbsp; Ordenes</p>
+			      		<p class="title"><?php echo $total_ventas->rowCount(); ?></p>
+			    	</a>
 			  	</div>
 			  	<div class="level-item has-text-centered">
 				    <a href="<?php echo APP_URL; ?>productList/">
