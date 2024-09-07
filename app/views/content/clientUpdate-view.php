@@ -32,13 +32,13 @@
 		  	<div class="column">
 		    	<div class="control">
 					<label>Nombre completo</label>
-				  	<input class="input" type="text" name="cliente_nombre_completo" pattern="[a-zA-ZáéíóúÁÉÍÓÚñÑ ]{3,40}" maxlength="40" value="<?php echo $datos['cliente_nombre_completo']; ?>" required >
+				  	<input class="input" type="text" name="cliente_nombre_completo" pattern="[a-zA-ZáéíóúÁÉÍÓÚñÑ ]{3,40}" maxlength="40" value="<?php echo $datos['cliente_nombre_completo']; ?>"  >
 				</div>
 		  	</div>
 			<div class="column">
 		    	<div class="control">
 					<label>Email</label>
-				  	<input class="input" type="text" name="cliente_email" value="<?php echo $datos['cliente_email']; ?>" required >
+				  	<input class="input" type="text" name="cliente_email" value="<?php echo $datos['cliente_email']; ?>"  >
 				</div>
 		  	</div>
 		</div>
@@ -46,13 +46,13 @@
 			<div class="column">
 		    	<div class="control">
 					<label>Telefono 1</label>
-				  	<input class="input" type="number" name="cliente_telefono_1" pattern="[0-9]{4,20}" maxlength="20" value="<?php echo $datos['cliente_telefono_1']; ?>" required >
+				  	<input class="input" type="number" name="cliente_telefono_1" pattern="[0-9]{4,20}" maxlength="20" value="<?php echo $datos['cliente_telefono_1']; ?>"  >
 				</div>
 		  	</div>
             <div class="column">
 		    	<div class="control">
 					<label>Telefono 2</label>
-				  	<input class="input" type="number" name="cliente_telefono_2" pattern="[0-9]{4,20}" maxlength="20" value="<?php echo $datos['cliente_telefono_2']; ?>" required >
+				  	<input class="input" type="number" name="cliente_telefono_2" pattern="[0-9]{4,20}" maxlength="20" value="<?php echo $datos['cliente_telefono_2']; ?>"  >
 				</div>
 		  	</div>
 		</div>
@@ -61,13 +61,13 @@
             <div class="column">
 		    	<div class="control">
 					<label>Domicilio</label>
-				  	<input class="input" type="text" name="cliente_domicilio" pattern="[a-zA-Z0-9áéíóúÁÉÍÓÚñÑ().,#\- ]{4,70}" maxlength="100" value="<?php echo $datos['cliente_domicilio']; ?>" required >
+				  	<input class="input" type="text" name="cliente_domicilio" pattern="[a-zA-Z0-9áéíóúÁÉÍÓÚñÑ().,#\- ]{4,70}" maxlength="100" value="<?php echo $datos['cliente_domicilio']; ?>"  >
 				</div>
 		  	</div>
 		  	<div class="column">
 		    	<div class="control">
 					<label>Nacimiento</label>
-				  	<input class="input" type="date" name="cliente_nacimiento" maxlength="100" value="<?php echo $datos['cliente_nacimiento']; ?>" required >
+				  	<input class="input" type="date" name="cliente_nacimiento" maxlength="100" value="<?php echo $datos['cliente_nacimiento']; ?>"  >
 				</div>
 		  	</div>
 		</div>
@@ -127,7 +127,7 @@
 		  	<div class="column">
 		    	<div class="control">
 					<label>Numero de documento <?php echo CAMPO_OBLIGATORIO; ?></label>
-				  	<input class="input" type="number" name="cliente_documento" pattern="[0-9]{7,30}" maxlength="30" required value="<?php echo $datos['cliente_documento']?>" >
+				  	<input class="input" type="number" name="cliente_documento" pattern="[0-9]{7,30}" maxlength="30"  value="<?php echo $datos['cliente_documento']?>" >
 				</div>
 		  	</div>
 		</div>

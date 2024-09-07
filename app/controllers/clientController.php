@@ -338,6 +338,7 @@
 			$cliente_documento = $this->limpiarCadena($_POST['cliente_documento']);
 			$cliente_nacimiento = $this->limpiarCadena($_POST['cliente_nacimiento']);
 
+			$cliente_datos = [];
 
             if ($this->verificarDatos("[a-zA-ZáéíóúÁÉÍÓÚñÑ ]{3,40}", $cliente_nombre_completo)) {
                 $alerta=[
@@ -361,38 +362,62 @@
 		        exit();
             }
 
-			if ($this->verificarDatos("[0-9]{4,20}", $cliente_telefono_2)) {
-                $alerta=[
-					"tipo"=>"simple",
-					"titulo"=>"Ocurrió un error inesperado",
-					"texto"=>"El telefono 2 no cumple con el formato solicitado",
-					"icono"=>"error"
-				];
-				return json_encode($alerta);
-		        exit();
-            }
+			if ($cliente_telefono_2 != $datos['cliente_telefono_2']) {
+				if ($cliente_telefono_2 != "" && $this->verificarDatos("[0-9]{4,20}", $cliente_telefono_2)) {
+					$alerta=[
+						"tipo"=>"simple",
+						"titulo"=>"Ocurrió un error inesperado",
+						"texto"=>"El telefono 2 no cumple con el formato solicitado",
+						"icono"=>"error"
+					];
+					return json_encode($alerta);
+					exit();
+				}
 
-			if ($this->verificarDatos("[a-zA-Z0-9áéíóúÁÉÍÓÚñÑ().,#\- ]{4,70}", $cliente_domicilio)) {
-                $alerta=[
-					"tipo"=>"simple",
-					"titulo"=>"Ocurrió un error inesperado",
-					"texto"=>"El domicilio no cumple con el formato solicitado",
-					"icono"=>"error"
+				$cliente_datos[] = [
+					"campo_nombre"=>"cliente_telefono_2",
+					"campo_marcador"=>":Telefono2",
+					"campo_valor"=>$cliente_telefono_2
 				];
-				return json_encode($alerta);
-		        exit();
-            }
+			}
 
-			if ($this->verificarDatos("[0-9]{7,30}", $cliente_documento)) {
-                $alerta=[
-					"tipo"=>"simple",
-					"titulo"=>"Ocurrió un error inesperado",
-					"texto"=>"El documento no cumple con el formato solicitado",
-					"icono"=>"error"
+			if ($cliente_domicilio != $datos['cliente_domicilio']) {
+				if ($cliente_domicilio != "" && $this->verificarDatos("[a-zA-Z0-9áéíóúÁÉÍÓÚñÑ().,#\- ]{4,70}", $cliente_domicilio)) {
+					$alerta=[
+						"tipo"=>"simple",
+						"titulo"=>"Ocurrió un error inesperado",
+						"texto"=>"El domicilio no cumple con el formato solicitado",
+						"icono"=>"error"
+					];
+					return json_encode($alerta);
+					exit();
+				}
+
+				$cliente_datos[] = [
+					"campo_nombre"=>"cliente_domicilio",
+					"campo_marcador"=>":Domicilio",
+					"campo_valor"=>$cliente_domicilio
 				];
-				return json_encode($alerta);
-		        exit();
-            }
+			}
+
+			if ($cliente_documento != $datos['cliente_documento']) {
+				if ($cliente_documento != "" && $this->verificarDatos("[a-zA-Z0-9áéíóúÁÉÍÓÚñÑ().,#\- ]{4,70}", $cliente_documento)) {
+					$alerta=[
+						"tipo"=>"simple",
+						"titulo"=>"Ocurrió un error inesperado",
+						"texto"=>"El documento no cumple con el formato solicitado",
+						"icono"=>"error"
+					];
+					return json_encode($alerta);
+					exit();
+				}
+
+				$cliente_datos[] = [
+					"campo_nombre"=>"cliente_documento",
+					"campo_marcador"=>":Documento",
+					"campo_valor"=>$cliente_documento
+				];
+			}
 				
 
             //verificar si el email no existe ya si se quiere actualizar
@@ -451,16 +476,6 @@
 					"campo_nombre"=>"cliente_telefono_1",
 					"campo_marcador"=>":Telefono1",
 					"campo_valor"=>$cliente_telefono_1
-				],
-				[
-					"campo_nombre"=>"cliente_telefono_2",
-					"campo_marcador"=>":Telefono2",
-					"campo_valor"=>$cliente_telefono_2
-				],
-				[
-					"campo_nombre"=>"cliente_domicilio",
-					"campo_marcador"=>":Domicilio",
-					"campo_valor"=>$cliente_domicilio
 				],
 				[
 					"campo_nombre"=>"cliente_localidad",
