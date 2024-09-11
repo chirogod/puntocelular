@@ -1,9 +1,9 @@
-<div class="container is-fluid mb-6">
+<div class="container is-fluid mb-1">
 	<h1 class="title">Ventas</h1>
 	<h2 class="subtitle"><i class="fas fa-cart-plus fa-fw"></i> &nbsp; Nueva venta</h2>
 </div>
 
-<div class="container pb-6 pt-6 is-max-desktop">
+<div class="container pb-6 is-max-desktop">
     <?php
         $check_empresa=$insLogin->seleccionarDatos("Normal","sucursal LIMIT 1","*",0);
 
@@ -74,11 +74,13 @@
                     <thead>
                         <tr>
                             <th class="has-text-centered">#</th>
-                            <th class="has-text-centered">Codigo</th>
+                            <th class="has-text-centered">Código de barras</th>
                             <th class="has-text-centered">Producto</th>
                             <th class="has-text-centered">Cant.</th>
                             <th class="has-text-centered">Precio</th>
                             <th class="has-text-centered">Subtotal</th>
+                            <th class="has-text-centered">AC. Precio</th>
+                            <th class="has-text-centered">AC. Cantidad</th>
                             <th class="has-text-centered">Remover</th>
                         </tr>
                     </thead>
@@ -103,7 +105,7 @@
                             <td><?php echo MONEDA_SIMBOLO.number_format($productos['venta_detalle_precio_venta_producto'],MONEDA_DECIMALES,MONEDA_SEPARADOR_DECIMAL,MONEDA_SEPARADOR_MILLAR)." ".MONEDA_NOMBRE; ?></td>
                             <td><?php echo MONEDA_SIMBOLO.number_format($productos['venta_detalle_total'],MONEDA_DECIMALES,MONEDA_SEPARADOR_DECIMAL,MONEDA_SEPARADOR_MILLAR)." ".MONEDA_NOMBRE; ?></td>
                             <td>
-                                <button type="button" class="button is-success is-rounded is-small js-modal-trigger" data-target="modal-js-price" onclick="modal_actualizar_precio('<?php echo $productos['venta_detalle_descripcion_producto']; ?>','<?php echo $productos['articulo_codigo']; ?>','<?php echo $productos['venta_detalle_precio_venta']; ?>')" >
+                                <button type="button" class="button is-success is-rounded is-small js-modal-trigger" data-target="modal-js-price" onclick="modal_actualizar_precio('<?php echo $productos['venta_detalle_descripcion_producto']; ?>','<?php echo $productos['articulo_codigo']; ?>','<?php echo $productos['venta_detalle_precio_venta_producto']; ?>')" >
                                     <i class="fas fa-dollar-sign fa-fw"></i>
                                 </button>
                             </td>
@@ -168,6 +170,23 @@
                 <div class="control mb-5">
                     <label>Fecha</label>
                     <input class="input" type="date" value="<?php echo date("Y-m-d"); ?>" readonly >
+                </div>
+                <br>
+                <label>Caja de ventas <?php echo CAMPO_OBLIGATORIO; ?></label><br>
+                <div class="select mb-5">
+                    <select name="id_caja">
+                        <?php
+                            $datos_cajas=$insLogin->seleccionarDatos("Normal","caja","*",0);
+
+                            while($campos_caja=$datos_cajas->fetch()){
+                                if($campos_caja['id_caja']==$_SESSION['caja']){
+                                    echo '<option value="'.$campos_caja['id_caja'].'" selected="" >'.$campos_caja['caja_nombre'].' (Actual)</option>';
+                                }else{
+                                    echo '<option value="'.$campos_caja['id_caja'].'">'.$campos_caja['caja_nombre'].'</option>';
+                                }
+                            }
+                        ?>
+                    </select>
                 </div>
                 <br>
 
@@ -254,7 +273,7 @@
         </header>
         <section class="modal-card-body">
             <div class="field mt-6 mb-6">
-                <label class="label">Nombre, marca, modelo</label>
+                <label class="label">Codigo, nombre, marca, modelo.</label>
                 <div class="control">
                     <input class="input" type="text" pattern="[a-zA-Z0-9áéíóúÁÉÍÓÚñÑ ]{1,30}" name="input_codigo" id="input_codigo" maxlength="30" >
                 </div>

@@ -14,6 +14,9 @@
                 <li class="text-condensedLight noLink" >
                     <small><?php echo $_SESSION['sucursal_descripcion']; ?></small>
                 </li>
+                <li class="text-condensedLight noLink" >
+                    <small><?php echo $_SESSION['caja']; ?></small>
+                </li>
             </ul>
         </nav>
     </div>

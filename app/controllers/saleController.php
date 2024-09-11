@@ -117,7 +117,7 @@
 
                 $stock_total=$campos['articulo_stock']-$detalle_cantidad;
 
-                if($stock_total<0){
+                if($stock_total<=0){
                     $alerta=[
 						"tipo"=>"simple",
 						"titulo"=>"Ocurrió un error inesperado",
@@ -136,8 +136,8 @@
 					"articulo_codigo"=>$campos['articulo_codigo'],
 					"articulo_stock"=>$stock_total,
 					"articulo_stock_old"=>$campos['articulo_stock'],
-                    "venta_detalle_precio_compra_producto"=>$campos['producto_precio_compra_producto'],
-                    "venta_detalle_precio_venta_producto"=>$campos['producto_precio_venta_producto'],
+                    "venta_detalle_precio_compra_producto"=>$campos['articulo_precio_compra'],
+                    "venta_detalle_precio_venta_producto"=>$campos['articulo_precio_venta'],
                     "venta_detalle_cantidad_producto"=>1,
                     "venta_detalle_total"=>$detalle_total,
                     "venta_detalle_descripcion_producto"=>$campos['articulo_descripcion']
@@ -168,8 +168,8 @@
 					"articulo_codigo"=>$campos['articulo_codigo'],
 					"articulo_stock"=>$stock_total,
 					"articulo_stock_total_old"=>$campos['articulo_stock'],
-                    "venta_detalle_precio_compra_producto"=>$campos['producto_precio_compra_producto'],
-                    "venta_detalle_precio_venta_producto"=>$campos['producto_precio_venta_producto'],
+                    "venta_detalle_precio_compra_producto"=>$campos['articulo_precio_compra'],
+                    "venta_detalle_precio_venta_producto"=>$campos['articulo_precio_venta'],
                     "venta_detalle_cantidad_producto"=>$detalle_cantidad,
                     "venta_detalle_total"=>$detalle_total,
                     "venta_detalle_descripcion_producto"=>$campos['articulo_descripcion']
@@ -246,12 +246,12 @@
             }
 
             /*== Comprobando producto en la DB ==*/
-            $check_producto=$this->ejecutarConsulta("SELECT * FROM producto WHERE producto_codigo='$codigo'");
+            $check_producto=$this->ejecutarConsulta("SELECT * FROM articulo WHERE articulo_codigo='$codigo'");
             if($check_producto->rowCount()<=0){
                 $alerta=[
 					"tipo"=>"simple",
 					"titulo"=>"Ocurrió un error inesperado",
-					"texto"=>"No hemos encontrado el producto con código de barras : '$codigo'",
+					"texto"=>"No hemos encontrado el articulo con código: '$codigo'",
 					"icono"=>"error"
 				];
 				return json_encode($alerta);
@@ -263,7 +263,7 @@
             /*== comprobando producto en carrito ==*/
             if(!empty($_SESSION['datos_producto_venta'][$codigo])){
 
-                if($_SESSION['datos_producto_venta'][$codigo]["venta_detalle_cantidad"]==$cantidad){
+                if($_SESSION['datos_producto_venta'][$codigo]["venta_detalle_cantidad_producto"]==$cantidad){
                     $alerta=[
 						"tipo"=>"simple",
 						"titulo"=>"Ocurrió un error inesperado",
@@ -274,16 +274,16 @@
 			        exit();
                 }
 
-                if($cantidad>$_SESSION['datos_producto_venta'][$codigo]["venta_detalle_cantidad"]){
-                    $diferencia_productos="agrego +".($cantidad-$_SESSION['datos_producto_venta'][$codigo]["venta_detalle_cantidad"]);
+                if($cantidad>$_SESSION['datos_producto_venta'][$codigo]["venta_detalle_cantidad_producto"]){
+                    $diferencia_productos="agrego +".($cantidad-$_SESSION['datos_producto_venta'][$codigo]["venta_detalle_cantidad_producto"]);
                 }else{
-                    $diferencia_productos="quito -".($_SESSION['datos_producto_venta'][$codigo]["venta_detalle_cantidad"]-$cantidad);
+                    $diferencia_productos="quito -".($_SESSION['datos_producto_venta'][$codigo]["venta_detalle_cantidad_producto"]-$cantidad);
                 }
 
 
                 $detalle_cantidad=$cantidad;
 
-                $stock_total=$campos['producto_stock_total']-$detalle_cantidad;
+                $stock_total=$campos['articulo_stock']-$detalle_cantidad;
 
                 if($stock_total<0){
                     $alerta=[
@@ -296,24 +296,24 @@
 			        exit();
                 }
 
-                $precio_venta=$_SESSION['datos_producto_venta'][$codigo]['venta_detalle_precio_venta'];
+                $precio_venta=$_SESSION['datos_producto_venta'][$codigo]['venta_detalle_precio_venta_producto'];
                 
                 $detalle_total=$detalle_cantidad*$precio_venta;
                 $detalle_total=number_format($detalle_total,MONEDA_DECIMALES,'.','');
 
                 $_SESSION['datos_producto_venta'][$codigo]=[
-                    "producto_id"=>$campos['producto_id'],
-					"producto_codigo"=>$campos['producto_codigo'],
-					"producto_stock_total"=>$stock_total,
-					"producto_stock_total_old"=>$campos['producto_stock_total'],
-                    "venta_detalle_precio_compra"=>$campos['producto_precio_compra'],
-                    "venta_detalle_precio_venta"=>$precio_venta,
-                    "venta_detalle_cantidad"=>$detalle_cantidad,
+                    "id_articulo"=>$campos['articulo_id'],
+					"articulo_codigo"=>$campos['articulo_codigo'],
+					"articulo_stock_total"=>$stock_total,
+					"articulo_stock_total_old"=>$campos['articulo_stock'],
+                    "venta_detalle_precio_compra_producto"=>$campos['articulo_precio_compra'],
+                    "venta_detalle_precio_venta_producto"=>$precio_venta,
+                    "venta_detalle_cantidad_producto"=>$detalle_cantidad,
                     "venta_detalle_total"=>$detalle_total,
-                    "venta_detalle_descripcion"=>$campos['producto_nombre']
+                    "venta_detalle_descripcion_producto"=>$campos['articulo_descripcion']
                 ];
 
-                $_SESSION['alerta_producto_agregado']="Se $diferencia_productos <strong>".$campos['producto_nombre']."</strong> a la venta. Total en carrito <strong>$detalle_cantidad</strong>";
+                $_SESSION['alerta_producto_agregado']="Se $diferencia_productos <strong>".$campos['articulo_descripcion']."</strong> a la venta. Total en carrito <strong>$detalle_cantidad</strong>";
 
                 $alerta=[
 					"tipo"=>"redireccionar",
@@ -466,7 +466,7 @@
         /*---------- Controlador registrar venta ----------*/
         public function registrarVentaControlador(){
 
-            $sucursal=$this->limpiarCadena($_POST['id_sucursal']);
+            $caja=$this->limpiarCadena($_POST['id_caja']);
 
             if($_SESSION['venta_importe']<=0 || (!isset($_SESSION['datos_producto_venta']) && count($_SESSION['datos_producto_venta'])<=0)){
 				$alerta=[
@@ -506,8 +506,8 @@
 
 
             /*== Comprobando caja en la DB ==*/
-            $check_sucursal=$this->ejecutarConsulta("SELECT * FROM sucursal WHERE id_sucursal='$sucursal'");
-			if($check_sucursal->rowCount()<=0){
+            $check_caja=$this->ejecutarConsulta("SELECT * FROM caja WHERE id_caja='$caja'");
+			if($check_caja->rowCount()<=0){
 				$alerta=[
 					"tipo"=>"simple",
 					"titulo"=>"Ocurrió un error inesperado",
@@ -517,26 +517,26 @@
 				return json_encode($alerta);
 		        exit();
             }else{
-                $datos_sucursal=$check_sucursal->fetch();
+                $datos_caja=$check_caja->fetch();
             }
 
 
             /*== Formateando variables ==*/
-            $venta_total=number_format($_SESSION['venta_total'],MONEDA_DECIMALES,'.','');
+            $venta_importe=number_format($_SESSION['venta_importe'],MONEDA_DECIMALES,'.','');
 
             $venta_fecha=date("Y-m-d");
             $venta_hora=date("h:i a");
 
-            $venta_total_final=$venta_total;
-            $venta_total_final=number_format($venta_total_final,MONEDA_DECIMALES,'.','');
+            $venta_importe_final=$venta_importe;
+            $venta_importe_final=number_format($venta_importe_final,MONEDA_DECIMALES,'.','');
 
 
 
             /*== Calculando total en caja ==*/
-            $movimiento_cantidad=$venta_pagado-$venta_cambio;
+            $movimiento_cantidad=$venta_importe;
             $movimiento_cantidad=number_format($movimiento_cantidad,MONEDA_DECIMALES,'.','');
 
-            $total_caja=$datos_caja['caja_efectivo']+$movimiento_cantidad;
+            $total_caja=$datos_caja['caja_monto']+$movimiento_cantidad;
             $total_caja=number_format($total_caja,MONEDA_DECIMALES,'.','');
 
 
@@ -554,9 +554,9 @@
                 }
 
                 /*== Respaldando datos de BD para poder restaurar en caso de errores ==*/
-                $_SESSION['datos_producto_venta'][$productos['articulo_codigo']]['producto_stock_total']=$datos_producto['articulo_stock']-$_SESSION['datos_producto_venta'][$productos['articulo_codigo']]['venta_detalle_cantidad_producto'];
+                $_SESSION['datos_producto_venta'][$productos['articulo_codigo']]['articulo_stock']=$datos_producto['articulo_stock']-$_SESSION['datos_producto_venta'][$productos['articulo_codigo']]['venta_detalle_cantidad_producto'];
 
-                $_SESSION['datos_producto_venta'][$productos['articulo_codigo']]['producto_stock_total_old']=$datos_producto['articulo_stock'];
+                $_SESSION['datos_producto_venta'][$productos['articulo_codigo']]['articulo_stock_total_old']=$datos_producto['articulo_stock'];
 
                 /*== Preparando datos para enviarlos al modelo ==*/
                 $datos_producto_up=[
@@ -587,19 +587,19 @@
 
                     $datos_producto_rs=[
                         [
-							"campo_nombre"=>"producto_stock",
+							"campo_nombre"=>"articulo_stock",
 							"campo_marcador"=>":Stock",
-							"campo_valor"=>$producto['producto_stock_total_old']
+							"campo_valor"=>$producto['articulo_stock_total_old']
 						]
                     ];
 
                     $condicion=[
-                        "condicion_campo"=>"producto_id",
+                        "condicion_campo"=>"id_articulo",
                         "condicion_marcador"=>":ID",
-                        "condicion_valor"=>$producto['producto_id']
+                        "condicion_valor"=>$producto['id_articulo']
                     ];
 
-                    $this->actualizarDatos("producto",$datos_producto_rs,$condicion);
+                    $this->actualizarDatos("articulo",$datos_producto_rs,$condicion);
                 }
 
                 $alerta=[
@@ -809,9 +809,9 @@
 
                     $datos_producto_rs=[
                         [
-							"campo_nombre"=>"producto_stock_total",
+							"campo_nombre"=>"articulo_stock",
 							"campo_marcador"=>":Stock",
-							"campo_valor"=>$producto['producto_stock_total_old']
+							"campo_valor"=>$producto['articulo_stock_total_old']
 						]
                     ];
 
@@ -821,7 +821,7 @@
                         "condicion_valor"=>$producto['producto_id']
                     ];
 
-                    $this->actualizarDatos("producto",$datos_producto_rs,$condicion);
+                    $this->actualizarDatos("articulo",$datos_producto_rs,$condicion);
                 }
 
                 $alerta=[
@@ -1056,14 +1056,14 @@
 		public function actualizarPrecioProducto(){
 
 			/*== Recuperando datos del producto ==*/
-			$codigo=$this->limpiarCadena($_POST['producto_codigo']);
-			$precio=$this->limpiarCadena($_POST['producto_precio']);
+			$codigo=$this->limpiarCadena($_POST['articulo_codigo']);
+			$precio=$this->limpiarCadena($_POST['articulo_precio']);
 
 			if($codigo==""){
                 $alerta=[
 					"tipo"=>"simple",
 					"titulo"=>"Ocurrió un error inesperado",
-					"texto"=>"No se ha encontrado el código de barras del producto",
+					"texto"=>"No se ha encontrado el código del producto",
 					"icono"=>"error"
 				];
 				return json_encode($alerta);
@@ -1075,7 +1075,7 @@
                 $alerta=[
 					"tipo"=>"simple",
 					"titulo"=>"Ocurrió un error inesperado",
-					"texto"=>"El código de barras no coincide con el formato solicitado",
+					"texto"=>"El código no coincide con el formato solicitado",
 					"icono"=>"error"
 				];
 				return json_encode($alerta);
@@ -1087,7 +1087,7 @@
 
             	$precio=number_format($precio,MONEDA_DECIMALES,'.','');
 
-            	if($precio<$_SESSION['datos_producto_venta'][$codigo]['venta_detalle_precio_compra']){
+            	if($precio<$_SESSION['datos_producto_venta'][$codigo]['venta_detalle_precio_compra_producto']){
             		$alerta=[
 						"tipo"=>"simple",
 						"titulo"=>"Ocurrió un error inesperado",
@@ -1098,10 +1098,10 @@
 			        exit();
             	}
 
-                $detalle_total=$_SESSION['datos_producto_venta'][$codigo]['venta_detalle_cantidad']*$precio;
+                $detalle_total=$_SESSION['datos_producto_venta'][$codigo]['venta_detalle_cantidad_producto']*$precio;
                 $detalle_total=number_format($detalle_total,MONEDA_DECIMALES,'.','');
 
-                $_SESSION['datos_producto_venta'][$codigo]['venta_detalle_precio_venta']=$precio;
+                $_SESSION['datos_producto_venta'][$codigo]['venta_detalle_precio_venta_producto']=$precio;
                 $_SESSION['datos_producto_venta'][$codigo]['venta_detalle_total']=$detalle_total;
 
                 $alerta=[

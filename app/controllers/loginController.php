@@ -76,6 +76,12 @@
                                     ';  
                                 }
 
+                                $check_caja = $this->ejecutarConsulta("SELECT * FROM caja WHERE id_sucursal = '$sucursal'");
+                                $check_caja = $check_caja->fetch();
+                                if ($check_caja['id_caja']) {
+                                    $_SESSION['caja'] = $check_caja['id_caja'];
+                                }
+
                                 if (headers_sent()) {
                                     echo "<script> window.location.href='".APP_URL."dashboard/' ; </script>";
                                 }else {
