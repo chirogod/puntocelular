@@ -34,7 +34,7 @@ class articuloController extends mainModel{
         }
 
         //verificar integridad datos
-        if($this->verificarDatos("a-zA-Z0-9!@#$%^&*()_+{}\\[\\]:;\"'<>,.?/\\|-", $articulo_descripcion)){
+        if($this->verificarDatos("[a-zA-ZáéíóúÁÉÍÓÚñÑ0-9\\s\/\(\)%\/\-\.]{3,100}", $articulo_descripcion)){
             $alerta=[
                 "tipo"=>"simple",
                 "titulo"=>"Ocurrió un error inesperado",
@@ -113,7 +113,7 @@ class articuloController extends mainModel{
         }
 
         if ($articulo_garantia != "") {
-            if($this->verificarDatos("[a-zA-ZáéíóúÁÉÍÓÚñÑ0-9 ]{3,100}", $articulo_garantia)){
+            if($this->verificarDatos("[a-zA-ZáéíóúÁÉÍÓÚñÑ0-9\\s\/\(\)%\/\-\.]{3,100}", $articulo_garantia)){
                 $alerta=[
                     "tipo"=>"simple",
                     "titulo"=>"Ocurrió un error inesperado",
@@ -126,7 +126,7 @@ class articuloController extends mainModel{
         }
 
         if ($articulo_observacion != "") {
-            if($this->verificarDatos("a-zA-Z0-9!@#$%^&*()_+{}\\[\\]:;\"'<>,.?/\\|-", $articulo_observacion)){
+            if($this->verificarDatos("[a-zA-ZáéíóúÁÉÍÓÚñÑ0-9\\s\/\(\)%\/\-\.]", $articulo_observacion)){
                 $alerta=[
                     "tipo"=>"simple",
                     "titulo"=>"Ocurrió un error inesperado",
@@ -375,7 +375,7 @@ class articuloController extends mainModel{
                         <td colspan="7">
                             No hay registros en el sistema
                             <div class="mt-1">
-                                <a href="'.APP_URL.'artNew/" class="button is-success is-rounded is-small">Registrar cliente</a>
+                                <a href="'.APP_URL.'artNew/" class="button is-success is-rounded is-small">Registrar articulos</a>
                             </div>
                         </td>
                     </tr>
@@ -387,11 +387,13 @@ class articuloController extends mainModel{
 
         ### Paginacion ###
         if($total>0 && $pagina<=$numeroPaginas){
-            $tabla.='<p class="has-text-right">Mostrando clientes <strong>'.$pag_inicio.'</strong> al <strong>'.$pag_final.'</strong> de un <strong>total de '.$total.'</strong></p>';
+            $tabla.='<p class="has-text-right">Mostrando articulo <strong>'.$pag_inicio.'</strong> al <strong>'.$pag_final.'</strong> de un <strong>total de '.$total.'</strong></p>';
 
             $tabla.=$this->paginadorTablas($pagina,$numeroPaginas,$url,7);
         }
 
         return $tabla;
     }
+
+    
 }

@@ -189,6 +189,46 @@
 
 				<li class="full-width divider-menu-h"></li>
 
+				<?php if($_SESSION['usuario_rol']=="Administrador"){ ?>
+
+				<!--
+				<li class="full-width">
+					<a href="#" class="full-width btn-subMenu">
+						<div class="navLateral-body-cl">
+							<i class="fas fa-cubes fa-fw"></i>
+						</div>
+						<div class="navLateral-body-cr">
+							EQUIPOS
+						</div>
+						<span class="fas fa-chevron-down"></span>
+					</a>
+					<ul class="full-width menu-principal sub-menu-options">
+						<li class="full-width">
+							<a href="<?php echo APP_URL; ?>equipoNew/" class="full-width">
+								<div class="navLateral-body-cl">
+									<i class="fas fa-box fa-fw"></i>
+								</div>
+								<div class="navLateral-body-cr">
+									Nuevo equipo
+								</div>
+							</a>
+						</li>
+						<li class="full-width">
+							<a href="<?php echo APP_URL; ?>equipoSearch/" class="full-width">
+								<div class="navLateral-body-cl">
+									<i class="fas fa-clipboard-list fa-fw"></i>
+								</div>
+								<div class="navLateral-body-cr">
+									Lista de equipos
+								</div>
+							</a>
+						</li>
+					</ul>
+				</li>-->
+				<?php } ?>
+				
+				<li class="full-width divider-menu-h"></li>
+
 				<li class="full-width">
 					<a href="#" class="full-width btn-subMenu">
 						<div class="navLateral-body-cl">
