@@ -221,7 +221,8 @@
             /*== Recuperando codigo & cantidad del producto ==*/
             $codigo=$this->limpiarCadena($_POST['articulo_codigo']);
             $cantidad=$this->limpiarCadena($_POST['articulo_cantidad']);
-           /*== comprobando campos vacios ==*/
+           
+			/*== comprobando campos vacios ==*/
             if($codigo=="" || $cantidad==""){
             	$alerta=[
 					"tipo"=>"simple",
@@ -466,7 +467,8 @@
         /*---------- Controlador registrar venta ----------*/
         public function registrarVentaControlador(){
 
-            $caja=$this->limpiarCadena($_POST['id_caja']);
+            $caja=$_SESSION['caja'];
+			$forma_pago = $_POST['venta_forma_pago'];
 
             if($_SESSION['venta_importe']<=0 || (!isset($_SESSION['datos_producto_venta']) && count($_SESSION['datos_producto_venta'])<=0)){
 				$alerta=[
@@ -506,12 +508,12 @@
 
 
             /*== Comprobando caja en la DB ==*/
-            $check_caja=$this->ejecutarConsulta("SELECT * FROM caja WHERE id_caja='$caja'");
+            $check_caja=$this->ejecutarConsulta("SELECT * FROM caja WHERE id_caja='$caja' ");
 			if($check_caja->rowCount()<=0){
 				$alerta=[
 					"tipo"=>"simple",
 					"titulo"=>"Ocurrió un error inesperado",
-					"texto"=>"La sucursal no está registrada en el sistema",
+					"texto"=>"La caja no está registrada en el sistema",
 					"icono"=>"error"
 				];
 				return json_encode($alerta);
@@ -538,6 +540,8 @@
 
             $total_caja=$datos_caja['caja_monto']+$movimiento_cantidad;
             $total_caja=number_format($total_caja,MONEDA_DECIMALES,'.','');
+
+			
 
 
             /*== Actualizando productos ==*/
@@ -637,32 +641,32 @@
 				[
 					"campo_nombre"=>"venta_importe",
 					"campo_marcador"=>":Total",
-					"campo_valor"=>$venta_total_final
+					"campo_valor"=>$venta_importe
 				],
 				[
-					"campo_nombre"=>"venta_pagado",
-					"campo_marcador"=>":Pagado",
-					"campo_valor"=>$venta_pagado
+					"campo_nombre"=>"id_sucursal",
+					"campo_marcador"=>":Sucursal",
+					"campo_valor"=>$_SESSION['id_sucursal']
 				],
 				[
-					"campo_nombre"=>"venta_cambio",
-					"campo_marcador"=>":Cambio",
-					"campo_valor"=>$venta_cambio
-				],
-				[
-					"campo_nombre"=>"usuario_id",
+					"campo_nombre"=>"id_usuario",
 					"campo_marcador"=>":Usuario",
-					"campo_valor"=>$_SESSION['id']
+					"campo_valor"=>$_SESSION['id_usuario']
 				],
 				[
-					"campo_nombre"=>"cliente_id",
+					"campo_nombre"=>"id_cliente",
 					"campo_marcador"=>":Cliente",
-					"campo_valor"=>$_SESSION['datos_cliente_venta']['cliente_id']
+					"campo_valor"=>$_SESSION['datos_cliente_venta']['id_cliente']
 				],
 				[
-					"campo_nombre"=>"caja_id",
+					"campo_nombre"=>"id_caja",
 					"campo_marcador"=>":Caja",
 					"campo_valor"=>$caja
+				],
+				[
+					"campo_nombre"=>"venta_forma_pago",
+					"campo_marcador"=>":FormaPago",
+					"campo_valor"=>$forma_pago
 				]
             ];
 
@@ -785,20 +789,64 @@
 		        exit();
             }
 
-            /*== Actualizando efectivo en caja ==*/
-            $datos_caja_up=[
-                [
-					"campo_nombre"=>"caja_efectivo",
-					"campo_marcador"=>":Efectivo",
-					"campo_valor"=>$total_caja
-				]
-            ];
-
-            $condicion_caja=[
-                "condicion_campo"=>"caja_id",
-                "condicion_marcador"=>":ID",
-                "condicion_valor"=>$caja
-            ];
+            if ($forma_pago == 'Efectivo') {
+				// Update cash balance in "caja ventas"
+				$datos_caja_up=[
+					[
+						"campo_nombre"=>"caja_monto",
+						"campo_marcador"=>":Monto",
+						"campo_valor"=>$total_caja
+					]
+				];
+			
+				$condicion_caja=[
+					"condicion_campo"=>"id_caja",
+					"condicion_marcador"=>":ID",
+					"condicion_valor"=>$caja
+				];
+			
+				$this->actualizarDatos("caja",$datos_caja_up,$condicion_caja);
+			
+				// Update cash balance in "caja fisica" of the corresponding branch
+				$sucursal_id = $datos_caja['id_sucursal'];
+				$caja_fisica = $this->ejecutarConsulta("SELECT * FROM caja WHERE caja_codigo LIKE '%Efectivo%' AND id_sucursal = '$_SESSION[id_sucursal]'")->fetch();
+				$total_caja_fisica=$caja_fisica['caja_monto']+$movimiento_cantidad;
+            	$total_caja_fisica=number_format($total_caja_fisica,MONEDA_DECIMALES,'.','');
+				if ($caja_fisica) {
+					$datos_caja_fisica_up=[
+						[
+							"campo_nombre"=>"caja_monto",
+							"campo_marcador"=>":Monto",
+							"campo_valor"=>$total_caja_fisica
+						]
+					];
+			
+					$condicion_caja_fisica=[
+						"condicion_campo"=>"id_caja",
+						"condicion_marcador"=>":ID",
+						"condicion_valor"=>$caja_fisica['id_caja']
+					];
+			
+					$this->actualizarDatos("caja",$datos_caja_fisica_up,$condicion_caja_fisica);
+				}
+			} else {
+				// Update cash balance in "caja ventas"
+				$datos_caja_up=[
+					[
+						"campo_nombre"=>"caja_monto",
+						"campo_marcador"=>":Monto",
+						"campo_valor"=>$total_caja
+					]
+				];
+			
+				$condicion_caja=[
+					"condicion_campo"=>"id_caja",
+					"condicion_marcador"=>":ID",
+					"condicion_valor"=>$caja
+				];
+			
+				$this->actualizarDatos("caja",$datos_caja_up,$condicion_caja);
+			}
 
             if(!$this->actualizarDatos("caja",$datos_caja_up,$condicion_caja)){
 
@@ -868,19 +916,19 @@
 			$pagina = (isset($pagina) && $pagina>0) ? (int) $pagina : 1;
 			$inicio = ($pagina>0) ? (($pagina * $registros)-$registros) : 0;
 
-			$campos_tablas="venta.venta_id,venta.venta_codigo,venta.venta_fecha,venta.venta_hora,venta.venta_total,venta.usuario_id,venta.cliente_id,venta.caja_id,usuario.usuario_id,usuario.usuario_nombre,usuario.usuario_apellido,cliente.cliente_id,cliente.cliente_nombre,cliente.cliente_apellido";
+			$campos_tablas = "venta.id_venta, venta.venta_codigo, venta.venta_fecha, venta.venta_hora, venta.venta_importe, venta.id_usuario, venta.id_cliente, venta.id_caja, usuario.id_usuario, usuario.usuario_nombre_completo, cliente.id_cliente, cliente.cliente_nombre_completo";
 
 			if(isset($busqueda) && $busqueda!=""){
 
-				$consulta_datos="SELECT $campos_tablas FROM venta INNER JOIN cliente ON venta.cliente_id=cliente.cliente_id INNER JOIN usuario ON venta.usuario_id=usuario.usuario_id WHERE (venta.venta_codigo='$busqueda') ORDER BY venta.venta_id DESC LIMIT $inicio,$registros";
+				$consulta_datos="SELECT $campos_tablas FROM venta INNER JOIN cliente ON venta.id_cliente=cliente.id_cliente INNER JOIN usuario ON venta.id_usuario=usuario.id_usuario WHERE (venta.venta_codigo='$busqueda') ORDER BY venta.id_venta DESC LIMIT $inicio,$registros";
 
-				$consulta_total="SELECT COUNT(venta_id) FROM venta WHERE (venta.venta_codigo='$busqueda')";
+				$consulta_total="SELECT COUNT(id_venta) FROM venta WHERE (venta.venta_codigo='$busqueda')";
 
 			}else{
 
-				$consulta_datos="SELECT $campos_tablas FROM venta INNER JOIN cliente ON venta.cliente_id=cliente.cliente_id INNER JOIN usuario ON venta.usuario_id=usuario.usuario_id ORDER BY venta.venta_id DESC LIMIT $inicio,$registros";
+				$consulta_datos="SELECT $campos_tablas FROM venta INNER JOIN cliente ON venta.id_cliente=cliente.id_cliente INNER JOIN usuario ON venta.id_usuario=usuario.id_usuario ORDER BY venta.id_venta DESC LIMIT $inicio,$registros";
 
-				$consulta_total="SELECT COUNT(venta_id) FROM venta";
+				$consulta_total="SELECT COUNT(id_venta) FROM venta";
 
 			}
 
@@ -915,32 +963,32 @@
 				foreach($datos as $rows){
 					$tabla.='
 						<tr class="has-text-centered" >
-							<td>'.$rows['venta_id'].'</td>
+							<td>'.$rows['id_venta'].'</td>
 							<td>'.$rows['venta_codigo'].'</td>
 							<td>'.date("d-m-Y", strtotime($rows['venta_fecha'])).' '.$rows['venta_hora'].'</td>
-							<td>'.$this->limitarCadena($rows['cliente_nombre'].' '.$rows['cliente_apellido'],30,"...").'</td>
-							<td>'.$this->limitarCadena($rows['usuario_nombre'].' '.$rows['usuario_apellido'],30,"...").'</td>
-							<td>'.MONEDA_SIMBOLO.number_format($rows['venta_total'],MONEDA_DECIMALES,MONEDA_SEPARADOR_DECIMAL,MONEDA_SEPARADOR_MILLAR).' '.MONEDA_NOMBRE.'</td>
+							<td>'.$rows['cliente_nombre_completo'].'</td>
+							<td>'.$rows['usuario_nombre_completo'].'</td>
+							<td>'.MONEDA_SIMBOLO.number_format($rows['venta_importe'],MONEDA_DECIMALES,MONEDA_SEPARADOR_DECIMAL,MONEDA_SEPARADOR_MILLAR).' '.MONEDA_NOMBRE.'</td>
 			                <td>
 
-			                	<button type="button" class="button is-link is-outlined is-rounded is-small btn-sale-options" onclick="print_invoice(\''.APP_URL.'app/pdf/invoice.php?code='.$rows['venta_codigo'].'\')" title="Imprimir factura Nro. '.$rows['venta_id'].'" >
+			                	<button type="button" class="button is-link is-outlined is-rounded is-small btn-sale-options" onclick="print_invoice(\''.APP_URL.'app/pdf/invoice.php?code='.$rows['venta_codigo'].'\')" title="Imprimir factura Nro. '.$rows['id_venta'].'" >
 	                                <i class="fas fa-file-invoice-dollar fa-fw"></i>
 	                            </button>
 
-                                <button type="button" class="button is-link is-outlined is-rounded is-small btn-sale-options" onclick="print_ticket(\''.APP_URL.'app/pdf/ticket.php?code='.$rows['venta_codigo'].'\')" title="Imprimir ticket Nro. '.$rows['venta_id'].'" >
+                                <button type="button" class="button is-link is-outlined is-rounded is-small btn-sale-options" onclick="print_ticket(\''.APP_URL.'app/pdf/ticket.php?code='.$rows['venta_codigo'].'\')" title="Imprimir ticket Nro. '.$rows['id_venta'].'" >
                                     <i class="fas fa-receipt fa-fw"></i>
                                 </button>
 
-			                    <a href="'.APP_URL.'saleDetail/'.$rows['venta_codigo'].'/" class="button is-link is-rounded is-small" title="Informacion de venta Nro. '.$rows['venta_id'].'" >
+			                    <a href="'.APP_URL.'saleDetail/'.$rows['venta_codigo'].'/" class="button is-link is-rounded is-small" title="Informacion de venta Nro. '.$rows['id_venta'].'" >
 			                    	<i class="fas fa-shopping-bag fa-fw"></i>
 			                    </a>
 
 			                	<form class="FormularioAjax is-inline-block" action="'.APP_URL.'app/ajax/ventaAjax.php" method="POST" autocomplete="off" >
 
 			                		<input type="hidden" name="modulo_venta" value="eliminar_venta">
-			                		<input type="hidden" name="venta_id" value="'.$rows['id_venta'].'">
+			                		<input type="hidden" name="id_venta" value="'.$rows['id_venta'].'">
 
-			                    	<button type="submit" class="button is-danger is-rounded is-small" title="Eliminar venta Nro. '.$rows['venta_id'].'" >
+			                    	<button type="submit" class="button is-danger is-rounded is-small" title="Eliminar venta Nro. '.$rows['id_venta'].'" >
 			                    		<i class="far fa-trash-alt fa-fw"></i>
 			                    	</button>
 			                    </form>
@@ -989,10 +1037,10 @@
 		/*----------  Controlador eliminar venta  ----------*/
 		public function eliminarVentaControlador(){
 
-			$id=$this->limpiarCadena($_POST['venta_id']);
+			$id=$this->limpiarCadena($_POST['id_venta']);
 
 			# Verificando venta #
-		    $datos=$this->ejecutarConsulta("SELECT * FROM venta WHERE venta_id='$id'");
+		    $datos=$this->ejecutarConsulta("SELECT * FROM venta WHERE id_venta='$id'");
 		    if($datos->rowCount()<=0){
 		        $alerta=[
 					"tipo"=>"simple",
@@ -1028,7 +1076,7 @@
 		    }
 
 
-		    $eliminarVenta=$this->eliminarRegistro("venta","venta_id",$id);
+		    $eliminarVenta=$this->eliminarRegistro("venta","id_venta",$id);
 
 		    if($eliminarVenta->rowCount()==1){
 

@@ -5,14 +5,22 @@
   	</div>
 </div>
 <?php
-
-	$total_usuarios=$insLogin->seleccionarDatos("Normal","usuario","id_usuario",0);
+	$sucursal = $_SESSION['id_sucursal'];
+	
+	$total_usuarios = $insLogin->seleccionarDatos("Normal","usuario","id_usuario",0);
 
 	$total_clientes=$insLogin->seleccionarDatos("Normal","cliente","id_cliente",0);
 
 	$total_productos=$insLogin->seleccionarDatos("Normal","articulo","id_articulo",0);
 
-	$total_ventas=$insLogin->seleccionarDatos("Normal","venta","id_venta",0);
+	$total_ventas=$insLogin->seleccionarDatosSucursal("Normal","venta","id_venta",0, $_SESSION['id_sucursal']);
+
+	$total_ordenes = $insLogin->seleccionarDatosSucursal("Normal", "orden", "id_orden",0, $_SESSION['id_sucursal']);
+
+	$total_ventas_mes = $insLogin->seleccionarDatosSucursal("Normal", "venta", "id_venta", 0,$_SESSION['id_sucursal'], "MONTH(venta_fecha) = MONTH(CURRENT_DATE) AND YEAR(venta_fecha) = YEAR(CURRENT_DATE)");
+
+	$total_montos_ventas_mes = $insLogin->seleccionarDatosSucursal("Normal", "venta", "SUM(venta_importe) AS total_ventas_mes", 0, $_SESSION['id_sucursal'], "MONTH(venta_fecha) = MONTH(CURRENT_DATE) AND YEAR(venta_fecha) = YEAR(CURRENT_DATE)");
+
 ?>
 <div class="container pb-6 pt-6 is-max-desktop">
 
@@ -49,8 +57,8 @@
 				<?php if($_SESSION['usuario_rol']=="Administrador"){ ?>
 					<div class="level-item has-text-centered">
 			    	<a href="<?php echo APP_URL; ?>saleList/">
-			      		<p class="heading"><i class="fas fa-shopping-cart fa-fw"></i> &nbsp; Ordenes</p>
-			      		<p class="title"><?php echo $total_ventas->rowCount(); ?></p>
+			      		<p class="heading"><i class="fas fa-shopping-cart fa-fw"></i> &nbsp; Ordenes totales</p>
+			      		<p class="title"><?php echo $total_ordenes->rowCount(); ?></p>
 			    	</a>
 			  	</div>
 			  	<div class="level-item has-text-centered">
@@ -62,10 +70,32 @@
 			  	<?php } ?>
 			  	<div class="level-item has-text-centered">
 			    	<a href="<?php echo APP_URL; ?>saleList/">
-			      		<p class="heading"><i class="fas fa-shopping-cart fa-fw"></i> &nbsp; Ventas</p>
+			      		<p class="heading"><i class="fas fa-shopping-cart fa-fw"></i> &nbsp; Ventas totales</p>
 			      		<p class="title"><?php echo $total_ventas->rowCount(); ?></p>
 			    	</a>
 			  	</div>
+			</nav>
+		</div>
+	</div>
+
+	<div class="columns pt-6">
+		<div class="column">
+			<nav class="level is-mobile">
+				<?php if($_SESSION['usuario_rol']=="Administrador"){ ?>
+					<div class="level-item has-text-centered">
+			    	<a href="<?php echo APP_URL; ?>saleList/">
+			      		<p class="heading"><i class="fas fa-shopping-cart fa-fw"></i> &nbsp; Ventas del mes</p>
+			      		<p class="title"><?php echo $total_ventas_mes->rowCount(); ?></p>
+			    	</a>
+			  	</div>
+			  	<div class="level-item has-text-centered">
+					<a href="">
+						<p class="heading"><i class="fas fa-cubes fa-fw"></i> &nbsp; Total del mes</p>
+						<p class="title"><?php echo $total_montos_ventas_mes->fetchColumn(); ?></p>
+					</a>
+					
+				</div>
+			  	<?php } ?>
 			</nav>
 		</div>
 	</div>

@@ -13,7 +13,7 @@
     <div class="columns">
 
         <div class="column pb-6">
-            <form class="pt-6 pb-6" id="sale-barcode-form" autocomplete="off">
+            <form class="FormularioAjax pt-6 pb-6" id="sale-barcode-form" autocomplete="off">
                 <div class="columns">
                     <div class="column is-one-quarter">
                         <button type="button" class="button is-link is-light js-modal-trigger" data-target="modal-js-product" ><i class="fas fa-search"></i> &nbsp; Buscar producto</button>
@@ -110,7 +110,7 @@
                                 </button>
                             </td>
                             <td>
-                                <button type="button" class="button is-success is-rounded is-small" onclick="actualizar_cantidad('#sale_input_<?php echo str_replace(" ", "_", $productos['articulo_codigo']); ?>','<?php echo $productos['articulo_codigo']; ?>')" >
+                            <button type="button" class="button is-success is-rounded is-small" onclick="actualizar_cantidad('#sale_input_<?php echo str_replace(" ", "_", $productos['articulo_codigo']); ?>','<?php echo $productos['articulo_codigo']; ?>')" >
                                     <i class="fas fa-redo-alt fa-fw"></i>
                                 </button>
                             </td>
@@ -161,33 +161,37 @@
             <hr>
 
             <?php if($_SESSION['venta_importe']>0){ ?>
-            <form class="FormularioAjax" action="<?php echo APP_URL; ?>app/ajax/ventaAjax.php" method="POST" autocomplete="off" name="formsale" >
+            <form class="" action="<?php echo APP_URL; ?>app/ajax/ventaAjax.php" method="POST" autocomplete="off" name="formsale" >
                 <input type="hidden" name="modulo_venta" value="registrar_venta">
             <?php }else { ?>
             <form name="formsale">
             <?php } ?>
 
-                <div class="control mb-5">
+                <div class="control">
                     <label>Fecha</label>
                     <input class="input" type="date" value="<?php echo date("Y-m-d"); ?>" readonly >
                 </div>
                 <br>
-                <label>Caja de ventas <?php echo CAMPO_OBLIGATORIO; ?></label><br>
-                <div class="select mb-5">
-                    <select name="id_caja">
-                        <?php
-                            $datos_cajas=$insLogin->seleccionarDatos("Normal","caja","*",0);
-
-                            while($campos_caja=$datos_cajas->fetch()){
-                                if($campos_caja['id_caja']==$_SESSION['caja']){
-                                    echo '<option value="'.$campos_caja['id_caja'].'" selected="" >'.$campos_caja['caja_nombre'].' (Actual)</option>';
-                                }else{
-                                    echo '<option value="'.$campos_caja['id_caja'].'">'.$campos_caja['caja_nombre'].'</option>';
-                                }
-                            }
-                        ?>
-                    </select>
+                <div class="control">
+                    <label>Forma de pago</label><br>
+                    <div class="select">
+                        <select name="venta_forma_pago">
+                            <option value="" selected="" >Seleccione una opción</option>
+                            <?php
+                                echo $insLogin->generarSelect(FORMAS_PAGO,"VACIO");
+                            ?>
+                        </select>
+                    </div>
                 </div>
+                <br>
+                <div class="control">
+                    <label>Detalle pago</label>
+                    <input class="input" type="text" name="venta_observacion_pago">
+                </div>
+                <br>
+
+                
+
                 <br>
 
                 <label>Cliente</label>

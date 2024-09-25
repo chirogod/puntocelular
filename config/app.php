@@ -19,6 +19,7 @@
 	/*---------- Monedas ---------- */
 	const MONEDAS =["ARS", "USD"];
 
+
 	/*----------  Configuración de moneda  ----------*/
 	const MONEDA_SIMBOLO="$";
 	const MONEDA_NOMBRE="ARS";
@@ -27,7 +28,7 @@
 	const MONEDA_SEPARADOR_DECIMAL=",";
 
 	/*---------- Formas de pago ----------*/
-	const FORMAS_PAGO = ["Efectivo, Transferencia", "Otro"];
+	const FORMAS_PAGO = ["Efectivo", "Transferencia", "Otro"];
 
 
 	/*----------  Marcador de campos obligatorios (Font Awesome) ----------*/
