@@ -11,7 +11,7 @@
 
 	$total_clientes=$insLogin->seleccionarDatos("Normal","cliente","id_cliente",0);
 
-	$total_productos=$insLogin->seleccionarDatos("Normal","articulo","id_articulo",0);
+	$total_productos=$insLogin->seleccionarDatosSucursal("Normal","articulo","id_articulo",0, $_SESSION['id_sucursal']);
 
 	$total_ventas=$insLogin->seleccionarDatosSucursal("Normal","venta","id_venta",0, $_SESSION['id_sucursal']);
 
@@ -21,6 +21,14 @@
 
 	$total_montos_ventas_mes = $insLogin->seleccionarDatosSucursal("Normal", "venta", "SUM(venta_importe) AS total_ventas_mes", 0, $_SESSION['id_sucursal'], "MONTH(venta_fecha) = MONTH(CURRENT_DATE) AND YEAR(venta_fecha) = YEAR(CURRENT_DATE)");
 
+	$total_caja_fisica = $insLogin->seleccionarCajaFisicaSucursal(
+		"Normal",
+		"caja",
+		"SUM(caja_monto) AS total_caja_fisica",
+		0,
+		$_SESSION['id_sucursal'],
+		"caja_codigo LIKE '%Efectivo%'"
+	);
 ?>
 <div class="container pb-6 pt-6 is-max-desktop">
 
@@ -28,11 +36,12 @@
 		<div class="column">
 			<nav class="level is-mobile">
 				<?php if($_SESSION['usuario_rol']=="Administrador"){ ?>
-			  	<div class="level-item has-text-centered">
-				    <a href="<?php echo APP_URL; ?>cashierList/">
-				      	TOTAL DE LAS VENTAS
-				    </a>
-			  	</div>
+					<div class="level-item has-text-centered">
+						<a href="">
+							<p class="heading"><i class="fas fa-cubes fa-fw"></i> &nbsp; Caja física</p>
+							<p class="title"><?php echo $total_caja_fisica->fetchColumn(); ?></p>
+						</a>
+					</div>
 			  	<div class="level-item has-text-centered">
 			    	<a href="<?php echo APP_URL; ?>userList/">
 			      		<p class="heading"><i class="fas fa-users fa-fw"></i> &nbsp; Usuarios</p>
@@ -93,7 +102,6 @@
 						<p class="heading"><i class="fas fa-cubes fa-fw"></i> &nbsp; Total del mes</p>
 						<p class="title"><?php echo $total_montos_ventas_mes->fetchColumn(); ?></p>
 					</a>
-					
 				</div>
 			  	<?php } ?>
 			</nav>

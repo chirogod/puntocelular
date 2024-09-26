@@ -126,6 +126,26 @@
             return $sql;
 		}
 
+		/*FILTRAR CADA CAJA FISICA DE CADA SUCURSAL */
+		public function seleccionarCajaFisicaSucursal($tipo,$tabla,$campo,$id, $id_sucursal, $condicion = ""){
+			$tipo=$this->limpiarCadena($tipo);
+			$tabla=$this->limpiarCadena($tabla);
+			$campo=$this->limpiarCadena($campo);
+			$id=$this->limpiarCadena($id);
+			$id_sucursal=$this->limpiarCadena($id_sucursal);
+
+            if($tipo=="Unico"){
+                $sql=$this->conectar()->prepare("SELECT * FROM $tabla WHERE $campo=:ID AND $id_sucursal=:IDSUCURSAL");
+                $sql->bindParam(":ID",$id);
+				$sql->bindParam(":IDSUCURSAL",$id_sucursal);
+            }elseif($tipo=="Normal"){
+				$sql=$this->conectar()->prepare("SELECT $campo FROM $tabla WHERE id_sucursal=:IDSUCURSAL AND $condicion");
+				$sql->bindParam(":IDSUCURSAL", $id_sucursal);
+			}
+            $sql->execute();
+
+            return $sql;
+		}
 		/*----------  EJECUTAR UN UPDATE  ----------*/
 		protected function actualizarDatos($tabla,$datos,$condicion){
 

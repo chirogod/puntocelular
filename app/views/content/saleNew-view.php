@@ -161,7 +161,7 @@
             <hr>
 
             <?php if($_SESSION['venta_importe']>0){ ?>
-            <form class="" action="<?php echo APP_URL; ?>app/ajax/ventaAjax.php" method="POST" autocomplete="off" name="formsale" >
+            <form class="FormularioAjax" action="<?php echo APP_URL; ?>app/ajax/ventaAjax.php" method="POST" autocomplete="off" name="formsale" >
                 <input type="hidden" name="modulo_venta" value="registrar_venta">
             <?php }else { ?>
             <form name="formsale">

@@ -273,6 +273,45 @@
 					</ul>
 				</li>
 
+				<li class="full-width divider-menu-h"></li>
+
+				<?php if($_SESSION['usuario_rol']=="Administrador"){ ?>
+
+				<li class="full-width">
+					<a href="#" class="full-width btn-subMenu">
+						<div class="navLateral-body-cl">
+							<i class="fas fa-shopping-cart fa-fw"></i>
+						</div>
+						<div class="navLateral-body-cr">
+							CAJA
+						</div>
+						<span class="fas fa-chevron-down"></span>
+					</a>
+					<ul class="full-width menu-principal sub-menu-options">
+						<li class="full-width">
+							<a href="<?php echo APP_URL; ?>cajaIng/" class="full-width">
+								<div class="navLateral-body-cl">
+									<i class="fas fa-cart-plus fa-fw"></i>
+								</div>
+								<div class="navLateral-body-cr">
+									Ingreso de dinero
+								</div>
+							</a>
+						</li>
+						<li class="full-width">
+							<a href="<?php echo APP_URL; ?>cajaEg/" class="full-width">
+								<div class="navLateral-body-cl">
+									<i class="fas fa-cart-plus fa-fw"></i>
+								</div>
+								<div class="navLateral-body-cr">
+									Egreso de dinero
+								</div>
+							</a>
+						</li>
+					</ul>
+				</li>
+				<?php } ?>
+
 				<?php if($_SESSION['usuario_rol']=="Administrador"){ ?>
 				<li class="full-width divider-menu-h"></li>
 
