@@ -31,7 +31,8 @@
                 "equipoNew",
                 "equipoSearch",
                 "cajaIng",
-                "cajaEg"
+                "cajaEg",
+                "comprobanteVenta"
             ];
             //si la $vista esta en el array de las vistas que existe
             if (in_array($vista,$listaBlanca)){
