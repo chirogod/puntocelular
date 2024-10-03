@@ -152,7 +152,9 @@
                         </tr>
                         <?php } ?>
                     </tbody>
+                    
                 </table>
+
             </div>
         </div>
 
@@ -161,12 +163,16 @@
             <hr>
 
             <?php if($_SESSION['venta_importe']>0){ ?>
-            <form class="FormularioAjax" action="<?php echo APP_URL; ?>app/ajax/ventaAjax.php" method="POST" autocomplete="off" name="formsale" >
+            <form class="" action="<?php echo APP_URL; ?>app/ajax/ventaAjax.php" method="POST" autocomplete="off" name="formsale" >
                 <input type="hidden" name="modulo_venta" value="registrar_venta">
             <?php }else { ?>
             <form name="formsale">
             <?php } ?>
-
+                <div class="control">
+                    <label>Observaciones</label>
+                    <input class="input" type="text" name="venta_observaciones" placeholder="Observaciones">
+                </div>
+                <br>
                 <div class="control">
                     <label>Fecha</label>
                     <input class="input" type="date" value="<?php echo date("Y-m-d"); ?>" readonly >

@@ -11,8 +11,8 @@
 	$ins_venta = new saleController();
 
 	$datos_venta=$ins_venta->seleccionarDatos("Normal","venta INNER JOIN cliente ON venta.id_cliente=cliente.id_cliente INNER JOIN usuario ON venta.id_usuario=usuario.id_usuario INNER JOIN caja ON venta.id_caja=caja.id_caja WHERE (venta_codigo='$code')","*",0);
-	$datos_articulo = $ins_venta->seleccionarDatos("Normal", "venta_detalle INNER JOIN articulo ON venta_detalle.id_articulo WHERE venta_codigo='$code'","*",0);
-	$datos_articulo=$datos_articulo->fetch();
+
+
 	if($datos_venta->rowCount()==1){
 
 		/*---------- Datos de la venta ----------*/
@@ -146,24 +146,24 @@
 			$pdf->Text(31, $yNewRect +20, $datos_venta['cliente_domicilio'].", ".$datos_venta['cliente_localidad'].", ".$datos_venta['cliente_provincia'].", ".$datos_venta['cliente_pais']);
 			
 			$pdf->SetFont('Arial','B',10);
-			$pdf->Text($pageWidth/2, $yNewRect +10, strtoupper($datos_venta['cliente_tipo_doc']).": ");
+			$pdf->Text($pageWidth/2+30, $yNewRect +10, strtoupper($datos_venta['cliente_tipo_doc']).": ");
 			$pdf->SetFont('Arial','',10);
-			$pdf->Text($pageWidth/2 + 9, $yNewRect +10, $datos_venta['cliente_documento']);
+			$pdf->Text($pageWidth/2 + 39, $yNewRect +10, $datos_venta['cliente_documento']);
 	
 			$pdf->SetFont('Arial','B',10);
-			$pdf->Text($pageWidth/2, $yNewRect +15, 'Telefono: ');
+			$pdf->Text($pageWidth/2+30, $yNewRect +15, 'Telefono: ');
 			$pdf->SetFont('Arial','',10);
-			$pdf->Text($pageWidth/2 + 18, $yNewRect +15, $datos_venta['cliente_telefono_1']." / ". $datos_venta['cliente_telefono_2']);
+			$pdf->Text($pageWidth/2 + 48, $yNewRect +15, $datos_venta['cliente_telefono_1']." / ". $datos_venta['cliente_telefono_2']);
 	
 			$pdf->SetFont('Arial','B',10);
-			$pdf->Text($pageWidth/2 , $yNewRect +20, 'Nacimiento: ');
+			$pdf->Text($pageWidth/2+30 , $yNewRect +20, 'Nacimiento: ');
 			$pdf->SetFont('Arial','',10);
-			$pdf->Text($pageWidth/2 + 22, $yNewRect +20, $datos_venta['cliente_nacimiento']);
+			$pdf->Text($pageWidth/2 + 52, $yNewRect +20, $datos_venta['cliente_nacimiento']);
 		}
 
-		$pdf->Ln(20);
+		$pdf->Ln(27);
 
-		// RECTANGULO DETALLE DEL ARTICULOS
+		// RECTANGULO DETALLE DE ARTICULOS
 		$pdf->Rect(10, $yNewRect +30, 36, 5); 
 		$pdf->SetFont('Arial','b',10);
 		$pdf->SetTextColor(0,0,0);
@@ -194,8 +194,11 @@
 		$venta_detalle=$venta_detalle->fetchAll();
 
 		foreach($venta_detalle as $detalle){
-			$pdf->SetX(10); // Asegúrate de ajustar la posición X aquí también
-			$pdf->Cell(30,7,iconv("UTF-8", "ISO-8859-1",$ins_venta->limitarCadena($detalle['venta_codigo'],80,"...")),'L',0,'C');
+			$datos_articulo = $ins_venta->seleccionarDatos("Normal", "articulo WHERE id_articulo = '".$detalle['id_articulo']."'","*",0);
+    		$datos_articulo=$datos_articulo->fetch();
+
+    		$pdf->SetX(10);// Asegúrate de ajustar la posición X aquí también
+			$pdf->Cell(30,7,iconv("UTF-8", "ISO-8859-1",$ins_venta->limitarCadena($datos_articulo['articulo_codigo'],80,"...")),'L',0,'C');
 			$pdf->Cell(50,7,iconv("UTF-8", "ISO-8859-1",$ins_venta->limitarCadena($detalle['venta_detalle_descripcion_producto'],80,"...")),'L',0,'C');
 			$pdf->Cell(13,7,iconv("UTF-8", "ISO-8859-1",$detalle['venta_detalle_cantidad_producto']),'L',0,'C');
 			
@@ -207,9 +210,9 @@
 			$pdf->Cell(22,7,iconv("UTF-8", "ISO-8859-1",MONEDA_SIMBOLO.number_format($detalle['venta_detalle_precio_venta_producto'],MONEDA_DECIMALES,MONEDA_SEPARADOR_DECIMAL,MONEDA_SEPARADOR_MILLAR)),'L',0,'C');
 			$pdf->Cell(18,7,iconv("UTF-8", "ISO-8859-1",MONEDA_SIMBOLO.number_format($detalle['venta_detalle_total'],MONEDA_DECIMALES,MONEDA_SEPARADOR_DECIMAL,MONEDA_SEPARADOR_MILLAR)),'LR',0,'C');
 			$pdf->Cell(22,7,iconv("UTF-8", "ISO-8859-1",MONEDA_SIMBOLO.number_format($detalle['venta_detalle_total'],MONEDA_DECIMALES,MONEDA_SEPARADOR_DECIMAL,MONEDA_SEPARADOR_MILLAR)),'LR',0,'C');
-			$pdf->Ln(62);
+			$pdf->Ln(5);
 		}
-
+		$pdf->Ln(52);
 		// RECTANGULO DETALLE DE SUS PAGOS
 		$pdf->SetDrawColor(0,0,0);
 		$pdf->Rect(10, $yNewRect +100, 39, 5); 
@@ -220,7 +223,7 @@
 		$pdf->Line(10, $yNewRect+105, $pageWidth-10, $yNewRect+105);
 		
 		$pdf->SetX(10); 
-		//LISTA ARTICULOS
+
 		$pdf->SetFillColor(0,0,0);
 		$pdf->SetDrawColor(255,255,255);
 		$pdf->SetTextColor(255,255,255);
@@ -237,6 +240,8 @@
 		/*----------  Seleccionando detalles de la venta  ----------*/
 		$pagos_cliente=$ins_venta->seleccionarDatos("Normal","venta WHERE venta_codigo='".$datos_venta['venta_codigo']."'","*",0);
 		$pagos_cliente=$pagos_cliente->fetchAll();
+		$total_de_todos_los_importes_del_cliente =0;
+		$pagos_total_del_cliente =0;
 
 		foreach($pagos_cliente as $detalle){
 			$pdf->SetX(10); // Asegúrate de ajustar la posición X aquí también
@@ -245,6 +250,8 @@
 			$pdf->Cell(30,7,iconv("UTF-8", "ISO-8859-1",$ins_venta->limitarCadena($detalle['venta_forma_pago'],80,"...")),'L',0,'C');
 			$pdf->Cell(28,7,iconv("UTF-8", "ISO-8859-1",$detalle['venta_observacion_pago']),'L',0,'C');
 			$pdf->Ln(7);
+			$total_de_todos_los_importes_del_cliente += $detalle['venta_importe'];
+			$pagos_total_del_cliente += $detalle['venta_importe'];
 		}
 
 		// RECTANGULO DETALLE DE OBSERVACIONES
@@ -257,7 +264,7 @@
 		$pdf->SetXY(10, $yNewRect +145); 
 		$pdf->SetFont('Arial','',9);
 		$pdf->SetTextColor(39,39,51);
-		$pdf->MultiCell(80, 10, iconv("UTF-8", "ISO-8859-1",$datos_venta['venta_observaciones']), 1, 'L');	
+		$pdf->MultiCell(80, 20, iconv("UTF-8", "ISO-8859-1",$datos_venta['venta_observaciones']), 1, 'A');	
 
 		// RECTANGULO TOTAL DE PAGOS Y SALDO A FAVOR
 		$pdf->SetDrawColor(0,0,0);
@@ -267,12 +274,14 @@
 		$pdf->Text($pageWidth/2 +10, $yNewRect+155, "SUS PAGOS");
 		$pdf->Text($pageWidth/2 +10, $yNewRect+163, "SALDO");
 
-		$pdf->Text($pageWidth -30, $yNewRect+150, $datos_venta['venta_importe']);
-		$pdf->Text($pageWidth -30, $yNewRect+155, $datos_venta['venta_importe']);
-		$pdf->Text($pageWidth -30, $yNewRect+163, $datos_venta['venta_importe']);
-
+		$pdf->Text($pageWidth -30, $yNewRect+150, iconv("UTF-8", "ISO-8859-1",MONEDA_SIMBOLO.number_format($total_de_todos_los_importes_del_cliente,MONEDA_DECIMALES,MONEDA_SEPARADOR_DECIMAL,MONEDA_SEPARADOR_MILLAR)));
+		$pdf->Text($pageWidth -30, $yNewRect+155, iconv("UTF-8", "ISO-8859-1",MONEDA_SIMBOLO.number_format($pagos_total_del_cliente,MONEDA_DECIMALES,MONEDA_SEPARADOR_DECIMAL,MONEDA_SEPARADOR_MILLAR)));
+		$saldo = $total_de_todos_los_importes_del_cliente - $pagos_total_del_cliente;
+		$pdf->Text($pageWidth -30, $yNewRect+163, iconv("UTF-8", "ISO-8859-1",MONEDA_SIMBOLO.number_format($saldo,MONEDA_DECIMALES,MONEDA_SEPARADOR_DECIMAL,MONEDA_SEPARADOR_MILLAR)));
+		$pdf->SetLineWidth(0.1);
+		$pdf->Line($pageWidth -100, 232, $pageWidth -10, 232);
 		$pdf->SetXY(10, $yNewRect+174);
-		$pdf->SetFont('Arial','',8);
+		$pdf->SetFont('Arial','B',8);
 		$pdf->MultiCell($pageWidth-10, 5, "Recuerde guardar la caja completa del equipo por si necesita asistencia de garantia (RMA). ATENCION!: El producto perdera su 'Garantia' si presenta golpes, humedad, rotura de faja de seguridad o signos de haber sido manipulado por terceros.", 0, 'L');
 		
 		$pdf->Output("I","Factura_Nro".$datos_venta['id_venta'].".pdf",true);

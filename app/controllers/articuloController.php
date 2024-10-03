@@ -113,7 +113,7 @@ class articuloController extends mainModel{
         }
 
         if ($articulo_garantia != "") {
-            if($this->verificarDatos("[a-zA-ZáéíóúÁÉÍÓÚñÑ0-9\\s\/\(\)%\/\-\.]{3,100}", $articulo_garantia)){
+            if($this->verificarDatos("[a-zA-ZáéíóúÁÉÍÓÚñÑ0-9\\s\/\(\)%\/\-\.]{0,100}", $articulo_garantia)){
                 $alerta=[
                     "tipo"=>"simple",
                     "titulo"=>"Ocurrió un error inesperado",
@@ -125,18 +125,6 @@ class articuloController extends mainModel{
             }
         }
 
-        if ($articulo_observacion != "") {
-            if($this->verificarDatos("[a-zA-ZáéíóúÁÉÍÓÚñÑ0-9\\s\/\(\)%\/\-\.]", $articulo_observacion)){
-                $alerta=[
-                    "tipo"=>"simple",
-                    "titulo"=>"Ocurrió un error inesperado",
-                    "texto"=>"La observacion del articulo no cumple con el formato solicitado",
-                    "icono"=>"error"
-                ];
-                return json_encode($alerta);
-                exit();
-            }
-        }
 
         if($this->verificarDatos("[0-9.]{1,25}", $articulo_precio_compra)){
             $alerta=[

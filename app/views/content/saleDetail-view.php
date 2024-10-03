@@ -1,9 +1,9 @@
-<div class="container is-fluid mb-6">
+<div class="container is-fluid">
 	<h1 class="title">Ventas</h1>
 	<h2 class="subtitle"><i class="fas fa-shopping-bag fa-fw"></i> &nbsp; Información de venta</h2>
 </div>
 
-<div class="container pb-6 pt-6">
+<div class="container pb-6 pt-2 is-max-desktop mb-2">
 	<?php
 	
 		include "./app/views/includes/btn_back.php";
@@ -15,8 +15,8 @@
 		if($datos->rowCount()==1){
 			$datos_venta=$datos->fetch();
 	?>
-	<h2 class="title has-text-centered">Datos de la venta <?php echo " (".$code.")"; ?></h2>
-	<div class="columns pb-6 pt-6">
+	<h2 class="title has-text-centered ">Datos de la venta <?php echo " (".$code.")"; ?></h2>
+	<div class="columns pb-1 pt-2">
 		<div class="column">
 
 			<div class="full-width sale-details text-condensedLight">
@@ -66,7 +66,7 @@
 
 	</div>
 
-	<div class="columns pb-6 pt-6">
+	<div class="columns pb-6 pt-6 is-max-desktop">
 		<div class="column">
 			<div class="table-container">
                 <table class="table is-bordered is-striped is-narrow is-hoverable is-fullwidth">
@@ -125,14 +125,12 @@
 		</div>
 	</div>
 
-	<div class="columns pb-6 pt-6">
+	<div class="columns pb-6 is-max-desktop">
 		<p class="has-text-centered full-width">
 			<?php
 			echo '<button type="button" class="button is-link is-light is-medium" onclick="print_invoice(\''.APP_URL.'app/pdf/invoice.php?code='.$datos_venta['venta_codigo'].'\')" title="Imprimir factura Nro. '.$datos_venta['id_venta'].'" >
-			<i class="fas fa-file-invoice-dollar fa-fw"></i> &nbsp; Imprimir factura
-			</button> &nbsp;&nbsp; 
-
-			<button type="button" class="button is-link is-light is-medium" onclick="print_ticket(\''.APP_URL.'app/pdf/ticket.php?code='.$datos_venta['venta_codigo'].'\')" title="Imprimir ticket Nro. '.$datos_venta['id_venta'].'" ><i class="fas fa-receipt fa-fw"></i> &nbsp; Imprimir ticket</button>';
+			<i class="fas fa-file-invoice-dollar fa-fw"></i> &nbsp; Imprimir comprobante
+			</button> &nbsp;&nbsp;'
 			?>
 		</p>
 	</div>

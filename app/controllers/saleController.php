@@ -466,6 +466,9 @@
 
         /*---------- Controlador registrar venta ----------*/
         public function registrarVentaControlador(){
+			
+			$venta_observaciones = $_POST['venta_observaciones'];
+			$venta_observacion_pago = $_POST['venta_observacion_pago'];
 
             $caja=$_SESSION['caja'];
 			$forma_pago = $_POST['venta_forma_pago'];
@@ -644,6 +647,11 @@
 					"campo_valor"=>$venta_importe
 				],
 				[
+					"campo_nombre"=>"venta_observaciones",
+					"campo_marcador"=>":Observaciones",
+					"campo_valor"=>$venta_observaciones
+				],
+				[
 					"campo_nombre"=>"id_sucursal",
 					"campo_marcador"=>":Sucursal",
 					"campo_valor"=>$_SESSION['id_sucursal']
@@ -667,6 +675,11 @@
 					"campo_nombre"=>"venta_forma_pago",
 					"campo_marcador"=>":FormaPago",
 					"campo_valor"=>$forma_pago
+				],
+				[
+					"campo_nombre"=>"venta_observacion_pago",
+					"campo_marcador"=>":ObservacionPago",
+					"campo_valor"=>$venta_observacion_pago
 				]
             ];
 
@@ -920,16 +933,46 @@
 
 			if(isset($busqueda) && $busqueda!=""){
 
-				$consulta_datos="SELECT $campos_tablas FROM venta INNER JOIN cliente ON venta.id_cliente=cliente.id_cliente INNER JOIN usuario ON venta.id_usuario=usuario.id_usuario WHERE (venta.venta_codigo='$busqueda') ORDER BY venta.id_venta DESC LIMIT $inicio,$registros";
-
-				$consulta_total="SELECT COUNT(id_venta) FROM venta WHERE (venta.venta_codigo='$busqueda')";
-
+				$consulta_datos="SELECT $campos_tablas 
+								FROM venta 
+								INNER JOIN cliente ON venta.id_cliente=cliente.id_cliente 
+								INNER JOIN usuario ON venta.id_usuario=usuario.id_usuario 
+								INNER JOIN caja ON venta.id_caja=caja.id_caja 
+								WHERE 
+									venta.id_venta LIKE '%$busqueda%' 
+									OR venta.venta_codigo LIKE '%$busqueda%' 
+									OR cliente.cliente_nombre_completo LIKE '%$busqueda%' 
+									OR usuario.usuario_nombre_completo LIKE '%$busqueda%' 
+									OR caja.caja_nombre LIKE '%$busqueda%' 
+								ORDER BY venta.id_venta DESC LIMIT $inicio,$registros";
+			
+				$consulta_total="SELECT COUNT(id_venta) 
+								FROM venta 
+								INNER JOIN cliente ON venta.id_cliente=cliente.id_cliente 
+								INNER JOIN usuario ON venta.id_usuario=usuario.id_usuario 
+								INNER JOIN caja ON venta.id_caja=caja.id_caja 
+								WHERE 
+									venta.id_venta LIKE '%$busqueda%' 
+									OR venta.venta_codigo LIKE '%$busqueda%' 
+									OR cliente.cliente_nombre_completo LIKE '%$busqueda%' 
+									OR usuario.usuario_nombre_completo LIKE '%$busqueda%' 
+									OR caja.caja_nombre LIKE '%$busqueda%'";
+			
 			}else{
-
-				$consulta_datos="SELECT $campos_tablas FROM venta INNER JOIN cliente ON venta.id_cliente=cliente.id_cliente INNER JOIN usuario ON venta.id_usuario=usuario.id_usuario ORDER BY venta.id_venta DESC LIMIT $inicio,$registros";
-
-				$consulta_total="SELECT COUNT(id_venta) FROM venta";
-
+			
+				$consulta_datos="SELECT $campos_tablas 
+								FROM venta 
+								INNER JOIN cliente ON venta.id_cliente=cliente.id_cliente 
+								INNER JOIN usuario ON venta.id_usuario=usuario.id_usuario 
+								INNER JOIN caja ON venta.id_caja=caja.id_caja 
+								ORDER BY venta.id_venta DESC LIMIT $inicio,$registros";
+			
+				$consulta_total="SELECT COUNT(id_venta) 
+								FROM venta 
+								INNER JOIN cliente ON venta.id_cliente=cliente.id_cliente 
+								INNER JOIN usuario ON venta.id_usuario=usuario.id_usuario 
+								INNER JOIN caja ON venta.id_caja=caja.id_caja";
+			
 			}
 
 			$datos = $this->ejecutarConsulta($consulta_datos);
@@ -975,23 +1018,9 @@
 	                                <i class="fas fa-file-invoice-dollar fa-fw"></i>
 	                            </button>
 
-                                <button type="button" class="button is-link is-outlined is-rounded is-small btn-sale-options" onclick="print_ticket(\''.APP_URL.'app/pdf/ticket.php?code='.$rows['venta_codigo'].'\')" title="Imprimir ticket Nro. '.$rows['id_venta'].'" >
-                                    <i class="fas fa-receipt fa-fw"></i>
-                                </button>
-
 			                    <a href="'.APP_URL.'saleDetail/'.$rows['venta_codigo'].'/" class="button is-link is-rounded is-small" title="Informacion de venta Nro. '.$rows['id_venta'].'" >
 			                    	<i class="fas fa-shopping-bag fa-fw"></i>
 			                    </a>
-
-			                	<form class="FormularioAjax is-inline-block" action="'.APP_URL.'app/ajax/ventaAjax.php" method="POST" autocomplete="off" >
-
-			                		<input type="hidden" name="modulo_venta" value="eliminar_venta">
-			                		<input type="hidden" name="id_venta" value="'.$rows['id_venta'].'">
-
-			                    	<button type="submit" class="button is-danger is-rounded is-small" title="Eliminar venta Nro. '.$rows['id_venta'].'" >
-			                    		<i class="far fa-trash-alt fa-fw"></i>
-			                    	</button>
-			                    </form>
 
 			                </td>
 						</tr>

@@ -9,6 +9,7 @@
 			</div>
 			<figcaption class="navLateral-body-cr">
 				<span>
+					GENERAL
 					<p>(<?php echo $_SESSION['usuario_rol']; ?>)</p>
 				</span>
 			</figcaption>
@@ -115,16 +116,6 @@
 								</div>
 							</a>
 						</li>
-						<li class="full-width">
-							<a href="<?php echo APP_URL; ?>clientSearch/" class="full-width">
-								<div class="navLateral-body-cl">
-									<i class="fas fa-search fa-fw"></i>
-								</div>
-								<div class="navLateral-body-cr">
-									Buscar cliente
-								</div>
-							</a>
-						</li>
 					</ul>
 				</li>
 
@@ -172,17 +163,7 @@
 								</div>
 							</a>
 						</li>
-						
-						<li class="full-width">
-							<a href="<?php echo APP_URL; ?>artSearch/" class="full-width">
-								<div class="navLateral-body-cl">
-									<i class="fas fa-search fa-fw"></i>
-								</div>
-								<div class="navLateral-body-cr">
-									Buscar articulo
-								</div>
-							</a>
-						</li>
+
 					</ul>
 				</li>
 				<?php } ?>
@@ -220,16 +201,6 @@
 								</div>
 							</a>
 						</li>
-						<li class="full-width">
-							<a href="<?php echo APP_URL; ?>saleSearch/" class="full-width">
-								<div class="navLateral-body-cl">
-									<i class="fas fa-search-dollar fa-fw"></i>
-								</div>
-								<div class="navLateral-body-cr">
-									Buscar venta
-								</div>
-							</a>
-						</li>
 					</ul>
 				</li>
 
@@ -240,7 +211,7 @@
 				<li class="full-width">
 					<a href="#" class="full-width btn-subMenu">
 						<div class="navLateral-body-cl">
-							<i class="fas fa-shopping-cart fa-fw"></i>
+							<i class="fas fa-cash-register fa-fw"></i>
 						</div>
 						<div class="navLateral-body-cr">
 							CAJA
