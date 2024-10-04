@@ -70,23 +70,25 @@
 				  	</select>
 				</div>
 		  	</div>
-			<div class="column">
+			  <div class="column">
 				<label>Sucursal <?php echo CAMPO_OBLIGATORIO; ?></label><br>
-		    	<div class="select">
-				  	<select name="id_sucursal" >
-				    	<option value="" selected="" >Seleccione una opción</option>
-				    	<?php
-                            $datos_sucursal=$insLogin->seleccionarDatos("Normal","sucursal","*",0);
+				<div class="select">
+					<select name="id_sucursal">
+						<option value="" <?php echo ($_SESSION['id_sucursal'] == '') ? 'selected' : ''; ?>>Seleccione una opción</option>
+						<?php
+							$datos_sucursal = $insLogin->seleccionarDatos("Normal", "sucursal", "*", 0);
+							$cc = 1;
 
-                            $cc=1;
-                            while($campos_sucursal=$datos_sucursal->fetch()){
-                                echo '<option value="'.$campos_sucursal['id_sucursal'].'">'.$cc.' - '.$campos_sucursal['sucursal_descripcion'].'</option>';
-                                $cc++;
-                            }
-                        ?>
-				  	</select>
+							while ($campos_sucursal = $datos_sucursal->fetch()) {
+								// Verificamos si el id_sucursal coincide con el de la sesión
+								$selected = ($_SESSION['id_sucursal'] == $campos_sucursal['id_sucursal']) ? 'selected' : '';
+								echo '<option value="'.$campos_sucursal['id_sucursal'].'" '.$selected.'>'.$cc.' - '.$campos_sucursal['sucursal_descripcion'].'</option>';
+								$cc++;
+							}
+						?>
+					</select>
 				</div>
-		  	</div>
+			</div>
 		</div>
         <div class="columns">
 		  	<div class="column">

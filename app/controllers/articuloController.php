@@ -287,15 +287,15 @@ class articuloController extends mainModel{
 
         if(isset($busqueda) && $busqueda!=""){
 
-            $consulta_datos = "SELECT * FROM articulo WHERE articulo_descripcion LIKE '%$busqueda%' OR articulo_codigo LIKE '%$busqueda%'";
+            $consulta_datos = "SELECT * FROM articulo WHERE articulo_descripcion LIKE '%$busqueda%' OR articulo_codigo LIKE '%$busqueda%' AND id_sucursal = '$_SESSION[id_sucursal]'";
 
-            $consulta_total="SELECT COUNT(id_articulo) FROM articulo WHERE articulo_descripcion LIKE '%$busqueda%' OR articulo_codigo LIKE '%$busqueda%'";
+            $consulta_total="SELECT COUNT(id_articulo) FROM articulo WHERE articulo_descripcion LIKE '%$busqueda%' OR articulo_codigo LIKE '%$busqueda%' AND id_sucursal = '$_SESSION[id_sucursal]'";
 
         }else{
 
-            $consulta_datos="SELECT * FROM articulo  ORDER BY articulo_descripcion ASC LIMIT $inicio,$registros";
+            $consulta_datos="SELECT * FROM articulo WHERE id_sucursal = '$_SESSION[id_sucursal]'  ORDER BY articulo_descripcion ASC LIMIT $inicio,$registros";
 
-            $consulta_total="SELECT COUNT(id_articulo) FROM articulo ";
+            $consulta_total="SELECT COUNT(id_articulo) FROM articulo WHERE id_sucursal = '$_SESSION[id_sucursal]'";
 
         }
 

@@ -944,6 +944,7 @@
 									OR cliente.cliente_nombre_completo LIKE '%$busqueda%' 
 									OR usuario.usuario_nombre_completo LIKE '%$busqueda%' 
 									OR caja.caja_nombre LIKE '%$busqueda%' 
+									AND venta.id_sucursal = '$_SESSION[id_sucursal]'
 								ORDER BY venta.id_venta DESC LIMIT $inicio,$registros";
 			
 				$consulta_total="SELECT COUNT(id_venta) 
@@ -956,7 +957,8 @@
 									OR venta.venta_codigo LIKE '%$busqueda%' 
 									OR cliente.cliente_nombre_completo LIKE '%$busqueda%' 
 									OR usuario.usuario_nombre_completo LIKE '%$busqueda%' 
-									OR caja.caja_nombre LIKE '%$busqueda%'";
+									OR caja.caja_nombre LIKE '%$busqueda%'
+									AND venta.id_sucursal = '$_SESSION[id_sucursal]'";
 			
 			}else{
 			
@@ -965,14 +967,15 @@
 								INNER JOIN cliente ON venta.id_cliente=cliente.id_cliente 
 								INNER JOIN usuario ON venta.id_usuario=usuario.id_usuario 
 								INNER JOIN caja ON venta.id_caja=caja.id_caja 
+								WHERE venta.id_sucursal = '$_SESSION[id_sucursal]'
 								ORDER BY venta.id_venta DESC LIMIT $inicio,$registros";
 			
 				$consulta_total="SELECT COUNT(id_venta) 
 								FROM venta 
 								INNER JOIN cliente ON venta.id_cliente=cliente.id_cliente 
 								INNER JOIN usuario ON venta.id_usuario=usuario.id_usuario 
-								INNER JOIN caja ON venta.id_caja=caja.id_caja";
-			
+								INNER JOIN caja ON venta.id_caja=caja.id_caja
+								WHERE venta.id_sucursal = '$_SESSION[id_sucursal]'";
 			}
 
 			$datos = $this->ejecutarConsulta($consulta_datos);
@@ -994,7 +997,7 @@
 		                    <th class="has-text-centered">Cliente</th>
 		                    <th class="has-text-centered">Vendedor</th>
 		                    <th class="has-text-centered">Total</th>
-		                    <th class="has-text-centered">Opciones</th>
+		                    <th class="has-text-centered">Detalle</th>
 		                </tr>
 		            </thead>
 		            <tbody>
@@ -1013,10 +1016,6 @@
 							<td>'.$rows['usuario_nombre_completo'].'</td>
 							<td>'.MONEDA_SIMBOLO.number_format($rows['venta_importe'],MONEDA_DECIMALES,MONEDA_SEPARADOR_DECIMAL,MONEDA_SEPARADOR_MILLAR).' '.MONEDA_NOMBRE.'</td>
 			                <td>
-
-			                	<button type="button" class="button is-link is-outlined is-rounded is-small btn-sale-options" onclick="print_invoice(\''.APP_URL.'app/pdf/invoice.php?code='.$rows['venta_codigo'].'\')" title="Imprimir factura Nro. '.$rows['id_venta'].'" >
-	                                <i class="fas fa-file-invoice-dollar fa-fw"></i>
-	                            </button>
 
 			                    <a href="'.APP_URL.'saleDetail/'.$rows['venta_codigo'].'/" class="button is-link is-rounded is-small" title="Informacion de venta Nro. '.$rows['id_venta'].'" >
 			                    	<i class="fas fa-shopping-bag fa-fw"></i>
