@@ -3,42 +3,17 @@
 		<div class="full-width navLateral-body-logo has-text-centered tittles is-uppercase">
 			PUNTO CELULAR
 		</div>
-		<figure class="full-width" style="height: 77px;">
-			<div class="navLateral-body-cl">
-				
-			</div>
-			<figcaption class="navLateral-body-cr">
-				<span>
-					GENERAL
-					<p>(<?php echo $_SESSION['usuario_rol']; ?>)</p>
-				</span>
-			</figcaption>
-		</figure>
-		<div class="full-width tittles navLateral-body-tittle-menu has-text-centered is-uppercase">
-			<i class="fas fa-th-large fa-fw"></i> &nbsp; <?php echo APP_NAME; ?>
+		<li class=" list-unstyle full-width divider-menu-h-short"></li>
+		<div class="full-width has-text-centered dashboard">
+			<a class="list-unstyle " href="<?php echo APP_URL; ?>dashboard/">DASHBOARD</a>
 		</div>
+
+		<li class=" list-unstyle full-width divider-menu-h-short"></li>
 		<nav class="full-width">
 			<ul class="full-width list-unstyle menu-principal">
-
-				<li class="full-width">
-					<a href="<?php echo APP_URL; ?>dashboard/" class="full-width">
-						<div class="navLateral-body-cl">
-							<i class="fab fa-dashcube fa-fw"></i>
-						</div>
-						<div class="navLateral-body-cr">
-							INICIO
-						</div>
-					</a>
-				</li>
-
 				<?php if($_SESSION['usuario_rol']=="Administrador"){ ?>
-				<li class="full-width divider-menu-h"></li>
 
-			
-
-				<li class="full-width divider-menu-h"></li>
-
-				<li class="full-width">
+				<li class="full-width mt-20">
 					<a href="#" class="full-width btn-subMenu">
 						<div class="navLateral-body-cl">
 							<i class="fas fa-users fa-fw"></i>
@@ -83,7 +58,6 @@
 				</li>
 				<?php } ?>
 
-				<li class="full-width divider-menu-h"></li>
 
 				<li class="full-width">
 					<a href="#" class="full-width btn-subMenu">
@@ -120,7 +94,6 @@
 				</li>
 
 				<?php if($_SESSION['usuario_rol']=="Administrador"){ ?>
-				<li class="full-width divider-menu-h"></li>
 
 				<li class="full-width">
 					<a href="#" class="full-width btn-subMenu">
@@ -168,7 +141,6 @@
 				</li>
 				<?php } ?>
 
-				<li class="full-width divider-menu-h"></li>
 
 				<li class="full-width">
 					<a href="#" class="full-width btn-subMenu">
@@ -204,7 +176,6 @@
 					</ul>
 				</li>
 
-				<li class="full-width divider-menu-h"></li>
 
 				<?php if($_SESSION['usuario_rol']=="Administrador"){ ?>
 
@@ -244,7 +215,6 @@
 				<?php } ?>
 
 				<?php if($_SESSION['usuario_rol']=="Administrador"){ ?>
-				<li class="full-width divider-menu-h"></li>
 
 				<li class="full-width">
 					<a href="#" class="full-width btn-subMenu">
@@ -281,7 +251,6 @@
 				</li>
 				<?php } ?>
 
-				<li class="full-width divider-menu-h"></li>
 
 				<li class="full-width">
 					<a href="#" class="full-width btn-subMenu">
@@ -311,7 +280,6 @@
 					</ul>
 				</li>
 
-				<li class="full-width divider-menu-h"></li>
 
 				<li class="full-width mt-5">
 					<a href="<?php echo APP_URL."logOut/"; ?>" class="full-width btn-exit" >

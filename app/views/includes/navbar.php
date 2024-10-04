@@ -4,9 +4,7 @@
         <nav class="navBar-options-list">
             <ul class="list-unstyle">
                 <li class="text-condensedLight noLink" >
-                    <a class="btn-exit" href="<?php echo APP_URL."logOut/"; ?>" >
-                        <i class="fas fa-power-off"></i>
-                    </a>
+
                 </li>
                 <li class="text-condensedLight noLink" >
                     <small><?php echo $_SESSION['usuario_usuario']; ?></small>
@@ -21,3 +19,4 @@
         </nav>
     </div>
 </div>
+<li class="full-width divider-menu-h-large"></li>
