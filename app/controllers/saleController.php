@@ -6,62 +6,80 @@
 	class saleController extends mainModel{
 
 		/*---------- Controlador buscar codigo de producto ----------*/
-        public function buscarCodigoVentaControlador(){
+		public function buscarCodigoVentaControlador(){
 
-            /*== Recuperando codigo de busqueda ==*/
+			/*== Recuperando codigo de busqueda ==*/
 			$articulo=$this->limpiarCadena($_POST['buscar_codigo']);
 
 			/*== Comprobando que no este vacio el campo ==*/
 			if($articulo==""){
 				return '
 				<article class="message is-warning mt-4 mb-4">
-					 <div class="message-header">
-					    <p>¡Ocurrio un error inesperado!</p>
-					 </div>
-				    <div class="message-body has-text-centered">
-				    	<i class="fas fa-exclamation-triangle fa-2x"></i><br>
+					<div class="message-header">
+						<p>¡Ocurrio un error inesperado!</p>
+					</div>
+					<div class="message-body has-text-centered">
+						<i class="fas fa-exclamation-triangle fa-2x"></i><br>
 						Debes de introducir el Nombre, Marca o Modelo del articulo
-				    </div>
+					</div>
 				</article>';
 				exit();
-            }
+			}
 
-            /*== Seleccionando productos en la DB ==*/
-            $datos_articulos=$this->ejecutarConsulta("SELECT * FROM articulo WHERE (articulo_descripcion LIKE '%$articulo%' OR articulo_marca LIKE '%$articulo%' OR articulo_modelo LIKE '%$articulo%') ORDER BY articulo_descripcion ASC");
+			/*== Seleccionando productos en la DB ==*/
+			$datos_articulos=$this->ejecutarConsulta("SELECT * FROM articulo WHERE (articulo_descripcion LIKE '%$articulo%' OR articulo_marca LIKE '%$articulo%' OR articulo_modelo LIKE '%$articulo%') ORDER BY articulo_descripcion ASC");
 
-            if($datos_articulos->rowCount()>=1){
+			if($datos_articulos->rowCount()>=1){
 
 				$datos_articulos = $datos_articulos->fetchAll();
 
 				$tabla='<div class="table-container mb-6"><table class="table is-striped is-narrow is-hoverable is-fullwidth"><tbody>';
-
+				$tabla.='
+							<div class="table-container">
+							<table class="table is-bordered is-striped is-narrow is-hoverable is-fullwidth">
+								<thead>
+									<tr>
+										<th class="has-text-centered">Codigo</th>
+										<th class="has-text-centered">Articulo</th>
+										<th class="has-text-centered">P. Lista</th>
+										<th class="has-text-centered">Financiacion</th>
+										<th class="has-text-centered">P. Efectivo</th>
+										<th class="has-text-centered">Agregar</th>
+									</tr>
+								</thead>
+								<tbody>
+						';
 				foreach($datos_articulos as $rows){
 					$tabla.='
-					<tr class="has-text-left" >
-                        <td><i class="fas fa-box fa-fw"></i> &nbsp; '.$rows['articulo_descripcion'].'</td>
-                        <td class="has-text-centered">
-                            <button type="button" class="button is-link is-rounded is-small" onclick="agregar_codigo(\''.$rows['articulo_codigo'].'\')"><i class="fas fa-plus-circle"></i></button>
-                        </td>
-                    </tr>
-                    ';
+					<tr class="has-text-left">
+						<td>'.$rows['articulo_codigo'].'</td>
+						<td>'.$rows['articulo_descripcion'].'</td>
+						<td>precio lista</td>
+						<td>financiacion</td>
+						<td>'.$rows['articulo_precio_venta'].'</td>
+						<td class="has-text-centered">
+							<button type="button" class="button is-link is-rounded is-small" onclick="agregar_codigo(\''.$rows['articulo_codigo'].'\')"><i class="fas fa-plus-circle"></i></button>
+						</td>
+					</tr>
+					';
 				}
 
 				$tabla.='</tbody></table></div>';
 				return $tabla;
 			}else{
 				return '<article class="message is-warning mt-4 mb-4">
-					 <div class="message-header">
-					    <p>¡Ocurrio un error inesperado!</p>
-					 </div>
-				    <div class="message-body has-text-centered">
-				    	<i class="fas fa-exclamation-triangle fa-2x"></i><br>
+					<div class="message-header">
+						<p>¡Ocurrio un error inesperado!</p>
+					</div>
+					<div class="message-body has-text-centered">
+						<i class="fas fa-exclamation-triangle fa-2x"></i><br>
 						No hemos encontrado ningún articulo en el sistema que coincida con <strong>“'.$articulo.'”
-				    </div>
+					</div>
 				</article>';
 
 				exit();
 			}
-        }
+		}
 
 
         /*---------- Controlador agregar producto a venta ----------*/
@@ -467,11 +485,10 @@
         /*---------- Controlador registrar venta ----------*/
         public function registrarVentaControlador(){
 			
-			$venta_observaciones = $_POST['venta_observaciones'];
-			$venta_observacion_pago = $_POST['venta_observacion_pago'];
+			$venta_observaciones = $this->limpiarCadena($_POST['venta_observaciones']);
+			$venta_vendedor = $this->limpiarCadena($_POST['venta_vendedor']);
 
             $caja=$_SESSION['caja'];
-			$forma_pago = $_POST['venta_forma_pago'];
 
             if($_SESSION['venta_importe']<=0 || (!isset($_SESSION['datos_producto_venta']) && count($_SESSION['datos_producto_venta'])<=0)){
 				$alerta=[
@@ -524,6 +541,17 @@
             }else{
                 $datos_caja=$check_caja->fetch();
             }
+
+			if($venta_vendedor == ""){
+				$alerta=[
+					"tipo"=>"simple",
+					"titulo"=>"Ocurrió un error inesperado",
+					"texto"=>"No se ha ingresado el vendedor!",
+					"icono"=>"error"
+				];
+				return json_encode($alerta);
+		        exit();
+			}
 
 
             /*== Formateando variables ==*/
@@ -652,6 +680,11 @@
 					"campo_valor"=>$venta_observaciones
 				],
 				[
+					"campo_nombre"=>"venta_vendedor",
+					"campo_marcador"=>":Vendedor",
+					"campo_valor"=>$venta_vendedor
+				],
+				[
 					"campo_nombre"=>"id_sucursal",
 					"campo_marcador"=>":Sucursal",
 					"campo_valor"=>$_SESSION['id_sucursal']
@@ -670,16 +703,6 @@
 					"campo_nombre"=>"id_caja",
 					"campo_marcador"=>":Caja",
 					"campo_valor"=>$caja
-				],
-				[
-					"campo_nombre"=>"venta_forma_pago",
-					"campo_marcador"=>":FormaPago",
-					"campo_valor"=>$forma_pago
-				],
-				[
-					"campo_nombre"=>"venta_observacion_pago",
-					"campo_marcador"=>":ObservacionPago",
-					"campo_valor"=>$venta_observacion_pago
 				]
             ];
 
@@ -802,6 +825,7 @@
 		        exit();
             }
 
+			/*
             if ($forma_pago == 'Efectivo') {
 				// Update cash balance in "caja ventas"
 				$datos_caja_up=[
@@ -895,7 +919,8 @@
 		        exit();
 
             }
-
+			/*
+			
             /*== Vaciando variables de sesion ==*/
             unset($_SESSION['venta_total']);
             unset($_SESSION['datos_cliente_venta']);

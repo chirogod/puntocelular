@@ -60,7 +60,7 @@ class articuloController extends mainModel{
                 exit();
             }
         }else{
-            /*== sino generar aleatoriamente el codigo del producto ==*/
+            /*== sino generar aleatoriamente el codigo del articulo ==*/
             $correlativo=$this->ejecutarConsulta("SELECT id_articulo FROM articulo");
             $correlativo=($correlativo->rowCount())+1;
             $articulo_codigo=$this->generarCodigoAleatorio(7,$correlativo);
@@ -272,6 +272,331 @@ class articuloController extends mainModel{
         return json_encode($alerta);
     }
 
+    public function actualizarArticuloControlador(){
+
+        $id=$this->limpiarCadena($_POST['id_articulo']);
+        $articulo_codigo = $this->limpiarCadena($_POST['articulo_codigo']);
+
+        # Verificando producto #
+        $datos=$this->ejecutarConsulta("SELECT * FROM articulo WHERE articulo_codigo='$articulo_codigo'");
+        if($datos->rowCount()<=0){
+            $alerta=[
+                "tipo"=>"simple",
+                "titulo"=>"Ocurrió un error inesperado",
+                "texto"=>"No hemos encontrado el articulo en el sistema",
+                "icono"=>"error"
+            ];
+            return json_encode($alerta);
+            exit();
+        }else{
+            $datos=$datos->fetch();
+        }
+
+        # Almacenando datos#
+        $codigo=$this->limpiarCadena($_POST['articulo_codigo']);
+        $nombre=$this->limpiarCadena($_POST['articulo_descripcion']);
+
+        $precio_compra=$this->limpiarCadena($_POST['articulo_precio_compra']);
+        $precio_venta=$this->limpiarCadena($_POST['articulo_precio_venta']);
+
+        $stock=$this->limpiarCadena($_POST['articulo_stock']);
+        $stock_minimo=$this->limpiarCadena($_POST['articulo_stock_min']);
+        $stock_maximo=$this->limpiarCadena($_POST['articulo_stock_max']);
+
+        $activo = $this->limpiarCadena($_POST['articulo_activo']);
+        $rubro = $this->limpiarCadena($_POST['id_rubro']);
+        $id_sucursal = $this->limpiarCadena($_POST['id_sucursal']);
+        
+        $garantia = $this->limpiarCadena($_POST['articulo_garantia']);
+        $observacion = $this->limpiarCadena($_POST['articulo_observacion']);
+
+        $moneda = $this->limpiarCadena($_POST['articulo_moneda']);
+
+        $marca=$this->limpiarCadena($_POST['articulo_marca']);
+        $modelo=$this->limpiarCadena($_POST['articulo_modelo']);
+
+        # Verificando campos obligatorios #
+        if($codigo=="" || $nombre=="" || $precio_compra=="" || $precio_venta=="" || $stock=="" || $id_sucursal == ""){
+            $alerta=[
+                "tipo"=>"simple",
+                "titulo"=>"Ocurrió un error inesperado",
+                "texto"=>"No has llenado todos los campos que son obligatorios",
+                "icono"=>"error"
+            ];
+            return json_encode($alerta);
+            exit();
+        }
+
+        # Verificando integridad de los datos #
+        if($this->verificarDatos("[a-zA-Z0-9- ]{1,77}",$codigo)){
+            $alerta=[
+                "tipo"=>"simple",
+                "titulo"=>"Ocurrió un error inesperado",
+                "texto"=>"El CODIGO no coincide con el formato solicitado",
+                "icono"=>"error"
+            ];
+            return json_encode($alerta);
+            exit();
+        }
+
+        if($this->verificarDatos("[a-zA-Z0-9áéíóúÁÉÍÓÚñÑ().,$#\-\/ ]{1,100}",$nombre)){
+            $alerta=[
+                "tipo"=>"simple",
+                "titulo"=>"Ocurrió un error inesperado",
+                "texto"=>"El NOMBRE no coincide con el formato solicitado",
+                "icono"=>"error"
+            ];
+            return json_encode($alerta);
+            exit();
+        }
+
+        if($this->verificarDatos("[0-9.]{1,25}",$precio_compra)){
+            $alerta=[
+                "tipo"=>"simple",
+                "titulo"=>"Ocurrió un error inesperado",
+                "texto"=>"El PRECIO DE COMPRA no coincide con el formato solicitado",
+                "icono"=>"error"
+            ];
+            return json_encode($alerta);
+            exit();
+        }
+
+        if($this->verificarDatos("[0-9.]{1,25}",$precio_venta)){
+            $alerta=[
+                "tipo"=>"simple",
+                "titulo"=>"Ocurrió un error inesperado",
+                "texto"=>"El PRECIO DE VENTA no coincide con el formato solicitado",
+                "icono"=>"error"
+            ];
+            return json_encode($alerta);
+            exit();
+        }
+
+        if($this->verificarDatos("[0-9]{1,22}",$stock)){
+            $alerta=[
+                "tipo"=>"simple",
+                "titulo"=>"Ocurrió un error inesperado",
+                "texto"=>"El STOCK O EXISTENCIAS no coincide con el formato solicitado",
+                "icono"=>"error"
+            ];
+            return json_encode($alerta);
+            exit();
+        }
+
+        if($marca!=""){
+            if($this->verificarDatos("[a-zA-Z0-9áéíóúÁÉÍÓÚñÑ().,#\- ]{1,30}",$marca)){
+                $alerta=[
+                    "tipo"=>"simple",
+                    "titulo"=>"Ocurrió un error inesperado",
+                    "texto"=>"La MARCA no coincide con el formato solicitado",
+                    "icono"=>"error"
+                ];
+                return json_encode($alerta);
+                exit();
+            }
+        }
+
+        if($modelo!=""){
+            if($this->verificarDatos("[a-zA-Z0-9áéíóúÁÉÍÓÚñÑ().,#\- ]{1,30}",$modelo)){
+                $alerta=[
+                    "tipo"=>"simple",
+                    "titulo"=>"Ocurrió un error inesperado",
+                    "texto"=>"El MODELO no coincide con el formato solicitado",
+                    "icono"=>"error"
+                ];
+                return json_encode($alerta);
+                exit();
+            }
+        }
+
+        # Verificando categoria #
+        if($datos['id_rubro']!=$rubro){
+            $check_rubro=$this->ejecutarConsulta("SELECT id_rubro FROM rubro WHERE id_rubro='$rubro'");
+            if($check_rubro->rowCount()<=0){
+                $alerta=[
+                    "tipo"=>"simple",
+                    "titulo"=>"Ocurrió un error inesperado",
+                    "texto"=>"El rubro seleccionado no existe en el sistema",
+                    "icono"=>"error"
+                ];
+                return json_encode($alerta);
+                exit();
+            }
+        }
+
+
+        # Comprobando precio de compra del producto #
+        $precio_compra=number_format($precio_compra,MONEDA_DECIMALES,'.','');
+        if($precio_compra<0){
+            $alerta=[
+                "tipo"=>"simple",
+                "titulo"=>"Ocurrió un error inesperado",
+                "texto"=>"El PRECIO DE COMPRA no puede ser menor a 0",
+                "icono"=>"error"
+            ];
+            return json_encode($alerta);
+            exit();
+        }
+
+        # Comprobando precio de venta del producto #
+        $precio_venta=number_format($precio_venta,MONEDA_DECIMALES,'.','');
+        if($precio_venta<0){
+            $alerta=[
+                "tipo"=>"simple",
+                "titulo"=>"Ocurrió un error inesperado",
+                "texto"=>"El PRECIO DE VENTA no puede ser menor a 0",
+                "icono"=>"error"
+            ];
+            return json_encode($alerta);
+            exit();
+        }
+
+        # Comprobando precio de compra y venta del producto #
+        if($precio_compra>$precio_venta){
+            $alerta=[
+                "tipo"=>"simple",
+                "titulo"=>"Ocurrió un error inesperado",
+                "texto"=>"El precio de compra del producto no puede ser mayor al precio de venta",
+                "icono"=>"error"
+            ];
+            return json_encode($alerta);
+            exit();
+        }
+
+        # Comprobando codigo de producto #
+        if($datos['articulo_codigo']!=$codigo){
+            $check_codigo=$this->ejecutarConsulta("SELECT articulo_codigo FROM articulo WHERE articulo_codigo='$codigo'");
+            if($check_codigo->rowCount()>=1){
+                $alerta=[
+                    "tipo"=>"simple",
+                    "titulo"=>"Ocurrió un error inesperado",
+                    "texto"=>"El código del arituc que ha ingresado ya se encuentra registrado en el sistema",
+                    "icono"=>"error"
+                ];
+                return json_encode($alerta);
+                exit();
+            }
+        }
+
+        # Comprobando nombre de producto #
+        if($datos['articulo_descripcion']!=$nombre){
+            $check_nombre=$this->ejecutarConsulta("SELECT articulo_descripcion FROM articulo WHERE articulo_codigo='$codigo' AND articulo_descripcion='$nombre'");
+            if($check_nombre->rowCount()>=1){
+                $alerta=[
+                    "tipo"=>"simple",
+                    "titulo"=>"Ocurrió un error inesperado",
+                    "texto"=>"Ya existe un articulo registrado con el mismo nombre y código de barras",
+                    "icono"=>"error"
+                ];
+                return json_encode($alerta);
+                exit();
+            }
+        }
+
+
+        $producto_datos_up=[
+            [
+                "campo_nombre"=>"articulo_codigo",
+                "campo_marcador"=>":Codigo",
+                "campo_valor"=>$codigo
+            ],
+            [
+                "campo_nombre"=>"articulo_descripcion",
+                "campo_marcador"=>":Nombre",
+                "campo_valor"=>$nombre
+            ],
+            [
+                "campo_nombre"=>"articulo_stock",
+                "campo_marcador"=>":Stock",
+                "campo_valor"=>$stock
+            ],
+            [
+                "campo_nombre"=>"articulo_stock_min",
+                "campo_marcador"=>":StockMin",
+                "campo_valor"=>$stock_minimo
+            ],
+            [
+                "campo_nombre"=>"articulo_stock_max",
+                "campo_marcador"=>":Stock_max",
+                "campo_valor"=>$stock_maximo
+            ],
+            [
+                "campo_nombre"=>"articulo_precio_compra",
+                "campo_marcador"=>":PrecioCompra",
+                "campo_valor"=>$precio_compra
+            ],
+            [
+                "campo_nombre"=>"articulo_precio_venta",
+                "campo_marcador"=>":PrecioVenta",
+                "campo_valor"=>$precio_venta
+            ],
+            [
+                "campo_nombre"=>"articulo_marca",
+                "campo_marcador"=>":Marca",
+                "campo_valor"=>$marca
+            ],
+            [
+                "campo_nombre"=>"articulo_modelo",
+                "campo_marcador"=>":Modelo",
+                "campo_valor"=>$modelo
+            ],
+            [
+                "campo_nombre"=>"id_rubro",
+                "campo_marcador"=>":Rubro",
+                "campo_valor"=>$rubro
+            ],
+            [
+                "campo_nombre"=>"articulo_moneda",
+                "campo_marcador"=>":Moneda",
+                "campo_valor"=>$moneda
+            ],
+            [
+                "campo_nombre"=>"id_sucursal",
+                "campo_marcador"=>":Sucursal",
+                "campo_valor"=>$id_sucursal
+            ],
+            [
+                "campo_nombre"=>"articulo_garantia",
+                "campo_marcador"=>":Garantia",
+                "campo_valor"=>$garantia
+            ],
+            [
+                "campo_nombre"=>"articulo_observacion",
+                "campo_marcador"=>":Observacion",
+                "campo_valor"=>$observacion
+            ],
+            [
+                "campo_nombre"=>"articulo_activo",
+                "campo_marcador"=>":Activo",
+                "campo_valor"=>$activo
+            ],
+        ];
+
+        $condicion=[
+            "condicion_campo"=>"id_articulo",
+            "condicion_marcador"=>":ID",
+            "condicion_valor"=>$id
+        ];
+
+        if($this->actualizarDatos("articulo",$producto_datos_up,$condicion)){
+            $alerta=[
+                "tipo"=>"recargar",
+                "titulo"=>"Articulo actualizado",
+                "texto"=>"Los datos del articulo '".$datos['articulo_descripcion']."' se actualizaron correctamente",
+                "icono"=>"success"
+            ];
+        }else{
+            $alerta=[
+                "tipo"=>"simple",
+                "titulo"=>"Ocurrió un error inesperado",
+                "texto"=>"No hemos podido actualizar los datos del articulo '".$datos['articulo_descripcion']."', por favor intente nuevamente",
+                "icono"=>"error"
+            ];
+        }
+
+        return json_encode($alerta);
+    }
+
     public function listarArticuloControlador($pagina,$registros,$url,$busqueda){
         $pagina=$this->limpiarCadena($pagina);
         $registros=$this->limpiarCadena($registros);
@@ -285,17 +610,19 @@ class articuloController extends mainModel{
         $pagina = (isset($pagina) && $pagina>0) ? (int) $pagina : 1;
         $inicio = ($pagina>0) ? (($pagina * $registros)-$registros) : 0;
 
+        $sucursal = $_SESSION['id_sucursal'];
+
         if(isset($busqueda) && $busqueda!=""){
 
-            $consulta_datos = "SELECT * FROM articulo WHERE articulo_descripcion LIKE '%$busqueda%' OR articulo_codigo LIKE '%$busqueda%' AND id_sucursal = '$_SESSION[id_sucursal]'";
+            $consulta_datos = "SELECT * FROM articulo WHERE id_sucursal = '$sucursal' AND articulo_descripcion LIKE '%$busqueda%' OR articulo_codigo LIKE '%$busqueda%'";
 
-            $consulta_total="SELECT COUNT(id_articulo) FROM articulo WHERE articulo_descripcion LIKE '%$busqueda%' OR articulo_codigo LIKE '%$busqueda%' AND id_sucursal = '$_SESSION[id_sucursal]'";
+            $consulta_total="SELECT COUNT(id_articulo) FROM articulo WHERE id_sucursal = '$sucursal' AND articulo_descripcion LIKE '%$busqueda%' OR articulo_codigo LIKE '%$busqueda%'";
 
         }else{
 
-            $consulta_datos="SELECT * FROM articulo WHERE id_sucursal = '$_SESSION[id_sucursal]'  ORDER BY articulo_descripcion ASC LIMIT $inicio,$registros";
+            $consulta_datos="SELECT * FROM articulo WHERE id_sucursal = '$sucursal'  ORDER BY articulo_descripcion ASC LIMIT $inicio,$registros";
 
-            $consulta_total="SELECT COUNT(id_articulo) FROM articulo WHERE id_sucursal = '$_SESSION[id_sucursal]'";
+            $consulta_total="SELECT COUNT(id_articulo) FROM articulo WHERE id_sucursal = '$sucursal'";
 
         }
 

@@ -86,12 +86,12 @@
 		$pdf->SetFont('Arial','B',12);
 		$pdf->Text($pageWidth / 2 + 25, 37, 'Fecha: ');
 		$pdf->SetFont('Arial','',12);
-		$pdf->Text($pageWidth / 2 + 40, 37, $datos_venta['venta_fecha']);
+		$pdf->Text($pageWidth / 2 + 40, 37,$datos_venta['venta_fecha']);
 
 		$pdf->SetFont('Arial','B',12);
 		$pdf->Text($pageWidth / 2 + 25, 44, 'Vendedor: ');
 		$pdf->SetFont('Arial','',12);
-		$pdf->Text($pageWidth / 2 + 47, 44, $datos_venta['usuario_nombre_completo']);
+		$pdf->Text($pageWidth / 2 + 47, 44, $datos_venta['venta_vendedor']);
 
 		$pdf->Ln(5);
 
@@ -247,8 +247,8 @@
 			$pdf->SetX(10); // Asegúrate de ajustar la posición X aquí también
 			$pdf->Cell(22,7,iconv("UTF-8", "ISO-8859-1",$ins_venta->limitarCadena($detalle['venta_fecha'],80,"...")),'L',0,'C');
 			$pdf->Cell(22,7,iconv("UTF-8", "ISO-8859-1",MONEDA_SIMBOLO.number_format($detalle['venta_importe'],MONEDA_DECIMALES,MONEDA_SEPARADOR_DECIMAL,MONEDA_SEPARADOR_MILLAR)),'LR',0,'C');
-			$pdf->Cell(30,7,iconv("UTF-8", "ISO-8859-1",$ins_venta->limitarCadena($detalle['venta_forma_pago'],80,"...")),'L',0,'C');
-			$pdf->Cell(28,7,iconv("UTF-8", "ISO-8859-1",$detalle['venta_observacion_pago']),'L',0,'C');
+			$pdf->Cell(30,7,iconv("UTF-8", "ISO-8859-1","Forma pago"),'L',0,'C');
+			$pdf->Cell(28,7,iconv("UTF-8", "ISO-8859-1","Observacion forma pago"),'L',0,'C');
 			$pdf->Ln(7);
 			$total_de_todos_los_importes_del_cliente += $detalle['venta_importe'];
 			$pagos_total_del_cliente += $detalle['venta_importe'];

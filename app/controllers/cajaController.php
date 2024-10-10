@@ -7,7 +7,7 @@
         public function registrarCajaControlador(){
             $sucursal = $_SESSION['id_sucursal'];
             
-            $fecha_caja_movimiento=date("Y-m-d");
+            $fecha_caja_movimiento = $_POST['fecha_caja_movimiento'];
             $hora_caja_movimiento=date("h:i a");
             $tipo_movimiento = $_POST['tipo_movimiento'];
             $importe_movimiento = $this->limpiarCadena($_POST['importe_movimiento']);
@@ -167,7 +167,7 @@
 			$pagina = (isset($pagina) && $pagina>0) ? (int) $pagina : 1;
 			$inicio = ($pagina>0) ? (($pagina * $registros)-$registros) : 0;
 
-			$consulta_datos="SELECT * FROM caja_movimiento WHERE id_sucursal = '$_SESSION[id_sucursal]' AND caja_codigo LIKE '%Efectivo%'  ORDER BY fecha_caja_movimiento ASC LIMIT $inicio,$registros";
+			$consulta_datos="SELECT * FROM caja_movimiento WHERE id_sucursal = '$_SESSION[id_sucursal]' AND caja_codigo LIKE '%Efectivo%'  ORDER BY id_caja_movimiento DESC LIMIT $inicio,$registros";
 
 			$consulta_total="SELECT COUNT(id_caja_movimiento) FROM caja_movimiento ";
 

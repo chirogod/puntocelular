@@ -26,7 +26,8 @@
 	<form class="" action="<?php echo APP_URL; ?>app/ajax/articuloAjax.php" method="POST" autocomplete="off" >
 
 		<input type="hidden" name="modulo_articulo" value="actualizar">
-
+		<input type="hidden" name="id_articulo" value="<?php echo $datos['id_articulo']; ?>">
+		
 		<div class="columns">
 		  	<div class="column">
 		    	<div class="control">
@@ -160,14 +161,13 @@
 				</div>
 		  	</div>
 		</div>
-		<!--
 		<p class="has-text-centered">
 			<button type="reset" class="button is-link is-light is-rounded"><i class="fas fa-paint-roller"></i> &nbsp; Limpiar</button>
 			<button type="submit" class="button is-info is-rounded"><i class="far fa-save"></i> &nbsp; Guardar</button>
 		</p>
 		<p class="has-text-centered pt-1">
             <small>Los campos marcados con <?php echo CAMPO_OBLIGATORIO; ?> son obligatorios</small>
-        </p>-->
+        </p>
 	</form>
 	<?php
 		}else{

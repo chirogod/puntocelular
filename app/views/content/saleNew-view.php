@@ -10,8 +10,8 @@
         if($check_empresa->rowCount()==1){
             $check_empresa=$check_empresa->fetch();
     ?>
-    <div class="columns">
 
+    <div class="container">
         <div class="column pb-6">
             <form class="FormularioAjax pt-6 pb-6" id="sale-barcode-form" autocomplete="off">
                 <div class="columns">
@@ -46,24 +46,99 @@
             ?>
             <div class="notification is-info is-light mb-2 mt-2">
                 <h4 class="has-text-centered has-text-weight-bold">Venta realizada</h4>
-                <p class="has-text-centered mb-2">La venta se realizó con éxito. ¿Que desea hacer a continuación? </p>
+                <p class="has-text-centered mb-2">La venta se realizó con éxito. A continuacion el comprobante de venta. </p>
                 <br>
                 <div class="container">
                     <div class="columns">
                         <div class="column has-text-centered">
-                            <button type="button" class="button is-link is-light" onclick="print_ticket('<?php echo APP_URL."app/pdf/ticket.php?code=".$_SESSION['venta_codigo_factura']; ?>')" >
-                                <i class="fas fa-receipt fa-2x"></i> &nbsp;
-                                Imprimir ticket de venta
-                            </buttona>
-                        </div>
-                        <div class="column has-text-centered">
                             <button type="button" class="button is-link is-light" onclick="print_invoice('<?php echo APP_URL."app/pdf/invoice.php?code=".$_SESSION['venta_codigo_factura']; ?>')" >
                                 <i class="fas fa-file-invoice-dollar fa-2x"></i> &nbsp;
-                                Imprimir factura de venta
+                                Comprobante de venta
                             </button>
+                            <button type="button" class="button is-link is-light js-modal-trigger" data-target="modal-js-pay" >
+                                Registrar pago
+                            </button>
+                            <!-- Modal registrar pago -->
+                            <div class="modal" id="modal-js-pay">
+                                <div class="modal-background"></div>
+                                <div class="modal-card">
+                                    <header class="modal-card-head">
+                                    <p class="modal-card-title is-uppercase"><i class="fas fa-search"></i> &nbsp; Pagos de la venta: </p>
+                                    <button class="delete" aria-label="close"></button>
+                                    </header>
+                                    <section class="modal-card-body">
+                                        <form class="" action="<?php echo APP_URL; ?>app/ajax/pagoAjax.php" method="POST" autocomplete="off" name="formsale" >
+                                            <input type="hidden" name="modulo_pago" value="registrar_pago_venta">
+                                            <input type="hidden" name="venta_codigo" id="venta_codigo">
+                                            <div class="columns">
+                                                <div class="column">
+                                                    <label for="" class="label">Venta codigo: </label>
+                                                    <input name="venta_codigo" readonly class="input" type="text" value="<?php echo $_SESSION['venta_codigo_factura']?>">
+                                                </div>
+                                                <div class="column">
+                                                    <label for="" class="label">Fecha: </label>
+                                                    <input name="venta_pago_fecha" class="input" name="" type="date" value="<?php echo date("Y-m-d"); ?>" >
+                                                </div>
+                                            </div>
+                                            <div class="columns">
+                                                <div class="column">
+                                                    <label for="" class="label">Forma de pago: </label>
+                                                    <select name="venta_pago_forma" id="" class="select">
+                                                        <option value="Efectivo">Efectivo</option>
+                                                        <option value="Transferencia">Transferencia</option>
+                                                    </select>
+                                                </div>
+                                                <div class="column">
+                                                    <label for="" class="label">Importe: </label>
+                                                    <input class="input" type="number" name="venta_pago_importe">
+                                                </div>
+                                                <div class="column">
+                                                    <label for="" class="label">Detalle: </label>
+                                                    <input class="input" type="text" name="venta_pago_detalle">
+                                                </div>
+                                            </div>
+                                            <div class="columns">
+                                                    <div class="column">Total de la venta: <?php echo MONEDA_SIMBOLO.number_format($_SESSION['venta_importe'],MONEDA_DECIMALES,MONEDA_SEPARADOR_DECIMAL,MONEDA_SEPARADOR_MILLAR)." ".MONEDA_NOMBRE; ?></div>
+                                                    <div class="column">
+                                                        <?php
+                                                        $suma_pagos = $insLogin->seleccionarDatos("Normal", "pago_venta WHERE venta_codigo = '".$_SESSION['venta_codigo_factura']."'","SUM(venta_pago_importe) as suma_pagos",0);
+                                                        if($suma_pagos->rowCount() >= 1){
+                                                            $suma_pagos = $suma_pagos->fetch();
+                                                            if($suma_pagos['suma_pagos'] !== NULL){
+                                                                echo "Suma de sus pagos: ".MONEDA_SIMBOLO.number_format($suma_pagos['suma_pagos'],MONEDA_DECIMALES,MONEDA_SEPARADOR_DECIMAL,MONEDA_SEPARADOR_MILLAR)." ".MONEDA_NOMBRE;
+                                                            }else{
+                                                                echo "Suma de sus pagos: 0.00";
+                                                            }
+                                                        }else{
+                                                            echo "Suma de sus pagos: 0.00";
+                                                        }
+                                                        ?>
+                                                    </div>
+                                                    <div class="column">
+                                                        <?php
+                                                        $suma_pagos = $insLogin->seleccionarDatos("Normal", "pago_venta WHERE venta_codigo = '".$_SESSION['venta_codigo_factura']."'","SUM(venta_pago_importe) as suma_pagos",0);
+                                                        if($suma_pagos->rowCount() >= 1){
+                                                            $suma_pagos = $suma_pagos->fetch();
+                                                            $saldo = $_SESSION['venta_importe'] - $suma_pagos['suma_pagos'];
+                                                            echo "Saldo: ".MONEDA_SIMBOLO.number_format($saldo,MONEDA_DECIMALES,MONEDA_SEPARADOR_DECIMAL,MONEDA_SEPARADOR_MILLAR)." ".MONEDA_NOMBRE;
+                                                        }else{
+                                                            echo "Saldo: ".MONEDA_SIMBOLO.number_format($_SESSION['venta_importe'],MONEDA_DECIMALES,MONEDA_SEPARADOR_DECIMAL,MONEDA_SEPARADOR_MILLAR)." ".MONEDA_NOMBRE;
+                                                        }
+                                                        ?>
+                                                    </div>
+                                                </div>
+                                            <div class="container" id="resultado-busqueda"></div>
+                                            <p class="has-text-centered">
+                                                <button type="submit" class="button is-link is-light">Registrar pago</button>
+                                            </p>
+                                        </form>
+                                    </section>
+                                </div>
+                            </div>
                         </div>
                     </div>
                 </div>
+
             </div>
             <?php
                     unset($_SESSION['venta_codigo_factura']);
@@ -73,14 +148,12 @@
                 <table class="table is-bordered is-striped is-narrow is-hoverable is-fullwidth">
                     <thead>
                         <tr>
-                            <th class="has-text-centered">#</th>
-                            <th class="has-text-centered">Código de barras</th>
-                            <th class="has-text-centered">Producto</th>
+                            <th class="has-text-centered">Codigo</th>
+                            <th class="has-text-centered">Articulo</th>
                             <th class="has-text-centered">Cant.</th>
-                            <th class="has-text-centered">Precio</th>
-                            <th class="has-text-centered">Subtotal</th>
-                            <th class="has-text-centered">AC. Precio</th>
-                            <th class="has-text-centered">AC. Cantidad</th>
+                            <th class="has-text-centered">P. Lista</th>
+                            <th class="has-text-centered">Financiacion</th>
+                            <th class="has-text-centered">P. Efectivo</th>
                             <th class="has-text-centered">Remover</th>
                         </tr>
                     </thead>
@@ -94,7 +167,6 @@
                                 foreach($_SESSION['datos_producto_venta'] as $productos){
                         ?>
                         <tr class="has-text-centered" >
-                            <td><?php echo $cc; ?></td>
                             <td><?php echo $productos['articulo_codigo']; ?></td>
                             <td><?php echo $productos['venta_detalle_descripcion_producto']; ?></td>
                             <td>
@@ -103,17 +175,8 @@
                                 </div>
                             </td>
                             <td><?php echo MONEDA_SIMBOLO.number_format($productos['venta_detalle_precio_venta_producto'],MONEDA_DECIMALES,MONEDA_SEPARADOR_DECIMAL,MONEDA_SEPARADOR_MILLAR)." ".MONEDA_NOMBRE; ?></td>
+                            <td><?php echo MONEDA_SIMBOLO.number_format($productos['venta_detalle_precio_venta_producto'],MONEDA_DECIMALES,MONEDA_SEPARADOR_DECIMAL,MONEDA_SEPARADOR_MILLAR)." ".MONEDA_NOMBRE; ?></td>
                             <td><?php echo MONEDA_SIMBOLO.number_format($productos['venta_detalle_total'],MONEDA_DECIMALES,MONEDA_SEPARADOR_DECIMAL,MONEDA_SEPARADOR_MILLAR)." ".MONEDA_NOMBRE; ?></td>
-                            <td>
-                                <button type="button" class="button is-success is-rounded is-small js-modal-trigger" data-target="modal-js-price" onclick="modal_actualizar_precio('<?php echo $productos['venta_detalle_descripcion_producto']; ?>','<?php echo $productos['articulo_codigo']; ?>','<?php echo $productos['venta_detalle_precio_venta_producto']; ?>')" >
-                                    <i class="fas fa-dollar-sign fa-fw"></i>
-                                </button>
-                            </td>
-                            <td>
-                            <button type="button" class="button is-success is-rounded is-small" onclick="actualizar_cantidad('#sale_input_<?php echo str_replace(" ", "_", $productos['articulo_codigo']); ?>','<?php echo $productos['articulo_codigo']; ?>')" >
-                                    <i class="fas fa-redo-alt fa-fw"></i>
-                                </button>
-                            </td>
                             <td>
                                 <form class="FormularioAjax" action="<?php echo APP_URL; ?>app/ajax/ventaAjax.php" method="POST" autocomplete="off">
 
@@ -157,50 +220,35 @@
 
             </div>
         </div>
+    </div>
 
-        <div class="column is-one-quarter">
-            <h2 class="title has-text-centered">Datos de la venta</h2>
-            <hr>
+    <div class="container">
+        <h2 class="title has-text-centered">Datos de la venta</h2>
+        <hr>
 
-            <?php if($_SESSION['venta_importe']>0){ ?>
-            <form class="" action="<?php echo APP_URL; ?>app/ajax/ventaAjax.php" method="POST" autocomplete="off" name="formsale" >
-                <input type="hidden" name="modulo_venta" value="registrar_venta">
-            <?php }else { ?>
+        <?php if($_SESSION['venta_importe']>0){ ?>
+        <form class="FormularioAjax" action="<?php echo APP_URL; ?>app/ajax/ventaAjax.php" method="POST" autocomplete="off" name="formsale" >
+            <input type="hidden" name="modulo_venta" value="registrar_venta">
+                <?php }else { ?>
             <form name="formsale">
-            <?php } ?>
+                <?php } ?>
                 <div class="control">
                     <label>Observaciones</label>
                     <input class="input" type="text" name="venta_observaciones" placeholder="Observaciones">
                 </div>
                 <br>
                 <div class="control">
-                    <label>Fecha</label>
-                    <input class="input" type="date" value="<?php echo date("Y-m-d"); ?>" readonly >
+                    <label>Fecha <?php echo CAMPO_OBLIGATORIO; ?></label>
+                    <input class="input" type="date" value="<?php echo date("Y-m-d"); ?>" >
                 </div>
                 <br>
                 <div class="control">
-                    <label>Forma de pago</label><br>
-                    <div class="select">
-                        <select name="venta_forma_pago">
-                            <option value="" selected="" >Seleccione una opción</option>
-                            <?php
-                                echo $insLogin->generarSelect(FORMAS_PAGO,"VACIO");
-                            ?>
-                        </select>
-                    </div>
-                </div>
-                <br>
-                <div class="control">
-                    <label>Detalle pago</label>
-                    <input class="input" type="text" name="venta_observacion_pago">
+                    <label>Vendedor <?php echo CAMPO_OBLIGATORIO; ?></label><br>
+                    <input class="input" type="text" name="venta_vendedor" id="">
                 </div>
                 <br>
 
-                
-
-                <br>
-
-                <label>Cliente</label>
+                <label>Cliente <?php echo CAMPO_OBLIGATORIO; ?></label>
                 <?php
                     if(isset($_SESSION['datos_cliente_venta']) && count($_SESSION['datos_cliente_venta'])>=1 && $_SESSION['datos_cliente_venta']['id_cliente']!=1){
                 ?>
@@ -214,28 +262,28 @@
                         </a>
                     </div>
                 </div>
-                <?php 
-                    }else{
-                        $datos_cliente=$insLogin->seleccionarDatos("Normal","cliente WHERE id_cliente='1'","*",0);
-                        if($datos_cliente->rowCount()==1){
-                            $datos_cliente=$datos_cliente->fetch();
-
-                            $_SESSION['datos_cliente_venta']=[
-                                "id_cliente"=>$datos_cliente['id_cliente'],
-                                "cliente_tipo_doc"=>$datos_cliente['cliente_tipo_doc'],
-                                "cliente_documento"=>$datos_cliente['cliente_documento'],
-                                "cliente_nombre_completo"=>$datos_cliente['cliente_nombre_completo']
-                            ];
-
+                    <?php 
                         }else{
-                            $_SESSION['datos_cliente_venta']=[
-                                "id_cliente"=>1,
-                                "cliente_tipo_doc"=>"N/A",
-                                "cliente_documento"=>"N/A",
-                                "cliente_nombre_completo"=>"Publico General",
-                            ];
-                        }
-                ?>
+                            $datos_cliente=$insLogin->seleccionarDatos("Normal","cliente WHERE id_cliente='1'","*",0);
+                            if($datos_cliente->rowCount()==1){
+                                $datos_cliente=$datos_cliente->fetch();
+
+                                $_SESSION['datos_cliente_venta']=[
+                                    "id_cliente"=>$datos_cliente['id_cliente'],
+                                    "cliente_tipo_doc"=>$datos_cliente['cliente_tipo_doc'],
+                                    "cliente_documento"=>$datos_cliente['cliente_documento'],
+                                    "cliente_nombre_completo"=>$datos_cliente['cliente_nombre_completo']
+                                ];
+
+                            }else{
+                                $_SESSION['datos_cliente_venta']=[
+                                    "id_cliente"=>1,
+                                    "cliente_tipo_doc"=>"N/A",
+                                    "cliente_documento"=>"N/A",
+                                    "cliente_nombre_completo"=>"Publico General",
+                                ];
+                            }
+                    ?>
                 <div class="field has-addons mb-5">
                     <div class="control">
                         <input class="input" type="text" readonly id="venta_cliente" value="<?php echo $_SESSION['datos_cliente_venta']['cliente_nombre_completo']; ?>" >
@@ -246,22 +294,22 @@
                         </a>
                     </div>
                 </div>
-                <?php } ?>
+                    <?php } ?>
 
-                <h4 class="subtitle is-5 has-text-centered has-text-weight-bold mb-5"><small>TOTAL A PAGAR: <?php echo MONEDA_SIMBOLO.number_format($_SESSION['venta_importe'],MONEDA_DECIMALES,MONEDA_SEPARADOR_DECIMAL,MONEDA_SEPARADOR_MILLAR)." ".MONEDA_NOMBRE; ?></small></h4>
+                    <h4 class="subtitle is-5 has-text-centered has-text-weight-bold mb-5"><small>TOTAL A PAGAR: <?php echo MONEDA_SIMBOLO.number_format($_SESSION['venta_importe'],MONEDA_DECIMALES,MONEDA_SEPARADOR_DECIMAL,MONEDA_SEPARADOR_MILLAR)." ".MONEDA_NOMBRE; ?></small></h4>
 
-                <?php if($_SESSION['venta_importe']>0){ ?>
-                <p class="has-text-centered">
-                    <button type="submit" class="button is-info is-rounded"><i class="far fa-save"></i> &nbsp; Guardar venta</button>
-                </p>
-                <?php } ?>
-                <p class="has-text-centered pt-6">
-                    <small>Los campos marcados con <?php echo CAMPO_OBLIGATORIO; ?> son obligatorios</small>
-                </p>
-                <input type="hidden" value="<?php echo number_format($_SESSION['venta_importe'],MONEDA_DECIMALES,MONEDA_SEPARADOR_DECIMAL,""); ?>" id="venta_importe_hidden">
-            </form>
-        </div>
+                    <?php if($_SESSION['venta_importe']>0){ ?>
+                    <p class="has-text-centered">
+                        <button type="submit" class="button is-info is-rounded"><i class="far fa-save"></i> &nbsp; Guardar venta</button>
+                    </p>
+                    <?php } ?>
+                    <p class="has-text-centered pt-6">
+                        <small>Los campos marcados con <?php echo CAMPO_OBLIGATORIO; ?> son obligatorios</small>
+                    </p>
+                    <input type="hidden" value="<?php echo number_format($_SESSION['venta_importe'],MONEDA_DECIMALES,MONEDA_SEPARADOR_DECIMAL,""); ?>" id="venta_importe_hidden">
+        </form>
 
+        
     </div>
     <?php }else{ ?>
         <article class="message is-warning">
@@ -288,7 +336,7 @@
                     <input class="input" type="text" pattern="[a-zA-Z0-9áéíóúÁÉÍÓÚñÑ ]{1,30}" name="input_codigo" id="input_codigo" maxlength="30" >
                 </div>
             </div>
-            <div class="container" id="tabla_productos"></div>
+            <div class="container" id="resultado-busqueda"></div>
             <p class="has-text-centered">
                 <button type="button" class="button is-link is-light" onclick="buscar_codigo()" ><i class="fas fa-search"></i> &nbsp; Buscar</button>
             </p>
@@ -347,7 +395,13 @@
     </div>
 </div>
 
+
+
+
+
 <script>
+
+
 
     /* Detectar cuando se envia el formulario para agregar producto */
     let sale_form_barcode = document.querySelector("#sale-barcode-form");
@@ -413,8 +467,8 @@
             })
             .then(respuesta => respuesta.text())
             .then(respuesta =>{
-                let tabla_productos=document.querySelector('#tabla_productos');
-                tabla_productos.innerHTML=respuesta;
+                let resultado_busqueda=document.querySelector('#resultado-busqueda');
+                resultado_busqueda.innerHTML=respuesta;
             });
 
         }else{
@@ -426,6 +480,62 @@
             });
         }
     }
+
+    // Agregar evento de búsqueda en tiempo real prodyctos
+    document.querySelector('#input_codigo').addEventListener('input', function(){
+        let input_codigo=document.querySelector('#input_codigo').value;
+
+        input_codigo=input_codigo.trim();
+
+        if(input_codigo!=""){
+
+            let datos = new FormData();
+            datos.append("buscar_codigo", input_codigo);
+            datos.append("modulo_venta", "buscar_codigo");
+
+            fetch('<?php echo APP_URL; ?>app/ajax/ventaAjax.php',{
+                method: 'POST',
+                body: datos
+            })
+            .then(respuesta => respuesta.text())
+            .then(respuesta =>{
+                let resultado_busqueda=document.querySelector('#resultado-busqueda');
+                resultado_busqueda.innerHTML=respuesta;
+            });
+
+        }else{
+            let resultado_busqueda=document.querySelector('#resultado-busqueda');
+            resultado_busqueda.innerHTML='';
+        }
+    });
+
+    // Agregar evento de búsqueda en tiempo real clientes
+    document.querySelector('#input_cliente').addEventListener('input', function(){
+        let input_cliente=document.querySelector('#input_cliente').value;
+
+        input_cliente=input_cliente.trim();
+
+        if(input_cliente!=""){
+
+            let datos = new FormData();
+            datos.append("buscar_cliente", input_cliente);
+            datos.append("modulo_venta", "buscar_cliente");
+
+            fetch('<?php echo APP_URL; ?>app/ajax/ventaAjax.php',{
+                method: 'POST',
+                body: datos
+            })
+            .then(respuesta => respuesta.text())
+            .then(respuesta =>{
+                let tabla_clientes=document.querySelector('#tabla_clientes');
+                tabla_clientes.innerHTML=respuesta;
+            });
+
+        }else{
+            let tabla_clientes=document.querySelector('#tabla_clientes');
+            tabla_clientes.innerHTML='';
+        }
+    });
 
 
     /*----------  Agregar codigo  ----------*/
@@ -629,7 +739,6 @@
             });
         }
     }
-
 
 </script>
 

@@ -14,7 +14,7 @@
 		  	<div class="column">
                 <div class="control">
                     <label>Fecha</label>
-                    <input class="input" type="date" value="<?php echo date("Y-m-d"); ?>" readonly >
+                    <input class="input" name="fecha_caja_movimiento" type="date" value="<?php echo date("Y-m-d"); ?>" >
                 </div>
 		  	</div>
 			<div class="column">
@@ -61,3 +61,33 @@
 	?>
 </div>
 
+<script>
+    // Agregar un evento que escuche la respuesta del servidor
+	document.querySelector('form.FormularioAjax').addEventListener('submit', function(event) {
+		event.preventDefault();
+		var datos = new FormData(this);
+		fetch('<?php echo APP_URL; ?>app/ajax/cajaAjax.php', {
+			method: 'POST',
+			body: datos
+		})
+		.then(respuesta => respuesta.json())
+		.then(respuesta => {
+			// Mostrar la alerta de confirmación
+			Swal.fire({
+				title: '¿Estás seguro?',
+				text: "¿Estás seguro de que deseas guardar el movimiento?",
+				icon: 'question',
+				showCancelButton: true,
+				confirmButtonColor: '#3085d6',
+				cancelButtonColor: '#d33',
+				confirmButtonText: 'Si, guardar',
+				cancelButtonText: 'No, cancelar'
+			}).then((result) => {
+				// Recargar la página después de confirmar
+				if (result.isConfirmed) {
+					window.location.reload();
+				}
+			});
+		});
+	});
+</script>

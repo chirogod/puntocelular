@@ -13,12 +13,12 @@
     ?>
     <div class="columns">
         <div class="column">
-            <form class="FormularioAjax" action="<?php echo APP_URL; ?>app/ajax/buscadorAjax.php" method="POST" autocomplete="off" >
+            <form class="FormularioAjaxSinAlerta" action="<?php echo APP_URL; ?>app/ajax/buscadorAjax.php" method="POST" autocomplete="off" >
                 <input type="hidden" name="modulo_buscador" value="buscar">
                 <input type="hidden" name="modulo_url" value="<?php echo $url[0]; ?>">
                 <div class="field is-grouped">
                     <p class="control is-expanded">
-                        <input class="input is-rounded" type="text" name="txt_buscador" placeholder="¿Qué estas buscando?" required >
+                        <input class="input is-rounded" type="text" name="txt_buscador" placeholder="¿Qué estas buscando?" required>
                     </p>
                     <p class="control">
                         <button class="button is-info" type="submit" >Buscar</button>
@@ -53,3 +53,35 @@
 		echo $insArticulo->listarArticuloControlador($url[1],15,$url[0],"");
 	?>
 </div>
+
+
+<script>
+
+    document.querySelector('#input_codigo').addEventListener('input', function(){
+        let input_codigo=document.querySelector('#input_codigo').value;
+
+        input_codigo=input_codigo.trim();
+
+        if(input_codigo!=""){
+
+            let datos = new FormData();
+            datos.append("buscar_codigo", input_codigo);
+            datos.append("modulo_venta", "buscar_codigo");
+
+            fetch('<?php echo APP_URL; ?>app/ajax/ventaAjax.php',{
+                method: 'POST',
+                body: datos
+            })
+            .then(respuesta => respuesta.text())
+            .then(respuesta =>{
+                let resultado_busqueda=document.querySelector('#resultado-busqueda');
+                resultado_busqueda.innerHTML=respuesta;
+            });
+
+        }else{
+            let resultado_busqueda=document.querySelector('#resultado-busqueda');
+            resultado_busqueda.innerHTML='';
+        }
+    });
+    
+</script>

@@ -8,6 +8,7 @@
 	<form class="FormularioAjax" action="<?php echo APP_URL; ?>app/ajax/articuloAjax.php" method="POST" autocomplete="off" >
 
 		<input type="hidden" name="modulo_articulo" value="registrar">
+		
 
 		<div class="columns">
 		  	<div class="column">
