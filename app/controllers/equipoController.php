@@ -225,7 +225,7 @@
         }
 
         public function actualizarEquipoControlador(){
-
+            
         }
     }
 

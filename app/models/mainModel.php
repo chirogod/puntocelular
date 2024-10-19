@@ -146,6 +146,7 @@
 
             return $sql;
 		}
+		
 		/*----------  EJECUTAR UN UPDATE  ----------*/
 		protected function actualizarDatos($tabla,$datos,$condicion){
 

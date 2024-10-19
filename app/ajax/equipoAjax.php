@@ -16,10 +16,6 @@
             echo $insEquipo->actualizarEquipoControlador();
         }
 
-        if ($_POST['modulo_equipo'] == "eliminar") {
-            echo $insEquipo->eliminarEquipoControlador();
-        }
-
     }else{
         session_destroy();
         header("Location: ".APP_URL."login/");

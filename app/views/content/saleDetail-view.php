@@ -253,6 +253,12 @@
 					<button type="submit" class="button is-link is-light">Registrar pago</button>
 				</p>
 			</form>
+			<form class="FormularioAjax" action="<?php echo APP_URL; ?>app/ajax/pagoAjax.php" method="POST" autocomplete="off" name="formsale" >
+                <input type="hidden" name="modulo_pago" value="saldar_pago_venta">
+				<p class="has-text-centered">
+					<button type="submit" class="button is-link is-light">Saldar pago</button>
+				</p>
+			</form>
 		</section>
 	</div>
 </div>

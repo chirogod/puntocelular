@@ -156,9 +156,9 @@
 			$pdf->Text($pageWidth/2 + 48, $yNewRect +15, $datos_venta['cliente_telefono_1']." / ". $datos_venta['cliente_telefono_2']);
 	
 			$pdf->SetFont('Arial','B',10);
-			$pdf->Text($pageWidth/2+30 , $yNewRect +20, 'Nacimiento: ');
+			$pdf->Text($pageWidth/2+30 , $yNewRect +20, 'Email: ');
 			$pdf->SetFont('Arial','',10);
-			$pdf->Text($pageWidth/2 + 52, $yNewRect +20, $datos_venta['cliente_nacimiento']);
+			$pdf->Text($pageWidth/2 + 42, $yNewRect +20, $datos_venta['cliente_email']);
 		}
 
 		$pdf->Ln(27);

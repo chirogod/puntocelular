@@ -14,6 +14,17 @@
 		if($_POST['modulo_pago']=="registrar_pago_venta"){
 			echo $insPago->registrarPagoVentaControlador();
 		}
+		/*--------- saldar todo el pago ---------*/
+		if($_POST['modulo_pago']=="saldar_pago_orden"){
+			echo $insPago->SaldarPagoOrdenControlador();
+		}
+
+		/*--------- Registrar pago ---------*/
+		if($_POST['modulo_pago']=="registrar_pago_orden"){
+			echo $insPago->registrarPagoOrdenControlador();
+		}
+
+		
 		
 	}else{
 		session_destroy();

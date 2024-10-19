@@ -145,6 +145,40 @@
 				<li class="full-width">
 					<a href="#" class="full-width btn-subMenu">
 						<div class="navLateral-body-cl">
+							<i class="fas fa-tools fa-fw"></i>
+						</div>
+						<div class="navLateral-body-cr">
+							ORDENES
+						</div>
+						<span class="fas fa-chevron-down"></span>
+					</a>
+					<ul class="full-width menu-principal sub-menu-options">
+						<li class="full-width">
+							<a href="<?php echo APP_URL; ?>ordenNew/" class="full-width">
+								<div class="navLateral-body-cl">
+									<i class="fas fa-cart-plus fa-fw"></i>
+								</div>
+								<div class="navLateral-body-cr">
+									Nueva orden
+								</div>
+							</a>
+						</li>
+						<li class="full-width">
+							<a href="<?php echo APP_URL; ?>ordenList/" class="full-width">
+								<div class="navLateral-body-cl">
+									<i class="fas fa-clipboard-list fa-fw"></i>
+								</div>
+								<div class="navLateral-body-cr">
+									Lista de ordenes
+								</div>
+							</a>
+						</li>
+					</ul>
+				</li>
+
+				<li class="full-width">
+					<a href="#" class="full-width btn-subMenu">
+						<div class="navLateral-body-cl">
 							<i class="fas fa-shopping-cart fa-fw"></i>
 						</div>
 						<div class="navLateral-body-cr">

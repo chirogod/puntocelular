@@ -712,3 +712,5 @@ class articuloController extends mainModel{
 
     
 }
+
+
