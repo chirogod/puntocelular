@@ -195,6 +195,102 @@
             <h3>Accesorios</h3>
             <textarea class="textarea"  name="orden_accesorios" ><?php echo $datos['orden_accesorios']; ?></textarea>
         </div>
+
+        <h2 class="subtitle">Agregar productos a la orden</h2>
+        <form class="FormularioAjax pt-6 pb-6" id="sale-barcode-form" autocomplete="off">
+            <div class="columns">
+                <div class="column is-one-quarter">
+                    <button type="button" class="button is-link is-light js-modal-trigger" data-target="modal-js-product" ><i class="fas fa-search"></i> &nbsp; Buscar producto</button>
+                </div>
+                <input type="hidden" name="orden_codigo" value="<?php echo $datos['orden_codigo']; ?>">
+                <div class="column">
+                    <div class="field is-grouped">
+                        <p class="control is-expanded">
+                            <input class="input" type="text" pattern="[a-zA-Z0-9- ]{1,70}" maxlength="70"  autofocus="autofocus" placeholder="Código de barras" id="sale-barcode-input" >
+                        </p>
+                        <a class="control">
+                            <button type="submit" class="button is-info">
+                                <i class="far fa-check-circle"></i> &nbsp; Agregar producto
+                            </button>
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </form>
+
+        <div class="table-container">
+            <table class="table is-bordered is-striped is-narrow is-hoverable is-fullwidth">
+                <thead>
+                    <tr>
+                        <th class="has-text-centered">Codigo</th>
+                        <th class="has-text-centered">Articulo</th>
+                        <th class="has-text-centered">Cant.</th>
+                        <th class="has-text-centered">P. Lista</th>
+                        <th class="has-text-centered">Financiacion</th>
+                        <th class="has-text-centered">P. Efectivo</th>
+                        <th class="has-text-centered">Remover</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <?php
+                        if(isset($_SESSION['datos_producto_orden']) && count($_SESSION['datos_producto_orden'])>=1){
+
+                            $_SESSION['orden_importe']=0;
+                            $cc=1;
+
+                            foreach($_SESSION['datos_producto_orden'] as $productos){
+                    ?>
+                    <tr class="has-text-centered" >
+                        <td><?php echo $productos['articulo_codigo']; ?></td>
+                        <td><?php echo $productos['orden_detalle_descripcion_producto']; ?></td>
+                        <td>
+                            <div class="control">
+                                <input class="input sale_input-cant has-text-centered" value="<?php echo $productos['orden_detalle_cantidad_producto']; ?>" id="sale_input_<?php echo str_replace(" ", "_", $productos['articulo_codigo']); ?>" type="text" style="max-width: 80px;">
+                            </div>
+                        </td>
+                        <td><?php echo MONEDA_SIMBOLO.number_format($productos['orden_detalle_precio_venta_producto'],MONEDA_DECIMALES,MONEDA_SEPARADOR_DECIMAL,MONEDA_SEPARADOR_MILLAR)." ".MONEDA_NOMBRE; ?></td>
+                        <td><?php echo MONEDA_SIMBOLO.number_format($productos['orden_detalle_precio_venta_producto'],MONEDA_DECIMALES,MONEDA_SEPARADOR_DECIMAL,MONEDA_SEPARADOR_MILLAR)." ".MONEDA_NOMBRE; ?></td>
+                        <td><?php echo MONEDA_SIMBOLO.number_format($productos['orden_detalle_total'],MONEDA_DECIMALES,MONEDA_SEPARADOR_DECIMAL,MONEDA_SEPARADOR_MILLAR)." ".MONEDA_NOMBRE; ?></td>
+                        <td>
+                            <form class="FormularioAjax" action="<?php echo APP_URL; ?>app/ajax/ordenAjax.php" method="POST" autocomplete="off">
+
+                                <input type="hidden" name="articulo_codigo" value="<?php echo $productos['articulo_codigo']; ?>">
+                                <input type="hidden" name="modulo_orden" value="remover_producto">
+
+                                <button type="submit" class="button is-danger is-rounded is-small" title="Remover producto">
+                                    <i class="fas fa-trash-restore fa-fw"></i>
+                                </button>
+                            </form>
+                        </td>
+                    </tr>
+                    <?php
+                            $cc++;
+                            $_SESSION['orden_importe']+=$productos['orden_detalle_total'];
+                        }
+                    ?>
+                    <tr class="has-text-centered" >
+                        <td colspan="4"></td>
+                        <td class="has-text-weight-bold">
+                            TOTAL
+                        </td>
+                        <td class="has-text-weight-bold">
+                            <?php echo MONEDA_SIMBOLO.number_format($_SESSION['orden_importe'],MONEDA_DECIMALES,MONEDA_SEPARADOR_DECIMAL,MONEDA_SEPARADOR_MILLAR)." ".MONEDA_NOMBRE; ?>
+                        </td>
+                        <td colspan="2"></td>
+                    </tr>
+                    <?php
+                        }else{
+                                $_SESSION['orden_importe']=0;
+                    ?>
+                    <tr class="has-text-centered" >
+                        <td colspan="8">
+                            No hay productos agregados6
+                        </td>
+                    </tr>
+                    <?php } ?>
+                </tbody>
+            </table>
+        </div>
         
 
         <!-- ESTADO DE LA ORDEN -->
@@ -284,20 +380,107 @@
             <section class="modal-card-body">
                 <form class="FormularioAjax" action="<?php echo APP_URL; ?>app/ajax/ordenAjax.php" method="POST" autocomplete="off" name="formsale" >
                     <input type="hidden" name="modulo_orden" value="registrar_informe_tecnico">
-                    <input type="hidden" name="orden_codigo" id="orden_codigo" value="<?php echo $datos['orden_codigo']; ?>">
-                    <h2 class="subtitle">Orden numero: <?php echo $datos['orden_codigo']; ?></h2>
+                    <h2 class="subtitle">Datos:</h2>
                     <div class="columns">
                         <div class="column">
-                            <label for="" class="label">Informe tecnico: </label>
-                            <textarea class="input" style="height: 200px;" name="orden_informe_tecnico" id=""><?php echo $datos['orden_informe_tecnico']; ?></textarea>
+                            <div class="control">
+                                <label for="">Numero: </label>
+                                <input class="input" type="text" name="orden_codigo" readonly value="<?php echo $datos['orden_codigo']; ?>">
+                            </div>
+                            <div class="control">
+                                <label>Marca</label><br>
+                                <div class="select">
+                                    <select name="id_marca" >
+                                        <option value="" selected="" >Seleccione una opción</option>
+                                        <?php
+                                            $datos_marca=$insLogin->seleccionarDatos("Normal","marca","*",0);
+
+                                            $cc=1;
+                                            while($campos_marca=$datos_marca->fetch()){
+                                                $selected = ($campos_marca['id_marca'] == $datos['id_marca']) ? 'selected' : '';
+                                                echo '<option value="'.$campos_marca['id_marca'].'" '.$selected.'>'.$cc.' - '.$campos_marca['marca_descripcion'].'</option>';
+                                                $cc++;
+                                            }
+                                        ?>
+                                    </select>
+                                </div>
+                            </div>
+
+                            <div class="control">
+                                <label>Marca</label><br>
+                                <div class="select">
+                                    <select name="id_modelo" >
+                                        <option value="" selected="" >Seleccione una opción</option>
+                                        <?php
+                                            $datos_modelo=$insLogin->seleccionarDatos("Normal","modelo","*",0);
+
+                                            $cc=1;
+                                            while($campos_modelo=$datos_modelo->fetch()){
+                                                $selected = ($campos_modelo['id_modelo'] == $datos['id_modelo']) ? 'selected' : '';
+                                                echo '<option value="'.$campos_modelo['id_modelo'].'" '.$selected.'>'.$cc.' - '.$campos_modelo['modelo_descripcion'].'</option>';
+                                                $cc++;
+                                            }
+                                        ?>
+                                    </select>
+                                </div>
+                            </div>
+                             
+                            <div class="control">
+                                <label>N° Serie</label>
+                                <input class="input" type="text" value="<?php echo $datos['orden_serie_equipo']; ?>" name="orden_modelo_equipo">
+                            </div>
+
+                            <div class="control">
+                                <label for="">Falla: </label>
+                                <textarea class="textarea" name="" readonly id=""><?php echo $datos['orden_falla']; ?></textarea>
+                            </div>
+                            
+                        </div>
+
+                        <div class="column">
+                            <div class="control">
+                                <label for="" class="label">Informe tecnico: </label>
+                                <textarea class="input" style="height: 200px;" name="orden_informe_tecnico" id=""><?php echo $datos['orden_informe_tecnico']; ?></textarea>
+                            </div>
+                            <div class="control">
+                                <h3>TOTALES</h3>
+                                <label>Reparacion</label>
+                                <input class="input" type="text" value="<?php echo $datos['orden_total_reparacion']?>" name="orden_total_reparacion">
+                                <label>Total</label>
+                                <input class="input" type="text" value="<?php echo $datos['orden_total_reparacion'] + $_SESSION['orden_importe']  ?>" name="orden_total">
+                            </div>
+                           
                         </div>
                     </div>
                     <p class="has-text-centered">
-                        <button type="submit" class="button is-link is-light">Registrar pago</button>
+                        <button type="submit" class="button is-link is-light">Guardar</button>
                     </p>
                 </form>
             </section>
         </div>
+    </div>
+</div>
+
+<!-- Modal buscar producto -->
+<div class="modal" id="modal-js-product">
+    <div class="modal-background"></div>
+    <div class="modal-card">
+        <header class="modal-card-head">
+          <p class="modal-card-title is-uppercase"><i class="fas fa-search"></i> &nbsp; Buscar producto</p>
+          <button class="delete" aria-label="close"></button>
+        </header>
+        <section class="modal-card-body">
+            <div class="field mt-6 mb-6">
+                <label class="label">Codigo, nombre, marca, modelo.</label>
+                <div class="control">
+                    <input class="input" type="text" pattern="[a-zA-Z0-9áéíóúÁÉÍÓÚñÑ ]{1,30}" name="input_codigo" id="input_codigo" maxlength="30" >
+                </div>
+            </div>
+            <div class="container" id="resultado-busqueda"></div>
+            <p class="has-text-centered">
+                <button type="button" class="button is-link is-light" onclick="buscar_codigo()" ><i class="fas fa-search"></i> &nbsp; Buscar</button>
+            </p>
+        </section>
     </div>
 </div>
 
@@ -556,4 +739,87 @@
             dateField.style.display = 'none';
         }
     }
+
+    /* Detectar cuando se envia el formulario para agregar producto */
+    let sale_form_barcode = document.querySelector("#sale-barcode-form");
+    sale_form_barcode.addEventListener('submit', function(event){
+        event.preventDefault();
+        setTimeout('agregar_producto()',100);
+    });
+
+    /* Detectar cuando escanea un codigo en formulario para agregar producto */
+    let sale_input_barcode = document.querySelector("#sale-barcode-input");
+    sale_input_barcode.addEventListener('paste',function(){
+        setTimeout('agregar_producto()',100);
+    });
+
+    /*----------  Buscar producto  ----------*/
+    function buscar_codigo(){
+        let input_codigo=document.querySelector('#input_codigo').value;
+
+        input_codigo=input_codigo.trim();
+
+        if(input_codigo!=""){
+
+            let datos = new FormData();
+            datos.append("buscar_codigo", input_codigo);
+            datos.append("modulo_orden", "buscar_codigo");
+
+            fetch('<?php echo APP_URL; ?>app/ajax/ordenAjax.php',{
+                method: 'POST',
+                body: datos
+            })
+            .then(respuesta => respuesta.text())
+            .then(respuesta =>{
+                let resultado_busqueda=document.querySelector('#resultado-busqueda');
+                resultado_busqueda.innerHTML=respuesta;
+            });
+
+        }else{
+            Swal.fire({
+                icon: 'error',
+                title: 'Ocurrió un error inesperado',
+                text: 'Debes de introducir el Nombre, Marca o Modelo del producto',
+                confirmButtonText: 'Aceptar'
+            });
+        }
+    }
+
+    /* Agregar producto */
+    function agregar_producto(){
+        let codigo_producto=document.querySelector('#sale-barcode-input').value;
+        let orden_codigo = document.querySelector('input[name="orden_codigo"]').value; // Obtener el orden_codigo
+        codigo_producto=codigo_producto.trim();
+
+        if(codigo_producto!=""){
+            let datos = new FormData();
+            datos.append("articulo_codigo", codigo_producto);
+            datos.append("orden_codigo", orden_codigo); 
+            datos.append("modulo_orden", "agregar_producto");
+
+            fetch('<?php echo APP_URL; ?>app/ajax/ordenAjax.php',{
+                method: 'POST',
+                body: datos
+            })
+            .then(respuesta => respuesta.json())
+            .then(respuesta =>{
+                return alertas_ajax(respuesta);
+            });
+
+        }else{
+            Swal.fire({
+                icon: 'error',
+                title: 'Ocurrió un error inesperado',
+                text: 'Debes de introducir el código del producto',
+                confirmButtonText: 'Aceptar'
+            });
+        }
+    }
+
+    /*----------  Agregar codigo  ----------*/
+    function agregar_codigo($codigo){
+        document.querySelector('#sale-barcode-input').value=$codigo;
+        setTimeout('agregar_producto()',100);
+    }
+
 </script>

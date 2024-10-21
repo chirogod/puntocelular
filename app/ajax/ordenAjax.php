@@ -54,6 +54,21 @@
 		if($_POST['modulo_orden']=="entregar_orden"){
 			echo $insOrden->entregarOrdenControlador();
 		}
+
+		/*--------- Buscar producto por codigo ---------*/
+		if($_POST['modulo_orden']=="buscar_codigo"){
+			echo $insOrden->buscarCodigoOrdenControlador();
+		}
+
+		/*--------- Agregar producto a carrito ---------*/
+		if($_POST['modulo_orden']=="agregar_producto"){
+			echo $insOrden->agregarProductoCarritoControlador();
+		}
+
+		/*--------- Remover producto de carrito ---------*/
+		if($_POST['modulo_orden']=="remover_producto"){
+			echo $insOrden->removerProductoCarritoControlador();
+		}
 		
 	}else{
 		session_destroy();
