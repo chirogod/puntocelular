@@ -232,71 +232,64 @@
 
 			$numeroPaginas =ceil($total/$registros);
             
-			$tabla.='
-		        <div class="table-container">
-		        <table class="table is-bordered is-striped is-narrow is-hoverable is-fullwidth">
-		            <thead>
-		                <tr>
-		                    <th class="has-text-centered">#</th>
-		                    <th class="has-text-centered">Nombre</th>
-		                    <th class="has-text-centered">Email</th>
-		                    <th class="has-text-centered">Telefono 1</th>
-                            <th class="has-text-centered">Documento</th>
-		                    <th class="has-text-centered">Detalles</th>
-		                </tr>
-		            </thead>
-		            <tbody>
-		    ';
+			$tabla .= '
+				<div class="table-container">
+				<table class="table is-bordered is-striped is-narrow is-hoverable is-fullwidth">
+					<thead>
+						<tr>
+							<th class="has-text-centered">#</th>
+							<th class="has-text-centered">Nombre</th>
+							<th class="has-text-centered">Email</th>
+							<th class="has-text-centered">Telefono 1</th>
+							<th class="has-text-centered">Documento</th>
+						</tr>
+					</thead>
+					<tbody>
+			';
 
-		    if($total>=1 && $pagina<=$numeroPaginas){
-				$contador=$inicio+1;
-				$pag_inicio=$inicio+1;
-				foreach($datos as $rows){
-					$tabla.='
-						<tr class="has-text-centered" >
-							<td>'.$contador.'</td>
-							<td>'.$rows['cliente_nombre_completo'].'</td>
-							<td>'.$rows['cliente_email'].'</td>
-                            <td>'.$rows['cliente_telefono_1'].'</td>
-                            <td>'.$rows['cliente_documento'].'</td>
-							
-			                <td>
-			                    <a href="'.APP_URL.'clientUpdate/'.$rows['id_cliente'].'/" class="button is-success is-rounded is-small">
-			                    	<i class="fas fa-search fa-fw"></i>
-			                    </a>
-			                </td>
-			                
+			if ($total >= 1 && $pagina <= $numeroPaginas) {
+				$contador = $inicio + 1;
+				$pag_inicio = $inicio + 1;
+				foreach ($datos as $rows) {
+					// Envolver la fila en un enlace
+					$tabla .= '
+						<tr class="has-text-centered" style="cursor: pointer;" onclick="window.location.href=\'' . APP_URL . 'clientUpdate/' . $rows['id_cliente'] . '/\'">
+							<td>' . $contador . '</td>
+							<td>' . $rows['cliente_nombre_completo'] . '</td>
+							<td>' . $rows['cliente_email'] . '</td>
+							<td>' . $rows['cliente_telefono_1'] . '</td>
+							<td>' . $rows['cliente_documento'] . '</td>
 						</tr>
 					';
 					$contador++;
 				}
-				$pag_final=$contador-1;
-			}else{
-				if($total>=1){
-					$tabla.='
-						<tr class="has-text-centered" >
-			                <td colspan="7">
-			                    <a href="'.$url.'1/" class="button is-link is-rounded is-small mt-4 mb-4">
-			                        Haga clic acá para recargar el listado
-			                    </a>
-			                </td>
-			            </tr>
+				$pag_final = $contador - 1;
+			} else {
+				if ($total >= 1) {
+					$tabla .= '
+						<tr class="has-text-centered">
+							<td colspan="5">
+								<a href="' . $url . '1/" class="button is-link is-rounded is-small mt-4 mb-4">
+									Haga clic acá para recargar el listado
+								</a>
+							</td>
+						</tr>
 					';
-				}else{
-					$tabla.='
-						<tr class="has-text-centered" >
-			                <td colspan="7">
-			                    No hay registros en el sistema
+				} else {
+					$tabla .= '
+						<tr class="has-text-centered">
+							<td colspan="5">
+								No hay registros en el sistema
 								<div class="mt-1">
-									<a href="'.APP_URL.'clientNew/" class="button is-success is-rounded is-small">Registrar cliente</a>
+									<a href="' . APP_URL . 'clientNew/" class="button is-success is-rounded is-small">Registrar cliente</a>
 								</div>
-			                </td>
-			            </tr>
+							</td>
+						</tr>
 					';
 				}
 			}
 
-			$tabla.='</tbody></table></div>';
+			$tabla .= '</tbody></table></div>';
 
 			### Paginacion ###
 			if($total>0 && $pagina<=$numeroPaginas){

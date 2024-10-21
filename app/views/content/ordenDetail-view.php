@@ -141,60 +141,62 @@
         
         <!-- DETALLES DEL EQUIPO -->
         <div class="box">
-            <h3 class="title is-4">Detalles del quipo</h3>
+            <h3 class="title is-4">Detalles del equipo</h3>
             <div class="columns">
-                <div class="column">
+                <!-- Columna izquierda: Marca, Modelo y N° Serie -->
+                <div class="column is-half">
                     <div class="control">
                         <label>Marca</label><br>
-                        <div class="select">
-                            <select name="id_marca" >
-                                <option value="" selected="" >Seleccione una opción</option>
+                        <div class="select is-fullwidth">
+                            <select name="id_marca">
+                                <option value="" selected>Seleccione una opción</option>
                                 <?php
-                                    $datos_marca=$insLogin->seleccionarDatos("Normal","marca","*",0);
-
-                                    $cc=1;
-                                    while($campos_marca=$datos_marca->fetch()){
+                                    $datos_marca = $insLogin->seleccionarDatos("Normal", "marca", "*", 0);
+                                    $cc = 1;
+                                    while ($campos_marca = $datos_marca->fetch()) {
                                         $selected = ($campos_marca['id_marca'] == $datos['id_marca']) ? 'selected' : '';
-                                        echo '<option value="'.$campos_marca['id_marca'].'" '.$selected.'>'.$cc.' - '.$campos_marca['marca_descripcion'].'</option>';
+                                        echo '<option value="' . $campos_marca['id_marca'] . '" ' . $selected . '>' . $cc . ' - ' . $campos_marca['marca_descripcion'] . '</option>';
                                         $cc++;
                                     }
                                 ?>
                             </select>
                         </div>
                     </div>
-                </div>
 
-                <div class="column">
                     <div class="control">
-                    <label>Marca</label><br>
-                        <div class="select">
-                            <select name="id_modelo" >
-                                <option value="" selected="" >Seleccione una opción</option>
+                        <label>Modelo</label><br>
+                        <div class="select is-fullwidth">
+                            <select name="id_modelo">
+                                <option value="" selected>Seleccione una opción</option>
                                 <?php
-                                    $datos_modelo=$insLogin->seleccionarDatos("Normal","modelo","*",0);
-
-                                    $cc=1;
-                                    while($campos_modelo=$datos_modelo->fetch()){
+                                    $datos_modelo = $insLogin->seleccionarDatos("Normal", "modelo", "*", 0);
+                                    $cc = 1;
+                                    while ($campos_modelo = $datos_modelo->fetch()) {
                                         $selected = ($campos_modelo['id_modelo'] == $datos['id_modelo']) ? 'selected' : '';
-                                        echo '<option value="'.$campos_modelo['id_modelo'].'" '.$selected.'>'.$cc.' - '.$campos_modelo['modelo_descripcion'].'</option>';
+                                        echo '<option value="' . $campos_modelo['id_modelo'] . '" ' . $selected . '>' . $cc . ' - ' . $campos_modelo['modelo_descripcion'] . '</option>';
                                         $cc++;
                                     }
                                 ?>
                             </select>
                         </div>
                     </div>
-                </div>
-                    
-                <div class="column">            
+
                     <div class="control">
                         <label>N° Serie</label>
-                        <input class="input" type="text" value="<?php echo $datos['orden_serie_equipo']; ?>" name="orden_modelo_equipo">
+                        <input class="input is-fullwidth" type="text" value="<?php echo $datos['orden_serie_equipo']; ?>" name="orden_modelo_equipo">
+                    </div>
+                </div>
+
+                <!-- Columna derecha: Accesorios -->
+                <div class="column is-half">
+                    <div class="control">
+                        <label>Accesorios</label>
+                        <textarea class="textarea" name="orden_accesorios"><?php echo $datos['orden_accesorios']; ?></textarea>
                     </div>
                 </div>
             </div>
-            <h3>Accesorios</h3>
-            <textarea class="textarea"  name="orden_accesorios" ><?php echo $datos['orden_accesorios']; ?></textarea>
         </div>
+                                <!--
 
         <h2 class="subtitle">Agregar productos a la orden</h2>
         <form class="FormularioAjax pt-6 pb-6" id="sale-barcode-form" autocomplete="off">
@@ -292,7 +294,7 @@
             </table>
         </div>
         
-
+                        -->
         <!-- ESTADO DE LA ORDEN -->
         <h2 class="subtitle">Estado de la orden</h2>
         <div class="box">
@@ -446,8 +448,10 @@
                                 <h3>TOTALES</h3>
                                 <label>Reparacion</label>
                                 <input class="input" type="text" value="<?php echo $datos['orden_total_reparacion']?>" name="orden_total_reparacion">
+                                <!--
                                 <label>Total</label>
                                 <input class="input" type="text" value="<?php echo $datos['orden_total_reparacion'] + $_SESSION['orden_importe']  ?>" name="orden_total">
+                                -->
                             </div>
                            
                         </div>

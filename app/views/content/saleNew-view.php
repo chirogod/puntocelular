@@ -232,21 +232,25 @@
                 <?php }else { ?>
             <form name="formsale">
                 <?php } ?>
-                <div class="control">
-                    <label>Observaciones</label>
-                    <input class="input" type="text" name="venta_observaciones" placeholder="Observaciones">
+                <div class="columns">
+                    <div class="column">
+                        <label>Observaciones</label>
+                        <textarea class="textarea" type="text" name="venta_observaciones" placeholder="Observaciones"></textarea>
+                    </div>
+                    <br>
+                    <div class="column">
+                        <label>Fecha <?php echo CAMPO_OBLIGATORIO; ?></label>
+                        <input class="input" type="date" value="<?php echo date("Y-m-d"); ?>" >
+                    </div>
+                    <br>
+                    <div class="column">
+                        <label>Vendedor <?php echo CAMPO_OBLIGATORIO; ?></label><br>
+                        <input class="input" type="text" name="venta_vendedor" id="">
+                    </div>
+                    <br>
+                    <div class="column"></div>
                 </div>
-                <br>
-                <div class="control">
-                    <label>Fecha <?php echo CAMPO_OBLIGATORIO; ?></label>
-                    <input class="input" type="date" value="<?php echo date("Y-m-d"); ?>" >
-                </div>
-                <br>
-                <div class="control">
-                    <label>Vendedor <?php echo CAMPO_OBLIGATORIO; ?></label><br>
-                    <input class="input" type="text" name="venta_vendedor" id="">
-                </div>
-                <br>
+                
 
                 <label>Cliente <?php echo CAMPO_OBLIGATORIO; ?></label>
                 <?php
@@ -337,9 +341,6 @@
                 </div>
             </div>
             <div class="container" id="resultado-busqueda"></div>
-            <p class="has-text-centered">
-                <button type="button" class="button is-link is-light" onclick="buscar_codigo()" ><i class="fas fa-search"></i> &nbsp; Buscar</button>
-            </p>
         </section>
     </div>
 </div>
@@ -360,9 +361,7 @@
                 </div>
             </div>
             <div class="container" id="tabla_clientes"></div>
-            <p class="has-text-centered">
-                <button type="button" class="button is-link is-light" onclick="buscar_cliente()" ><i class="fas fa-search"></i> &nbsp; Buscar</button>
-            </p>
+
         </section>
     </div>
 </div>
@@ -400,9 +399,6 @@
 
 
 <script>
-
-
-
     /* Detectar cuando se envia el formulario para agregar producto */
     let sale_form_barcode = document.querySelector("#sale-barcode-form");
     sale_form_barcode.addEventListener('submit', function(event){
