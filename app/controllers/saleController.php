@@ -52,11 +52,11 @@
 				foreach($datos_articulos as $rows){
 					$tabla.='
 					<tr class="has-text-left">
-						<td>'.$rows['articulo_codigo'].'</td>
-						<td>'.$rows['articulo_descripcion'].'</td>
-						<td>precio lista</td>
-						<td>financiacion</td>
-						<td>'.$rows['articulo_precio_venta'].'</td>
+						<td class="has-text-centered">'.$rows['articulo_codigo'].'</td>
+						<td class="has-text-centered">'.$rows['articulo_descripcion'].'</td>
+						<td class="has-text-centered">'.$rows['articulo_precio_lista'].'</td>
+						<td class="has-text-centered">'.$rows['articulo_financiacion'].'</td>
+						<td class="has-text-centered">'.$rows['articulo_precio_efectivo'].'</td>
 						<td class="has-text-centered">
 							<button type="button" class="button is-link is-rounded is-small" onclick="agregar_codigo(\''.$rows['articulo_codigo'].'\')"><i class="fas fa-plus-circle"></i></button>
 						</td>
@@ -146,7 +146,7 @@
 			        exit();
                 }
 
-                $detalle_total=$detalle_cantidad*$campos['articulo_precio_venta'];
+                $detalle_total=$detalle_cantidad*$campos['articulo_precio_lista'];
                 $detalle_total=number_format($detalle_total,MONEDA_DECIMALES,'.','');
 
                 $_SESSION['datos_producto_venta'][$codigo]=[
@@ -155,7 +155,9 @@
 					"articulo_stock"=>$stock_total,
 					"articulo_stock_old"=>$campos['articulo_stock'],
                     "venta_detalle_precio_compra_producto"=>$campos['articulo_precio_compra'],
-                    "venta_detalle_precio_venta_producto"=>$campos['articulo_precio_venta'],
+                    "venta_detalle_precio_lista_producto"=>$campos['articulo_precio_lista'],
+					"venta_detalle_precio_efectivo_producto"=>$campos['articulo_precio_efectivo'],
+					"venta_detalle_financiacion_producto"=>$campos['articulo_financiacion'],
                     "venta_detalle_cantidad_producto"=>1,
                     "venta_detalle_total"=>$detalle_total,
                     "venta_detalle_descripcion_producto"=>$campos['articulo_descripcion']
@@ -178,7 +180,7 @@
 			        exit();
                 }
 
-                $detalle_total=$detalle_cantidad*$campos['articulo_precio_venta'];
+                $detalle_total=$detalle_cantidad*$campos['articulo_precio_lista'];
                 $detalle_total=number_format($detalle_total,MONEDA_DECIMALES,'.','');
 
                 $_SESSION['datos_producto_venta'][$codigo]=[
@@ -187,7 +189,9 @@
 					"articulo_stock"=>$stock_total,
 					"articulo_stock_total_old"=>$campos['articulo_stock'],
                     "venta_detalle_precio_compra_producto"=>$campos['articulo_precio_compra'],
-                    "venta_detalle_precio_venta_producto"=>$campos['articulo_precio_venta'],
+                    "venta_detalle_precio_lista_producto"=>$campos['articulo_precio_lista'],
+					"venta_detalle_precio_efectivo_producto"=>$campos['articulo_precio_efectivo'],
+					"venta_detalle_financiacion_producto"=>$campos['articulo_financiacion'],
                     "venta_detalle_cantidad_producto"=>$detalle_cantidad,
                     "venta_detalle_total"=>$detalle_total,
                     "venta_detalle_descripcion_producto"=>$campos['articulo_descripcion']
@@ -204,6 +208,68 @@
 			return json_encode($alerta);
         }
 
+		public function financiarProducto(){
+			
+            $codigo = $this->limpiarCadena($_POST['articulo_codigo']);
+			$financiacion = $this->limpiarCadena($_POST['financiacion']);
+            if($codigo==""){
+                $alerta=[
+					"tipo"=>"simple",
+					"titulo"=>"Ocurrió un error inesperado",
+					"texto"=>"Debes de introducir el código del producto",
+					"icono"=>"error"
+				];
+				return json_encode($alerta);
+		        exit();
+            }
+
+            /*== Comprobando producto en la DB ==*/
+            $check_articulo=$this->ejecutarConsulta("SELECT * FROM articulo WHERE articulo_codigo = '$codigo'");
+            if($check_articulo->rowCount()<=0){
+                $alerta=[
+					"tipo"=>"simple",
+					"titulo"=>"Ocurrió un error inesperado",
+					"texto"=>"No hemos encontrado el articulo con codigo: '$codigo'",
+					"icono"=>"error"
+				];
+				return json_encode($alerta);
+		        exit();
+            }else{
+                $campos=$check_articulo->fetch();
+            }
+
+            /*== Codigo de producto ==*/
+            $codigo = $campos['articulo_codigo'];
+
+			if(isset($_SESSION['datos_producto_venta']) && count($_SESSION['datos_producto_venta'])>=1){
+
+				$_SESSION['venta_importe']=0;
+				$cc=1;
+
+				foreach($_SESSION['datos_producto_venta'] as $productos){
+					$_SESSION['financiacion'][$codigo]=[
+						"id_articulo"=>$productos['id_articulo'],
+						"articulo_codigo"=>$productos['articulo_codigo'],
+						"articulo_stock"=>$productos['articulo_stock'],
+						"articulo_stock_old"=>$productos['articulo_stock_old'],
+						"venta_detalle_precio_compra_producto"=>$productos['venta_detalle_precio_compra_producto'],
+						"venta_detalle_precio_lista_producto"=>$productos['venta_detalle_precio_lista_producto'],
+						"venta_detalle_precio_efectivo_producto"=>$productos['venta_detalle_precio_efectivo_producto'],
+						"venta_detalle_financiacion_producto"=>$financiacion,
+						"venta_detalle_cantidad_producto"=>$productos['venta_detalle_cantidad_producto'],
+						"venta_detalle_total"=>$productos['venta_detalle_total'],
+						"venta_detalle_descripcion_producto"=>$productos['venta_detalle_descripcion_producto']
+					];
+				}
+			}
+            
+            $alerta=[
+				"tipo"=>"redireccionar",
+				"url"=>APP_URL."saleNew/"
+			];
+
+			return json_encode($alerta);
+		}
 
         /*---------- Controlador remover producto de venta ----------*/
         public function removerProductoCarritoControlador(){
@@ -315,7 +381,8 @@
 			        exit();
                 }
 
-                $precio_venta=$_SESSION['datos_producto_venta'][$codigo]['venta_detalle_precio_venta_producto'];
+				
+                $precio_venta = $_SESSION['datos_producto_venta'][$codigo]['venta_detalle_precio_lista_producto'];
                 
                 $detalle_total=$detalle_cantidad*$precio_venta;
                 $detalle_total=number_format($detalle_total,MONEDA_DECIMALES,'.','');
@@ -326,7 +393,7 @@
 					"articulo_stock_total"=>$stock_total,
 					"articulo_stock_total_old"=>$campos['articulo_stock'],
                     "venta_detalle_precio_compra_producto"=>$campos['articulo_precio_compra'],
-                    "venta_detalle_precio_venta_producto"=>$precio_venta,
+                    "venta_detalle_precio_lista_producto"=>$precio_venta,
                     "venta_detalle_cantidad_producto"=>$detalle_cantidad,
                     "venta_detalle_total"=>$detalle_total,
                     "venta_detalle_descripcion_producto"=>$campos['articulo_descripcion']
@@ -756,9 +823,9 @@
 						"campo_valor"=>$venta_detalle['venta_detalle_precio_compra_producto']
 					],
 					[
-						"campo_nombre"=>"venta_detalle_precio_venta_producto",
+						"campo_nombre"=>"venta_detalle_precio_lista_producto",
 						"campo_marcador"=>":PrecioVenta",
-						"campo_valor"=>$venta_detalle['venta_detalle_precio_venta_producto']
+						"campo_valor"=>$venta_detalle['venta_detalle_precio_lista_producto']
 					],
 					[
 						"campo_nombre"=>"venta_detalle_total",
@@ -1202,7 +1269,7 @@
                 $detalle_total=$_SESSION['datos_producto_venta'][$codigo]['venta_detalle_cantidad_producto']*$precio;
                 $detalle_total=number_format($detalle_total,MONEDA_DECIMALES,'.','');
 
-                $_SESSION['datos_producto_venta'][$codigo]['venta_detalle_precio_venta_producto']=$precio;
+                $_SESSION['datos_producto_venta'][$codigo]['venta_detalle_precio_lista_producto']=$precio;
                 $_SESSION['datos_producto_venta'][$codigo]['venta_detalle_total']=$detalle_total;
 
                 $alerta=[

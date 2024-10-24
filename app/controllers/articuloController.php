@@ -17,12 +17,14 @@ class articuloController extends mainModel{
         $articulo_activo = $this->limpiarCadena($_POST['articulo_activo']);
         $articulo_moneda = $this->limpiarCadena($_POST['articulo_moneda']);
         $articulo_precio_compra = $this->limpiarCadena($_POST['articulo_precio_compra']);
-        $articulo_precio_venta = $this->limpiarCadena($_POST['articulo_precio_venta']);
+        $articulo_precio_lista = $this->limpiarCadena($_POST['articulo_precio_lista']);
+        $articulo_precio_efectivo = $this->limpiarCadena($_POST['articulo_precio_efectivo']);
+        $articulo_financicion = $this->limpiarCadena($_POST['articulo_financiacion']);
         $articulo_marca = $this->limpiarCadena($_POST['articulo_marca']);
         $articulo_modelo = $this->limpiarCadena($_POST['articulo_modelo']);
 
         //verificar campos obligatorios
-        if($articulo_descripcion == "" || $articulo_stock == "" || $id_rubro == "" || $id_sucursal == "" || $articulo_moneda == "" || $articulo_precio_compra == "" || $articulo_precio_venta == "" || $articulo_activo == ""){
+        if($articulo_descripcion == "" || $articulo_stock == "" || $id_rubro == "" || $id_sucursal == "" || $articulo_moneda == "" || $articulo_precio_compra == "" || $articulo_precio_lista == "" || $articulo_precio_efectivo == "" || $articulo_activo == ""){
             $alerta=[
                 "tipo"=>"simple",
                 "titulo"=>"Ocurrió un error inesperado",
@@ -137,16 +139,7 @@ class articuloController extends mainModel{
             exit();
         }
 
-        if($this->verificarDatos("[0-9.]{1,25}", $articulo_precio_venta)){
-            $alerta=[
-                "tipo"=>"simple",
-                "titulo"=>"Ocurrió un error inesperado",
-                "texto"=>"El precio de venta del articulo no cumple con el formato solicitado",
-                "icono"=>"error"
-            ];
-            return json_encode($alerta);
-            exit();
-        }
+
 
         if ($articulo_marca != "") {
             if($this->verificarDatos("[a-zA-ZáéíóúÁÉÍÓÚñÑ0-9 -]{1,30}", $articulo_marca)){
@@ -231,9 +224,19 @@ class articuloController extends mainModel{
                 "campo_valor"=>$articulo_precio_compra
             ],
             [
-                "campo_nombre"=>"articulo_precio_venta",
-                "campo_marcador"=>":PrecioVenta",
-                "campo_valor"=>$articulo_precio_venta
+                "campo_nombre"=>"articulo_precio_lista",
+                "campo_marcador"=>":PrecioLista",
+                "campo_valor"=>$articulo_precio_lista
+            ],
+            [
+                "campo_nombre"=>"articulo_precio_efectivo",
+                "campo_marcador"=>":PrecioEfectivo",
+                "campo_valor"=>$articulo_precio_efectivo
+            ],
+            [
+                "campo_nombre"=>"articulo_financiacion",
+                "campo_marcador"=>":Financiacion",
+                "campo_valor"=>$articulo_financiacion
             ],
             [
                 "campo_nombre"=>"articulo_marca",
@@ -297,7 +300,9 @@ class articuloController extends mainModel{
         $nombre=$this->limpiarCadena($_POST['articulo_descripcion']);
 
         $precio_compra=$this->limpiarCadena($_POST['articulo_precio_compra']);
-        $precio_venta=$this->limpiarCadena($_POST['articulo_precio_venta']);
+        $articulo_precio_lista = $this->limpiarCadena($_POST['articulo_precio_lista']);
+        $articulo_precio_efectivo = $this->limpiarCadena($_POST['articulo_precio_efectivo']);
+        $articulo_financiacion = $this->limpiarCadena($_POST['articulo_financiacion']);
 
         $stock=$this->limpiarCadena($_POST['articulo_stock']);
         $stock_minimo=$this->limpiarCadena($_POST['articulo_stock_min']);
@@ -316,7 +321,7 @@ class articuloController extends mainModel{
         $modelo=$this->limpiarCadena($_POST['articulo_modelo']);
 
         # Verificando campos obligatorios #
-        if($codigo=="" || $nombre=="" || $precio_compra=="" || $precio_venta=="" || $stock=="" || $id_sucursal == ""){
+        if($codigo=="" || $nombre=="" || $precio_compra=="" || $stock=="" || $id_sucursal == ""){
             $alerta=[
                 "tipo"=>"simple",
                 "titulo"=>"Ocurrió un error inesperado",
@@ -355,17 +360,6 @@ class articuloController extends mainModel{
                 "tipo"=>"simple",
                 "titulo"=>"Ocurrió un error inesperado",
                 "texto"=>"El PRECIO DE COMPRA no coincide con el formato solicitado",
-                "icono"=>"error"
-            ];
-            return json_encode($alerta);
-            exit();
-        }
-
-        if($this->verificarDatos("[0-9.]{1,25}",$precio_venta)){
-            $alerta=[
-                "tipo"=>"simple",
-                "titulo"=>"Ocurrió un error inesperado",
-                "texto"=>"El PRECIO DE VENTA no coincide con el formato solicitado",
                 "icono"=>"error"
             ];
             return json_encode($alerta);
@@ -438,30 +432,6 @@ class articuloController extends mainModel{
             exit();
         }
 
-        # Comprobando precio de venta del producto #
-        $precio_venta=number_format($precio_venta,MONEDA_DECIMALES,'.','');
-        if($precio_venta<0){
-            $alerta=[
-                "tipo"=>"simple",
-                "titulo"=>"Ocurrió un error inesperado",
-                "texto"=>"El PRECIO DE VENTA no puede ser menor a 0",
-                "icono"=>"error"
-            ];
-            return json_encode($alerta);
-            exit();
-        }
-
-        # Comprobando precio de compra y venta del producto #
-        if($precio_compra>$precio_venta){
-            $alerta=[
-                "tipo"=>"simple",
-                "titulo"=>"Ocurrió un error inesperado",
-                "texto"=>"El precio de compra del producto no puede ser mayor al precio de venta",
-                "icono"=>"error"
-            ];
-            return json_encode($alerta);
-            exit();
-        }
 
         # Comprobando codigo de producto #
         if($datos['articulo_codigo']!=$codigo){
@@ -526,9 +496,19 @@ class articuloController extends mainModel{
                 "campo_valor"=>$precio_compra
             ],
             [
-                "campo_nombre"=>"articulo_precio_venta",
-                "campo_marcador"=>":PrecioVenta",
-                "campo_valor"=>$precio_venta
+                "campo_nombre"=>"articulo_precio_lista",
+                "campo_marcador"=>":PrecioLista",
+                "campo_valor"=>$articulo_precio_lista
+            ],
+            [
+                "campo_nombre"=>"articulo_precio_efectivo",
+                "campo_marcador"=>":PrecioEfectivo",
+                "campo_valor"=>$articulo_precio_efectivo
+            ],
+            [
+                "campo_nombre"=>"articulo_financiacion",
+                "campo_marcador"=>":Financiacion",
+                "campo_valor"=>$articulo_financiacion
             ],
             [
                 "campo_nombre"=>"articulo_marca",
@@ -643,7 +623,8 @@ class articuloController extends mainModel{
                         <th class="has-text-centered">Articulo</th>
                         <th class="has-text-centered">Codigo</th>
                         <th class="has-text-centered">Stock</th>
-                        <th class="has-text-centered">Precio venta</th>
+                        <th class="has-text-centered">Precio lista</th>
+                        <th class="has-text-centered">Precio efectivo</th>
                         <th class="has-text-centered">Detalle</th>
                     </tr>
                 </thead>
@@ -660,8 +641,8 @@ class articuloController extends mainModel{
                         <td>'.$rows['articulo_descripcion'].'</td>
                         <td>'.$rows['articulo_codigo'].'</td>
                         <td>'.$rows['articulo_stock'].'</td>
-                        <td>'.$rows['articulo_precio_venta'].'</td>
-                        
+                        <td>'.$rows['articulo_precio_lista'].'</td>
+                        <td>'.$rows['articulo_precio_efectivo'].'</td>
                         <td>
                             <a href="'.APP_URL.'artUpdate/'.$rows['id_articulo'].'/" class="button is-success is-rounded is-small">
                                 <i class="fas fa-search fa-fw"></i>

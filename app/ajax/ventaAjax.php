@@ -59,6 +59,11 @@
 		if($_POST['modulo_venta']=="actualizar_precio_producto"){
 			echo $insVenta->actualizarPrecioProducto();
 		}
+
+		/*--------- financiar precio de producto ---------*/
+		if($_POST['modulo_venta']=="financiar_producto"){
+			echo $insVenta->financiarProducto();
+		}
 		
 	}else{
 		session_destroy();

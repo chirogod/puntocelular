@@ -153,7 +153,8 @@
                             <th class="has-text-centered">Cant.</th>
                             <th class="has-text-centered">P. Lista</th>
                             <th class="has-text-centered">Financiacion</th>
-                            <th class="has-text-centered">P. Efectivo</th>
+                            <th class="has-text-centered">Tipo financ</th>
+                            <th class="has-text-centered">Subtotal</th>
                             <th class="has-text-centered">Remover</th>
                         </tr>
                     </thead>
@@ -174,8 +175,29 @@
                                     <input class="input sale_input-cant has-text-centered" value="<?php echo $productos['venta_detalle_cantidad_producto']; ?>" id="sale_input_<?php echo str_replace(" ", "_", $productos['articulo_codigo']); ?>" type="text" style="max-width: 80px;">
                                 </div>
                             </td>
-                            <td><?php echo MONEDA_SIMBOLO.number_format($productos['venta_detalle_precio_venta_producto'],MONEDA_DECIMALES,MONEDA_SEPARADOR_DECIMAL,MONEDA_SEPARADOR_MILLAR)." ".MONEDA_NOMBRE; ?></td>
-                            <td><?php echo MONEDA_SIMBOLO.number_format($productos['venta_detalle_precio_venta_producto'],MONEDA_DECIMALES,MONEDA_SEPARADOR_DECIMAL,MONEDA_SEPARADOR_MILLAR)." ".MONEDA_NOMBRE; ?></td>
+                            <td><?php echo MONEDA_SIMBOLO.number_format($productos['venta_detalle_precio_lista_producto'],MONEDA_DECIMALES,MONEDA_SEPARADOR_DECIMAL,MONEDA_SEPARADOR_MILLAR)." ".MONEDA_NOMBRE; ?></td>
+                            <td>
+                                <form class="FormularioAjax" action="<?php echo APP_URL; ?>app/ajax/ventaAjax.php" method="POST" autocomplete="off">
+                                    <input type="hidden" name="articulo_codigo" value="<?php echo $productos['articulo_codigo']; ?>">
+                                    <input type="hidden" name="modulo_venta" value="financiar_producto">
+                                    <div class="">
+                                        <select class="input" name="financiacion" id="">
+                                            <option value="">Seleccionar opcion</option>
+                                            <option value="Efectivo">Efectivo</option>
+                                            <option value="3cuotas">3 cuotas</option>
+                                            <option value="6cuotas">6 cuotas</option>
+                                            <option value="9cuotas">9 cuotas</option>
+                                            <option value="12cuotas">12 cuotas</option>
+                                        </select>
+                                    </div>
+                                    
+                                    <button type="submit" class="button is-link is-light is-rounded">Financiar</button>
+                                </form>
+                            </td>
+                            <td>
+                            <?php $cod = $productos['articulo_codigo']; echo $_SESSION['financiacion'][$cod]['venta_detalle_financiacion_producto']; ?></td>
+                            
+                            </td>
                             <td><?php echo MONEDA_SIMBOLO.number_format($productos['venta_detalle_total'],MONEDA_DECIMALES,MONEDA_SEPARADOR_DECIMAL,MONEDA_SEPARADOR_MILLAR)." ".MONEDA_NOMBRE; ?></td>
                             <td>
                                 <form class="FormularioAjax" action="<?php echo APP_URL; ?>app/ajax/ventaAjax.php" method="POST" autocomplete="off">
@@ -233,22 +255,32 @@
             <form name="formsale">
                 <?php } ?>
                 <div class="columns">
+
                     <div class="column">
-                        <label>Observaciones</label>
-                        <textarea class="textarea" type="text" name="venta_observaciones" placeholder="Observaciones"></textarea>
+                        <div class="control">
+                            <label>Fecha <?php echo CAMPO_OBLIGATORIO; ?></label>
+                            <input class="input" type="date" value="<?php echo date("Y-m-d"); ?>" >
+                        </div>
+                        <div class="control">
+                            <label>Vendedor <?php echo CAMPO_OBLIGATORIO; ?></label><br>
+                            <select class="input" name="venta_vendedor" >
+                                <option value="" selected="" >Seleccione una opción</option>
+                                <?php
+                                    $datos_usuario=$insLogin->seleccionarDatosEspecificos("usuario","usuario_rol","Vendedor");
+
+                                    $cc=1;
+                                    while($campos_usuario=$datos_usuario->fetch()){
+                                        echo '<option value="'.$campos_usuario['id_usuario'].'">'.$cc.' - '.$campos_usuario['usuario_nombre_completo'].'</option>';
+                                        $cc++;
+                                    }
+                                ?>
+                            </select>
+                        </div>
                     </div>
-                    <br>
                     <div class="column">
-                        <label>Fecha <?php echo CAMPO_OBLIGATORIO; ?></label>
-                        <input class="input" type="date" value="<?php echo date("Y-m-d"); ?>" >
+                        <label>Observaciones</label><br>
+                        <textarea class="textarea" name="venta_observaciones" id=""></textarea>
                     </div>
-                    <br>
-                    <div class="column">
-                        <label>Vendedor <?php echo CAMPO_OBLIGATORIO; ?></label><br>
-                        <input class="input" type="text" name="venta_vendedor" id="">
-                    </div>
-                    <br>
-                    <div class="column"></div>
                 </div>
                 
 
@@ -419,6 +451,7 @@
         let codigo_producto=document.querySelector('#sale-barcode-input').value;
 
         codigo_producto=codigo_producto.trim();
+        
 
         if(codigo_producto!=""){
             let datos = new FormData();

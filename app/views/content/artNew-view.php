@@ -123,8 +123,20 @@
 		  	</div>
 		  	<div class="column">
 		    	<div class="control">
-					<label>Precio venta <?php echo CAMPO_OBLIGATORIO; ?></label>
-					<input class="input" type="number" name="articulo_precio_venta" pattern="[0-9.]{1,25}" maxlength="25" value="0.00">
+					<label>Precio lista <?php echo CAMPO_OBLIGATORIO; ?></label>
+					<input class="input" type="number" name="articulo_precio_lista" pattern="[0-9.]{1,25}" maxlength="25" value="0.00">
+				</div>
+		  	</div>
+			<div class="column">
+		    	<div class="control">
+					<label>Precio efectivo <?php echo CAMPO_OBLIGATORIO; ?></label>
+					<input class="input" type="number" name="articulo_precio_efectivo" pattern="[0-9.]{1,25}" maxlength="25" value="0.00">
+				</div>
+		  	</div>
+			<div class="column">
+		    	<div class="control">
+					<label>Financiacion <?php echo CAMPO_OBLIGATORIO; ?></label>
+					<input class="input" type="number" name="articulo_financiacion" pattern="[0-9.]{1,25}" maxlength="25" value="0.00">
 				</div>
 		  	</div>
 		</div>

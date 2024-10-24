@@ -23,7 +23,7 @@
 
     <br>
 
-	<form class="" action="<?php echo APP_URL; ?>app/ajax/articuloAjax.php" method="POST" autocomplete="off" >
+	<form class="FormularioAjax" action="<?php echo APP_URL; ?>app/ajax/articuloAjax.php" method="POST" autocomplete="off" >
 
 		<input type="hidden" name="modulo_articulo" value="actualizar">
 		<input type="hidden" name="id_articulo" value="<?php echo $datos['id_articulo']; ?>">
@@ -141,8 +141,20 @@
 		  	</div>
 		  	<div class="column">
 		    	<div class="control">
-					<label>Precio venta <?php echo CAMPO_OBLIGATORIO; ?></label>
-					<input class="input" type="number" name="articulo_precio_venta" pattern="[0-9.]{1,25}" maxlength="25" value="<?php echo $datos['articulo_precio_venta']; ?>">
+					<label>Precio lista <?php echo CAMPO_OBLIGATORIO; ?></label>
+					<input class="input" type="number" name="articulo_precio_lista" pattern="[0-9.]{1,25}" maxlength="25" value="<?php echo $datos['articulo_precio_lista']; ?>">
+				</div>
+		  	</div>
+			<div class="column">
+		    	<div class="control">
+					<label>Precio efectivo <?php echo CAMPO_OBLIGATORIO; ?></label>
+					<input class="input" type="number" name="articulo_precio_efectivo" pattern="[0-9.]{1,25}" maxlength="25" value="<?php echo $datos['articulo_precio_efectivo']; ?>">
+				</div>
+		  	</div>
+			<div class="column">
+		    	<div class="control">
+					<label>Financiacion <?php echo CAMPO_OBLIGATORIO; ?></label>
+					<input class="input" type="text" name="articulo_financiacion" maxlength="25" value="<?php echo $datos['articulo_financiacion']; ?>">
 				</div>
 		  	</div>
 		</div>

@@ -105,6 +105,21 @@
             return $sql;
 		}
 
+		/*---------- SELECCIONAR DATOS ESPECIFICOS ----------*/
+        public function seleccionarDatosEspecificos($tabla,$campo,$condicion){
+			$tipo=$this->limpiarCadena($tipo);
+			$tabla=$this->limpiarCadena($tabla);
+			$campo=$this->limpiarCadena($campo);
+			$condicion=$this->limpiarCadena($condicion);
+
+            $sql=$this->conectar()->prepare("SELECT * FROM $tabla WHERE $campo=:condicion");
+            $sql->bindParam(":condicion",$condicion);
+            
+            $sql->execute();
+
+            return $sql;
+		}
+
 		/*---------- FILTRAR POR SUCURSAL --------- */
         public function seleccionarDatosSucursal($tipo,$tabla,$campo,$id, $id_sucursal){
 			$tipo=$this->limpiarCadena($tipo);
