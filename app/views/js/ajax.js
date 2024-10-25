@@ -48,7 +48,6 @@ formularios_ajax.forEach(formularios => {
 // ALERTAS
 function alertas_ajax(alerta){
     if(alerta.tipo=="simple"){
-
         Swal.fire({
             icon: alerta.icono,
             title: alerta.titulo,

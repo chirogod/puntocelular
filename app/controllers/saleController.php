@@ -154,7 +154,6 @@
 					"articulo_stock_old"=>$campos['articulo_stock'],
                     "venta_detalle_precio_compra_producto"=>$campos['articulo_precio_compra'],
                     "venta_detalle_precio_lista_producto"=>$campos['articulo_precio_lista'],
-					"venta_detalle_precio_efectivo_producto"=>$campos['articulo_precio_efectivo'],
                     "venta_detalle_cantidad_producto"=>1,
                     "venta_detalle_total"=>$detalle_total,
                     "venta_detalle_descripcion_producto"=>$campos['articulo_descripcion']
@@ -187,8 +186,6 @@
 					"articulo_stock_total_old"=>$campos['articulo_stock'],
                     "venta_detalle_precio_compra_producto"=>$campos['articulo_precio_compra'],
                     "venta_detalle_precio_lista_producto"=>$campos['articulo_precio_lista'],
-					"venta_detalle_precio_efectivo_producto"=>$campos['articulo_precio_efectivo'],
-					"venta_detalle_financiacion_producto"=>$campos['articulo_financiacion'],
                     "venta_detalle_cantidad_producto"=>$detalle_cantidad,
                     "venta_detalle_total"=>$detalle_total,
                     "venta_detalle_descripcion_producto"=>$campos['articulo_descripcion']
@@ -564,6 +561,16 @@
 				return json_encode($alerta);
 		        exit();
             }
+			if((!isset($_SESSION['financiacion']) && count($_SESSION['financiacion'])<=0)){
+				$alerta=[
+					"tipo"=>"simple",
+					"titulo"=>"Ocurrió un error inesperado",
+					"texto"=>"No has financiado los articulos de esta venta",
+					"icono"=>"error"
+				];
+				return json_encode($alerta);
+		        exit();
+            }
 
             if(!isset($_SESSION['datos_cliente_venta'])){
 				$alerta=[
@@ -825,9 +832,14 @@
 						"campo_valor"=>$venta_detalle['venta_detalle_precio_lista_producto']
 					],
 					[
+						"campo_nombre"=>"venta_detalle_financiacion_producto",
+						"campo_marcador"=>":Financiacion",
+						"campo_valor"=>$_SESSION['financiacion'][$venta_detalle['articulo_codigo']]['venta_detalle_financiacion_producto']
+					],
+					[
 						"campo_nombre"=>"venta_detalle_total",
 						"campo_marcador"=>":Total",
-						"campo_valor"=>$venta_detalle['venta_detalle_total']
+						"campo_valor"=>$_SESSION['financiacion'][$venta_detalle['articulo_codigo']]['venta_detalle_total']
 					],
 					[
 						"campo_nombre"=>"venta_detalle_descripcion_producto",
@@ -888,102 +900,6 @@
 				return json_encode($alerta);
 		        exit();
             }
-
-			/*
-            if ($forma_pago == 'Efectivo') {
-				// Update cash balance in "caja ventas"
-				$datos_caja_up=[
-					[
-						"campo_nombre"=>"caja_monto",
-						"campo_marcador"=>":Monto",
-						"campo_valor"=>$total_caja
-					]
-				];
-			
-				$condicion_caja=[
-					"condicion_campo"=>"id_caja",
-					"condicion_marcador"=>":ID",
-					"condicion_valor"=>$caja
-				];
-			
-				$this->actualizarDatos("caja",$datos_caja_up,$condicion_caja);
-			
-				// Update cash balance in "caja fisica" of the corresponding branch
-				$sucursal_id = $datos_caja['id_sucursal'];
-				$caja_fisica = $this->ejecutarConsulta("SELECT * FROM caja WHERE caja_codigo LIKE '%Efectivo%' AND id_sucursal = '$_SESSION[id_sucursal]'")->fetch();
-				$total_caja_fisica=$caja_fisica['caja_monto']+$movimiento_cantidad;
-            	$total_caja_fisica=number_format($total_caja_fisica,MONEDA_DECIMALES,'.','');
-				if ($caja_fisica) {
-					$datos_caja_fisica_up=[
-						[
-							"campo_nombre"=>"caja_monto",
-							"campo_marcador"=>":Monto",
-							"campo_valor"=>$total_caja_fisica
-						]
-					];
-			
-					$condicion_caja_fisica=[
-						"condicion_campo"=>"id_caja",
-						"condicion_marcador"=>":ID",
-						"condicion_valor"=>$caja_fisica['id_caja']
-					];
-			
-					$this->actualizarDatos("caja",$datos_caja_fisica_up,$condicion_caja_fisica);
-				}
-			} else {
-				// Update cash balance in "caja ventas"
-				$datos_caja_up=[
-					[
-						"campo_nombre"=>"caja_monto",
-						"campo_marcador"=>":Monto",
-						"campo_valor"=>$total_caja
-					]
-				];
-			
-				$condicion_caja=[
-					"condicion_campo"=>"id_caja",
-					"condicion_marcador"=>":ID",
-					"condicion_valor"=>$caja
-				];
-			
-				$this->actualizarDatos("caja",$datos_caja_up,$condicion_caja);
-			}
-
-            if(!$this->actualizarDatos("caja",$datos_caja_up,$condicion_caja)){
-
-                $this->eliminarRegistro("venta_detalle","venta_codigo",$codigo_venta);
-                $this->eliminarRegistro("venta","venta_codigo",$codigo_venta);
-
-                foreach($_SESSION['datos_producto_venta'] as $producto){
-
-                    $datos_producto_rs=[
-                        [
-							"campo_nombre"=>"articulo_stock",
-							"campo_marcador"=>":Stock",
-							"campo_valor"=>$producto['articulo_stock_total_old']
-						]
-                    ];
-
-                    $condicion=[
-                        "condicion_campo"=>"producto_id",
-                        "condicion_marcador"=>":ID",
-                        "condicion_valor"=>$producto['producto_id']
-                    ];
-
-                    $this->actualizarDatos("articulo",$datos_producto_rs,$condicion);
-                }
-
-                $alerta=[
-					"tipo"=>"simple",
-					"titulo"=>"Ocurrió un error inesperado",
-					"texto"=>"No hemos podido registrar la venta, por favor intente nuevamente. Código de error: 003",
-					"icono"=>"error"
-				];
-				return json_encode($alerta);
-		        exit();
-
-            }
-			/*
 			
             /*== Vaciando variables de sesion ==*/
             unset($_SESSION['venta_total']);

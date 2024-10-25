@@ -17,6 +17,8 @@
             $id_cliente = $datos['id_cliente'];
             $datos_cliente = $insLogin->seleccionarDatos("Unico","cliente","id_cliente",$id_cliente);
             $datos_cliente = $datos_cliente->fetch();
+            $datos_telefonista = $insLogin->seleccionarDatosEspecificos("usuario", "id_usuario", $datos['orden_telefonista']);
+            $datos_telefonista = $datos_telefonista->fetch();
 	?>
 
 	<h2 class="title has-text-centered">INFORMACION ORDEN  <?php echo $datos['orden_codigo'] ; ?></h2>
@@ -91,7 +93,7 @@
                     </div>
                     <div class="control">
                         <h3>Telefonista/Operador</h3>
-                        <input type="text" readonly class="input" name="orden_telefonista" value="<?php echo $datos['orden_telefonista'] ?>">
+                        <input type="text" readonly class="input" name="orden_telefonista" value="<?php echo $datos_telefonista['usuario_nombre_completo'] ?>">
                     </div>
                 </div>
 
@@ -110,7 +112,7 @@
                         <?php if($datos['orden_equipo_detalles_fisicos'] != "") {?>
                                 <textarea readonly class="textarea"  name="orden_equipo_detalles_fisicos" id=""><?php echo $datos['orden_equipo_detalles_fisicos']; ?></textarea>
                         <?php }else{?>
-                                <p>No</p>
+                                <p class="textarea">No</p>
                         <?php }?>
                     </div>
                     <div class="control">
@@ -196,105 +198,7 @@
                 </div>
             </div>
         </div>
-                                <!--
-
-        <h2 class="subtitle">Agregar productos a la orden</h2>
-        <form class="FormularioAjax pt-6 pb-6" id="sale-barcode-form" autocomplete="off">
-            <div class="columns">
-                <div class="column is-one-quarter">
-                    <button type="button" class="button is-link is-light js-modal-trigger" data-target="modal-js-product" ><i class="fas fa-search"></i> &nbsp; Buscar producto</button>
-                </div>
-                <input type="hidden" name="orden_codigo" value="<?php echo $datos['orden_codigo']; ?>">
-                <div class="column">
-                    <div class="field is-grouped">
-                        <p class="control is-expanded">
-                            <input class="input" type="text" pattern="[a-zA-Z0-9- ]{1,70}" maxlength="70"  autofocus="autofocus" placeholder="Código de barras" id="sale-barcode-input" >
-                        </p>
-                        <a class="control">
-                            <button type="submit" class="button is-info">
-                                <i class="far fa-check-circle"></i> &nbsp; Agregar producto
-                            </button>
-                        </a>
-                    </div>
-                </div>
-            </div>
-        </form>
-
-        <div class="table-container">
-            <table class="table is-bordered is-striped is-narrow is-hoverable is-fullwidth">
-                <thead>
-                    <tr>
-                        <th class="has-text-centered">Codigo</th>
-                        <th class="has-text-centered">Articulo</th>
-                        <th class="has-text-centered">Cant.</th>
-                        <th class="has-text-centered">P. Lista</th>
-                        <th class="has-text-centered">Financiacion</th>
-                        <th class="has-text-centered">P. Efectivo</th>
-                        <th class="has-text-centered">Remover</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    <?php
-                        if(isset($_SESSION['datos_producto_orden']) && count($_SESSION['datos_producto_orden'])>=1){
-
-                            $_SESSION['orden_importe']=0;
-                            $cc=1;
-
-                            foreach($_SESSION['datos_producto_orden'] as $productos){
-                    ?>
-                    <tr class="has-text-centered" >
-                        <td><?php echo $productos['articulo_codigo']; ?></td>
-                        <td><?php echo $productos['orden_detalle_descripcion_producto']; ?></td>
-                        <td>
-                            <div class="control">
-                                <input class="input sale_input-cant has-text-centered" value="<?php echo $productos['orden_detalle_cantidad_producto']; ?>" id="sale_input_<?php echo str_replace(" ", "_", $productos['articulo_codigo']); ?>" type="text" style="max-width: 80px;">
-                            </div>
-                        </td>
-                        <td><?php echo MONEDA_SIMBOLO.number_format($productos['orden_detalle_precio_venta_producto'],MONEDA_DECIMALES,MONEDA_SEPARADOR_DECIMAL,MONEDA_SEPARADOR_MILLAR)." ".MONEDA_NOMBRE; ?></td>
-                        <td><?php echo MONEDA_SIMBOLO.number_format($productos['orden_detalle_precio_venta_producto'],MONEDA_DECIMALES,MONEDA_SEPARADOR_DECIMAL,MONEDA_SEPARADOR_MILLAR)." ".MONEDA_NOMBRE; ?></td>
-                        <td><?php echo MONEDA_SIMBOLO.number_format($productos['orden_detalle_total'],MONEDA_DECIMALES,MONEDA_SEPARADOR_DECIMAL,MONEDA_SEPARADOR_MILLAR)." ".MONEDA_NOMBRE; ?></td>
-                        <td>
-                            <form class="FormularioAjax" action="<?php echo APP_URL; ?>app/ajax/ordenAjax.php" method="POST" autocomplete="off">
-
-                                <input type="hidden" name="articulo_codigo" value="<?php echo $productos['articulo_codigo']; ?>">
-                                <input type="hidden" name="modulo_orden" value="remover_producto">
-
-                                <button type="submit" class="button is-danger is-rounded is-small" title="Remover producto">
-                                    <i class="fas fa-trash-restore fa-fw"></i>
-                                </button>
-                            </form>
-                        </td>
-                    </tr>
-                    <?php
-                            $cc++;
-                            $_SESSION['orden_importe']+=$productos['orden_detalle_total'];
-                        }
-                    ?>
-                    <tr class="has-text-centered" >
-                        <td colspan="4"></td>
-                        <td class="has-text-weight-bold">
-                            TOTAL
-                        </td>
-                        <td class="has-text-weight-bold">
-                            <?php echo MONEDA_SIMBOLO.number_format($_SESSION['orden_importe'],MONEDA_DECIMALES,MONEDA_SEPARADOR_DECIMAL,MONEDA_SEPARADOR_MILLAR)." ".MONEDA_NOMBRE; ?>
-                        </td>
-                        <td colspan="2"></td>
-                    </tr>
-                    <?php
-                        }else{
-                                $_SESSION['orden_importe']=0;
-                    ?>
-                    <tr class="has-text-centered" >
-                        <td colspan="8">
-                            No hay productos agregados6
-                        </td>
-                    </tr>
-                    <?php } ?>
-                </tbody>
-            </table>
-        </div>
         
-                        -->
         <!-- ESTADO DE LA ORDEN -->
         <h2 class="subtitle">Estado de la orden</h2>
         <div class="box">

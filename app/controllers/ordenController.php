@@ -263,12 +263,12 @@
 				],
 				[
 					"campo_nombre"=>"orden_importe_lista",
-					"campo_marcador"=>":Tipo",
+					"campo_marcador"=>":Lista",
 					"campo_valor"=>$orden_importe_lista
 				],
 				[
 					"campo_nombre"=>"orden_importe_efectivo",
-					"campo_marcador"=>":Tipo",
+					"campo_marcador"=>":Efectivo",
 					"campo_valor"=>$orden_importe_efectivo
 				],
 
@@ -326,13 +326,19 @@
 		public function registrarInformeTecnicoOrdenControlador(){
 			$orden_codigo = $_POST['orden_codigo'];
 			$orden_informe_tecnico = $_POST['orden_informe_tecnico'];
-
+			$orden_total_reparacion = $_POST['orden_total_reparacion'];
+			
 			$datos =[
 				[
 					"campo_nombre"=>"orden_informe_tecnico",
 					"campo_marcador"=>":InformeTecnico",
 					"campo_valor"=>$orden_informe_tecnico
-				]
+				],
+				[
+					"campo_nombre"=>"orden_total_reparacion",
+					"campo_marcador"=>":Total",
+					"campo_valor"=>$orden_total_reparacion
+				],
 			];
 
 			$condicion=[
@@ -659,239 +665,7 @@
 			}
 		
 			return $tabla;
-		}
-
-		/* FUNCIONES PARA AGREGAR PRODUCTOS A LA ORDEN */
-
-
-		/*---------- Controlador buscar codigo de producto ----------*/
-		public function buscarCodigoOrdenControlador(){
-
-			/*== Recuperando codigo de busqueda ==*/
-			$articulo=$this->limpiarCadena($_POST['buscar_codigo']);
-
-			/*== Comprobando que no este vacio el campo ==*/
-			if($articulo==""){
-				return '
-				<article class="message is-warning mt-4 mb-4">
-					<div class="message-header">
-						<p>¡Ocurrio un error inesperado!</p>
-					</div>
-					<div class="message-body has-text-centered">
-						<i class="fas fa-exclamation-triangle fa-2x"></i><br>
-						Debes de introducir el Nombre, Marca o Modelo del articulo
-					</div>
-				</article>';
-				exit();
-			}
-
-			/*== Seleccionando productos en la DB ==*/
-			$datos_articulos=$this->ejecutarConsulta("SELECT * FROM articulo WHERE (articulo_descripcion LIKE '%$articulo%' OR articulo_marca LIKE '%$articulo%' OR articulo_modelo LIKE '%$articulo%') ORDER BY articulo_descripcion ASC");
-
-			if($datos_articulos->rowCount()>=1){
-
-				$datos_articulos = $datos_articulos->fetchAll();
-
-				$tabla='<div class="table-container mb-6"><table class="table is-striped is-narrow is-hoverable is-fullwidth"><tbody>';
-				$tabla.='
-							<div class="table-container">
-							<table class="table is-bordered is-striped is-narrow is-hoverable is-fullwidth">
-								<thead>
-									<tr>
-										<th class="has-text-centered">Codigo</th>
-										<th class="has-text-centered">Articulo</th>
-										<th class="has-text-centered">P. Lista</th>
-										<th class="has-text-centered">Financiacion</th>
-										<th class="has-text-centered">P. Efectivo</th>
-										<th class="has-text-centered">Agregar</th>
-									</tr>
-								</thead>
-								<tbody>
-						';
-				foreach($datos_articulos as $rows){
-					$tabla.='
-					<tr class="has-text-left">
-						<td>'.$rows['articulo_codigo'].'</td>
-						<td>'.$rows['articulo_descripcion'].'</td>
-						<td>precio lista</td>
-						<td>financiacion</td>
-						<td>'.$rows['articulo_precio_venta'].'</td>
-						<td class="has-text-centered">
-							<button type="button" class="button is-link is-rounded is-small" onclick="agregar_codigo(\''.$rows['articulo_codigo'].'\')"><i class="fas fa-plus-circle"></i></button>
-						</td>
-					</tr>
-					';
-				}
-
-				$tabla.='</tbody></table></div>';
-				return $tabla;
-			}else{
-				return '<article class="message is-warning mt-4 mb-4">
-					<div class="message-header">
-						<p>¡Ocurrio un error inesperado!</p>
-					</div>
-					<div class="message-body has-text-centered">
-						<i class="fas fa-exclamation-triangle fa-2x"></i><br>
-						No hemos encontrado ningún articulo en el sistema que coincida con <strong>“'.$articulo.'”
-					</div>
-				</article>';
-
-				exit();
-			}
-		}
-
-		/*---------- Controlador agregar producto a venta ----------*/
-        public function agregarProductoCarritoControlador(){
-
-            /*== Recuperando codigo del producto ==*/
-            $codigo = $this->limpiarCadena($_POST['articulo_codigo']);
-			$orden_codigo = $this->limpiarCadena($_POST['orden_codigo']);
-
-            if($codigo==""){
-                $alerta=[
-					"tipo"=>"simple",
-					"titulo"=>"Ocurrió un error inesperado",
-					"texto"=>"Debes de introducir el código del producto",
-					"icono"=>"error"
-				];
-				return json_encode($alerta);
-		        exit();
-            }
-
-            /*== Verificando integridad de los datos ==*/
-            if($this->verificarDatos("[a-zA-Z0-9- ]{1,70}",$codigo)){
-                $alerta=[
-					"tipo"=>"simple",
-					"titulo"=>"Ocurrió un error inesperado",
-					"texto"=>"El código no coincide con el formato solicitado",
-					"icono"=>"error"
-				];
-				return json_encode($alerta);
-		        exit();
-            }
-
-            /*== Comprobando producto en la DB ==*/
-            $check_articulo=$this->ejecutarConsulta("SELECT * FROM articulo WHERE articulo_codigo = '$codigo'");
-            if($check_articulo->rowCount()<=0){
-                $alerta=[
-					"tipo"=>"simple",
-					"titulo"=>"Ocurrió un error inesperado",
-					"texto"=>"No hemos encontrado el articulo con codigo: '$codigo'",
-					"icono"=>"error"
-				];
-				return json_encode($alerta);
-		        exit();
-            }else{
-                $campos=$check_articulo->fetch();
-            }
-
-            /*== Codigo de producto ==*/
-            $codigo=$campos['articulo_codigo'];
-
-            if(empty($_SESSION['datos_producto_orden'][$codigo])){
-
-                $detalle_cantidad=1;
-
-                $stock_total=$campos['articulo_stock']-$detalle_cantidad;
-
-                if($stock_total<=0){
-                    $alerta=[
-						"tipo"=>"simple",
-						"titulo"=>"Ocurrió un error inesperado",
-						"texto"=>"Lo sentimos, no hay existencias disponibles del producto seleccionado",
-						"icono"=>"error"
-					];
-					return json_encode($alerta);
-			        exit();
-                }
-
-                $detalle_total=$detalle_cantidad*$campos['articulo_precio_venta'];
-                $detalle_total=number_format($detalle_total,MONEDA_DECIMALES,'.','');
-
-                $_SESSION['datos_producto_orden'][$codigo]=[
-                    "id_articulo"=>$campos['id_articulo'],
-					"articulo_codigo"=>$campos['articulo_codigo'],
-					"articulo_stock"=>$stock_total,
-					"articulo_stock_old"=>$campos['articulo_stock'],
-                    "orden_detalle_precio_compra_producto"=>$campos['articulo_precio_compra'],
-                    "orden_detalle_precio_venta_producto"=>$campos['articulo_precio_venta'],
-                    "orden_detalle_cantidad_producto"=>1,
-                    "orden_detalle_total"=>$detalle_total,
-                    "orden_detalle_descripcion_producto"=>$campos['articulo_descripcion']
-                ];
-
-                $_SESSION['alerta_producto_agregado']="Se agrego <strong>".$campos['articulo_descripcion']."</strong> a la orden";
-            }else{
-                $detalle_cantidad=($_SESSION['datos_producto_orden'][$codigo]['orden_detalle_cantidad_producto'])+1;
-
-                $stock_total=$campos['articulo_stock']-$detalle_cantidad;
-
-                if($stock_total<0){
-                    $alerta=[
-						"tipo"=>"simple",
-						"titulo"=>"Ocurrió un error inesperado",
-						"texto"=>"Lo sentimos, no hay existencias disponibles del producto seleccionado",
-						"icono"=>"error"
-					];
-					return json_encode($alerta);
-			        exit();
-                }
-
-                $detalle_total=$detalle_cantidad*$campos['articulo_precio_venta'];
-                $detalle_total=number_format($detalle_total,MONEDA_DECIMALES,'.','');
-
-                $_SESSION['datos_producto_venta'][$codigo]=[
-                    "id_articulo"=>$campos['id_articulo'],
-					"articulo_codigo"=>$campos['articulo_codigo'],
-					"articulo_stock"=>$stock_total,
-					"articulo_stock_old"=>$campos['articulo_stock'],
-                    "orden_detalle_precio_compra_producto"=>$campos['articulo_precio_compra'],
-                    "orden_detalle_precio_venta_producto"=>$campos['articulo_precio_venta'],
-                    "orden_detalle_cantidad_producto"=>1,
-                    "orden_detalle_total"=>$detalle_total,
-                    "orden_detalle_descripcion_producto"=>$campos['articulo_descripcion']
-                ];
-
-                $_SESSION['alerta_producto_agregado']="Se agrego +1 <strong>".$campos['articulo_descripcion']."</strong> a la venta. Total en carrito: <strong>$detalle_cantidad</strong>";
-            }
-
-            $alerta = [
-				"tipo" => "simple",
-				"titulo" => "Producto agregado",
-				"texto" => "El producto se ha agregado correctamente al carrito.",
-				"icono" => "success"
-			];
-
-			return json_encode($alerta);
-        }
-
-		/*---------- Controlador remover producto de venta ----------*/
-        public function removerProductoCarritoControlador(){
-
-            /*== Recuperando codigo del producto ==*/
-            $codigo=$this->limpiarCadena($_POST['articulo_codigo']);
-
-            unset($_SESSION['datos_producto_orden'][$codigo]);
-
-            if(empty($_SESSION['datos_producto_orden'][$codigo])){
-				$alerta=[
-					"tipo"=>"recargar",
-					"titulo"=>"¡Articulo removido!",
-					"texto"=>"El articulo se ha removido de la venta",
-					"icono"=>"success"
-				];
-				
-			}else{
-				$alerta=[
-					"tipo"=>"simple",
-					"titulo"=>"Ocurrió un error inesperado",
-					"texto"=>"No hemos podido remover el articulo, por favor intente nuevamente",
-					"icono"=>"error"
-				];
-            }
-            return json_encode($alerta);
-        }
-		
+		}		
 	}
 
 ?>

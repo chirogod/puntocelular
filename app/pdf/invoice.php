@@ -86,7 +86,7 @@
 		$pdf->SetFont('Arial','B',12);
 		$pdf->Text($pageWidth / 2 + 25, 37, 'Fecha: ');
 		$pdf->SetFont('Arial','',12);
-		$pdf->Text($pageWidth / 2 + 40, 37,$datos_venta['venta_fecha']);
+		$pdf->Text($pageWidth / 2 + 40, 37,date("d/m/Y", strtotime($datos_venta['venta_fecha'])));
 
 		$pdf->SetFont('Arial','B',12);
 		$pdf->Text($pageWidth / 2 + 25, 44, 'Vendedor: ');
@@ -181,7 +181,7 @@
 		$pdf->Cell(13,8,iconv("UTF-8", "ISO-8859-1",'Cant.'),1,0,'C',true);
 		$pdf->Cell(17,8,iconv("UTF-8", "ISO-8859-1",'Garantia'),1,0,'C',true);
 		$pdf->Cell(22,8,iconv("UTF-8", "ISO-8859-1",'P. Original'),1,0,'C',true);
-		$pdf->Cell(18,8,iconv("UTF-8", "ISO-8859-1",'DESC %'),1,0,'C',true);
+		$pdf->Cell(18,8,iconv("UTF-8", "ISO-8859-1",'FINANC'),1,0,'C',true);
 		$pdf->Cell(22,8,iconv("UTF-8", "ISO-8859-1",'P. Final'),1,0,'C',true);
 
 		$pdf->Ln(8);
@@ -207,8 +207,8 @@
 			$fecha_vencimiento = strtotime("+$garantia_dias days", $fecha_venta);
 			$pdf->Cell(17,7,iconv("UTF-8", "ISO-8859-1",date("d-m-Y", $fecha_vencimiento)),'L',0,'C');
 			
-			$pdf->Cell(22,7,iconv("UTF-8", "ISO-8859-1",MONEDA_SIMBOLO.number_format($detalle['venta_detalle_precio_venta_producto'],MONEDA_DECIMALES,MONEDA_SEPARADOR_DECIMAL,MONEDA_SEPARADOR_MILLAR)),'L',0,'C');
-			$pdf->Cell(18,7,iconv("UTF-8", "ISO-8859-1",MONEDA_SIMBOLO.number_format($detalle['venta_detalle_total'],MONEDA_DECIMALES,MONEDA_SEPARADOR_DECIMAL,MONEDA_SEPARADOR_MILLAR)),'LR',0,'C');
+			$pdf->Cell(22,7,iconv("UTF-8", "ISO-8859-1",MONEDA_SIMBOLO.number_format($detalle['venta_detalle_precio_lista_producto'],MONEDA_DECIMALES,MONEDA_SEPARADOR_DECIMAL,MONEDA_SEPARADOR_MILLAR)),'L',0,'C');
+			$pdf->Cell(18,7,iconv("UTF-8", "ISO-8859-1",$detalle['venta_detalle_financiacion_producto']),'L',0,'C');
 			$pdf->Cell(22,7,iconv("UTF-8", "ISO-8859-1",MONEDA_SIMBOLO.number_format($detalle['venta_detalle_total'],MONEDA_DECIMALES,MONEDA_SEPARADOR_DECIMAL,MONEDA_SEPARADOR_MILLAR)),'LR',0,'C');
 			$pdf->Ln(5);
 		}
@@ -238,20 +238,18 @@
 		$pdf->SetTextColor(39,39,51);
 
 		/*----------  Seleccionando detalles de la venta  ----------*/
-		$pagos_cliente=$ins_venta->seleccionarDatos("Normal","venta WHERE venta_codigo='".$datos_venta['venta_codigo']."'","*",0);
+		$pagos_cliente=$ins_venta->seleccionarDatos("Normal","pago_venta WHERE venta_codigo='".$datos_venta['venta_codigo']."'","*",0);
 		$pagos_cliente=$pagos_cliente->fetchAll();
-		$total_de_todos_los_importes_del_cliente =0;
-		$pagos_total_del_cliente =0;
+		$total_de_todos_los_pagos_del_cliente =0;
 
 		foreach($pagos_cliente as $detalle){
 			$pdf->SetX(10); // Asegúrate de ajustar la posición X aquí también
-			$pdf->Cell(22,7,iconv("UTF-8", "ISO-8859-1",$ins_venta->limitarCadena($detalle['venta_fecha'],80,"...")),'L',0,'C');
-			$pdf->Cell(22,7,iconv("UTF-8", "ISO-8859-1",MONEDA_SIMBOLO.number_format($detalle['venta_importe'],MONEDA_DECIMALES,MONEDA_SEPARADOR_DECIMAL,MONEDA_SEPARADOR_MILLAR)),'LR',0,'C');
-			$pdf->Cell(30,7,iconv("UTF-8", "ISO-8859-1","Forma pago"),'L',0,'C');
-			$pdf->Cell(28,7,iconv("UTF-8", "ISO-8859-1","Observacion forma pago"),'L',0,'C');
+			$pdf->Cell(22,7,iconv("UTF-8", "ISO-8859-1",$ins_venta->limitarCadena(date("d/m/Y", strtotime($detalle['venta_pago_fecha'])),80,"...")),'L',0,'C');
+			$pdf->Cell(22,7,iconv("UTF-8", "ISO-8859-1",MONEDA_SIMBOLO.number_format($detalle['venta_pago_importe'],MONEDA_DECIMALES,MONEDA_SEPARADOR_DECIMAL,MONEDA_SEPARADOR_MILLAR)),'LR',0,'C');
+			$pdf->Cell(30,7,iconv("UTF-8", "ISO-8859-1",$detalle['venta_pago_forma']),'L',0,'C');
+			$pdf->Cell(28,7,iconv("UTF-8", "ISO-8859-1",$detalle['venta_pago_detalle']),'L',0,'C');
 			$pdf->Ln(7);
-			$total_de_todos_los_importes_del_cliente += $detalle['venta_importe'];
-			$pagos_total_del_cliente += $detalle['venta_importe'];
+			$total_de_todos_los_pagos_del_cliente += $detalle['venta_pago_importe'];
 		}
 
 		// RECTANGULO DETALLE DE OBSERVACIONES
@@ -274,9 +272,9 @@
 		$pdf->Text($pageWidth/2 +10, $yNewRect+155, "SUS PAGOS");
 		$pdf->Text($pageWidth/2 +10, $yNewRect+163, "SALDO");
 
-		$pdf->Text($pageWidth -30, $yNewRect+150, iconv("UTF-8", "ISO-8859-1",MONEDA_SIMBOLO.number_format($total_de_todos_los_importes_del_cliente,MONEDA_DECIMALES,MONEDA_SEPARADOR_DECIMAL,MONEDA_SEPARADOR_MILLAR)));
-		$pdf->Text($pageWidth -30, $yNewRect+155, iconv("UTF-8", "ISO-8859-1",MONEDA_SIMBOLO.number_format($pagos_total_del_cliente,MONEDA_DECIMALES,MONEDA_SEPARADOR_DECIMAL,MONEDA_SEPARADOR_MILLAR)));
-		$saldo = $total_de_todos_los_importes_del_cliente - $pagos_total_del_cliente;
+		$pdf->Text($pageWidth -30, $yNewRect+150, iconv("UTF-8", "ISO-8859-1",MONEDA_SIMBOLO.number_format($datos_venta['venta_importe'],MONEDA_DECIMALES,MONEDA_SEPARADOR_DECIMAL,MONEDA_SEPARADOR_MILLAR)));
+		$pdf->Text($pageWidth -30, $yNewRect+155, iconv("UTF-8", "ISO-8859-1",MONEDA_SIMBOLO.number_format($total_de_todos_los_pagos_del_cliente,MONEDA_DECIMALES,MONEDA_SEPARADOR_DECIMAL,MONEDA_SEPARADOR_MILLAR)));
+		$saldo = $datos_venta['venta_importe'] - $total_de_todos_los_pagos_del_cliente;
 		$pdf->Text($pageWidth -30, $yNewRect+163, iconv("UTF-8", "ISO-8859-1",MONEDA_SIMBOLO.number_format($saldo,MONEDA_DECIMALES,MONEDA_SEPARADOR_DECIMAL,MONEDA_SEPARADOR_MILLAR)));
 		$pdf->SetLineWidth(0.1);
 		$pdf->Line($pageWidth -100, 232, $pageWidth -10, 232);

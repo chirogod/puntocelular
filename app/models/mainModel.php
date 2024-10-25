@@ -107,7 +107,6 @@
 
 		/*---------- SELECCIONAR DATOS ESPECIFICOS ----------*/
         public function seleccionarDatosEspecificos($tabla,$campo,$condicion){
-			$tipo=$this->limpiarCadena($tipo);
 			$tabla=$this->limpiarCadena($tabla);
 			$campo=$this->limpiarCadena($campo);
 			$condicion=$this->limpiarCadena($condicion);
