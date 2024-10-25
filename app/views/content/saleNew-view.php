@@ -145,102 +145,92 @@
                 }
             ?>
             <div class="table-container">
-                <table class="table is-bordered is-striped is-narrow is-hoverable is-fullwidth">
-                    <thead>
-                        <tr>
-                            <th class="has-text-centered">Codigo</th>
-                            <th class="has-text-centered">Articulo</th>
-                            <th class="has-text-centered">Cant.</th>
-                            <th class="has-text-centered">P. Lista</th>
-                            <th class="has-text-centered">Financiacion</th>
-                            <th class="has-text-centered">Tipo financ</th>
-                            <th class="has-text-centered">Subtotal</th>
-                            <th class="has-text-centered">Remover</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        <?php
-                            if(isset($_SESSION['datos_producto_venta']) && count($_SESSION['datos_producto_venta'])>=1){
+    <table class="table is-bordered is-striped is-narrow is-hoverable is-fullwidth">
+        <thead>
+            <tr>
+                <th class="has-text-centered">Código</th>
+                <th class="has-text-centered">Artículo</th>
+                <th class="has-text-centered">Cant.</th>
+                <th class="has-text-centered">P. Lista</th>
+                <th class="has-text-centered">Financ.</th>
+                <th class="has-text-centered">Tipo Financ.</th>
+                <th class="has-text-centered">Subtotal</th>
+                <th class="has-text-centered">Acciones</th>
+            </tr>
+        </thead>
+        <tbody>
+            <?php
+                if(isset($_SESSION['datos_producto_venta']) && count($_SESSION['datos_producto_venta']) >= 1) {
+                    $_SESSION['venta_importe'] = 0;
 
-                                $_SESSION['venta_importe']=0;
-                                $cc=1;
-
-                                foreach($_SESSION['datos_producto_venta'] as $productos){
-                        ?>
-                        <tr class="has-text-centered" >
-                            <td><?php echo $productos['articulo_codigo']; ?></td>
-                            <td><?php echo $productos['venta_detalle_descripcion_producto']; ?></td>
-                            <td>
-                                <div class="control">
-                                    <input class="input sale_input-cant has-text-centered" value="<?php echo $productos['venta_detalle_cantidad_producto']; ?>" id="sale_input_<?php echo str_replace(" ", "_", $productos['articulo_codigo']); ?>" type="text" style="max-width: 80px;">
-                                </div>
-                            </td>
-                            <td><?php echo MONEDA_SIMBOLO.number_format($productos['venta_detalle_precio_lista_producto'],MONEDA_DECIMALES,MONEDA_SEPARADOR_DECIMAL,MONEDA_SEPARADOR_MILLAR)." ".MONEDA_NOMBRE; ?></td>
-                            <td>
-                                <form class="FormularioAjax" action="<?php echo APP_URL; ?>app/ajax/ventaAjax.php" method="POST" autocomplete="off">
-                                    <input type="hidden" name="articulo_codigo" value="<?php echo $productos['articulo_codigo']; ?>">
-                                    <input type="hidden" name="modulo_venta" value="financiar_producto">
-                                    <div class="">
-                                        <select class="input" name="financiacion" id="">
-                                            <option value="">Seleccionar opcion</option>
-                                            <option value="Efectivo">Efectivo</option>
-                                            <option value="3cuotas">3 cuotas</option>
-                                            <option value="6cuotas">6 cuotas</option>
-                                            <option value="9cuotas">9 cuotas</option>
-                                            <option value="12cuotas">12 cuotas</option>
-                                        </select>
-                                    </div>
-                                    
-                                    <button type="submit" class="button is-link is-light is-rounded">Financiar</button>
-                                </form>
-                            </td>
-                            <td>
-                            <?php $cod = $productos['articulo_codigo']; echo $_SESSION['financiacion'][$cod]['venta_detalle_financiacion_producto']; ?></td>
-                            
-                            </td>
-                            <td><?php echo MONEDA_SIMBOLO.number_format($productos['venta_detalle_total'],MONEDA_DECIMALES,MONEDA_SEPARADOR_DECIMAL,MONEDA_SEPARADOR_MILLAR)." ".MONEDA_NOMBRE; ?></td>
-                            <td>
-                                <form class="FormularioAjax" action="<?php echo APP_URL; ?>app/ajax/ventaAjax.php" method="POST" autocomplete="off">
-
-                                    <input type="hidden" name="articulo_codigo" value="<?php echo $productos['articulo_codigo']; ?>">
-                                    <input type="hidden" name="modulo_venta" value="remover_producto">
-
-                                    <button type="submit" class="button is-danger is-rounded is-small" title="Remover producto">
-                                        <i class="fas fa-trash-restore fa-fw"></i>
-                                    </button>
-                                </form>
-                            </td>
-                        </tr>
-                        <?php
-                                $cc++;
-                                $_SESSION['venta_importe']+=$productos['venta_detalle_total'];
-                            }
-                        ?>
-                        <tr class="has-text-centered" >
-                            <td colspan="4"></td>
-                            <td class="has-text-weight-bold">
-                                TOTAL
-                            </td>
-                            <td class="has-text-weight-bold">
-                                <?php echo MONEDA_SIMBOLO.number_format($_SESSION['venta_importe'],MONEDA_DECIMALES,MONEDA_SEPARADOR_DECIMAL,MONEDA_SEPARADOR_MILLAR)." ".MONEDA_NOMBRE; ?>
-                            </td>
-                            <td colspan="2"></td>
-                        </tr>
-                        <?php
-                            }else{
-                                    $_SESSION['venta_importe']=0;
-                        ?>
-                        <tr class="has-text-centered" >
-                            <td colspan="8">
-                                No hay productos agregados
-                            </td>
-                        </tr>
-                        <?php } ?>
-                    </tbody>
-                    
-                </table>
-
-            </div>
+                    foreach($_SESSION['datos_producto_venta'] as $productos) {
+                        $codigo = $productos['articulo_codigo'];
+                        $financiacion = isset($_SESSION['financiacion'][$codigo]) ? $_SESSION['financiacion'][$codigo]['venta_detalle_financiacion_producto'] : 'n/a';
+                        $subtotal = isset($_SESSION['financiacion'][$codigo]) ? $_SESSION['financiacion'][$codigo]['venta_detalle_total'] : $productos['venta_detalle_total'];
+                        $_SESSION['venta_importe'] += $subtotal;
+            ?>
+            <tr class="has-text-centered">
+                <td><?php echo $productos['articulo_codigo']; ?></td>
+                <td><?php echo $productos['venta_detalle_descripcion_producto']; ?></td>
+                <td>
+                    <div class="control">
+                        <input readonly class="input sale_input-cant has-text-centered" value="<?php echo $productos['venta_detalle_cantidad_producto']; ?>" id="sale_input_<?php echo str_replace(" ", "_", $productos['articulo_codigo']); ?>" type="text" style="max-width: 80px;">
+                    </div>
+                </td>
+                <td><?php echo MONEDA_SIMBOLO . number_format($productos['venta_detalle_precio_lista_producto'], MONEDA_DECIMALES, MONEDA_SEPARADOR_DECIMAL, MONEDA_SEPARADOR_MILLAR) . " " . MONEDA_NOMBRE; ?></td>
+                <td>
+                    <form class="FormularioAjax" action="<?php echo APP_URL; ?>app/ajax/ventaAjax.php" method="POST" autocomplete="off">
+                        <input type="hidden" name="articulo_codigo" value="<?php echo $productos['articulo_codigo']; ?>">
+                        <input type="hidden" name="modulo_venta" value="financiar_producto">
+                        <select name="financiacion" class="select" required>
+                            <option value="">Seleccionar opción</option>
+                            <option value="Efectivo">Efectivo</option>
+                            <option value="3cuotas">3 cuotas</option>
+                            <option value="6cuotas">6 cuotas</option>
+                            <option value="9cuotas">9 cuotas</option>
+                            <option value="12cuotas">12 cuotas</option>
+                        </select>
+                        <button type="submit" class="button is-link is-light is-rounded">Financiar</button>
+                    </form>
+                </td>
+                <td>
+                    <?php echo $financiacion; ?>
+                </td>
+                <td>
+                    <?php echo MONEDA_SIMBOLO . number_format($subtotal, MONEDA_DECIMALES, MONEDA_SEPARADOR_DECIMAL, MONEDA_SEPARADOR_MILLAR) . " " . MONEDA_NOMBRE; ?>
+                </td>
+                <td>
+                    <form class="FormularioAjax" action="<?php echo APP_URL; ?>app/ajax/ventaAjax.php" method="POST" autocomplete="off">
+                        <input type="hidden" name="articulo_codigo" value="<?php echo $productos['articulo_codigo']; ?>">
+                        <input type="hidden" name="modulo_venta" value="remover_producto">
+                        <button type="submit" class="button is-danger is-rounded is-small" title="Remover producto">
+                            <i class="fas fa-trash-restore fa-fw"></i>
+                        </button>
+                    </form>
+                </td>
+            </tr>
+            <?php
+                    }
+            ?>
+            <tr class="has-text-centered">
+                <td colspan="5"></td>
+                <td class="has-text-weight-bold">TOTAL</td>
+                <td class ="has-text-weight-bold">
+                    <?php echo MONEDA_SIMBOLO . number_format($_SESSION['venta_importe'], MONEDA_DECIMALES, MONEDA_SEPARADOR_DECIMAL, MONEDA_SEPARADOR_MILLAR) . " " . MONEDA_NOMBRE; ?>
+                </td>
+                <td colspan="2"></td>
+            </tr>
+            <?php
+                } else {
+                    $_SESSION['venta_importe'] = 0;
+            ?>
+            <tr class="has-text-centered">
+                <td colspan="8">No hay productos agregados</td>
+            </tr>
+            <?php } ?>
+        </tbody>
+    </table>
+</div>
         </div>
     </div>
 

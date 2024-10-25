@@ -42,7 +42,6 @@
 										<th class="has-text-centered">Codigo</th>
 										<th class="has-text-centered">Articulo</th>
 										<th class="has-text-centered">P. Lista</th>
-										<th class="has-text-centered">Financiacion</th>
 										<th class="has-text-centered">P. Efectivo</th>
 										<th class="has-text-centered">Agregar</th>
 									</tr>
@@ -55,8 +54,7 @@
 						<td class="has-text-centered">'.$rows['articulo_codigo'].'</td>
 						<td class="has-text-centered">'.$rows['articulo_descripcion'].'</td>
 						<td class="has-text-centered">'.$rows['articulo_precio_lista'].'</td>
-						<td class="has-text-centered">'.$rows['articulo_financiacion'].'</td>
-						<td class="has-text-centered">'.$rows['articulo_precio_efectivo'].'</td>
+						<td class="has-text-centered">'.(($rows['articulo_precio_lista'])-($rows['articulo_precio_lista'])*0.25).'</td>
 						<td class="has-text-centered">
 							<button type="button" class="button is-link is-rounded is-small" onclick="agregar_codigo(\''.$rows['articulo_codigo'].'\')"><i class="fas fa-plus-circle"></i></button>
 						</td>
@@ -157,7 +155,6 @@
                     "venta_detalle_precio_compra_producto"=>$campos['articulo_precio_compra'],
                     "venta_detalle_precio_lista_producto"=>$campos['articulo_precio_lista'],
 					"venta_detalle_precio_efectivo_producto"=>$campos['articulo_precio_efectivo'],
-					"venta_detalle_financiacion_producto"=>$campos['articulo_financiacion'],
                     "venta_detalle_cantidad_producto"=>1,
                     "venta_detalle_total"=>$detalle_total,
                     "venta_detalle_descripcion_producto"=>$campos['articulo_descripcion']
@@ -208,60 +205,60 @@
 			return json_encode($alerta);
         }
 
+		private function calcularOperadorFinanciacion($financiacion) {
+			switch ($financiacion) {
+				case "Efectivo":
+					return 1.05;
+				case "3cuotas":
+					return 1.4;
+				case "6cuotas":
+					return 1.4;
+				case "9cuotas":
+					return 1.5;
+				case "12cuotas":
+					return 1.6;
+				default:
+					return null;
+			}
+		}
+
 		public function financiarProducto(){
 			
             $codigo = $this->limpiarCadena($_POST['articulo_codigo']);
 			$financiacion = $this->limpiarCadena($_POST['financiacion']);
-            if($codigo==""){
-                $alerta=[
-					"tipo"=>"simple",
-					"titulo"=>"Ocurrió un error inesperado",
-					"texto"=>"Debes de introducir el código del producto",
-					"icono"=>"error"
-				];
-				return json_encode($alerta);
-		        exit();
-            }
 
-            /*== Comprobando producto en la DB ==*/
-            $check_articulo=$this->ejecutarConsulta("SELECT * FROM articulo WHERE articulo_codigo = '$codigo'");
-            if($check_articulo->rowCount()<=0){
-                $alerta=[
-					"tipo"=>"simple",
-					"titulo"=>"Ocurrió un error inesperado",
-					"texto"=>"No hemos encontrado el articulo con codigo: '$codigo'",
-					"icono"=>"error"
-				];
-				return json_encode($alerta);
-		        exit();
-            }else{
-                $campos=$check_articulo->fetch();
-            }
-
-            /*== Codigo de producto ==*/
-            $codigo = $campos['articulo_codigo'];
-
-			if(isset($_SESSION['datos_producto_venta']) && count($_SESSION['datos_producto_venta'])>=1){
-
-				$_SESSION['venta_importe']=0;
-				$cc=1;
-
-				foreach($_SESSION['datos_producto_venta'] as $productos){
-					$_SESSION['financiacion'][$codigo]=[
-						"id_articulo"=>$productos['id_articulo'],
-						"articulo_codigo"=>$productos['articulo_codigo'],
-						"articulo_stock"=>$productos['articulo_stock'],
-						"articulo_stock_old"=>$productos['articulo_stock_old'],
-						"venta_detalle_precio_compra_producto"=>$productos['venta_detalle_precio_compra_producto'],
-						"venta_detalle_precio_lista_producto"=>$productos['venta_detalle_precio_lista_producto'],
-						"venta_detalle_precio_efectivo_producto"=>$productos['venta_detalle_precio_efectivo_producto'],
-						"venta_detalle_financiacion_producto"=>$financiacion,
-						"venta_detalle_cantidad_producto"=>$productos['venta_detalle_cantidad_producto'],
-						"venta_detalle_total"=>$productos['venta_detalle_total'],
-						"venta_detalle_descripcion_producto"=>$productos['venta_detalle_descripcion_producto']
-					];
-				}
+			// Validar el código del producto
+			if($codigo == ""){
+				return $this->crearAlerta("Ocurrió un error inesperado", "Debes de introducir el código del producto", "error");
 			}
+
+			// Comprobar si el producto existe en la base de datos
+			$check_articulo = $this->ejecutarConsulta("SELECT * FROM articulo WHERE articulo_codigo = '$codigo'");
+			if($check_articulo->rowCount() <= 0){
+				return $this->crearAlerta("Ocurrió un error inesperado", "No hemos encontrado el articulo con codigo: '$codigo'", "error");
+			} else {
+				$campos = $check_articulo->fetch();
+			}
+
+			// Obtener el precio de financiamiento basado en la opción seleccionada
+			$operacion = $this->calcularOperadorFinanciacion($financiacion);
+			if ($operacion === null) {
+				return $this->crearAlerta("Ocurrió un error inesperado", "Forma de financiamiento no válida", "error");
+			}
+
+			// Asegúrate de que la sesión de productos de venta esté inicializada
+			if (!isset($_SESSION['financiacion'])) {
+				$_SESSION['financiacion'] = [];
+			}
+
+			// Almacena los detalles de financiamiento para el producto
+			$_SESSION['financiacion'][$codigo] = [
+				"id_articulo" => $campos['id_articulo'],
+				"articulo_codigo" => $campos['articulo_codigo'],
+				"venta_detalle_financiacion_producto" => $financiacion,
+				"venta_detalle_total" => ($_SESSION['datos_producto_venta'][$codigo]['venta_detalle_total'] * $operacion),
+				"venta_detalle_descripcion_producto" => $campos['articulo_descripcion']
+			];
             
             $alerta=[
 				"tipo"=>"redireccionar",
@@ -278,7 +275,7 @@
             $codigo=$this->limpiarCadena($_POST['articulo_codigo']);
 
             unset($_SESSION['datos_producto_venta'][$codigo]);
-
+			unset($_SESSION['financiacion'][$codigo]);
             if(empty($_SESSION['datos_producto_venta'][$codigo])){
 				$alerta=[
 					"tipo"=>"recargar",
