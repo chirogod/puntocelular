@@ -242,6 +242,8 @@
 							<th class="has-text-centered">Email</th>
 							<th class="has-text-centered">Telefono 1</th>
 							<th class="has-text-centered">Documento</th>
+							<th class="has-text-centered">Ventas</th>
+							<th class="has-text-centered">Ordenes</th>
 						</tr>
 					</thead>
 					<tbody>
@@ -259,6 +261,16 @@
 							<td>' . $rows['cliente_email'] . '</td>
 							<td>' . $rows['cliente_telefono_1'] . '</td>
 							<td>' . $rows['cliente_documento'] . '</td>
+							<td>
+			                    <a href="'.APP_URL.'salesClientDetail/'.$rows['id_cliente'].'/" class="button is-link is-rounded is-small" title="Ventas del cliente. '.$rows['id_cliente'].'" >
+			                    	<i class="fas fa-shopping-bag fa-fw"></i>
+			                    </a>
+			                </td>
+							<td>
+			                    <a href="'.APP_URL.'ordersClientDetail/'.$rows['id_cliente'].'/" class="button is-link is-rounded is-small" title="Ordenes del cliente. '.$rows['id_cliente'].'" >
+			                    	<i class="fas fa-shopping-bag fa-fw"></i>
+			                    </a>
+			                </td>
 						</tr>
 					';
 					$contador++;
@@ -301,6 +313,152 @@
 			return $tabla;
         }
 
+		/*----------  Controlador listar venta  ----------*/
+		public function listarVentasClienteControlador($pagina,$registros,$url,$busqueda, $cliente){
+
+			$pagina=$this->limpiarCadena($pagina);
+			$registros=$this->limpiarCadena($registros);
+
+			$url=$this->limpiarCadena($url);
+			$url=APP_URL.$url."/";
+
+			$busqueda=$this->limpiarCadena($busqueda);
+			$tabla="";
+
+			$pagina = (isset($pagina) && $pagina>0) ? (int) $pagina : 1;
+			$inicio = ($pagina>0) ? (($pagina * $registros)-$registros) : 0;
+
+			$campos_tablas = "venta.id_venta, venta.venta_codigo, venta.venta_fecha, venta.venta_hora, venta.venta_importe, venta.id_usuario, venta.id_cliente, venta.id_caja, usuario.id_usuario, usuario.usuario_nombre_completo, cliente.id_cliente, cliente.cliente_nombre_completo";
+
+			if(isset($busqueda) && $busqueda!=""){
+
+				$consulta_datos="SELECT $campos_tablas 
+								FROM venta 
+								INNER JOIN cliente ON venta.id_cliente=cliente.id_cliente 
+								INNER JOIN usuario ON venta.id_usuario=usuario.id_usuario 
+								INNER JOIN caja ON venta.id_caja=caja.id_caja 
+								WHERE 
+									venta.id_venta LIKE '%$busqueda%' 
+									OR venta.venta_codigo LIKE '%$busqueda%' 
+									OR cliente.cliente_nombre_completo LIKE '%$busqueda%' 
+									OR usuario.usuario_nombre_completo LIKE '%$busqueda%' 
+									OR caja.caja_nombre LIKE '%$busqueda%' 
+									AND venta.id_sucursal = '$_SESSION[id_sucursal]'
+									AND venta.id_cliente = '$cliente';
+								ORDER BY venta.id_venta DESC LIMIT $inicio,$registros";
+			
+				$consulta_total="SELECT COUNT(id_venta) 
+								FROM venta 
+								INNER JOIN cliente ON venta.id_cliente=cliente.id_cliente 
+								INNER JOIN usuario ON venta.id_usuario=usuario.id_usuario 
+								INNER JOIN caja ON venta.id_caja=caja.id_caja 
+								WHERE 
+									venta.id_venta LIKE '%$busqueda%' 
+									OR venta.venta_codigo LIKE '%$busqueda%' 
+									OR cliente.cliente_nombre_completo LIKE '%$busqueda%' 
+									OR usuario.usuario_nombre_completo LIKE '%$busqueda%' 
+									OR caja.caja_nombre LIKE '%$busqueda%'
+									AND venta.id_sucursal = '$_SESSION[id_sucursal]'
+									AND venta.id_cliente = '$cliente'";
+			
+			}else{
+			
+				$consulta_datos="SELECT $campos_tablas 
+								FROM venta 
+								INNER JOIN cliente ON venta.id_cliente=cliente.id_cliente 
+								INNER JOIN usuario ON venta.id_usuario=usuario.id_usuario 
+								INNER JOIN caja ON venta.id_caja=caja.id_caja 
+								WHERE venta.id_sucursal = '$_SESSION[id_sucursal]' AND venta.id_cliente = '$cliente';
+								ORDER BY venta.id_venta DESC LIMIT $inicio,$registros";
+			
+				$consulta_total="SELECT COUNT(id_venta) 
+								FROM venta 
+								INNER JOIN cliente ON venta.id_cliente=cliente.id_cliente 
+								INNER JOIN usuario ON venta.id_usuario=usuario.id_usuario 
+								INNER JOIN caja ON venta.id_caja=caja.id_caja
+								WHERE venta.id_sucursal = '$_SESSION[id_sucursal]' AND venta.id_cliente = '$cliente';";
+			}
+
+			$datos = $this->ejecutarConsulta($consulta_datos);
+			$datos = $datos->fetchAll();
+
+			$total = $this->ejecutarConsulta($consulta_total);
+			$total = (int) $total->fetchColumn();
+
+			$numeroPaginas =ceil($total/$registros);
+
+			$tabla.='
+		        <div class="table-container">
+		        <table class="table is-bordered is-striped is-narrow is-hoverable is-fullwidth">
+		            <thead>
+		                <tr>
+		                    <th class="has-text-centered">NRO.</th>
+		                    <th class="has-text-centered">Codigo</th>
+		                    <th class="has-text-centered">Fecha</th>
+		                    <th class="has-text-centered">Vendedor</th>
+		                    <th class="has-text-centered">Total</th>
+		                    <th class="has-text-centered">Detalle</th>
+		                </tr>
+		            </thead>
+		            <tbody>
+		    ';
+
+		    if($total>=1 && $pagina<=$numeroPaginas){
+				$contador=$inicio+1;
+				$pag_inicio=$inicio+1;
+				foreach($datos as $rows){
+					$tabla.='
+						<tr class="has-text-centered" >
+							<td>'.$rows['id_venta'].'</td>
+							<td>'.$rows['venta_codigo'].'</td>
+							<td>'.date("d-m-Y", strtotime($rows['venta_fecha'])).' '.$rows['venta_hora'].'</td>
+							<td>'.$rows['usuario_nombre_completo'].'</td>
+							<td>'.MONEDA_SIMBOLO.number_format($rows['venta_importe'],MONEDA_DECIMALES,MONEDA_SEPARADOR_DECIMAL,MONEDA_SEPARADOR_MILLAR).' '.MONEDA_NOMBRE.'</td>
+			                <td>
+
+			                    <a href="'.APP_URL.'saleDetail/'.$rows['venta_codigo'].'/" class="button is-link is-rounded is-small" title="Informacion de venta Nro. '.$rows['id_venta'].'" >
+			                    	<i class="fas fa-shopping-bag fa-fw"></i>
+			                    </a>
+
+			                </td>
+						</tr>
+					';
+					$contador++;
+				}
+				$pag_final=$contador-1;
+			}else{
+				if($total>=1){
+					$tabla.='
+						<tr class="has-text-centered" >
+			                <td colspan="7">
+			                    <a href="'.$url.'1/" class="button is-link is-rounded is-small mt-4 mb-4">
+			                        Haga clic acá para recargar el listado
+			                    </a>
+			                </td>
+			            </tr>
+					';
+				}else{
+					$tabla.='
+						<tr class="has-text-centered" >
+			                <td colspan="7">
+			                    No hay registros en el sistema
+			                </td>
+			            </tr>
+					';
+				}
+			}
+
+			$tabla.='</tbody></table></div>';
+
+			### Paginacion ###
+			if($total>0 && $pagina<=$numeroPaginas){
+				$tabla.='<p class="has-text-right">Mostrando ventas <strong>'.$pag_inicio.'</strong> al <strong>'.$pag_final.'</strong> de un <strong>total de '.$total.'</strong></p>';
+
+				$tabla.=$this->paginadorTablas($pagina,$numeroPaginas,$url,7);
+			}
+
+			return $tabla;
+		}
         
         public function actualizarClienteControlador(){
             $id_cliente = $this->limpiarCadena($_POST['id_cliente']);

@@ -624,7 +624,6 @@ class articuloController extends mainModel{
                         <th class="has-text-centered">Codigo</th>
                         <th class="has-text-centered">Stock</th>
                         <th class="has-text-centered">Precio lista</th>
-                        <th class="has-text-centered">Precio efectivo</th>
                         <th class="has-text-centered">Detalle</th>
                     </tr>
                 </thead>
@@ -642,7 +641,6 @@ class articuloController extends mainModel{
                         <td>'.$rows['articulo_codigo'].'</td>
                         <td>'.$rows['articulo_stock'].'</td>
                         <td>'.$rows['articulo_precio_lista'].'</td>
-                        <td>'.$rows['articulo_precio_efectivo'].'</td>
                         <td>
                             <a href="'.APP_URL.'artUpdate/'.$rows['id_articulo'].'/" class="button is-success is-rounded is-small">
                                 <i class="fas fa-search fa-fw"></i>
