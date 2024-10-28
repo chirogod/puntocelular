@@ -329,6 +329,7 @@
 			$orden_total_reparacion = $_POST['orden_total_reparacion'];
 			$orden_productos_total = 0;
 			$orden = $this->ejecutarConsulta("SELECT * FROM orden WHERE orden_codigo='$orden_codigo'");
+			$orden = $orden->fetch();
 			$orden_total = $orden_total_reparacion + $orden_productos_total;
 			
 			$datos =[
