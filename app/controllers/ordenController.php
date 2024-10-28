@@ -327,6 +327,9 @@
 			$orden_codigo = $_POST['orden_codigo'];
 			$orden_informe_tecnico = $_POST['orden_informe_tecnico'];
 			$orden_total_reparacion = $_POST['orden_total_reparacion'];
+			$orden_productos_total = 0;
+			$orden = $this->ejecutarConsulta("SELECT * FROM orden WHERE orden_codigo='$orden_codigo'");
+			$orden_total = $orden_total_reparacion + $orden_productos_total;
 			
 			$datos =[
 				[
@@ -336,8 +339,13 @@
 				],
 				[
 					"campo_nombre"=>"orden_total_reparacion",
-					"campo_marcador"=>":Total",
+					"campo_marcador"=>":TotalReparacion",
 					"campo_valor"=>$orden_total_reparacion
+				],
+				[
+					"campo_nombre"=>"orden_total",
+					"campo_marcador"=>":Total",
+					"campo_valor"=>$orden_total
 				],
 			];
 

@@ -398,6 +398,7 @@
 
 <!-- Modal registrar pago -->
 <div class="modal" id="modal-js-pay">
+    <div class="modal-background"></div>
     <div class="modal-card">
         <header class="modal-card-head">
             <p class="modal-card-title is-uppercase"><i class="fas fa-search"></i> &nbsp; Pagos de la orden: </p>
@@ -420,10 +421,13 @@
                 <div class="columns">
                     <div class="column">
                         <label for="" class="label">Forma de pago: </label>
-                        <select name="orden_pago_forma" id="" class="select">
-                            <option value="Efectivo">Efectivo</option>
-                            <option value="Transferencia">Transferencia</option>
-                        </select>
+                        <div class="select">
+                            <select name="orden_pago_forma" id="" class="select">
+                                <option value="Efectivo">Efectivo</option>
+                                <option value="Transferencia">Transferencia</option>
+                            </select>
+                        </div>
+                        
                     </div>
                     <div class="column">
                         <label for="" class="label">Importe: </label>
@@ -435,7 +439,7 @@
                     </div>
                 </div>
                 <div class="columns">
-                    <div class="column">Total de la orden: <?php echo MONEDA_SIMBOLO.number_format($datos['orden_importe'],MONEDA_DECIMALES,MONEDA_SEPARADOR_DECIMAL,MONEDA_SEPARADOR_MILLAR)." ".MONEDA_NOMBRE; ?> </div>
+                    <div class="column">Total de la orden: <?php echo MONEDA_SIMBOLO.number_format($datos['orden_total'],MONEDA_DECIMALES,MONEDA_SEPARADOR_DECIMAL,MONEDA_SEPARADOR_MILLAR)." ".MONEDA_NOMBRE; ?> </div>
                     <div class="column">
                         <?php
                         $suma_pagos = $insLogin->seleccionarDatos("Normal", "pago_orden WHERE orden_codigo = '".$datos['orden_codigo']."'","SUM(orden_pago_importe) as suma_pagos",0);
@@ -456,10 +460,10 @@
                                 $suma_pagos = $insLogin->seleccionarDatos("Normal", "pago_orden WHERE orden_codigo = '".$datos['orden_codigo']."'","SUM(orden_pago_importe) as suma_pagos",0);
                                 if($suma_pagos->rowCount() >= 1){
                                     $suma_pagos = $suma_pagos->fetch();
-                                    $saldo = $datos['orden_importe'] - $suma_pagos['suma_pagos'];
+                                    $saldo = $datos['orden_total'] - $suma_pagos['suma_pagos'];
                                     echo "Saldo: ".MONEDA_SIMBOLO.number_format($saldo,MONEDA_DECIMALES,MONEDA_SEPARADOR_DECIMAL,MONEDA_SEPARADOR_MILLAR)." ".MONEDA_NOMBRE;
                                 }else{
-                                    echo "Saldo: ".MONEDA_SIMBOLO.number_format($datos['orden_importe'],MONEDA_DECIMALES,MONEDA_SEPARADOR_DECIMAL,MONEDA_SEPARADOR_MILLAR)." ".MONEDA_NOMBRE;
+                                    echo "Saldo: ".MONEDA_SIMBOLO.number_format($datos['orden_total'],MONEDA_DECIMALES,MONEDA_SEPARADOR_DECIMAL,MONEDA_SEPARADOR_MILLAR)." ".MONEDA_NOMBRE;
                                 }
                             ?>
                         </div>

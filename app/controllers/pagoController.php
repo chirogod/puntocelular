@@ -203,7 +203,7 @@
             $check_orden = $this->ejecutarConsulta("SELECT * FROM orden WHERE orden_codigo ='$orden_codigo'");
             $datos_orden = $check_orden->fetch();
 
-            $orden_importe = $datos_orden['orden_importe'];
+            $orden_importe = $datos_orden['orden_total'];
 
             $orden_saldo = $orden_importe - $orden_pago_importe;
 
@@ -262,10 +262,8 @@
             $registrar_pago = $this->guardarDatos("pago_orden", $datos_pago);
             if ($registrar_pago->rowCount()==1) {
                 $alerta=[
-                    "tipo"=>"limpiar",
-                    "titulo"=>"Articulo registrado con exito",
-                    "texto"=>"El pago se registro con exito",
-                    "icono"=>"success"
+                    "tipo"=>"redireccionar",
+                    "url"=>APP_URL."ordenDetail/$orden_codigo/"
                 ];
             }else{
                 $alerta=[
