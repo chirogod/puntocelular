@@ -22,6 +22,10 @@
 	?>
 
 	<h2 class="title has-text-centered">INFORMACION ORDEN  <?php echo $datos['orden_codigo'] ; ?></h2>
+    <button type="button" class="button is-link is-light" onclick="print_orden('<?php echo APP_URL."app/pdf/comprobanteOrden.php?code=".$datos['orden_codigo']; ?>')" >
+        <i class="fas fa-file-invoice-dollar fa-2x"></i> &nbsp;
+        Comprobante de orden
+    </button>
     <br>
 
     <div class="box has-text-centered">
@@ -731,3 +735,7 @@
     }
 
 </script>
+
+<?php
+    include "./app/views/includes/print_invoice_script.php";
+?>
