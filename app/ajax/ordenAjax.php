@@ -74,7 +74,7 @@
 		}
 		/*--------- financiar precio de producto ---------*/
 		if($_POST['modulo_orden']=="financiar_producto"){
-			echo $insVenta->financiarProducto();
+			echo $insOrden->financiarProducto();
 		}
 	}else{
 		session_destroy();

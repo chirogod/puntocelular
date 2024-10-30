@@ -185,11 +185,20 @@
         $pdf->Cell(40,7,'Saldo',0,0,'C');
         $pdf->Cell(40,7,'Firma cliente',0,0,'C');
         $pdf->Ln();
-
-        $pdf->SetFont('Arial','',10);
-        $pdf->Cell(40,7,'------',1,0,'C');
-        $pdf->Cell(40,7,'------',1,0,'C');
-        $pdf->Cell(40,7,'------',1,0,'C');
+		$pdf->SetFont('Arial','',10);
+		$detalle_pagos = $ins_orden->seleccionarDatos("Normal","pago_orden WHERE orden_codigo='".$datos_orden['orden_codigo']."'","*",0);
+        // Verifica si se encontraron resultados
+		if ($detalle_pagos->rowCount() > 0) {
+			// Si hay resultados, obtenemos el primer registro
+			$detalle_pagos = $detalle_pagos->fetch();
+			$importe_pago = $detalle_pagos['orden_pago_importe'];
+		} else {
+			// Si no hay resultados, asignamos 0
+			$importe_pago = 0;
+		}
+		$pdf->Cell(40,7,$datos_orden['orden_total'],1,0,'C');
+        $pdf->Cell(40,7,$importe_pago,1,0,'C');
+        $pdf->Cell(40,7,$datos_orden['orden_total'] - $importe_pago,1,0,'C');
         $pdf->Cell(60,7,'',1,1,'C');
 		
 

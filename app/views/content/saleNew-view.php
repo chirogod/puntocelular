@@ -182,14 +182,16 @@
                                 <form class="FormularioAjax" action="<?php echo APP_URL; ?>app/ajax/ventaAjax.php" method="POST" autocomplete="off">
                                     <input type="hidden" name="articulo_codigo" value="<?php echo $productos['articulo_codigo']; ?>">
                                     <input type="hidden" name="modulo_venta" value="financiar_producto">
-                                    <select name="financiacion" class="select" required>
-                                        <option value="">Seleccionar opción</option>
-                                        <option value="Efectivo">Efectivo</option>
-                                        <option value="3cuotas">3 cuotas</option>
-                                        <option value="6cuotas">6 cuotas</option>
-                                        <option value="9cuotas">9 cuotas</option>
-                                        <option value="12cuotas">12 cuotas</option>
-                                    </select>
+                                    <div class="select">
+                                        <select name="financiacion" class="select" required>
+                                            <option value="">Seleccionar opción</option>
+                                            <option value="Efectivo" <?php echo (isset($_SESSION['financiacion'][$codigo]) && $_SESSION['financiacion'][$codigo]['orden_detalle_financiacion_producto'] == 'Efectivo') ? 'selected' : ''; ?>>Efectivo</option>
+                                            <option value="3cuotas" <?php echo (isset($_SESSION['financiacion'][$codigo]) && $_SESSION['financiacion'][$codigo]['orden_detalle_financiacion_producto'] == '3cuotas') ? 'selected' : ''; ?>>3 cuotas</option>
+                                            <option value="6cuotas" <?php echo (isset($_SESSION['financiacion'][$codigo]) && $_SESSION['financiacion'][$codigo]['orden_detalle_financiacion_producto'] == '6cuotas') ? 'selected' : ''; ?>>6 cuotas</option>
+                                            <option value="9cuotas" <?php echo (isset($_SESSION['financiacion'][$codigo]) && $_SESSION['financiacion'][$codigo]['orden_detalle_financiacion_producto'] == '9cuotas') ? 'selected' : ''; ?>>9 cuotas</option>
+                                            <option value="12cuotas" <?php echo (isset($_SESSION['financiacion'][$codigo]) && $_SESSION['financiacion'][$codigo]['orden_detalle_financiacion_producto'] == '12cuotas') ? 'selected' : ''; ?>>12 cuotas</option>
+                                        </select>
+                                    </div>
                                     <button type="submit" class="button is-link is-light is-rounded">Financiar</button>
                                 </form>
                             </td>

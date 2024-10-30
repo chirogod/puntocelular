@@ -145,9 +145,30 @@
 			
 			//agregar equipo
 			$id_marca = $_POST['id_marca'];
+			if($id_marca == ""){
+				$alerta=[
+					"tipo"=>"simple",
+					"titulo"=>"Ocurrió un error inesperado",
+					"texto"=>"Debe indicar la marca del equipo!",
+					"icono"=>"error"
+				];
+				return json_encode($alerta);
+		        exit();
+			}
 			$id_modelo = $_POST['id_modelo'];
+			if($id_modelo == ""){
+				$alerta=[
+					"tipo"=>"simple",
+					"titulo"=>"Ocurrió un error inesperado",
+					"texto"=>"Debe indicar el modelo del equipo!",
+					"icono"=>"error"
+				];
+				return json_encode($alerta);
+		        exit();
+			}
 			$orden_serie_equipo = $_POST['orden_serie_equipo'];
 			$orden_equipo_ingresa_encendido = $_POST['orden_equipo_ingresa_encendido'];
+
 			$orden_equipo_detalles_fisicos = $_POST['orden_equipo_detalles_fisicos'];
 			$orden_equipo_contrasena = $_POST['orden_equipo_contrasena'];
 			$orden_falla = $_POST['orden_falla'];
@@ -155,9 +176,39 @@
 			//detalles
 			$orden_accesorios = $_POST['orden_accesorios'];
 			$orden_telefonista = $_POST['orden_telefonista'];
+			if($orden_telefonista == ""){
+				$alerta=[
+					"tipo"=>"simple",
+					"titulo"=>"Ocurrió un error inesperado",
+					"texto"=>"Debe indicar el telefonista!",
+					"icono"=>"error"
+				];
+				return json_encode($alerta);
+		        exit();
+			}
 			$orden_estado = "Pendiente";
 			$orden_tipo = $_POST['orden_tipo'];
+			if($orden_tipo == ""){
+				$alerta=[
+					"tipo"=>"simple",
+					"titulo"=>"Ocurrió un error inesperado",
+					"texto"=>"Debe indicar el tipo de orden!",
+					"icono"=>"error"
+				];
+				return json_encode($alerta);
+		        exit();
+			}
 			$id_tecnico = $_POST['id_tecnico'];
+			if($id_tecnico == ""){
+				$alerta=[
+					"tipo"=>"simple",
+					"titulo"=>"Ocurrió un error inesperado",
+					"texto"=>"Debe indicar el tecnico a quien se le asigna!",
+					"icono"=>"error"
+				];
+				return json_encode($alerta);
+		        exit();
+			}
 			$orden_importe_lista = $_POST['orden_importe_lista'];
 			$orden_importe_efectivo = $_POST['orden_importe_efectivo'];
 
@@ -324,10 +375,9 @@
 			$orden_codigo = $_POST['orden_codigo'];
 			$orden_informe_tecnico = $_POST['orden_informe_tecnico'];
 			$orden_total_reparacion = $_POST['orden_total_reparacion'];
-			$orden_productos_total = 0;
 			$orden = $this->ejecutarConsulta("SELECT * FROM orden WHERE orden_codigo='$orden_codigo'");
 			$orden = $orden->fetch();
-			$orden_total = $orden_total_reparacion + $orden_productos_total;
+			$orden_total = $_POST['orden_total'];;
 			
 			$datos =[
 				[
@@ -530,7 +580,7 @@
 							  orden.orden_codigo, 
 							  orden.orden_fecha, 
 							  orden.orden_hora, 
-							  orden.orden_importe_lista, 
+							  orden.orden_total, 
 							  orden.id_usuario, 
 							  orden.id_cliente, 
 							  orden.orden_tipo, 
@@ -606,7 +656,6 @@
 					<table class="table is-bordered is-striped is-narrow is-hoverable is-fullwidth">
 						<thead>
 							<tr>
-								<th class="has-text-centered">NRO.</th>
 								<th class="has-text-centered">Código</th>
 								<th class="has-text-centered">Fecha</th>
 								<th class="has-text-centered">Cliente</th>
@@ -624,12 +673,11 @@
 				foreach ($datos as $rows) {
 					$tabla .= '
 						<tr class="has-text-centered">
-							<td>' . $rows['id_orden'] . '</td>
 							<td>' . $rows['orden_codigo'] . '</td>
 							<td>' . date("d-m-Y", strtotime($rows['orden_fecha'])) . ' ' . $rows['orden_hora'] . '</td>
 							<td>' . $rows['cliente_nombre_completo'] . '</td>
 							<td>' . $rows['orden_telefonista'] . '</td>
-							<td>' . MONEDA_SIMBOLO . number_format($rows['orden_importe_lista'], MONEDA_DECIMALES, MONEDA_SEPARADOR_DECIMAL, MONEDA_SEPARADOR_MILLAR) . ' ' . MONEDA_NOMBRE . '</td>
+							<td>' . MONEDA_SIMBOLO . number_format($rows['orden_total'], MONEDA_DECIMALES, MONEDA_SEPARADOR_DECIMAL, MONEDA_SEPARADOR_MILLAR) . ' ' . MONEDA_NOMBRE . '</td>
 							<td>
 								<a href="' . APP_URL . 'ordenDetail/' . $rows['orden_codigo'] . '/" class="button is-link is-rounded is-small" title="Información de orden Nro. ' . $rows['id_orden'] . '">
 									<i class="fas fa-shopping-bag fa-fw"></i>
@@ -750,7 +798,7 @@
 
         /*---------- Controlador agregar producto a orden ----------*/
         public function agregarProductoCarritoControlador(){
-
+			$orden = $this->limpiarCadena($_POST['orden_codigo']);
             /*== Recuperando codigo del producto ==*/
             $codigo = $this->limpiarCadena($_POST['articulo_codigo']);
 
@@ -860,10 +908,10 @@
 
                 }
 
-            $alerta=[
-				"tipo"=>"redireccionar",
-				"url"=>APP_URL."ordenDetail/"
-			];
+				$alerta=[
+					"tipo"=>"redireccionar",
+					"url"=>APP_URL."ordenDetail/$orden"
+				];
 
 			return json_encode($alerta);
         }
@@ -916,7 +964,7 @@
 			
             $codigo = $this->limpiarCadena($_POST['articulo_codigo']);
 			$financiacion = $this->limpiarCadena($_POST['financiacion']);
-
+			$orden = $this->limpiarCadena($_POST['orden_codigo']);
 			// Validar el código del producto
 			if($codigo == ""){
 				$alerta=[
@@ -967,7 +1015,7 @@
             
             $alerta=[
 				"tipo"=>"redireccionar",
-				"url"=>APP_URL."saleNew/"
+				"url"=>APP_URL."ordenDetail/$orden"
 			];
 
 			return json_encode($alerta);
@@ -976,7 +1024,24 @@
 		/*---------- Controlador registrar produtcos a la orden ----------*/
         public function registrarProductosOrdenControlador(){
 
-            $caja=$_SESSION['caja'];
+            $caja = $_SESSION['caja'];
+			$orden = $_SESSION['orden'];
+			/*== Comprobando orden en la DB ==*/
+            $check_orden=$this->ejecutarConsulta("SELECT * FROM orden WHERE orden_codigo='$orden' ");
+			if($check_orden->rowCount()<=0){
+				$alerta=[
+					"tipo"=>"simple",
+					"titulo"=>"Ocurrió un error inesperado",
+					"texto"=>"La orden no existe o no está registrada en el sistema",
+					"icono"=>"error"
+				];
+				return json_encode($alerta);
+		        exit();
+            }else{
+                $datos_orden=$check_orden->fetch();
+            }
+			$codigo_orden =  $datos_orden['orden_codigo'];
+			$orden_total_old =  $datos_orden['orden_total'];
 
             if($_SESSION['orden_importe']<=0 || (!isset($_SESSION['datos_producto_orden']) && count($_SESSION['datos_producto_orden'])<=0)){
 				$alerta=[
@@ -999,32 +1064,6 @@
 		        exit();
             }
 
-            if(!isset($_SESSION['datos_cliente_orden'])){
-				$alerta=[
-					"tipo"=>"simple",
-					"titulo"=>"Ocurrió un error inesperado",
-					"texto"=>"No ha seleccionado ningún cliente para realizar esta orden",
-					"icono"=>"error"
-				];
-				return json_encode($alerta);
-		        exit();
-            }
-
-
-            /*== Comprobando cliente en la DB ==*/
-			$check_cliente=$this->ejecutarConsulta("SELECT id_cliente FROM cliente WHERE id_cliente='".$_SESSION['datos_cliente_orden']['id_cliente']."'");
-			if($check_cliente->rowCount()<=0){
-				$alerta=[
-					"tipo"=>"simple",
-					"titulo"=>"Ocurrió un error inesperado",
-					"texto"=>"No hemos encontrado el cliente registrado en el sistema",
-					"icono"=>"error"
-				];
-				return json_encode($alerta);
-		        exit();
-            }
-
-
             /*== Comprobando caja en la DB ==*/
             $check_caja=$this->ejecutarConsulta("SELECT * FROM caja WHERE id_caja='$caja' ");
 			if($check_caja->rowCount()<=0){
@@ -1043,9 +1082,6 @@
             /*== Formateando variables ==*/
             $orden_importe=number_format($_SESSION['orden_importe'],MONEDA_DECIMALES,'.','');
 
-            $orden_fecha=date("Y-m-d");
-            $orden_hora=date("h:i a");
-
             $orden_importe_final=$orden_importe;
             $orden_importe_final=number_format($orden_importe_final,MONEDA_DECIMALES,'.','');
 
@@ -1057,7 +1093,7 @@
 
             $total_caja=$datos_caja['caja_monto']+$movimiento_cantidad;
             $total_caja=number_format($total_caja,MONEDA_DECIMALES,'.','');
-
+			$orden_total = $orden_total_old + $movimiento_cantidad;
 			
 
 
@@ -1133,10 +1169,6 @@
 		        exit();
             }
 
-            /*== generando codigo de venta ==*/
-            $correlativo=$this->ejecutarConsulta("SELECT id_orden FROM orden");
-			$correlativo=($correlativo->rowCount())+1;
-            $codigo_orden=$this->generarCodigoAleatorio(10,$correlativo);
 
 			/*== Agregando detalles de la venta ==*/
             $errores_orden_detalle=0;
@@ -1260,23 +1292,38 @@
 				return json_encode($alerta);
 		        exit();
             }
+
+			$act_orden_total=[
+				[
+					"campo_nombre"=>"orden_total",
+					"campo_marcador"=>":Total",
+					"campo_valor"=>$orden_total
+				]
+			];
+
+			$condicion=[
+				"condicion_campo"=>"orden_codigo",
+				"condicion_marcador"=>":Codigo",
+				"condicion_valor"=>$codigo_orden
+			];
+
+			$this->actualizarDatos("orden",$act_orden_total,$condicion);
 			
             /*== Vaciando variables de sesion ==*/
             unset($_SESSION['orden_total']);
             unset($_SESSION['datos_cliente_orden']);
             unset($_SESSION['datos_producto_orden']);
 
-            $_SESSION['venta_codigo_factura']=$codigo_orden;
-
             $alerta=[
 				"tipo"=>"recargar",
-				"titulo"=>"¡Venta registrada!",
-				"texto"=>"La venta se registró con éxito en el sistema",
+				"titulo"=>"¡Productos registrados!",
+				"texto"=>"Productos agregados correctamente a la orden",
 				"icono"=>"success"
 			];
 			return json_encode($alerta);
 	        exit();
         }
+
 	}
 
 ?>
