@@ -155,8 +155,8 @@
 
             if(!$this->actualizarDatos("caja",$datos_caja_up,$condicion_caja)){
 
-                $this->eliminarRegistro("venta_detalle","venta_codigo",$codigo_venta);
-                $this->eliminarRegistro("venta","venta_codigo",$codigo_venta);
+                $this->eliminarRegistro("venta_detalle","venta_codigo",$venta_codigo);
+                $this->eliminarRegistro("venta","venta_codigo",$venta_codigo);
 
                 foreach($_SESSION['datos_producto_venta'] as $producto){
 

@@ -138,8 +138,6 @@
         /*---------- Controlador registrar orden ----------*/
 		public function registrarOrdenControlador(){
 
-			//datos
-			$orden_codigo;
 			$id_cliente = $_SESSION['datos_cliente_orden']['id_cliente'];
 			$orden_fecha = date("Y-m-d");
 			$orden_hora = date("h:i a");
@@ -319,7 +317,6 @@
 
 		/*---------- Controlador actualizar orden -------- */
 		public function actualizarOrdenControlador(){
-
 		}
 
 		/*---------- Controlador registrar informe tecnico orden -------- */
@@ -675,6 +672,611 @@
 		
 			return $tabla;
 		}		
+
+		/*---------- Controlador buscar codigo de producto ----------*/
+		public function buscarCodigoVentaControlador(){
+
+			/*== Recuperando codigo de busqueda ==*/
+			$articulo=$this->limpiarCadena($_POST['buscar_codigo']);
+
+			/*== Comprobando que no este vacio el campo ==*/
+			if($articulo==""){
+				return '
+				<article class="message is-warning mt-4 mb-4">
+					<div class="message-header">
+						<p>¡Ocurrio un error inesperado!</p>
+					</div>
+					<div class="message-body has-text-centered">
+						<i class="fas fa-exclamation-triangle fa-2x"></i><br>
+						Debes de introducir el Nombre, Marca o Modelo del articulo
+					</div>
+				</article>';
+				exit();
+			}
+
+			/*== Seleccionando productos en la DB ==*/
+			$datos_articulos=$this->ejecutarConsulta("SELECT * FROM articulo WHERE (articulo_descripcion LIKE '%$articulo%' OR articulo_marca LIKE '%$articulo%' OR articulo_modelo LIKE '%$articulo%') ORDER BY articulo_descripcion ASC");
+
+			if($datos_articulos->rowCount()>=1){
+
+				$datos_articulos = $datos_articulos->fetchAll();
+
+				$tabla='<div class="table-container mb-6"><table class="table is-striped is-narrow is-hoverable is-fullwidth"><tbody>';
+				$tabla.='
+							<div class="table-container">
+							<table class="table is-bordered is-striped is-narrow is-hoverable is-fullwidth">
+								<thead>
+									<tr>
+										<th class="has-text-centered">Codigo</th>
+										<th class="has-text-centered">Articulo</th>
+										<th class="has-text-centered">P. Lista</th>
+										<th class="has-text-centered">P. Efectivo</th>
+										<th class="has-text-centered">Agregar</th>
+									</tr>
+								</thead>
+								<tbody>
+						';
+				foreach($datos_articulos as $rows){
+					$tabla.='
+					<tr class="has-text-left">
+						<td class="has-text-centered">'.$rows['articulo_codigo'].'</td>
+						<td class="has-text-centered">'.$rows['articulo_descripcion'].'</td>
+						<td class="has-text-centered">'.$rows['articulo_precio_lista'].'</td>
+						<td class="has-text-centered">'.(($rows['articulo_precio_lista'])-($rows['articulo_precio_lista'])*0.25).'</td>
+						<td class="has-text-centered">
+							<button type="button" class="button is-link is-rounded is-small" onclick="agregar_codigo(\''.$rows['articulo_codigo'].'\')"><i class="fas fa-plus-circle"></i></button>
+						</td>
+					</tr>
+					';
+				}
+
+				$tabla.='</tbody></table></div>';
+				return $tabla;
+			}else{
+				return '<article class="message is-warning mt-4 mb-4">
+					<div class="message-header">
+						<p>¡Ocurrio un error inesperado!</p>
+					</div>
+					<div class="message-body has-text-centered">
+						<i class="fas fa-exclamation-triangle fa-2x"></i><br>
+						No hemos encontrado ningún articulo en el sistema que coincida con <strong>“'.$articulo.'”
+					</div>
+				</article>';
+
+				exit();
+			}
+		}
+
+
+        /*---------- Controlador agregar producto a orden ----------*/
+        public function agregarProductoCarritoControlador(){
+
+            /*== Recuperando codigo del producto ==*/
+            $codigo = $this->limpiarCadena($_POST['articulo_codigo']);
+
+            if($codigo==""){
+                $alerta=[
+					"tipo"=>"simple",
+					"titulo"=>"Ocurrió un error inesperado",
+					"texto"=>"Debes de introducir el código del producto",
+					"icono"=>"error"
+				];
+				return json_encode($alerta);
+		        exit();
+            }
+
+            /*== Verificando integridad de los datos ==*/
+            if($this->verificarDatos("[a-zA-Z0-9- ]{1,70}",$codigo)){
+                $alerta=[
+					"tipo"=>"simple",
+					"titulo"=>"Ocurrió un error inesperado",
+					"texto"=>"El código no coincide con el formato solicitado",
+					"icono"=>"error"
+				];
+				return json_encode($alerta);
+		        exit();
+            }
+
+            /*== Comprobando producto en la DB ==*/
+            $check_articulo=$this->ejecutarConsulta("SELECT * FROM articulo WHERE articulo_codigo = '$codigo'");
+            if($check_articulo->rowCount()<=0){
+                $alerta=[
+					"tipo"=>"simple",
+					"titulo"=>"Ocurrió un error inesperado",
+					"texto"=>"No hemos encontrado el articulo con codigo: '$codigo'",
+					"icono"=>"error"
+				];
+				return json_encode($alerta);
+		        exit();
+            }else{
+                $campos=$check_articulo->fetch();
+            }
+
+            /*== Codigo de producto ==*/
+            $codigo=$campos['articulo_codigo'];
+
+            if(empty($_SESSION['datos_producto_orden'][$codigo])){
+
+                $detalle_cantidad=1;
+
+                $stock_total=$campos['articulo_stock']-$detalle_cantidad;
+
+                if($stock_total<=0){
+                    $alerta=[
+						"tipo"=>"simple",
+						"titulo"=>"Ocurrió un error inesperado",
+						"texto"=>"Lo sentimos, no hay existencias disponibles del producto seleccionado",
+						"icono"=>"error"
+					];
+					return json_encode($alerta);
+			        exit();
+                }
+
+                $detalle_total=$detalle_cantidad*$campos['articulo_precio_lista'];
+                $detalle_total=number_format($detalle_total,MONEDA_DECIMALES,'.','');
+
+                $_SESSION['datos_producto_orden'][$codigo]=[
+                    "id_articulo"=>$campos['id_articulo'],
+					"articulo_codigo"=>$campos['articulo_codigo'],
+					"articulo_stock"=>$stock_total,
+					"articulo_stock_old"=>$campos['articulo_stock'],
+                    "orden_detalle_precio_compra_producto"=>$campos['articulo_precio_compra'],
+                    "orden_detalle_precio_lista_producto"=>$campos['articulo_precio_lista'],
+                    "orden_detalle_cantidad_producto"=>1,
+                    "orden_detalle_total"=>$detalle_total,
+                    "orden_detalle_descripcion_producto"=>$campos['articulo_descripcion']
+                ];
+
+            }else{
+                $detalle_cantidad=($_SESSION['datos_producto_orden'][$codigo]['orden_detalle_cantidad_producto'])+1;
+
+                $stock_total=$campos['articulo_stock']-$detalle_cantidad;
+
+                if($stock_total<0){
+                    $alerta=[
+						"tipo"=>"simple",
+						"titulo"=>"Ocurrió un error inesperado",
+						"texto"=>"Lo sentimos, no hay existencias disponibles del producto seleccionado",
+						"icono"=>"error"
+					];
+					return json_encode($alerta);
+			        exit();
+                }
+
+                $detalle_total=$detalle_cantidad*$campos['articulo_precio_lista'];
+                $detalle_total=number_format($detalle_total,MONEDA_DECIMALES,'.','');
+
+                $_SESSION['datos_producto_orden'][$codigo]=[
+                    "id_articulo"=>$campos['id_articulo'],
+					"articulo_codigo"=>$campos['articulo_codigo'],
+					"articulo_stock"=>$stock_total,
+					"articulo_stock_total_old"=>$campos['articulo_stock'],
+                    "orden_detalle_precio_compra_producto"=>$campos['articulo_precio_compra'],
+                    "orden_detalle_precio_lista_producto"=>$campos['articulo_precio_lista'],
+                    "orden_detalle_cantidad_producto"=>$detalle_cantidad,
+                    "orden_detalle_total"=>$detalle_total,
+                    "orden_detalle_descripcion_producto"=>$campos['articulo_descripcion']
+                ];
+
+                }
+
+            $alerta=[
+				"tipo"=>"redireccionar",
+				"url"=>APP_URL."ordenDetail/"
+			];
+
+			return json_encode($alerta);
+        }
+
+		/*---------- Controlador remover producto de venta ----------*/
+        public function removerProductoCarritoControlador(){
+
+            /*== Recuperando codigo del producto ==*/
+            $codigo=$this->limpiarCadena($_POST['articulo_codigo']);
+
+            unset($_SESSION['datos_producto_orden'][$codigo]);
+			unset($_SESSION['financiacion'][$codigo]);
+            if(empty($_SESSION['datos_producto_orden'][$codigo])){
+				$alerta=[
+					"tipo"=>"recargar",
+					"titulo"=>"¡Articulo removido!",
+					"texto"=>"El articulo se ha removido de la orden",
+					"icono"=>"success"
+				];
+				
+			}else{
+				$alerta=[
+					"tipo"=>"simple",
+					"titulo"=>"Ocurrió un error inesperado",
+					"texto"=>"No hemos podido remover el articulo, por favor intente nuevamente",
+					"icono"=>"error"
+				];
+            }
+            return json_encode($alerta);
+        }
+
+		private function calcularOperadorFinanciacion($financiacion) {
+			switch ($financiacion) {
+				case "Efectivo":
+					return 1.05;
+				case "3cuotas":
+					return 1.4;
+				case "6cuotas":
+					return 1.4;
+				case "9cuotas":
+					return 1.5;
+				case "12cuotas":
+					return 1.6;
+				default:
+					return null;
+			}
+		}
+
+		public function financiarProducto(){
+			
+            $codigo = $this->limpiarCadena($_POST['articulo_codigo']);
+			$financiacion = $this->limpiarCadena($_POST['financiacion']);
+
+			// Validar el código del producto
+			if($codigo == ""){
+				$alerta=[
+					"tipo"=>"recargar",
+					"titulo"=>"¡Ocurrio un error inesperado!",
+					"texto"=>"No se introdujo el codigo del producto",
+					"icono"=>"success"
+				];
+			}
+
+			// Comprobar si el producto existe en la base de datos
+			$check_articulo = $this->ejecutarConsulta("SELECT * FROM articulo WHERE articulo_codigo = '$codigo'");
+			if($check_articulo->rowCount() <= 0){
+				$alerta=[
+					"tipo"=>"recargar",
+					"titulo"=>"¡Ocurrio un error inesperado!",
+					"texto"=>"No se encontro el articulo de codigo '$codigo'",
+					"icono"=>"success"
+				];
+			} else {
+				$campos = $check_articulo->fetch();
+			}
+
+			// Obtener el precio de financiamiento basado en la opción seleccionada
+			$operacion = $this->calcularOperadorFinanciacion($financiacion);
+			if ($operacion === null) {
+				$alerta=[
+					"tipo"=>"recargar",
+					"titulo"=>"¡Ocurrio un error inesperado!",
+					"texto"=>"Forma de financiamiento no valida",
+					"icono"=>"success"
+				];
+			}
+
+			// Asegúrate de que la sesión de productos de venta esté inicializada
+			if (!isset($_SESSION['financiacion'])) {
+				$_SESSION['financiacion'] = [];
+			}
+
+			// Almacena los detalles de financiamiento para el producto
+			$_SESSION['financiacion'][$codigo] = [
+				"id_articulo" => $campos['id_articulo'],
+				"articulo_codigo" => $campos['articulo_codigo'],
+				"orden_detalle_financiacion_producto" => $financiacion,
+				"orden_detalle_total" => ($_SESSION['datos_producto_orden'][$codigo]['orden_detalle_total'] * $operacion),
+				"orden_detalle_descripcion_producto" => $campos['articulo_descripcion']
+			];
+            
+            $alerta=[
+				"tipo"=>"redireccionar",
+				"url"=>APP_URL."saleNew/"
+			];
+
+			return json_encode($alerta);
+		}
+
+		/*---------- Controlador registrar produtcos a la orden ----------*/
+        public function registrarProductosOrdenControlador(){
+
+            $caja=$_SESSION['caja'];
+
+            if($_SESSION['orden_importe']<=0 || (!isset($_SESSION['datos_producto_orden']) && count($_SESSION['datos_producto_orden'])<=0)){
+				$alerta=[
+					"tipo"=>"simple",
+					"titulo"=>"Ocurrió un error inesperado",
+					"texto"=>"No ha agregado productos a esta orden",
+					"icono"=>"error"
+				];
+				return json_encode($alerta);
+		        exit();
+            }
+			if((!isset($_SESSION['financiacion']) && count($_SESSION['financiacion'])<=0)){
+				$alerta=[
+					"tipo"=>"simple",
+					"titulo"=>"Ocurrió un error inesperado",
+					"texto"=>"No has financiado los articulos de esta venta",
+					"icono"=>"error"
+				];
+				return json_encode($alerta);
+		        exit();
+            }
+
+            if(!isset($_SESSION['datos_cliente_orden'])){
+				$alerta=[
+					"tipo"=>"simple",
+					"titulo"=>"Ocurrió un error inesperado",
+					"texto"=>"No ha seleccionado ningún cliente para realizar esta orden",
+					"icono"=>"error"
+				];
+				return json_encode($alerta);
+		        exit();
+            }
+
+
+            /*== Comprobando cliente en la DB ==*/
+			$check_cliente=$this->ejecutarConsulta("SELECT id_cliente FROM cliente WHERE id_cliente='".$_SESSION['datos_cliente_orden']['id_cliente']."'");
+			if($check_cliente->rowCount()<=0){
+				$alerta=[
+					"tipo"=>"simple",
+					"titulo"=>"Ocurrió un error inesperado",
+					"texto"=>"No hemos encontrado el cliente registrado en el sistema",
+					"icono"=>"error"
+				];
+				return json_encode($alerta);
+		        exit();
+            }
+
+
+            /*== Comprobando caja en la DB ==*/
+            $check_caja=$this->ejecutarConsulta("SELECT * FROM caja WHERE id_caja='$caja' ");
+			if($check_caja->rowCount()<=0){
+				$alerta=[
+					"tipo"=>"simple",
+					"titulo"=>"Ocurrió un error inesperado",
+					"texto"=>"La caja no está registrada en el sistema",
+					"icono"=>"error"
+				];
+				return json_encode($alerta);
+		        exit();
+            }else{
+                $datos_caja=$check_caja->fetch();
+            }
+
+            /*== Formateando variables ==*/
+            $orden_importe=number_format($_SESSION['orden_importe'],MONEDA_DECIMALES,'.','');
+
+            $orden_fecha=date("Y-m-d");
+            $orden_hora=date("h:i a");
+
+            $orden_importe_final=$orden_importe;
+            $orden_importe_final=number_format($orden_importe_final,MONEDA_DECIMALES,'.','');
+
+
+
+            /*== Calculando total en caja ==*/
+            $movimiento_cantidad=$orden_importe;
+            $movimiento_cantidad=number_format($movimiento_cantidad,MONEDA_DECIMALES,'.','');
+
+            $total_caja=$datos_caja['caja_monto']+$movimiento_cantidad;
+            $total_caja=number_format($total_caja,MONEDA_DECIMALES,'.','');
+
+			
+
+
+            /*== Actualizando productos ==*/
+            $errores_productos=0;
+			foreach($_SESSION['datos_producto_orden'] as $productos){
+
+                /*== Obteniendo datos del producto ==*/
+                $check_producto=$this->ejecutarConsulta("SELECT * FROM articulo WHERE id_articulo='".$productos['id_articulo']."' AND articulo_codigo='".$productos['articulo_codigo']."'");
+                if($check_producto->rowCount()<1){
+                    $errores_productos=1;
+                    break;
+                }else{
+                    $datos_producto=$check_producto->fetch();
+                }
+
+                /*== Respaldando datos de BD para poder restaurar en caso de errores ==*/
+                $_SESSION['datos_producto_orden'][$productos['articulo_codigo']]['articulo_stock']=$datos_producto['articulo_stock']-$_SESSION['datos_producto_orden'][$productos['articulo_codigo']]['orden_detalle_cantidad_producto'];
+
+                $_SESSION['datos_producto_orden'][$productos['articulo_codigo']]['articulo_stock_total_old']=$datos_producto['articulo_stock'];
+
+                /*== Preparando datos para enviarlos al modelo ==*/
+                $datos_producto_up=[
+                    [
+						"campo_nombre"=>"articulo_stock",
+						"campo_marcador"=>":Stock",
+						"campo_valor"=>$_SESSION['datos_producto_orden'][$productos['articulo_codigo']]['articulo_stock']
+					]
+                ];
+
+                $condicion=[
+                    "condicion_campo"=>"id_articulo",
+                    "condicion_marcador"=>":ID",
+                    "condicion_valor"=>$productos['id_articulo']
+                ];
+
+                /*== Actualizando producto ==*/
+                if(!$this->actualizarDatos("articulo",$datos_producto_up,$condicion)){
+                    $errores_productos=1;
+                    break;
+                }
+            }
+
+            /*== Reestableciendo DB debido a errores ==*/
+            if($errores_productos==1){
+
+                foreach($_SESSION['datos_producto_orden'] as $producto){
+
+                    $datos_producto_rs=[
+                        [
+							"campo_nombre"=>"articulo_stock",
+							"campo_marcador"=>":Stock",
+							"campo_valor"=>$producto['articulo_stock_total_old']
+						]
+                    ];
+
+                    $condicion=[
+                        "condicion_campo"=>"id_articulo",
+                        "condicion_marcador"=>":ID",
+                        "condicion_valor"=>$producto['id_articulo']
+                    ];
+
+                    $this->actualizarDatos("articulo",$datos_producto_rs,$condicion);
+                }
+
+                $alerta=[
+					"tipo"=>"simple",
+					"titulo"=>"Ocurrió un error inesperado",
+					"texto"=>"No hemos podido actualizar los productos en el sistema",
+					"icono"=>"error"
+				];
+				return json_encode($alerta);
+		        exit();
+            }
+
+            /*== generando codigo de venta ==*/
+            $correlativo=$this->ejecutarConsulta("SELECT id_orden FROM orden");
+			$correlativo=($correlativo->rowCount())+1;
+            $codigo_orden=$this->generarCodigoAleatorio(10,$correlativo);
+
+			/*== Agregando detalles de la venta ==*/
+            $errores_orden_detalle=0;
+            foreach($_SESSION['datos_producto_orden'] as $orden_detalle){
+
+                /*== Preparando datos para enviarlos al modelo ==*/
+                $datos_orden_detalle_reg=[
+                	[
+						"campo_nombre"=>"orden_detalle_cantidad_producto",
+						"campo_marcador"=>":Cantidad",
+						"campo_valor"=>$orden_detalle['orden_detalle_cantidad_producto']
+					],
+					[
+						"campo_nombre"=>"orden_detalle_precio_compra_producto",
+						"campo_marcador"=>":PrecioCompra",
+						"campo_valor"=>$orden_detalle['orden_detalle_precio_compra_producto']
+					],
+					[
+						"campo_nombre"=>"orden_detalle_precio_lista_producto",
+						"campo_marcador"=>":PrecioVenta",
+						"campo_valor"=>$orden_detalle['orden_detalle_precio_lista_producto']
+					],
+					[
+						"campo_nombre"=>"orden_detalle_financiacion_producto",
+						"campo_marcador"=>":Financiacion",
+						"campo_valor"=>$_SESSION['financiacion'][$orden_detalle['articulo_codigo']]['orden_detalle_financiacion_producto']
+					],
+					[
+						"campo_nombre"=>"orden_detalle_total",
+						"campo_marcador"=>":Total",
+						"campo_valor"=>$_SESSION['financiacion'][$orden_detalle['articulo_codigo']]['orden_detalle_total']
+					],
+					[
+						"campo_nombre"=>"orden_detalle_descripcion_producto",
+						"campo_marcador"=>":Descripcion",
+						"campo_valor"=>$orden_detalle['orden_detalle_descripcion_producto']
+					],
+					[
+						"campo_nombre"=>"orden_codigo",
+						"campo_marcador"=>":OrdenCodigo",
+						"campo_valor"=>$codigo_orden
+					],
+					[
+						"campo_nombre"=>"id_articulo",
+						"campo_marcador"=>":Producto",
+						"campo_valor"=>$orden_detalle['id_articulo']
+					]
+                ];
+
+                $agregar_detalle_orden=$this->guardarDatos("orden_productos",$datos_orden_detalle_reg);
+
+                if($agregar_detalle_orden->rowCount()!=1){
+                    $errores_orden_detalle=1;
+                    break;
+                }
+            }
+
+            if($agregar_detalle_orden->rowCount()!=1){
+                foreach($_SESSION['datos_producto_orden'] as $producto){
+
+                    $datos_producto_rs=[
+                        [
+							"campo_nombre"=>"articulo_stock",
+							"campo_marcador"=>":Stock",
+							"campo_valor"=>$producto['articulo_stock_total_old']
+						]
+                    ];
+
+                    $condicion=[
+                        "condicion_campo"=>"id_articulo",
+                        "condicion_marcador"=>":ID",
+                        "condicion_valor"=>$producto['id_articulo']
+                    ];
+
+                    $this->actualizarDatos("articulo",$datos_producto_rs,$condicion);
+                }
+
+                $alerta=[
+					"tipo"=>"simple",
+					"titulo"=>"Ocurrió un error inesperado",
+					"texto"=>"No hemos podido registrar la venta, por favor intente nuevamente. Código de error: 001",
+					"icono"=>"error"
+				];
+				return json_encode($alerta);
+		        exit();
+            }
+
+            
+
+            /*== Reestableciendo DB debido a errores ==*/
+            if($errores_orden_detalle==1){
+
+                $this->eliminarRegistro("orden_detalle","orden_codigo",$codigo_orden);
+                $this->eliminarRegistro("orden","orden_codigo",$codigo_orden);
+
+                foreach($_SESSION['datos_producto_orden'] as $producto){
+
+                    $datos_producto_rs=[
+                        [
+							"campo_nombre"=>"articulo_stock",
+							"campo_marcador"=>":Stock",
+							"campo_valor"=>$producto['articulo_stock_total_old']
+						]
+                    ];
+
+                    $condicion=[
+                        "condicion_campo"=>"id_articulo",
+                        "condicion_marcador"=>":ID",
+                        "condicion_valor"=>$producto['id_articulo']
+                    ];
+
+                    $this->actualizarDatos("articulo",$datos_producto_rs,$condicion);
+                }
+
+                $alerta=[
+					"tipo"=>"simple",
+					"titulo"=>"Ocurrió un error inesperado",
+					"texto"=>"No hemos podido registrar la venta, por favor intente nuevamente. Código de error: 002",
+					"icono"=>"error"
+				];
+				return json_encode($alerta);
+		        exit();
+            }
+			
+            /*== Vaciando variables de sesion ==*/
+            unset($_SESSION['orden_total']);
+            unset($_SESSION['datos_cliente_orden']);
+            unset($_SESSION['datos_producto_orden']);
+
+            $_SESSION['venta_codigo_factura']=$codigo_orden;
+
+            $alerta=[
+				"tipo"=>"recargar",
+				"titulo"=>"¡Venta registrada!",
+				"texto"=>"La venta se registró con éxito en el sistema",
+				"icono"=>"success"
+			];
+			return json_encode($alerta);
+	        exit();
+        }
 	}
 
 ?>

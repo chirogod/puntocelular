@@ -1,6 +1,7 @@
 <div class="">
 	<?php 
 		$id = $insLogin->limpiarCadena($url[1]);
+        
 	?>
 
 </div>
@@ -14,6 +15,7 @@
         
 		if($datos->rowCount()==1){
 			$datos=$datos->fetch();
+            $_SESSION['orden'] = $datos['orden_codigo'];
             $id_cliente = $datos['id_cliente'];
             $datos_cliente = $insLogin->seleccionarDatos("Unico","cliente","id_cliente",$id_cliente);
             $datos_cliente = $datos_cliente->fetch();
@@ -255,23 +257,143 @@
                     </div>
                 </div>
             </div>
-        </div>
-
-
-
-
-        <div class="columns">
-            
-        </div>
-        
+        </div>   
 		<p class="has-text-centered">
-			<button type="reset" class="button is-link is-light is-rounded"><i class="fas fa-paint-roller"></i> &nbsp; Limpiar</button>
 			<button type="submit" class="button is-info is-rounded"><i class="far fa-save"></i> &nbsp; Guardar</button>
 		</p>
-		<p class="has-text-centered pt-1">
-            <small>Los campos marcados con <?php echo CAMPO_OBLIGATORIO; ?> son obligatorios</small>
-        </p>
 	</form>
+    <section class="box">
+        
+    
+        <form class="FormularioAjax pt-6 pb-6" id="sale-barcode-form" autocomplete="off">
+            <div class="columns">
+                <div class="column is-one-quarter">
+                    <button type="button" class="button is-link is-light js-modal-trigger" data-target="modal-js-product" ><i class="fas fa-search"></i> &nbsp; Buscar producto</button>
+                </div>
+                <div class="column">
+                    <div class="field is-grouped">
+                        <p class="control is-expanded">
+                            <input class="input" type="text" pattern="[a-zA-Z0-9- ]{1,70}" maxlength="70"  autofocus="autofocus" placeholder="Código de barras" id="sale-barcode-input" >
+                        </p>
+                        <a class="control">
+                            <button type="submit" class="button is-info">
+                                <i class="far fa-check-circle"></i> &nbsp; Agregar producto
+                            </button>
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </form>
+        <div class="table-container">
+            <table class="table is-bordered is-striped is-narrow is-hoverable is-fullwidth">
+                <thead>
+                    <tr>
+                        <th class="has-text-centered">Código</th>
+                        <th class="has-text-centered">Artículo</th>
+                        <th class="has-text-centered">Cant.</th>
+                        <th class="has-text-centered">P. Lista</th>
+                        <th class="has-text-centered">Financ.</th>
+                        <th class="has-text-centered">Tipo Financ.</th>
+                        <th class="has-text-centered">Subtotal</th>
+                        <th class="has-text-centered">Acciones</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <?php
+                        if(isset($_SESSION['datos_producto_orden']) && count($_SESSION['datos_producto_orden']) >= 1) {
+                            $_SESSION['orden_importe'] = 0;
+                            foreach($_SESSION['datos_producto_orden'] as $productos) {
+                                $codigo = $productos['articulo_codigo'];
+                                $financiacion = isset($_SESSION['financiacion'][$codigo]) ? $_SESSION['financiacion'][$codigo]['orden_detalle_financiacion_producto'] : 'n/a';
+                                $subtotal = isset($_SESSION['financiacion'][$codigo]) ? $_SESSION['financiacion'][$codigo]['orden_detalle_total'] : $productos['orden_detalle_total'];
+                                $_SESSION['orden_importe'] += $subtotal;
+                    ?>
+                    <tr class="has-text-centered">
+                        <td><?php echo $productos['articulo_codigo']; ?></td>
+                        <td><?php echo $productos['orden_detalle_descripcion_producto']; ?></td>
+                        <td>
+                            <div class="control">
+                                <input readonly class="input sale_input-cant has-text-centered" value="<?php echo $productos['orden_detalle_cantidad_producto']; ?>" id="sale_input_<?php echo str_replace(" ", "_", $productos['articulo_codigo']); ?>" type="text" style="max-width: 80px;">
+                            </div>
+                        </td>
+                        <td><?php echo MONEDA_SIMBOLO . number_format($productos['orden_detalle_precio_lista_producto'], MONEDA_DECIMALES, MONEDA_SEPARADOR_DECIMAL, MONEDA_SEPARADOR_MILLAR) . " " . MONEDA_NOMBRE; ?></td>
+                        <td>
+                            <form class="" action="<?php echo APP_URL; ?>app/ajax/ordenAjax.php" method="POST" autocomplete="off">
+                                <input type="hidden" name="articulo_codigo" value="<?php echo $productos['articulo_codigo']; ?>">
+                                <input type="hidden" name="modulo_orden" value="financiar_producto">
+                                <select name="financiacion" class="select" required>
+                                    <option value="">Seleccionar opción</option>
+                                    <option value="Efectivo">Efectivo</option>
+                                    <option value="3cuotas">3 cuotas</option>
+                                    <option value="6cuotas">6 cuotas</option>
+                                    <option value="9cuotas">9 cuotas</option>
+                                    <option value="12cuotas">12 cuotas</option>
+                                </select>
+                                <button type="submit" class="button is-link is-light is-rounded">Financiar</button>
+                            </form>
+                        </td>
+                        <td>
+                            <?php echo $financiacion; ?>
+                        </td>
+                        <td>
+                            <?php echo MONEDA_SIMBOLO . number_format($subtotal, MONEDA_DECIMALES, MONEDA_SEPARADOR_DECIMAL, MONEDA_SEPARADOR_MILLAR) . " " . MONEDA_NOMBRE; ?>
+                        </td>
+                        <td>
+                            <form class="FormularioAjax" action="<?php echo APP_URL; ?>app/ajax/ordenAjax.php" method="POST" autocomplete="off">
+                                <input type="hidden" name="articulo_codigo" value="<?php echo $productos['articulo_codigo']; ?>">
+                                <input type="hidden" name="modulo_orden" value="remover_producto">
+                                <button type="submit" class="button is-danger is-rounded is-small" title="Remover producto">
+                                    <i class="fas fa-trash-restore fa-fw"></i>
+                                </button>
+                            </form>
+                        </td>
+                    </tr>
+                    <?php
+                            }
+                    ?>
+                    <tr class="has-text-centered">
+                        <td colspan="4"></td>
+                        <td class="has-text-weight-bold">TOTAL</td>
+                        <td class ="has-text-weight-bold">
+                            <?php echo MONEDA_SIMBOLO . number_format($_SESSION['orden_importe'], MONEDA_DECIMALES, MONEDA_SEPARADOR_DECIMAL, MONEDA_SEPARADOR_MILLAR) . " " . MONEDA_NOMBRE; ?>
+                        </td>
+                        <td colspan="2"></td>
+                    </tr>
+                    <?php
+                        } else {
+                            $_SESSION['orden_importe'] = 0;
+                    ?>
+                    <tr class="has-text-centered">
+                        <td colspan="8">No hay productos agregados</td>
+                    </tr>
+                    <?php } ?>
+                </tbody>
+            </table>
+        </div>
+        <div class="container">
+            <?php if($_SESSION['orden_importe']>0){ ?>
+            <form class="FromularioAjax" action="<?php echo APP_URL; ?>app/ajax/ordenAjax.php" method="POST" autocomplete="off" name="formsale" >
+                <input type="hidden" name="modulo_orden" value="registrar_productos_orden">
+                    <?php }else { ?>
+                <form name="formsale">
+                    <?php } ?>
+
+                    <h4 class="subtitle is-5 has-text-centered has-text-weight-bold mb-5"><small>TOTAL A PAGAR: <?php echo MONEDA_SIMBOLO.number_format($_SESSION['orden_importe'],MONEDA_DECIMALES,MONEDA_SEPARADOR_DECIMAL,MONEDA_SEPARADOR_MILLAR)." ".MONEDA_NOMBRE; ?></small></h4>
+
+                    <?php if($_SESSION['orden_importe']>0){ ?>
+                    <p class="has-text-centered">
+                        <button type="submit" class="button is-info is-rounded"><i class="far fa-save"></i> &nbsp; Agregar productos</button>
+                    </p>
+                    <?php } ?>
+                    <p class="has-text-centered pt-6">
+                        <small>Los campos marcados con <?php echo CAMPO_OBLIGATORIO; ?> son obligatorios</small>
+                    </p>
+                    <input type="hidden" value="<?php echo number_format($_SESSION['orden_importe'],MONEDA_DECIMALES,MONEDA_SEPARADOR_DECIMAL,""); ?>" id="venta_importe_hidden">
+                </form>
+
+            
+        </div>
+    </section>
 	<?php
 		}else{
 			include "./app/views/includes/error_alert.php";
@@ -356,12 +478,11 @@
                                 <h3>TOTALES</h3>
                                 <label>Reparacion</label>
                                 <input class="input" type="text" value="<?php echo $datos['orden_total_reparacion']?>" name="orden_total_reparacion">
-                                <!--
+                                
                                 <label>Total</label>
                                 <input class="input" type="text" value="<?php echo $datos['orden_total_reparacion'] + $_SESSION['orden_importe']  ?>" name="orden_total">
-                                -->
+                                
                             </div>
-                           
                         </div>
                     </div>
                     <p class="has-text-centered">
@@ -646,15 +767,6 @@
 
 
 <script>
-    //si se marca prometido para en la fecha se activa un input date
-    function toggleDateInput(show) {
-        const dateField = document.getElementById('fecha_reparacion_field');
-        if (show) {
-            dateField.style.display = 'block';
-        } else {
-            dateField.style.display = 'none';
-        }
-    }
 
     /* Detectar cuando se envia el formulario para agregar producto */
     let sale_form_barcode = document.querySelector("#sale-barcode-form");
@@ -663,13 +775,46 @@
         setTimeout('agregar_producto()',100);
     });
 
+
     /* Detectar cuando escanea un codigo en formulario para agregar producto */
     let sale_input_barcode = document.querySelector("#sale-barcode-input");
     sale_input_barcode.addEventListener('paste',function(){
         setTimeout('agregar_producto()',100);
     });
 
-    /*----------  Buscar producto  ----------*/
+
+    /* Agregar producto */
+    function agregar_producto(){
+        let codigo_producto=document.querySelector('#sale-barcode-input').value;
+
+        codigo_producto=codigo_producto.trim();
+
+        if(codigo_producto!=""){
+            let datos = new FormData();
+            datos.append("articulo_codigo", codigo_producto);
+            datos.append("modulo_orden", "agregar_producto");
+
+            fetch('<?php echo APP_URL; ?>app/ajax/ordenAjax.php',{
+                method: 'POST',
+                body: datos
+            })
+            .then(respuesta => respuesta.json())
+            .then(respuesta =>{
+                return alertas_ajax(respuesta);
+            });
+
+        }else{
+            Swal.fire({
+                icon: 'error',
+                title: 'Ocurrió un error inesperado',
+                text: 'Debes de introducir el código del producto',
+                confirmButtonText: 'Aceptar'
+            });
+        }
+    }
+
+
+    /*----------  Buscar codigo  ----------*/
     function buscar_codigo(){
         let input_codigo=document.querySelector('#input_codigo').value;
 
@@ -701,36 +846,62 @@
         }
     }
 
-    /* Agregar producto */
-    function agregar_producto(){
-        let codigo_producto=document.querySelector('#sale-barcode-input').value;
-        let orden_codigo = document.querySelector('input[name="orden_codigo"]').value; // Obtener el orden_codigo
-        codigo_producto=codigo_producto.trim();
+    // Agregar evento de búsqueda en tiempo real prodyctos
+    document.querySelector('#input_codigo').addEventListener('input', function(){
+        let input_codigo=document.querySelector('#input_codigo').value;
 
-        if(codigo_producto!=""){
+        input_codigo=input_codigo.trim();
+
+        if(input_codigo!=""){
+
             let datos = new FormData();
-            datos.append("articulo_codigo", codigo_producto);
-            datos.append("orden_codigo", orden_codigo); 
-            datos.append("modulo_orden", "agregar_producto");
+            datos.append("buscar_codigo", input_codigo);
+            datos.append("modulo_orden", "buscar_codigo");
 
             fetch('<?php echo APP_URL; ?>app/ajax/ordenAjax.php',{
                 method: 'POST',
                 body: datos
             })
-            .then(respuesta => respuesta.json())
+            .then(respuesta => respuesta.text())
             .then(respuesta =>{
-                return alertas_ajax(respuesta);
+                let resultado_busqueda=document.querySelector('#resultado-busqueda');
+                resultado_busqueda.innerHTML=respuesta;
             });
 
         }else{
-            Swal.fire({
-                icon: 'error',
-                title: 'Ocurrió un error inesperado',
-                text: 'Debes de introducir el código del producto',
-                confirmButtonText: 'Aceptar'
-            });
+            let resultado_busqueda=document.querySelector('#resultado-busqueda');
+            resultado_busqueda.innerHTML='';
         }
-    }
+    });
+
+    // Agregar evento de búsqueda en tiempo real clientes
+    document.querySelector('#input_cliente').addEventListener('input', function(){
+        let input_cliente=document.querySelector('#input_cliente').value;
+
+        input_cliente=input_cliente.trim();
+
+        if(input_cliente!=""){
+
+            let datos = new FormData();
+            datos.append("buscar_cliente", input_cliente);
+            datos.append("modulo_orden", "buscar_cliente");
+
+            fetch('<?php echo APP_URL; ?>app/ajax/ordenAjax.php',{
+                method: 'POST',
+                body: datos
+            })
+            .then(respuesta => respuesta.text())
+            .then(respuesta =>{
+                let tabla_clientes=document.querySelector('#tabla_clientes');
+                tabla_clientes.innerHTML=respuesta;
+            });
+
+        }else{
+            let tabla_clientes=document.querySelector('#tabla_clientes');
+            tabla_clientes.innerHTML='';
+        }
+    });
+
 
     /*----------  Agregar codigo  ----------*/
     function agregar_codigo($codigo){

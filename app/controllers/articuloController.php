@@ -229,16 +229,6 @@ class articuloController extends mainModel{
                 "campo_valor"=>$articulo_precio_lista
             ],
             [
-                "campo_nombre"=>"articulo_precio_efectivo",
-                "campo_marcador"=>":PrecioEfectivo",
-                "campo_valor"=>$articulo_precio_efectivo
-            ],
-            [
-                "campo_nombre"=>"articulo_financiacion",
-                "campo_marcador"=>":Financiacion",
-                "campo_valor"=>$articulo_financiacion
-            ],
-            [
                 "campo_nombre"=>"articulo_marca",
                 "campo_marcador"=>":Marca",
                 "campo_valor"=>$articulo_marca
@@ -301,8 +291,6 @@ class articuloController extends mainModel{
 
         $precio_compra=$this->limpiarCadena($_POST['articulo_precio_compra']);
         $articulo_precio_lista = $this->limpiarCadena($_POST['articulo_precio_lista']);
-        $articulo_precio_efectivo = $this->limpiarCadena($_POST['articulo_precio_efectivo']);
-        $articulo_financiacion = $this->limpiarCadena($_POST['articulo_financiacion']);
 
         $stock=$this->limpiarCadena($_POST['articulo_stock']);
         $stock_minimo=$this->limpiarCadena($_POST['articulo_stock_min']);
@@ -499,16 +487,6 @@ class articuloController extends mainModel{
                 "campo_nombre"=>"articulo_precio_lista",
                 "campo_marcador"=>":PrecioLista",
                 "campo_valor"=>$articulo_precio_lista
-            ],
-            [
-                "campo_nombre"=>"articulo_precio_efectivo",
-                "campo_marcador"=>":PrecioEfectivo",
-                "campo_valor"=>$articulo_precio_efectivo
-            ],
-            [
-                "campo_nombre"=>"articulo_financiacion",
-                "campo_marcador"=>":Financiacion",
-                "campo_valor"=>$articulo_financiacion
             ],
             [
                 "campo_nombre"=>"articulo_marca",

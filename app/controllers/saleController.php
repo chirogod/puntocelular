@@ -226,13 +226,23 @@
 
 			// Validar el código del producto
 			if($codigo == ""){
-				return $this->crearAlerta("Ocurrió un error inesperado", "Debes de introducir el código del producto", "error");
+				$alerta=[
+					"tipo"=>"recargar",
+					"titulo"=>"¡Ocurrio un error inesperado!",
+					"texto"=>"No se introdujo el codigo del producto",
+					"icono"=>"success"
+				];
 			}
 
 			// Comprobar si el producto existe en la base de datos
 			$check_articulo = $this->ejecutarConsulta("SELECT * FROM articulo WHERE articulo_codigo = '$codigo'");
 			if($check_articulo->rowCount() <= 0){
-				return $this->crearAlerta("Ocurrió un error inesperado", "No hemos encontrado el articulo con codigo: '$codigo'", "error");
+				$alerta=[
+					"tipo"=>"recargar",
+					"titulo"=>"¡Ocurrio un error inesperado!",
+					"texto"=>"No se encontro el articulo de codigo '$codigo'",
+					"icono"=>"success"
+				];
 			} else {
 				$campos = $check_articulo->fetch();
 			}
@@ -240,7 +250,12 @@
 			// Obtener el precio de financiamiento basado en la opción seleccionada
 			$operacion = $this->calcularOperadorFinanciacion($financiacion);
 			if ($operacion === null) {
-				return $this->crearAlerta("Ocurrió un error inesperado", "Forma de financiamiento no válida", "error");
+				$alerta=[
+					"tipo"=>"recargar",
+					"titulo"=>"¡Ocurrio un error inesperado!",
+					"texto"=>"Forma de financiamiento no valida",
+					"icono"=>"success"
+				];
 			}
 
 			// Asegúrate de que la sesión de productos de venta esté inicializada
