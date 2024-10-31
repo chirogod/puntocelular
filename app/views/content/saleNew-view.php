@@ -52,10 +52,11 @@
                     <div class="columns">
                         <div class="column has-text-centered">
                             <button type="button" class="button is-link is-light" onclick="print_invoice('<?php echo APP_URL."app/pdf/invoice.php?code=".$_SESSION['venta_codigo_factura']; ?>')" >
-                                <i class="fas fa-file-invoice-dollar fa-2x"></i> &nbsp;
+                                <i class="fas fa-file-invoice fa-2x"></i> &nbsp;
                                 Comprobante de venta
                             </button>
                             <button type="button" class="button is-link is-light js-modal-trigger" data-target="modal-js-pay" >
+                                <i class="fas fa-file-invoice-dollar fa-2x"></i> &nbsp;    
                                 Registrar pago
                             </button>
                             <!-- Modal registrar pago -->
@@ -130,6 +131,7 @@
                                             <div class="container" id="resultado-busqueda"></div>
                                             <p class="has-text-centered">
                                                 <button type="submit" class="button is-link is-light">Registrar pago</button>
+                                                <button type="submit" class="button is-link is-light">Saldar totalidad pago</button>
                                             </p>
                                         </form>
                                     </section>
@@ -153,7 +155,6 @@
                             <th class="has-text-centered">Cant.</th>
                             <th class="has-text-centered">P. Lista</th>
                             <th class="has-text-centered">Financ.</th>
-                            <th class="has-text-centered">Tipo Financ.</th>
                             <th class="has-text-centered">Subtotal</th>
                             <th class="has-text-centered">Acciones</th>
                         </tr>
@@ -185,18 +186,15 @@
                                     <div class="select">
                                         <select name="financiacion" class="select" required>
                                             <option value="">Seleccionar opción</option>
-                                            <option value="Efectivo" <?php echo (isset($_SESSION['financiacion'][$codigo]) && $_SESSION['financiacion'][$codigo]['orden_detalle_financiacion_producto'] == 'Efectivo') ? 'selected' : ''; ?>>Efectivo</option>
-                                            <option value="3cuotas" <?php echo (isset($_SESSION['financiacion'][$codigo]) && $_SESSION['financiacion'][$codigo]['orden_detalle_financiacion_producto'] == '3cuotas') ? 'selected' : ''; ?>>3 cuotas</option>
-                                            <option value="6cuotas" <?php echo (isset($_SESSION['financiacion'][$codigo]) && $_SESSION['financiacion'][$codigo]['orden_detalle_financiacion_producto'] == '6cuotas') ? 'selected' : ''; ?>>6 cuotas</option>
-                                            <option value="9cuotas" <?php echo (isset($_SESSION['financiacion'][$codigo]) && $_SESSION['financiacion'][$codigo]['orden_detalle_financiacion_producto'] == '9cuotas') ? 'selected' : ''; ?>>9 cuotas</option>
-                                            <option value="12cuotas" <?php echo (isset($_SESSION['financiacion'][$codigo]) && $_SESSION['financiacion'][$codigo]['orden_detalle_financiacion_producto'] == '12cuotas') ? 'selected' : ''; ?>>12 cuotas</option>
+                                            <option value="Efectivo" <?php echo (isset($_SESSION['financiacion'][$codigo]) && $_SESSION['financiacion'][$codigo]['venta_detalle_financiacion_producto'] == 'Efectivo') ? 'selected' : ''; ?>>Efectivo</option>
+                                            <option value="3cuotas" <?php echo (isset($_SESSION['financiacion'][$codigo]) && $_SESSION['financiacion'][$codigo]['venta_detalle_financiacion_producto'] == '3cuotas') ? 'selected' : ''; ?>>3 cuotas</option>
+                                            <option value="6cuotas" <?php echo (isset($_SESSION['financiacion'][$codigo]) && $_SESSION['financiacion'][$codigo]['venta_detalle_financiacion_producto'] == '6cuotas') ? 'selected' : ''; ?>>6 cuotas</option>
+                                            <option value="9cuotas" <?php echo (isset($_SESSION['financiacion'][$codigo]) && $_SESSION['financiacion'][$codigo]['venta_detalle_financiacion_producto'] == '9cuotas') ? 'selected' : ''; ?>>9 cuotas</option>
+                                            <option value="12cuotas" <?php echo (isset($_SESSION['financiacion'][$codigo]) && $_SESSION['financiacion'][$codigo]['venta_detalle_financiacion_producto'] == '12cuotas') ? 'selected' : ''; ?>>12 cuotas</option>
                                         </select>
                                     </div>
                                     <button type="submit" class="button is-link is-light is-rounded">Financiar</button>
                                 </form>
-                            </td>
-                            <td>
-                                <?php echo $financiacion; ?>
                             </td>
                             <td>
                                 <?php echo MONEDA_SIMBOLO . number_format($subtotal, MONEDA_DECIMALES, MONEDA_SEPARADOR_DECIMAL, MONEDA_SEPARADOR_MILLAR) . " " . MONEDA_NOMBRE; ?>
@@ -215,7 +213,7 @@
                                 }
                         ?>
                         <tr class="has-text-centered">
-                            <td colspan="5"></td>
+                            <td colspan="4"></td>
                             <td class="has-text-weight-bold">TOTAL</td>
                             <td class ="has-text-weight-bold">
                                 <?php echo MONEDA_SIMBOLO . number_format($_SESSION['venta_importe'], MONEDA_DECIMALES, MONEDA_SEPARADOR_DECIMAL, MONEDA_SEPARADOR_MILLAR) . " " . MONEDA_NOMBRE; ?>
@@ -246,34 +244,7 @@
                 <?php }else { ?>
             <form name="formsale">
                 <?php } ?>
-                <div class="columns">
-
-                    <div class="column">
-                        <div class="control">
-                            <label>Fecha <?php echo CAMPO_OBLIGATORIO; ?></label>
-                            <input class="input" type="date" value="<?php echo date("Y-m-d"); ?>" >
-                        </div>
-                        <div class="control">
-                            <label>Vendedor <?php echo CAMPO_OBLIGATORIO; ?></label><br>
-                            <select class="input" name="venta_vendedor" >
-                                <option value="" selected="" >Seleccione una opción</option>
-                                <?php
-                                    $datos_usuario=$insLogin->seleccionarDatosEspecificos("usuario","usuario_rol","Vendedor");
-
-                                    $cc=1;
-                                    while($campos_usuario=$datos_usuario->fetch()){
-                                        echo '<option value="'.$campos_usuario['id_usuario'].'">'.$cc.' - '.$campos_usuario['usuario_nombre_completo'].'</option>';
-                                        $cc++;
-                                    }
-                                ?>
-                            </select>
-                        </div>
-                    </div>
-                    <div class="column">
-                        <label>Observaciones</label><br>
-                        <textarea class="textarea" name="venta_observaciones" id=""></textarea>
-                    </div>
-                </div>
+                
                 
 
                 <label>Cliente <?php echo CAMPO_OBLIGATORIO; ?></label>
@@ -322,20 +293,54 @@
                         </a>
                     </div>
                 </div>
-                    <?php } ?>
+                <?php } ?>
 
-                    <h4 class="subtitle is-5 has-text-centered has-text-weight-bold mb-5"><small>TOTAL A PAGAR: <?php echo MONEDA_SIMBOLO.number_format($_SESSION['venta_importe'],MONEDA_DECIMALES,MONEDA_SEPARADOR_DECIMAL,MONEDA_SEPARADOR_MILLAR)." ".MONEDA_NOMBRE; ?></small></h4>
+                <div class="columns">
 
-                    <?php if($_SESSION['venta_importe']>0){ ?>
-                    <p class="has-text-centered">
-                        <button type="submit" class="button is-info is-rounded"><i class="far fa-save"></i> &nbsp; Guardar venta</button>
-                    </p>
-                    <?php } ?>
-                    <p class="has-text-centered pt-6">
-                        <small>Los campos marcados con <?php echo CAMPO_OBLIGATORIO; ?> son obligatorios</small>
-                    </p>
-                    <input type="hidden" value="<?php echo number_format($_SESSION['venta_importe'],MONEDA_DECIMALES,MONEDA_SEPARADOR_DECIMAL,""); ?>" id="venta_importe_hidden">
-        </form>
+                    <div class="column">
+                        <div class="control">
+                            <label>Fecha <?php echo CAMPO_OBLIGATORIO; ?></label>
+                            <input class="input" type="date" value="<?php echo date("Y-m-d"); ?>" >
+                        </div>
+                        <div class="control">
+                            <label>Vendedor <?php echo CAMPO_OBLIGATORIO; ?></label><br>
+                            <div class="select">
+                                <select class="input" name="venta_vendedor" >
+                                    <option value="" selected="" >Seleccione una opción</option>
+                                    <?php
+                                        $datos_usuario=$insLogin->seleccionarDatosEspecificos("usuario","usuario_rol","Vendedor");
+
+                                        $cc=1;
+                                        while($campos_usuario=$datos_usuario->fetch()){
+                                            echo '<option value="'.$campos_usuario['id_usuario'].'">'.$cc.' - '.$campos_usuario['usuario_nombre_completo'].'</option>';
+                                            $cc++;
+                                        }
+                                    ?>
+                                </select>
+                            </div>
+                            
+                        </div>
+                    </div>
+                    <div class="column">
+                        <label>Observaciones</label><br>
+                        <textarea class="textarea" name="venta_observaciones" id=""></textarea>
+                    </div>
+                </div>
+
+                <h4 class="subtitle is-5 has-text-centered has-text-weight-bold mb-5"><small>TOTAL A PAGAR: <?php echo MONEDA_SIMBOLO.number_format($_SESSION['venta_importe'],MONEDA_DECIMALES,MONEDA_SEPARADOR_DECIMAL,MONEDA_SEPARADOR_MILLAR)." ".MONEDA_NOMBRE; ?></small></h4>
+
+                <?php if($_SESSION['venta_importe']>0){ ?>
+                <p class="has-text-centered">
+                    <button type="submit" class="button is-info is-rounded"><i class="far fa-save"></i> &nbsp; Guardar venta</button>
+                </p>
+                <?php } ?>
+                <p class="has-text-centered pt-6">
+                    <small>Los campos marcados con <?php echo CAMPO_OBLIGATORIO; ?> son obligatorios</small>
+                </p>
+                <input type="hidden" value="<?php echo number_format($_SESSION['venta_importe'],MONEDA_DECIMALES,MONEDA_SEPARADOR_DECIMAL,""); ?>" id="venta_importe_hidden">
+                
+                
+            </form>
 
         
     </div>
@@ -423,6 +428,37 @@
 
 
 <script>
+
+    function saldarVenta() {
+        const ventaCodigo = document.querySelector('input[name="venta_codigo"]').value;
+
+        // Verificar que se haya ingresado un código de venta
+        if (!ventaCodigo) {
+            Swal.fire({
+                icon: 'error',
+                title: 'Ocurrió un error inesperado',
+                text: 'No se ha encontrado el código de la venta.',
+                confirmButtonText: 'Aceptar'
+            });
+            return;
+        }
+
+        let datos = new FormData();
+        datos.append("venta_codigo", ventaCodigo);
+        datos.append("accion", "saldar"); // Esta acción indica que se quiere saldar la venta
+
+        fetch('<?php echo APP_URL; ?>app/ajax/pagoAjax.php', {
+            method: 'POST',
+            body: datos
+        })
+        .then(respuesta => respuesta.json())
+        .then(respuesta => {
+            return alertas_ajax(respuesta);
+        });
+    }
+
+
+
     /* Detectar cuando se envia el formulario para agregar producto */
     let sale_form_barcode = document.querySelector("#sale-barcode-form");
     sale_form_barcode.addEventListener('submit', function(event){
@@ -649,32 +685,17 @@
     /*----------  Agregar cliente  ----------*/
     function agregar_cliente(id){
 
-        Swal.fire({
-            title: '¿Quieres agregar este cliente?',
-            text: "Se va a agregar este cliente para realizar una venta",
-            icon: 'question',
-            showCancelButton: true,
-            confirmButtonColor: '#3085d6',
-            cancelButtonColor: '#d33',
-            confirmButtonText: 'Si, agregar',
-            cancelButtonText: 'No, cancelar'
-        }).then((result) => {
-            if (result.isConfirmed){
+        let datos = new FormData();
+        datos.append("id_cliente", id);
+        datos.append("modulo_venta", "agregar_cliente");
 
-                let datos = new FormData();
-                datos.append("id_cliente", id);
-                datos.append("modulo_venta", "agregar_cliente");
-
-                fetch('<?php echo APP_URL; ?>app/ajax/ventaAjax.php',{
-                    method: 'POST',
-                    body: datos
-                })
-                .then(respuesta => respuesta.json())
-                .then(respuesta =>{
-                    return alertas_ajax(respuesta);
-                });
-
-            }
+        fetch('<?php echo APP_URL; ?>app/ajax/ventaAjax.php',{
+            method: 'POST',
+            body: datos
+        })
+        .then(respuesta => respuesta.json())
+        .then(respuesta =>{
+            return alertas_ajax(respuesta);
         });
     }
 

@@ -895,22 +895,6 @@
 
 
 <script>
-
-    // Función para abrir un modal por su ID
-    function openModal(modalId) {
-        const modal = document.getElementById(modalId);
-        if (modal) {
-            modal.classList.add('is-active'); // Abre el modal
-        }
-    }
-
-    // Verifica si hay un parámetro 'modal' en la URL
-    const urlParams = new URLSearchParams(window.location.search);
-    const modalToOpen = urlParams.get('modal');
-    if (modalToOpen) {
-        openModal(modalToOpen); // Llama a la función para abrir el modal
-    }
-
     /* Detectar cuando se envia el formulario para agregar producto */
     let sale_form_barcode = document.querySelector("#sale-barcode-form");
     sale_form_barcode.addEventListener('submit', function(event){
@@ -944,7 +928,10 @@
             })
             .then(respuesta => respuesta.json())
             .then(respuesta =>{
-                return alertas_ajax(respuesta);
+                alertas_ajax(respuesta);
+                // Almacena el estado del modal en sessionStorage
+                sessionStorage.setItem('modalState', 'modal-js-agregar'); // Cambia 'modal-js-agregar' por el ID del modal que deseas abrir
+                location.reload(); // Recarga la página
             });
 
         }else{
@@ -957,6 +944,18 @@
         }
     }
 
+    // Al cargar la página, verifica si hay un modal que abrir
+    window.onload = function() {
+        const modalState = sessionStorage.getItem('modalState');
+        if (modalState) {
+            const modal = document.getElementById(modalState);
+            if (modal) {
+                modal.classList.add('is-active'); // Abre el modal
+            }
+            sessionStorage.removeItem('modalState'); // Limpia el estado después de abrir el modal
+            sessionStorage.setItem('modalState', 'modal-js-infTec');
+        }
+    };
 
     /*----------  Buscar codigo  ----------*/
     function buscar_codigo(){

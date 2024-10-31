@@ -909,9 +909,11 @@
                 }
 
 				$alerta=[
-					"tipo"=>"redireccionar",
-					"url"=>APP_URL."ordenDetail/$orden"
-				];
+                    "tipo"=>"simple",
+                    "titulo"=>"Articulo agregado!",
+                    "texto"=>"El articulo se agrego al carrito de la orden",
+                    "icono"=>"success"
+                ];
 
 			return json_encode($alerta);
         }
@@ -995,7 +997,7 @@
 					"tipo"=>"recargar",
 					"titulo"=>"¡Ocurrio un error inesperado!",
 					"texto"=>"Forma de financiamiento no valida",
-					"icono"=>"success"
+					"icono"=>"error"
 				];
 			}
 
@@ -1014,8 +1016,10 @@
 			];
             
             $alerta=[
-				"tipo"=>"redireccionar",
-				"url"=>APP_URL."ordenDetail/$orden"
+				"tipo"=>"recargar",
+				"titulo"=>"¡Financiado!",
+				"texto"=>"Producto financiado",
+				"icono"=>"success"
 			];
 
 			return json_encode($alerta);
@@ -1307,19 +1311,21 @@
 				"condicion_valor"=>$codigo_orden
 			];
 
-			$this->actualizarDatos("orden",$act_orden_total,$condicion);
+			$operacion = $this->actualizarDatos("orden",$act_orden_total,$condicion);
 			
             /*== Vaciando variables de sesion ==*/
             unset($_SESSION['orden_total']);
             unset($_SESSION['datos_cliente_orden']);
             unset($_SESSION['datos_producto_orden']);
 
-            $alerta=[
+			
+			$alerta=[
 				"tipo"=>"recargar",
 				"titulo"=>"¡Productos registrados!",
 				"texto"=>"Productos agregados correctamente a la orden",
 				"icono"=>"success"
 			];
+
 			return json_encode($alerta);
 	        exit();
         }

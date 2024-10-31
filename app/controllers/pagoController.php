@@ -82,8 +82,9 @@
             if ($registrar_pago->rowCount()==1) {
                 $alerta=[
                     "tipo"=>"redireccionar",
-                    "url"=>APP_URL."saleDetail/$venta_codigo/"
+                    "url"=>APP_URL."saleDetail/$venta_codigo"
                 ];
+                return json_encode($alerta);
             }else{
                 $alerta=[
                     "tipo"=>"simple",
@@ -91,6 +92,7 @@
                     "texto"=>"No se pudo registrar el pago, por favor intente nuevamente",
                     "icono"=>"error"
                 ];
+                
             }
             
             //movimientos para la caja
@@ -262,8 +264,10 @@
             $registrar_pago = $this->guardarDatos("pago_orden", $datos_pago);
             if ($registrar_pago->rowCount()==1) {
                 $alerta=[
-                    "tipo"=>"redireccionar",
-                    "url"=>APP_URL."ordenDetail/$orden_codigo/"
+                    "tipo"=>"simple",
+                    "titulo"=>"Pago registrado",
+                    "texto"=>"El pago se registro con exito",
+                    "icono"=>"success"
                 ];
             }else{
                 $alerta=[

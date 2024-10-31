@@ -31,20 +31,31 @@ btn_subMenu.forEach(subMenu => {
 
 
 document.addEventListener('DOMContentLoaded', () => {
-  
+
   // Functions to open and close a modal
   function openModal($el) {
     $el.classList.add('is-active');
+    localStorage.setItem('activeModal', $el.id); // Guarda el ID del modal activo
   }
 
   function closeModal($el) {
     $el.classList.remove('is-active');
+    localStorage.removeItem('activeModal'); // Elimina el ID del modal activo
   }
 
   function closeAllModals() {
     (document.querySelectorAll('.modal') || []).forEach(($modal) => {
       closeModal($modal);
     });
+  }
+
+  // Al cargar la página, verifica si hay un modal activo
+  const activeModal = localStorage.getItem('activeModal');
+  if (activeModal) {
+    const $target = document.getElementById(activeModal);
+    if ($target) {
+      openModal($target); // Abre el modal que estaba activo
+    }
   }
 
   // Add a click event on buttons to open a specific modal

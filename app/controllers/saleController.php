@@ -27,7 +27,7 @@
 			}
 
 			/*== Seleccionando productos en la DB ==*/
-			$datos_articulos=$this->ejecutarConsulta("SELECT * FROM articulo WHERE (articulo_descripcion LIKE '%$articulo%' OR articulo_marca LIKE '%$articulo%' OR articulo_modelo LIKE '%$articulo%') ORDER BY articulo_descripcion ASC");
+			$datos_articulos=$this->ejecutarConsulta("SELECT * FROM articulo WHERE (articulo_descripcion LIKE '%$articulo%' OR articulo_marca LIKE '%$articulo%' OR articulo_modelo LIKE '%$articulo%') AND id_sucursal = '$_SESSION[id_sucursal]' ORDER BY articulo_descripcion ASC");
 
 			if($datos_articulos->rowCount()>=1){
 
@@ -42,7 +42,6 @@
 										<th class="has-text-centered">Codigo</th>
 										<th class="has-text-centered">Articulo</th>
 										<th class="has-text-centered">P. Lista</th>
-										<th class="has-text-centered">P. Efectivo</th>
 										<th class="has-text-centered">Agregar</th>
 									</tr>
 								</thead>
@@ -54,7 +53,6 @@
 						<td class="has-text-centered">'.$rows['articulo_codigo'].'</td>
 						<td class="has-text-centered">'.$rows['articulo_descripcion'].'</td>
 						<td class="has-text-centered">'.$rows['articulo_precio_lista'].'</td>
-						<td class="has-text-centered">'.(($rows['articulo_precio_lista'])-($rows['articulo_precio_lista'])*0.25).'</td>
 						<td class="has-text-centered">
 							<button type="button" class="button is-link is-rounded is-small" onclick="agregar_codigo(\''.$rows['articulo_codigo'].'\')"><i class="fas fa-plus-circle"></i></button>
 						</td>
@@ -517,10 +515,8 @@
                 ];
 
 				$alerta=[
-					"tipo"=>"recargar",
-					"titulo"=>"¡Cliente agregado!",
-					"texto"=>"El cliente se agregó para realizar una venta",
-					"icono"=>"success"
+					"tipo"=>"redireccionar",
+					"url"=>APP_URL."saleNew/"
 				];
 			}else{
 				$alerta=[
@@ -920,14 +916,13 @@
             unset($_SESSION['venta_total']);
             unset($_SESSION['datos_cliente_venta']);
             unset($_SESSION['datos_producto_venta']);
+			unset($_SESSION['financiacion']);
 
             $_SESSION['venta_codigo_factura']=$codigo_venta;
 
             $alerta=[
-				"tipo"=>"recargar",
-				"titulo"=>"¡Venta registrada!",
-				"texto"=>"La venta se registró con éxito en el sistema",
-				"icono"=>"success"
+				"tipo"=>"redireccionar",
+				"url"=>APP_URL."saleNew/"
 			];
 			return json_encode($alerta);
 	        exit();
