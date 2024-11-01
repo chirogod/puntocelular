@@ -69,6 +69,7 @@
 		if($_POST['modulo_orden']=="remover_producto"){
 			echo $insOrden->removerProductoCarritoControlador();
 		}
+		
 		if($_POST['modulo_orden']=="registrar_productos_orden"){
 			echo $insOrden->registrarProductosOrdenControlador();
 		}

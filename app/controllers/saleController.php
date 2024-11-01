@@ -230,6 +230,8 @@
 					"texto"=>"No se introdujo el codigo del producto",
 					"icono"=>"success"
 				];
+				return json_encode($alerta);
+				exit();
 			}
 
 			// Comprobar si el producto existe en la base de datos
@@ -241,6 +243,8 @@
 					"texto"=>"No se encontro el articulo de codigo '$codigo'",
 					"icono"=>"success"
 				];
+				return json_encode($alerta);
+				exit();
 			} else {
 				$campos = $check_articulo->fetch();
 			}
@@ -254,6 +258,8 @@
 					"texto"=>"Forma de financiamiento no valida",
 					"icono"=>"success"
 				];
+				return json_encode($alerta);
+				exit();
 			}
 
 			// Asegúrate de que la sesión de productos de venta esté inicializada

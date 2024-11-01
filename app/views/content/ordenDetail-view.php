@@ -488,138 +488,137 @@
     <div class="modal-background"></div>
     <div class="modal-card">
         <header class="modal-card-head">
-            <p class="modal-card-title is-uppercase"><i class="fas fa-search"></i> &nbsp; Productos agregados</p>
+            <p class="modal-card-title is-uppercase"><i class="fas fa-search"></i> &nbsp;Agregar productos a la orden</p>
             <button class="delete" aria-label="close"></button>
         </header>
-        <section class="box mt-4">
-        <h3 class="title is-4">Agregar productos a la orden</h3>
-        <form class="FormularioAjax pb-6" id="sale-barcode-form" autocomplete="off">
-            <input type="hidden" name="orden_codigo" id = "codigo_orden" value="<?php echo $orden_codigo; ?>">
-            <div class="columns">
-                <div class="column is-one-quarter">
-                    <button type="button" class="button is-link is-light js-modal-trigger" data-target="modal-js-product" ><i class="fas fa-search"></i> &nbsp; Buscar producto</button>
-                </div>
-                <div class="column">
-                    <div class="field is-grouped">
-                        <p class="control is-expanded">
-                            <input class="input" type="text" pattern="[a-zA-Z0-9- ]{1,70}" maxlength="70"  autofocus="autofocus" placeholder="Código de barras" id="sale-barcode-input" >
-                        </p>
-                        <a class="control">
-                            <button type="submit" class="button is-info">
-                                <i class="far fa-check-circle"></i> &nbsp; Agregar producto
-                            </button>
-                        </a>
+        <section class="box">
+            <form class="FormularioAjax pb-6" id="sale-barcode-form" autocomplete="off">
+                <input type="hidden" name="orden_codigo" id = "codigo_orden" value="<?php echo $orden_codigo; ?>">
+                <div class="columns">
+                    <div class="column is-one-quarter">
+                        <button type="button" class="button is-link is-light js-modal-trigger" data-target="modal-js-product" ><i class="fas fa-search"></i> &nbsp; Buscar producto</button>
+                    </div>
+                    <div class="column">
+                        <div class="field is-grouped">
+                            <p class="control is-expanded">
+                                <input class="input" type="text" pattern="[a-zA-Z0-9- ]{1,70}" maxlength="70"  autofocus="autofocus" placeholder="Código de barras" id="sale-barcode-input" >
+                            </p>
+                            <a class="control">
+                                <button type="submit" class="button is-info">
+                                    <i class="far fa-check-circle"></i> &nbsp; Agregar producto
+                                </button>
+                            </a>
+                        </div>
                     </div>
                 </div>
-            </div>
-        </form>
-        <div class="table-container">
-            <table class="table is-bordered is-striped is-narrow is-hoverable is-fullwidth">
-                <thead>
-                    <tr>
-                        <th class="has-text-centered">Código</th>
-                        <th class="has-text-centered">Artículo</th>
-                        <th class="has-text-centered">Cant.</th>
-                        <th class="has-text-centered">P. Lista</th>
-                        <th class="has-text-centered">Financ.</th>
-                        <th class="has-text-centered">Subtotal</th>
-                        <th class="has-text-centered">Acciones</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    <?php
-                        
-                        if(isset($_SESSION['datos_producto_orden']) && count($_SESSION['datos_producto_orden']) >= 1) {
-                            $_SESSION['orden_importe'] = 0;
-                            foreach($_SESSION['datos_producto_orden'] as $productos) {
-                                $codigo = $productos['articulo_codigo'];
-                                $financiacion = isset($_SESSION['financiacion'][$codigo]) ? $_SESSION['financiacion'][$codigo]['orden_detalle_financiacion_producto'] : 'n/a';
-                                $subtotal = isset($_SESSION['financiacion'][$codigo]) ? $_SESSION['financiacion'][$codigo]['orden_detalle_total'] : $productos['orden_detalle_total'];
-                                $_SESSION['orden_importe'] += $subtotal;
-                    ?>
-                    <tr class="has-text-centered">
-                        <td><?php echo $productos['articulo_codigo']; ?></td>
-                        <td><?php echo $productos['orden_detalle_descripcion_producto']; ?></td>
-                        <td>
-                            <div class="control">
-                                <input readonly class="input sale_input-cant has-text-centered" value="<?php echo $productos['orden_detalle_cantidad_producto']; ?>" id="sale_input_<?php echo str_replace(" ", "_", $productos['articulo_codigo']); ?>" type="text" style="max-width: 80px;">
-                            </div>
-                        </td>
-                        <td><?php echo MONEDA_SIMBOLO . number_format($productos['orden_detalle_precio_lista_producto'], MONEDA_DECIMALES, MONEDA_SEPARADOR_DECIMAL, MONEDA_SEPARADOR_MILLAR) . " " . MONEDA_NOMBRE; ?></td>
-                        <td>
-                            <form class="FormularioAjax" action="<?php echo APP_URL; ?>app/ajax/ordenAjax.php" method="POST" autocomplete="off">
-                                <input type="hidden" name="articulo_codigo" value="<?php echo $productos['articulo_codigo']; ?>">
-                                <input type="hidden" name="modulo_orden" value="financiar_producto">
-                                <input type="hidden" name="orden_codigo" value="<?php echo $orden_codigo; ?>">
-                                <div class="select">
-                                    <select name="financiacion" class="select" required>
-                                        <option value="">Seleccionar opción</option>
-                                        <option value="Efectivo" <?php echo (isset($_SESSION['financiacion'][$codigo]) && $_SESSION['financiacion'][$codigo]['orden_detalle_financiacion_producto'] == 'Efectivo') ? 'selected' : ''; ?>>Efectivo</option>
-                                        <option value="3cuotas" <?php echo (isset($_SESSION['financiacion'][$codigo]) && $_SESSION['financiacion'][$codigo]['orden_detalle_financiacion_producto'] == '3cuotas') ? 'selected' : ''; ?>>3 cuotas</option>
-                                        <option value="6cuotas" <?php echo (isset($_SESSION['financiacion'][$codigo]) && $_SESSION['financiacion'][$codigo]['orden_detalle_financiacion_producto'] == '6cuotas') ? 'selected' : ''; ?>>6 cuotas</option>
-                                        <option value="9cuotas" <?php echo (isset($_SESSION['financiacion'][$codigo]) && $_SESSION['financiacion'][$codigo]['orden_detalle_financiacion_producto'] == '9cuotas') ? 'selected' : ''; ?>>9 cuotas</option>
-                                        <option value="12cuotas" <?php echo (isset($_SESSION['financiacion'][$codigo]) && $_SESSION['financiacion'][$codigo]['orden_detalle_financiacion_producto'] == '12cuotas') ? 'selected' : ''; ?>>12 cuotas</option>
-                                    </select>
+            </form>
+            <div class="table-container">
+                <table class="table is-bordered is-striped is-narrow is-hoverable is-fullwidth">
+                    <thead>
+                        <tr>
+                            <th class="has-text-centered">Código</th>
+                            <th class="has-text-centered">Artículo</th>
+                            <th class="has-text-centered">Cant.</th>
+                            <th class="has-text-centered">P. Lista</th>
+                            <th class="has-text-centered">Financ.</th>
+                            <th class="has-text-centered">Subtotal</th>
+                            <th class="has-text-centered">Acciones</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <?php
+                            
+                            if(isset($_SESSION['datos_producto_orden']) && count($_SESSION['datos_producto_orden']) >= 1) {
+                                $_SESSION['orden_importe'] = 0;
+                                foreach($_SESSION['datos_producto_orden'] as $productos) {
+                                    $codigo = $productos['articulo_codigo'];
+                                    $financiacion = isset($_SESSION['financiacion'][$codigo]) ? $_SESSION['financiacion'][$codigo]['orden_detalle_financiacion_producto'] : 'n/a';
+                                    $subtotal = isset($_SESSION['financiacion'][$codigo]) ? $_SESSION['financiacion'][$codigo]['orden_detalle_total'] : $productos['orden_detalle_total'];
+                                    $_SESSION['orden_importe'] += $subtotal;
+                        ?>
+                        <tr class="has-text-centered">
+                            <td><?php echo $productos['articulo_codigo']; ?></td>
+                            <td><?php echo $productos['orden_detalle_descripcion_producto']; ?></td>
+                            <td>
+                                <div class="control">
+                                    <input readonly class="input sale_input-cant has-text-centered" value="<?php echo $productos['orden_detalle_cantidad_producto']; ?>" id="sale_input_<?php echo str_replace(" ", "_", $productos['articulo_codigo']); ?>" type="text" style="max-width: 80px;">
                                 </div>
-                                
-                                <button type="submit" class="button is-link is-light is-rounded">Financiar</button>
-                            </form>
-                        </td>
-                        <td>
-                            <?php echo MONEDA_SIMBOLO . number_format($subtotal, MONEDA_DECIMALES, MONEDA_SEPARADOR_DECIMAL, MONEDA_SEPARADOR_MILLAR) . " " . MONEDA_NOMBRE; ?>
-                        </td>
-                        <td>
-                            <form class="FormularioAjax" action="<?php echo APP_URL; ?>app/ajax/ordenAjax.php" method="POST" autocomplete="off">
-                                <input type="hidden" name="articulo_codigo" value="<?php echo $productos['articulo_codigo']; ?>">
-                                <input type="hidden" name="orden_codigo" value="<?php echo $orden_codigo; ?>">
-                                <input type="hidden" name="modulo_orden" value="remover_producto">
-                                <button type="submit" class="button is-danger is-rounded is-small" title="Remover producto">
-                                    <i class="fas fa-trash-restore fa-fw"></i>
-                                </button>
-                            </form>
-                        </td>
-                    </tr>
-                    <?php
-                            }
-                    ?>
-                    <tr class="has-text-centered">
-                        <td colspan="4"></td>
-                        <td class="has-text-weight-bold">TOTAL</td>
-                        <td class ="has-text-weight-bold">
-                            <?php echo MONEDA_SIMBOLO . number_format($_SESSION['orden_importe'], MONEDA_DECIMALES, MONEDA_SEPARADOR_DECIMAL, MONEDA_SEPARADOR_MILLAR) . " " . MONEDA_NOMBRE; ?>
-                        </td>
-                        <td colspan="2"></td>
-                    </tr>
-                    <?php
-                        } else {
-                            $_SESSION['orden_importe'] = 0;
-                    ?>
-                    <tr class="has-text-centered">
-                        <td colspan="8">No hay productos agregados</td>
-                    </tr>
-                    <?php } ?>
-                </tbody>
-            </table>
-        </div>
-        <div class="container">
-            <?php if($_SESSION['orden_importe']>0){ ?>
-            <form class="FromularioAjax" action="<?php echo APP_URL; ?>app/ajax/ordenAjax.php" method="POST" autocomplete="off" name="formsale" >
-                <input type="hidden" name="modulo_orden" value="registrar_productos_orden">
-                    <?php }else { ?>
-                <form name="formsale">
-                    <?php } ?>
+                            </td>
+                            <td><?php echo MONEDA_SIMBOLO . number_format($productos['orden_detalle_precio_lista_producto'], MONEDA_DECIMALES, MONEDA_SEPARADOR_DECIMAL, MONEDA_SEPARADOR_MILLAR) . " " . MONEDA_NOMBRE; ?></td>
+                            <td>
+                                <form class="FormularioAjax" action="<?php echo APP_URL; ?>app/ajax/ordenAjax.php" method="POST" id="financiar-form" autocomplete="off">
+                                    <input type="hidden" name="articulo_codigo" value="<?php echo $productos['articulo_codigo']; ?>">
+                                    <input type="hidden" name="modulo_orden" value="financiar_producto">
+                                    <input type="hidden" name="orden_codigo" value="<?php echo $orden_codigo; ?>">
+                                    <div class="select">
+                                        <select name="financiacion" class="select" required>
+                                            <option value="">Seleccionar opción</option>
+                                            <option value="Efectivo" <?php echo (isset($_SESSION['financiacion'][$codigo]) && $_SESSION['financiacion'][$codigo]['orden_detalle_financiacion_producto'] == 'Efectivo') ? 'selected' : ''; ?>>Efectivo</option>
+                                            <option value="3cuotas" <?php echo (isset($_SESSION['financiacion'][$codigo]) && $_SESSION['financiacion'][$codigo]['orden_detalle_financiacion_producto'] == '3cuotas') ? 'selected' : ''; ?>>3 cuotas</option>
+                                            <option value="6cuotas" <?php echo (isset($_SESSION['financiacion'][$codigo]) && $_SESSION['financiacion'][$codigo]['orden_detalle_financiacion_producto'] == '6cuotas') ? 'selected' : ''; ?>>6 cuotas</option>
+                                            <option value="9cuotas" <?php echo (isset($_SESSION['financiacion'][$codigo]) && $_SESSION['financiacion'][$codigo]['orden_detalle_financiacion_producto'] == '9cuotas') ? 'selected' : ''; ?>>9 cuotas</option>
+                                            <option value="12cuotas" <?php echo (isset($_SESSION['financiacion'][$codigo]) && $_SESSION['financiacion'][$codigo]['orden_detalle_financiacion_producto'] == '12cuotas') ? 'selected' : ''; ?>>12 cuotas</option>
+                                        </select>
+                                    </div>
+                                    
+                                    <button type="submit" class="button is-link is-light is-rounded">Financiar</button>
+                                </form>
+                            </td>
+                            <td>
+                                <?php echo MONEDA_SIMBOLO . number_format($subtotal, MONEDA_DECIMALES, MONEDA_SEPARADOR_DECIMAL, MONEDA_SEPARADOR_MILLAR) . " " . MONEDA_NOMBRE; ?>
+                            </td>
+                            <td>
+                                <form class="FormularioAjax" action="<?php echo APP_URL; ?>app/ajax/ordenAjax.php" method="POST" autocomplete="off">
+                                    <input type="hidden" name="articulo_codigo" value="<?php echo $productos['articulo_codigo']; ?>">
+                                    <input type="hidden" name="orden_codigo" value="<?php echo $orden_codigo; ?>">
+                                    <input type="hidden" name="modulo_orden" value="remover_producto">
+                                    <button type="submit" class="button is-danger is-rounded is-small" title="Remover producto">
+                                        <i class="fas fa-trash-restore fa-fw"></i>
+                                    </button>
+                                </form>
+                            </td>
+                        </tr>
+                        <?php
+                                }
+                        ?>
+                        <tr class="has-text-centered">
+                            <td colspan="4"></td>
+                            <td class="has-text-weight-bold">TOTAL</td>
+                            <td class ="has-text-weight-bold">
+                                <?php echo MONEDA_SIMBOLO . number_format($_SESSION['orden_importe'], MONEDA_DECIMALES, MONEDA_SEPARADOR_DECIMAL, MONEDA_SEPARADOR_MILLAR) . " " . MONEDA_NOMBRE; ?>
+                            </td>
+                            <td colspan="2"></td>
+                        </tr>
+                        <?php
+                            } else {
+                                $_SESSION['orden_importe'] = 0;
+                        ?>
+                        <tr class="has-text-centered">
+                            <td colspan="8">No hay productos agregados</td>
+                        </tr>
+                        <?php } ?>
+                    </tbody>
+                </table>
+            </div>
+            <div class="container">
+                <?php if($_SESSION['orden_importe']>0){ ?>
+                <form class="FromularioAjax" action="<?php echo APP_URL; ?>app/ajax/ordenAjax.php" method="POST" autocomplete="off" name="formsale" >
+                    <input type="hidden" name="modulo_orden" value="registrar_productos_orden">
+                        <?php }else { ?>
+                    <form name="formsale">
+                        <?php } ?>
 
-                    <h4 class="subtitle is-5 has-text-centered has-text-weight-bold mb-5"><small>TOTAL A PAGAR: <?php echo MONEDA_SIMBOLO.number_format($_SESSION['orden_importe'],MONEDA_DECIMALES,MONEDA_SEPARADOR_DECIMAL,MONEDA_SEPARADOR_MILLAR)." ".MONEDA_NOMBRE; ?></small></h4>
+                        <h4 class="subtitle is-5 has-text-centered has-text-weight-bold mb-5"><small>TOTAL A PAGAR: <?php echo MONEDA_SIMBOLO.number_format($_SESSION['orden_importe'],MONEDA_DECIMALES,MONEDA_SEPARADOR_DECIMAL,MONEDA_SEPARADOR_MILLAR)." ".MONEDA_NOMBRE; ?></small></h4>
 
-                    <?php if($_SESSION['orden_importe']>0){ ?>
-                    <p class="has-text-centered">
-                        <button type="submit" class="button is-info is-rounded"><i class="far fa-save"></i> &nbsp; Agregar productos</button>
-                    </p>
-                    <?php } ?>
-                    <input type="hidden" value="<?php echo number_format($_SESSION['orden_importe'],MONEDA_DECIMALES,MONEDA_SEPARADOR_DECIMAL,""); ?>" id="venta_importe_hidden">
-                </form>
-        </div>
-    </section>
+                        <?php if($_SESSION['orden_importe']>0){ ?>
+                        <p class="has-text-centered">
+                            <button type="submit" class="button is-info is-rounded"><i class="far fa-save"></i> &nbsp; Agregar productos</button>
+                        </p>
+                        <?php } ?>
+                        <input type="hidden" value="<?php echo number_format($_SESSION['orden_importe'],MONEDA_DECIMALES,MONEDA_SEPARADOR_DECIMAL,""); ?>" id="venta_importe_hidden">
+                    </form>
+            </div>
+        </section>
     </div>
 </div>
 
@@ -895,6 +894,28 @@
 
 
 <script>
+    //al financiar producto se vuelve a abrir el
+    document.querySelectorAll('#financiar-form').forEach(form => {
+        form.addEventListener('submit', function(event) {
+            event.preventDefault(); // Prevenir el envío normal del formulario
+
+            let formData = new FormData(this);
+
+            fetch('<?php echo APP_URL; ?>app/ajax/ordenAjax.php', {
+                method: 'POST',
+                body: formData
+            })
+            .then(response => response.json())
+            .then(data => {
+                alertas_ajax(data); // Muestra las alertas correspondientes
+
+                // Almacena el estado del modal en sessionStorage
+                sessionStorage.setItem('modalState', 'modal-js-agregar'); // Cambia 'modal-js-agregar' por el ID del modal que deseas abrir
+                location.reload(); // Recarga la página
+            });
+        });
+    });
+
     /* Detectar cuando se envia el formulario para agregar producto */
     let sale_form_barcode = document.querySelector("#sale-barcode-form");
     sale_form_barcode.addEventListener('submit', function(event){

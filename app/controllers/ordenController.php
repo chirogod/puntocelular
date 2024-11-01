@@ -145,7 +145,7 @@
 			
 			//agregar equipo
 			$id_marca = $_POST['id_marca'];
-			if($id_marca == ""){
+			if($id_marca == ""){  
 				$alerta=[
 					"tipo"=>"simple",
 					"titulo"=>"Ocurrió un error inesperado",
@@ -509,6 +509,7 @@
 			}
 	
 			return json_encode($alerta);
+			exit();
 		}
 
 		/*---------- Controlador aceptar orden -------- */
@@ -560,6 +561,7 @@
 			}
 	
 			return json_encode($alerta);
+			exit();
 		}
 
         /*----------  Controlador listar orden  ----------*/
@@ -743,7 +745,7 @@
 			}
 
 			/*== Seleccionando productos en la DB ==*/
-			$datos_articulos=$this->ejecutarConsulta("SELECT * FROM articulo WHERE (articulo_descripcion LIKE '%$articulo%' OR articulo_marca LIKE '%$articulo%' OR articulo_modelo LIKE '%$articulo%') ORDER BY articulo_descripcion ASC");
+			$datos_articulos=$this->ejecutarConsulta("SELECT * FROM articulo WHERE (articulo_descripcion LIKE '%$articulo%' OR articulo_marca LIKE '%$articulo%' OR articulo_modelo LIKE '%$articulo%') AND id_sucursal = '$_SESSION[id_sucursal]' ORDER BY articulo_descripcion ASC");
 
 			if($datos_articulos->rowCount()>=1){
 
@@ -1311,23 +1313,15 @@
 				"condicion_valor"=>$codigo_orden
 			];
 
-			$operacion = $this->actualizarDatos("orden",$act_orden_total,$condicion);
+			$this->actualizarDatos("orden",$act_orden_total,$condicion);
 			
             /*== Vaciando variables de sesion ==*/
             unset($_SESSION['orden_total']);
             unset($_SESSION['datos_cliente_orden']);
             unset($_SESSION['datos_producto_orden']);
 
-			
-			$alerta=[
-				"tipo"=>"recargar",
-				"titulo"=>"¡Productos registrados!",
-				"texto"=>"Productos agregados correctamente a la orden",
-				"icono"=>"success"
-			];
-
-			return json_encode($alerta);
-	        exit();
+			header("Location: ".APP_URL."ordenDetail/$orden");
+			exit();
         }
 
 	}

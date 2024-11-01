@@ -113,7 +113,7 @@ function alertas_ajax(alerta){
             confirmButtonText: 'Aceptar'
         }).then((result) => {
             if(result.isConfirmed){
-                //location.reload();
+                location.reload();
             }
         });
 
