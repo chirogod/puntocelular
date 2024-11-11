@@ -65,7 +65,6 @@
                             <th class="has-text-centered">#</th>
                             <th class="has-text-centered">Producto</th>
                             <th class="has-text-centered">Cant.</th>
-                            <th class="has-text-centered">Precio</th>
 							<th class="has-text-centered">Financiacion</th>
                             <th class="has-text-centered">Subtotal</th>
                         </tr>
@@ -85,7 +84,6 @@
                             <td><?php echo $cc; ?></td>
                             <td><?php echo $detalle['venta_detalle_descripcion_producto']; ?></td>
                             <td><?php echo $detalle['venta_detalle_cantidad_producto']; ?></td>
-                            <td><?php echo MONEDA_SIMBOLO.number_format($detalle['venta_detalle_precio_lista_producto'],MONEDA_DECIMALES,MONEDA_SEPARADOR_DECIMAL,MONEDA_SEPARADOR_MILLAR)." ".MONEDA_NOMBRE; ?></td>
                             <td><?php echo $detalle['venta_detalle_financiacion_producto'] ?></td>
                             <td><?php echo MONEDA_SIMBOLO.number_format($detalle['venta_detalle_total'],MONEDA_DECIMALES,MONEDA_SEPARADOR_DECIMAL,MONEDA_SEPARADOR_MILLAR)." ".MONEDA_NOMBRE; ?></td>
                         </tr>
@@ -189,7 +187,7 @@
             	<button class="delete" aria-label="close"></button>
             </header>
         <section class="modal-card-body">
-            <form class="" action="<?php echo APP_URL; ?>app/ajax/pagoAjax.php" method="POST" autocomplete="off" name="formsale" >
+            <form class="FormularioAjax" action="<?php echo APP_URL; ?>app/ajax/pagoAjax.php" method="POST" autocomplete="off" name="formsale" >
                 <input type="hidden" name="modulo_pago" value="registrar_pago_venta">
                 <input type="hidden" name="venta_codigo" id="venta_codigo">
                 <div class="columns">
@@ -256,8 +254,7 @@
 				</div>
 				<p class="has-text-centered">
 					
-					<button type="submit" class="button is-link is-light" name="accion" value="pagar">Registrar pago</button>
-					<button type="submit" class="button is-link is-light" name="accion" value="saldar">Saldar totalidad pago</button>
+					<button type="submit" class="button is-link is-light" >Registrar pago</button>
 				</p>
 			</form>
 		</section>

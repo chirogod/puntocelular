@@ -313,7 +313,7 @@
 			return $tabla;
         }
 
-		/*----------  Controlador listar venta  ----------*/
+		/*----------  Controlador listar ventas del cliente  ----------*/
 		public function listarVentasClienteControlador($pagina,$registros,$url,$busqueda, $cliente){
 
 			$pagina=$this->limpiarCadena($pagina);
@@ -453,6 +453,153 @@
 			### Paginacion ###
 			if($total>0 && $pagina<=$numeroPaginas){
 				$tabla.='<p class="has-text-right">Mostrando ventas <strong>'.$pag_inicio.'</strong> al <strong>'.$pag_final.'</strong> de un <strong>total de '.$total.'</strong></p>';
+
+				$tabla.=$this->paginadorTablas($pagina,$numeroPaginas,$url,7);
+			}
+
+			return $tabla;
+		}
+
+		/*----------  Controlador listar ordenes  ----------*/
+		public function listarOrdenesClienteControlador($pagina,$registros,$url,$busqueda, $cliente){
+
+			$pagina=$this->limpiarCadena($pagina);
+			$registros=$this->limpiarCadena($registros);
+
+			$url=$this->limpiarCadena($url);
+			$url=APP_URL.$url."/";
+
+			$busqueda=$this->limpiarCadena($busqueda);
+			$tabla="";
+
+			$pagina = (isset($pagina) && $pagina>0) ? (int) $pagina : 1;
+			$inicio = ($pagina>0) ? (($pagina * $registros)-$registros) : 0;
+
+			$campos_tablas = "orden.id_orden, orden.orden_codigo, orden.orden_fecha, orden.orden_hora, orden.orden_total, orden.id_usuario, orden.id_cliente, orden.id_caja, usuario.id_usuario, usuario.usuario_nombre_completo, cliente.id_cliente, cliente.cliente_nombre_completo";
+
+			if(isset($busqueda) && $busqueda!=""){
+
+				$consulta_datos="SELECT $campos_tablas 
+								FROM orden 
+								INNER JOIN cliente ON orden.id_cliente=cliente.id_cliente 
+								INNER JOIN usuario ON orden.id_usuario=usuario.id_usuario 
+								INNER JOIN caja ON orden.id_caja=caja.id_caja 
+								WHERE 
+									orden.id_orden LIKE '%$busqueda%' 
+									OR orden.orden_codigo LIKE '%$busqueda%' 
+									OR cliente.cliente_nombre_completo LIKE '%$busqueda%' 
+									OR usuario.usuario_nombre_completo LIKE '%$busqueda%' 
+									OR caja.caja_nombre LIKE '%$busqueda%' 
+									AND orden.id_sucursal = '$_SESSION[id_sucursal]'
+									AND orden.id_cliente = '$cliente';
+								ORDER BY orden.id_orden DESC LIMIT $inicio,$registros";
+			
+				$consulta_total="SELECT COUNT(id_orden) 
+								FROM orden 
+								INNER JOIN cliente ON orden.id_cliente=cliente.id_cliente 
+								INNER JOIN usuario ON orden.id_usuario=usuario.id_usuario 
+								INNER JOIN caja ON orden.id_caja=caja.id_caja 
+								WHERE 
+									orden.id_orden LIKE '%$busqueda%' 
+									OR orden.orden_codigo LIKE '%$busqueda%' 
+									OR cliente.cliente_nombre_completo LIKE '%$busqueda%' 
+									OR usuario.usuario_nombre_completo LIKE '%$busqueda%' 
+									OR caja.caja_nombre LIKE '%$busqueda%'
+									AND orden.id_sucursal = '$_SESSION[id_sucursal]'
+									AND orden.id_cliente = '$cliente'";
+			
+			}else{
+			
+				$consulta_datos="SELECT $campos_tablas 
+								FROM orden 
+								INNER JOIN cliente ON orden.id_cliente=cliente.id_cliente 
+								INNER JOIN usuario ON orden.id_usuario=usuario.id_usuario 
+								INNER JOIN caja ON orden.id_caja=caja.id_caja 
+								WHERE orden.id_sucursal = '$_SESSION[id_sucursal]' AND orden.id_cliente = '$cliente';
+								ORDER BY orden.id_orden DESC LIMIT $inicio,$registros";
+			
+				$consulta_total="SELECT COUNT(id_orden) 
+								FROM orden 
+								INNER JOIN cliente ON orden.id_cliente=cliente.id_cliente 
+								INNER JOIN usuario ON orden.id_usuario=usuario.id_usuario 
+								INNER JOIN caja ON orden.id_caja=caja.id_caja
+								WHERE orden.id_sucursal = '$_SESSION[id_sucursal]' AND orden.id_cliente = '$cliente';";
+			}
+
+			$datos = $this->ejecutarConsulta($consulta_datos);
+			$datos = $datos->fetchAll();
+
+			$total = $this->ejecutarConsulta($consulta_total);
+			$total = (int) $total->fetchColumn();
+
+			$numeroPaginas =ceil($total/$registros);
+
+			$tabla.='
+		        <div class="table-container">
+		        <table class="table is-bordered is-striped is-narrow is-hoverable is-fullwidth">
+		            <thead>
+		                <tr>
+		                    <th class="has-text-centered">NRO.</th>
+		                    <th class="has-text-centered">Codigo</th>
+		                    <th class="has-text-centered">Fecha</th>
+		                    <th class="has-text-centered">Telefonista</th>
+		                    <th class="has-text-centered">Total</th>
+		                    <th class="has-text-centered">Detalle</th>
+		                </tr>
+		            </thead>
+		            <tbody>
+		    ';
+
+		    if($total>=1 && $pagina<=$numeroPaginas){
+				$contador=$inicio+1;
+				$pag_inicio=$inicio+1;
+				foreach($datos as $rows){
+					$tabla.='
+						<tr class="has-text-centered" >
+							<td>'.$rows['id_orden'].'</td>
+							<td>'.$rows['orden_codigo'].'</td>
+							<td>'.date("d-m-Y", strtotime($rows['orden_fecha'])).' '.$rows['orden_hora'].'</td>
+							<td>'.$rows['usuario_nombre_completo'].'</td>
+							<td>'.MONEDA_SIMBOLO.number_format($rows['orden_importe'],MONEDA_DECIMALES,MONEDA_SEPARADOR_DECIMAL,MONEDA_SEPARADOR_MILLAR).' '.MONEDA_NOMBRE.'</td>
+			                <td>
+
+			                    <a href="'.APP_URL.'saleDetail/'.$rows['orden_codigo'].'/" class="button is-link is-rounded is-small" title="Informacion de orden Nro. '.$rows['id_orden'].'" >
+			                    	<i class="fas fa-shopping-bag fa-fw"></i>
+			                    </a>
+
+			                </td>
+						</tr>
+					';
+					$contador++;
+				}
+				$pag_final=$contador-1;
+			}else{
+				if($total>=1){
+					$tabla.='
+						<tr class="has-text-centered" >
+			                <td colspan="7">
+			                    <a href="'.$url."".$cliente.'/" class="button is-link is-rounded is-small mt-4 mb-4">
+			                        Haga clic acá para recargar el listado
+			                    </a>
+			                </td>
+			            </tr>
+					';
+				}else{
+					$tabla.='
+						<tr class="has-text-centered" >
+			                <td colspan="7">
+			                    No hay registros en el sistema
+			                </td>
+			            </tr>
+					';
+				}
+			}
+
+			$tabla.='</tbody></table></div>';
+
+			### Paginacion ###
+			if($total>0 && $pagina<=$numeroPaginas){
+				$tabla.='<p class="has-text-right">Mostrando ordenes <strong>'.$pag_inicio.'</strong> al <strong>'.$pag_final.'</strong> de un <strong>total de '.$total.'</strong></p>';
 
 				$tabla.=$this->paginadorTablas($pagina,$numeroPaginas,$url,7);
 			}

@@ -16,15 +16,7 @@
             $id_venta = $datos_venta['id_venta'];
             $venta_importe = $datos_venta['venta_importe'];
             
-            // Si la acción es "saldar", asignar el saldo total al pago
-            if ($_POST['accion'] === 'saldar') {
-                $venta_pago_importe = $venta_importe; // Salda todo el importe de la venta
-            } else {
-                $venta_pago_importe = $_POST['venta_pago_importe']; // Pagar el monto ingresado
-            }
-           
-
-            $venta_saldo = $venta_importe - $venta_pago_importe;
+            $venta_pago_importe = $_POST['venta_pago_importe'];
 
             $caja=$_SESSION['caja'];
             $check_caja=$this->ejecutarConsulta("SELECT * FROM caja WHERE id_caja='$caja' ");
@@ -67,24 +59,25 @@
                     "campo_valor"=>$venta_pago_importe
                 ],
                 [
-                    "campo_nombre"=>"venta_saldo",
-                    "campo_marcador"=>":Saldo",
-                    "campo_valor"=>$venta_saldo
-                ],
-                [
                     "campo_nombre"=>"venta_codigo",
                     "campo_marcador"=>":VentaCodigo",
                     "campo_valor"=>$venta_codigo
+                ],
+                [
+                    "campo_nombre"=>"id_sucursal",
+                    "campo_marcador"=>":Sucursal",
+                    "campo_valor"=>$_SESSION['id_sucursal']
                 ]
             ];
     
             $registrar_pago = $this->guardarDatos("pago_venta", $datos_pago);
             if ($registrar_pago->rowCount()==1) {
                 $alerta=[
-                    "tipo"=>"redireccionar",
-                    "url"=>APP_URL."saleDetail/$venta_codigo"
+                    "tipo"=>"recargar",
+                    "titulo"=>"Pago registrado",
+                    "texto"=>"El pago se registro con exito",
+                    "icono"=>"success"
                 ];
-                return json_encode($alerta);
             }else{
                 $alerta=[
                     "tipo"=>"simple",
@@ -92,7 +85,6 @@
                     "texto"=>"No se pudo registrar el pago, por favor intente nuevamente",
                     "icono"=>"error"
                 ];
-                
             }
             
             //movimientos para la caja
@@ -250,21 +242,21 @@
                     "campo_valor"=>$orden_pago_importe
                 ],
                 [
-                    "campo_nombre"=>"orden_saldo",
-                    "campo_marcador"=>":Saldo",
-                    "campo_valor"=>$orden_saldo
-                ],
-                [
                     "campo_nombre"=>"orden_codigo",
                     "campo_marcador"=>":OrdenCodigo",
                     "campo_valor"=>$orden_codigo
+                ],
+                [
+                    "campo_nombre"=>"id_sucursal",
+                    "campo_marcador"=>":Sucursal",
+                    "campo_valor"=>$_SESSION['id_sucursal']
                 ]
             ];
     
             $registrar_pago = $this->guardarDatos("pago_orden", $datos_pago);
             if ($registrar_pago->rowCount()==1) {
                 $alerta=[
-                    "tipo"=>"simple",
+                    "tipo"=>"recargar",
                     "titulo"=>"Pago registrado",
                     "texto"=>"El pago se registro con exito",
                     "icono"=>"success"

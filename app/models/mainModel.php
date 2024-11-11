@@ -26,6 +26,12 @@
 			return $sql;
         }
 
+		public function Consultar($consulta){
+			$sql=$this->conectar()->prepare($consulta);
+			$sql->execute();
+			return $sql;
+		}
+
         /*--- LIMPIAR CADENAS ---*/
         public function limpiarCadena($cadena){
 
@@ -86,6 +92,25 @@
 			return $sql;
 		}
 
+		/* cargar modelos por marca en el select de las ordenes */
+		public function cargarModelosPorMarca($marcaId) {
+			// Asegúrate de que la consulta esté bien formada
+			$datos_modelo = $this->seleccionarDatos("Normal", "modelo", "*", 0);
+		
+			$modelos = [];
+			while ($campos_modelo = $datos_modelo->fetch()) {
+				// Filtra los modelos según la marca
+				if ($campos_modelo['id_marca'] == $marcaId) {
+					$modelos[] = [
+						'id_modelo' => $campos_modelo['id_modelo'],
+						'modelo_descripcion' => $campos_modelo['modelo_descripcion']
+					];
+				}
+			}
+		
+			return $modelos;
+		}
+
 
 		/*---------- SELECCIONAR DATOS ----------*/
         public function seleccionarDatos($tipo,$tabla,$campo,$id){
@@ -112,6 +137,19 @@
 			$condicion=$this->limpiarCadena($condicion);
 
             $sql=$this->conectar()->prepare("SELECT * FROM $tabla WHERE $campo=:condicion");
+            $sql->bindParam(":condicion",$condicion);
+            
+            $sql->execute();
+
+            return $sql;
+		}
+
+		/*---------- SELECCIONAR DATOS ESPECIFICOS ----------*/
+        public function seleccionarDatosFechaHoy($tabla,$sucursal){
+			$tabla=$this->limpiarCadena($tabla);
+			$sucursal=$this->limpiarCadena($sucursal);
+
+            $sql=$this->conectar()->prepare("SELECT * FROM ventas WHERE ");
             $sql->bindParam(":condicion",$condicion);
             
             $sql->execute();

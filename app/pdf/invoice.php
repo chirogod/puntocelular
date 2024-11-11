@@ -177,12 +177,11 @@
 		$pdf->SetDrawColor(255,255,255);
 		$pdf->SetTextColor(255,255,255);
 		$pdf->Cell(30,8,iconv("UTF-8", "ISO-8859-1",'Codigo'),1,0,'C',true);
-		$pdf->Cell(50,8,iconv("UTF-8", "ISO-8859-1",'Articulo'),1,0,'C',true);
+		$pdf->Cell(63,8,iconv("UTF-8", "ISO-8859-1",'Articulo'),1,0,'C',true);
 		$pdf->Cell(13,8,iconv("UTF-8", "ISO-8859-1",'Cant.'),1,0,'C',true);
-		$pdf->Cell(17,8,iconv("UTF-8", "ISO-8859-1",'Garantia'),1,0,'C',true);
-		$pdf->Cell(22,8,iconv("UTF-8", "ISO-8859-1",'P. Original'),1,0,'C',true);
-		$pdf->Cell(18,8,iconv("UTF-8", "ISO-8859-1",'FINANC'),1,0,'C',true);
-		$pdf->Cell(22,8,iconv("UTF-8", "ISO-8859-1",'P. Final'),1,0,'C',true);
+		$pdf->Cell(30,8,iconv("UTF-8", "ISO-8859-1",'Garantia'),1,0,'C',true);
+		$pdf->Cell(25,8,iconv("UTF-8", "ISO-8859-1",'FINANC'),1,0,'C',true);
+		$pdf->Cell(35,8,iconv("UTF-8", "ISO-8859-1",'P. Final'),1,0,'C',true);
 
 		$pdf->Ln(8);
 
@@ -199,17 +198,16 @@
 
     		$pdf->SetX(10);// Asegúrate de ajustar la posición X aquí también
 			$pdf->Cell(30,7,iconv("UTF-8", "ISO-8859-1",$ins_venta->limitarCadena($datos_articulo['articulo_codigo'],80,"...")),'L',0,'C');
-			$pdf->Cell(50,7,iconv("UTF-8", "ISO-8859-1",$ins_venta->limitarCadena($detalle['venta_detalle_descripcion_producto'],80,"...")),'L',0,'C');
+			$pdf->Cell(63,7,iconv("UTF-8", "ISO-8859-1",$ins_venta->limitarCadena($detalle['venta_detalle_descripcion_producto'],80,"...")),'L',0,'C');
 			$pdf->Cell(13,7,iconv("UTF-8", "ISO-8859-1",$detalle['venta_detalle_cantidad_producto']),'L',0,'C');
 			
 			$fecha_venta = strtotime($datos_venta['venta_fecha']);
 			$garantia_dias = $datos_articulo['articulo_garantia'];
 			$fecha_vencimiento = strtotime("+$garantia_dias days", $fecha_venta);
-			$pdf->Cell(17,7,iconv("UTF-8", "ISO-8859-1",date("d-m-Y", $fecha_vencimiento)),'L',0,'C');
+			$pdf->Cell(30,7,iconv("UTF-8", "ISO-8859-1",date("d-m-Y", $fecha_vencimiento)),'L',0,'C');
 			
-			$pdf->Cell(22,7,iconv("UTF-8", "ISO-8859-1",MONEDA_SIMBOLO.number_format($detalle['venta_detalle_precio_lista_producto'],MONEDA_DECIMALES,MONEDA_SEPARADOR_DECIMAL,MONEDA_SEPARADOR_MILLAR)),'L',0,'C');
-			$pdf->Cell(18,7,iconv("UTF-8", "ISO-8859-1",$detalle['venta_detalle_financiacion_producto']),'L',0,'C');
-			$pdf->Cell(22,7,iconv("UTF-8", "ISO-8859-1",MONEDA_SIMBOLO.number_format($detalle['venta_detalle_total'],MONEDA_DECIMALES,MONEDA_SEPARADOR_DECIMAL,MONEDA_SEPARADOR_MILLAR)),'LR',0,'C');
+			$pdf->Cell(25,7,iconv("UTF-8", "ISO-8859-1",$detalle['venta_detalle_financiacion_producto']),'L',0,'C');
+			$pdf->Cell(35,7,iconv("UTF-8", "ISO-8859-1",MONEDA_SIMBOLO.number_format($detalle['venta_detalle_total'],MONEDA_DECIMALES,MONEDA_SEPARADOR_DECIMAL,MONEDA_SEPARADOR_MILLAR)),'LR',0,'C');
 			$pdf->Ln(5);
 		}
 		$pdf->Ln(52);

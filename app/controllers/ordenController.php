@@ -166,8 +166,18 @@
 				return json_encode($alerta);
 		        exit();
 			}
-			$orden_serie_equipo = $_POST['orden_serie_equipo'];
+
 			$orden_equipo_ingresa_encendido = $_POST['orden_equipo_ingresa_encendido'];
+			if($orden_equipo_ingresa_encendido == null){
+				$alerta=[
+					"tipo"=>"simple",
+					"titulo"=>"Ocurrió un error inesperado",
+					"texto"=>"Debe indicar si el equipo ingresa encendido o no!",
+					"icono"=>"error"
+				];
+				return json_encode($alerta);
+		        exit();
+			}
 
 			$orden_equipo_detalles_fisicos = $_POST['orden_equipo_detalles_fisicos'];
 			$orden_equipo_contrasena = $_POST['orden_equipo_contrasena'];
@@ -188,6 +198,7 @@
 			}
 			$orden_estado = "Pendiente";
 			$orden_tipo = $_POST['orden_tipo'];
+			$fecha_prometida = '';
 			if($orden_tipo == ""){
 				$alerta=[
 					"tipo"=>"simple",
@@ -197,6 +208,8 @@
 				];
 				return json_encode($alerta);
 		        exit();
+			}elseif ($orden_tipo == "Prometida") {
+				$fecha_prometida = $_POST['orden_fecha_prometida'];
 			}
 			$id_tecnico = $_POST['id_tecnico'];
 			if($id_tecnico == ""){
@@ -257,11 +270,6 @@
 					"campo_valor"=>$id_modelo
 				],
 				[
-					"campo_nombre"=>"orden_serie_equipo",
-					"campo_marcador"=>":NSerie",
-					"campo_valor"=>$orden_serie_equipo
-				],
-				[
 					"campo_nombre"=>"orden_equipo_ingresa_encendido",
 					"campo_marcador"=>":Encendido",
 					"campo_valor"=>$orden_equipo_ingresa_encendido
@@ -311,6 +319,11 @@
 					"campo_valor"=>$orden_tipo
 				],
 				[
+					"campo_nombre"=>"orden_fecha_prometida",
+					"campo_marcador"=>":FechaPrometida",
+					"campo_valor"=>$fecha_prometida
+				],
+				[
 					"campo_nombre"=>"orden_importe_lista",
 					"campo_marcador"=>":Lista",
 					"campo_valor"=>$orden_importe_lista
@@ -349,7 +362,8 @@
 					"tipo"=>"limpiar",
 					"titulo"=>"Orden registrada con exito",
 					"texto"=>"La orden se registro con exito",
-					"icono"=>"success"
+					"icono"=>"success",
+					"comprobante_url" => APP_URL . "app/pdf/comprobanteOrden.php?code=" . $orden_codigo
 				];
 			}else{
 				$alerta=[
@@ -368,6 +382,58 @@
 
 		/*---------- Controlador actualizar orden -------- */
 		public function actualizarOrdenControlador(){
+			$orden_codigo = $_POST['orden_codigo'];
+			$orden_observaciones = $this->limpiarCadena($_POST['orden_observaciones']);
+			$orden_falla = $this->limpiarCadena($_POST['orden_falla']);
+			$orden_accesorios = $this->limpiarCadena($_POST['orden_accesorios']);
+
+			
+			$datos = [
+				//datos
+				[
+					"campo_nombre"=>"orden_observaciones",
+					"campo_marcador"=>":Observaciones",
+					"campo_valor"=>$orden_observaciones
+				],
+				
+				[
+					"campo_nombre"=>"orden_falla",
+					"campo_marcador"=>":Falla",
+					"campo_valor"=>$orden_falla
+				],
+				[
+					"campo_nombre"=>"orden_accesorios",
+					"campo_marcador"=>":Accesorios",
+					"campo_valor"=>$orden_accesorios
+				],
+			];
+
+			$condicion=[
+				"condicion_campo"=>"orden_codigo",
+				"condicion_marcador"=>":CodigoOrden",
+				"condicion_valor"=>$orden_codigo
+			];
+
+			$registrar_orden = $this->actualizarDatos("orden", $datos, $condicion);
+
+
+			if ($registrar_orden->rowCount()==1) {
+				$alerta=[
+					"tipo"=>"recargar",
+					"titulo"=>"Orden actualizada",
+					"texto"=>"La orden se actualizo con exito",
+					"icono"=>"success"
+				];
+			}else{
+				$alerta=[
+					"tipo"=>"simple",
+					"titulo"=>"Ocurrió un error inesperado",
+					"texto"=>"No se pudo actualizar la orden, por favor intente nuevamente",
+					"icono"=>"error"
+				];
+			}
+			//retornamos el json 
+			return json_encode($alerta);
 		}
 
 		/*---------- Controlador registrar informe tecnico orden -------- */
@@ -377,7 +443,7 @@
 			$orden_total_reparacion = $_POST['orden_total_reparacion'];
 			$orden = $this->ejecutarConsulta("SELECT * FROM orden WHERE orden_codigo='$orden_codigo'");
 			$orden = $orden->fetch();
-			$orden_total = $_POST['orden_total'];;
+			$orden_total = $_POST['orden_total']+$orden_total_reparacion;
 			
 			$datos =[
 				[
@@ -663,7 +729,6 @@
 								<th class="has-text-centered">Cliente</th>
 								<th class="has-text-centered">Vendedor</th>
 								<th class="has-text-centered">Total</th>
-								<th class="has-text-centered">Detalle</th>
 							</tr>
 						</thead>
 						<tbody>
@@ -674,17 +739,12 @@
 				$pag_inicio = $inicio + 1;
 				foreach ($datos as $rows) {
 					$tabla .= '
-						<tr class="has-text-centered">
+						<tr class="has-text-centered" style="cursor: pointer;" onclick="window.location.href=\'' . APP_URL . 'ordenDetail/' . $rows['orden_codigo'] . '/\'">
 							<td>' . $rows['orden_codigo'] . '</td>
 							<td>' . date("d-m-Y", strtotime($rows['orden_fecha'])) . ' ' . $rows['orden_hora'] . '</td>
 							<td>' . $rows['cliente_nombre_completo'] . '</td>
 							<td>' . $rows['orden_telefonista'] . '</td>
 							<td>' . MONEDA_SIMBOLO . number_format($rows['orden_total'], MONEDA_DECIMALES, MONEDA_SEPARADOR_DECIMAL, MONEDA_SEPARADOR_MILLAR) . ' ' . MONEDA_NOMBRE . '</td>
-							<td>
-								<a href="' . APP_URL . 'ordenDetail/' . $rows['orden_codigo'] . '/" class="button is-link is-rounded is-small" title="Información de orden Nro. ' . $rows['id_orden'] . '">
-									<i class="fas fa-shopping-bag fa-fw"></i>
-								</a>
-							</td>
 						</tr>
 					';
 					$contador++;
@@ -723,12 +783,20 @@
 			return $tabla;
 		}		
 
+		/* agregar PRODUCTOS A LA ORDEN  */
+
 		/*---------- Controlador buscar codigo de producto ----------*/
 		public function buscarCodigoVentaControlador(){
 
 			/*== Recuperando codigo de busqueda ==*/
 			$articulo=$this->limpiarCadena($_POST['buscar_codigo']);
 
+			// Log para verificar el valor recibido
+			error_log("Valor recibido en el controlador: " . $articulo);
+
+
+
+   
 			/*== Comprobando que no este vacio el campo ==*/
 			if($articulo==""){
 				return '
@@ -800,7 +868,6 @@
 
         /*---------- Controlador agregar producto a orden ----------*/
         public function agregarProductoCarritoControlador(){
-			$orden = $this->limpiarCadena($_POST['orden_codigo']);
             /*== Recuperando codigo del producto ==*/
             $codigo = $this->limpiarCadena($_POST['articulo_codigo']);
 
@@ -920,7 +987,7 @@
 			return json_encode($alerta);
         }
 
-		/*---------- Controlador remover producto de venta ----------*/
+		/*---------- Controlador remover producto de orden ----------*/
         public function removerProductoCarritoControlador(){
 
             /*== Recuperando codigo del producto ==*/
@@ -1003,7 +1070,7 @@
 				];
 			}
 
-			// Asegúrate de que la sesión de productos de venta esté inicializada
+			// Asegúrate de que la sesión de productos de orden esté inicializada
 			if (!isset($_SESSION['financiacion'])) {
 				$_SESSION['financiacion'] = [];
 			}
@@ -1018,10 +1085,9 @@
 			];
             
             $alerta=[
-				"tipo"=>"recargar",
-				"titulo"=>"¡Financiado!",
-				"texto"=>"Producto financiado",
-				"icono"=>"success"
+				"tipo"=>"redireccionar",
+				"url"=>APP_URL."saleNew/"
+
 			];
 
 			return json_encode($alerta);
@@ -1063,7 +1129,7 @@
 				$alerta=[
 					"tipo"=>"simple",
 					"titulo"=>"Ocurrió un error inesperado",
-					"texto"=>"No has financiado los articulos de esta venta",
+					"texto"=>"No has financiado los articulos agregados a esta orden",
 					"icono"=>"error"
 				];
 				return json_encode($alerta);
@@ -1176,7 +1242,7 @@
             }
 
 
-			/*== Agregando detalles de la venta ==*/
+			/*== Agregando detalles de la orden ==*/
             $errores_orden_detalle=0;
             foreach($_SESSION['datos_producto_orden'] as $orden_detalle){
 
@@ -1255,7 +1321,7 @@
                 $alerta=[
 					"tipo"=>"simple",
 					"titulo"=>"Ocurrió un error inesperado",
-					"texto"=>"No hemos podido registrar la venta, por favor intente nuevamente. Código de error: 001",
+					"texto"=>"No hemos podido registrar la orden, por favor intente nuevamente. Código de error: 001",
 					"icono"=>"error"
 				];
 				return json_encode($alerta);
@@ -1292,7 +1358,7 @@
                 $alerta=[
 					"tipo"=>"simple",
 					"titulo"=>"Ocurrió un error inesperado",
-					"texto"=>"No hemos podido registrar la venta, por favor intente nuevamente. Código de error: 002",
+					"texto"=>"No hemos podido registrar la orden, por favor intente nuevamente. Código de error: 002",
 					"icono"=>"error"
 				];
 				return json_encode($alerta);
@@ -1304,6 +1370,11 @@
 					"campo_nombre"=>"orden_total",
 					"campo_marcador"=>":Total",
 					"campo_valor"=>$orden_total
+				],
+				[
+					"campo_nombre"=>"orden_total_productos",
+					"campo_marcador"=>":TotalProductos",
+					"campo_valor"=>$orden_importe
 				]
 			];
 

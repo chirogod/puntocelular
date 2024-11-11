@@ -70,7 +70,7 @@ class rubroController extends mainModel{
 
             if ($registrar_rubro->rowCount()==1) {
                 $alerta=[
-					"tipo"=>"limpiar",
+					"tipo"=>"recargar",
 					"titulo"=>"Rubro registrado con exito",
 					"texto"=>"El rubro '".$rubro."' se registro con exito",
 					"icono"=>"success"
@@ -134,13 +134,7 @@ class rubroController extends mainModel{
 
             
             <div class="table-container">
-            <tr class="has-text-centered" >
-                        <td colspan="7">
-                            <a href="'.$url.'1/" class="button is-link is-rounded is-small mt-4 mb-4">
-                                Haga clic acá para recargar el listado
-                            </a>
-                        </td>
-                    </tr>
+            
             
 
             <table class="table is-bordered is-striped is-narrow is-hoverable is-fullwidth">

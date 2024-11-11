@@ -154,7 +154,6 @@
 		//EQUIPO
         $pdf->Cell($pageWidth/3,7,"Marca: ".$datos_orden['marca_descripcion'],'',0,'L');
 		$pdf->Cell($pageWidth/3,7,"Modelo: ".$datos_orden['modelo_descripcion'],'',0,'L');
-		$pdf->Cell($pageWidth/3,7,"Serie: ". $datos_orden['orden_serie_equipo'],'',0,'L');
 		
         $pdf->Ln(2);
 

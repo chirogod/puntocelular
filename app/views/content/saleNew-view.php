@@ -68,7 +68,7 @@
                                     <button class="delete" aria-label="close"></button>
                                     </header>
                                     <section class="modal-card-body">
-                                        <form class="" action="<?php echo APP_URL; ?>app/ajax/pagoAjax.php" method="POST" autocomplete="off" name="formsale" >
+                                        <form class="FormularioAjax" action="<?php echo APP_URL; ?>app/ajax/pagoAjax.php" method="POST" autocomplete="off" name="formsale" >
                                             <input type="hidden" name="modulo_pago" value="registrar_pago_venta">
                                             <input type="hidden" name="venta_codigo" id="venta_codigo">
                                             <div class="columns">
@@ -84,10 +84,12 @@
                                             <div class="columns">
                                                 <div class="column">
                                                     <label for="" class="label">Forma de pago: </label>
-                                                    <select name="venta_pago_forma" id="" class="select">
-                                                        <option value="Efectivo">Efectivo</option>
-                                                        <option value="Transferencia">Transferencia</option>
-                                                    </select>
+                                                    <div class="select">
+                                                        <select name="venta_pago_forma" id="" class="select">
+                                                            <option value="Efectivo">Efectivo</option>
+                                                            <option value="Transferencia">Transferencia</option>
+                                                        </select>
+                                                    </div>
                                                 </div>
                                                 <div class="column">
                                                     <label for="" class="label">Importe: </label>
@@ -130,8 +132,8 @@
                                                 </div>
                                             <div class="container" id="resultado-busqueda"></div>
                                             <p class="has-text-centered">
-                                                <button type="submit" class="button is-link is-light">Registrar pago</button>
-                                                <button type="submit" class="button is-link is-light">Saldar totalidad pago</button>
+                                                <button type="submit" class="button is-link is-light" name="accion" value="pagar">Registrar pago</button>
+                                                <button type="submit" class="button is-link is-light" name="accion" value="saldar">Saldar totalidad pago</button>
                                             </p>
                                         </form>
                                     </section>
@@ -153,10 +155,9 @@
                             <th class="has-text-centered">Código</th>
                             <th class="has-text-centered">Artículo</th>
                             <th class="has-text-centered">Cant.</th>
-                            <th class="has-text-centered">P. Lista</th>
-                            <th class="has-text-centered">Financ.</th>
+                            <th class="has-text-centered">F. de pago</th>
                             <th class="has-text-centered">Subtotal</th>
-                            <th class="has-text-centered">Acciones</th>
+                            <th class="has-text-centered">Remover</th>
                         </tr>
                     </thead>
                     <tbody>
@@ -167,7 +168,7 @@
                                 foreach($_SESSION['datos_producto_venta'] as $productos) {
                                     $codigo = $productos['articulo_codigo'];
                                     $financiacion = isset($_SESSION['financiacion'][$codigo]) ? $_SESSION['financiacion'][$codigo]['venta_detalle_financiacion_producto'] : 'n/a';
-                                    $subtotal = isset($_SESSION['financiacion'][$codigo]) ? $_SESSION['financiacion'][$codigo]['venta_detalle_total'] : $productos['venta_detalle_total'];
+                                    $subtotal = isset($_SESSION['financiacion'][$codigo]) ? $_SESSION['financiacion'][$codigo]['venta_detalle_total'] : '0';
                                     $_SESSION['venta_importe'] += $subtotal;
                         ?>
                         <tr class="has-text-centered">
@@ -178,7 +179,6 @@
                                     <input readonly class="input sale_input-cant has-text-centered" value="<?php echo $productos['venta_detalle_cantidad_producto']; ?>" id="sale_input_<?php echo str_replace(" ", "_", $productos['articulo_codigo']); ?>" type="text" style="max-width: 80px;">
                                 </div>
                             </td>
-                            <td><?php echo MONEDA_SIMBOLO . number_format($productos['venta_detalle_precio_lista_producto'], MONEDA_DECIMALES, MONEDA_SEPARADOR_DECIMAL, MONEDA_SEPARADOR_MILLAR) . " " . MONEDA_NOMBRE; ?></td>
                             <td>
                                 <form class="FormularioAjax" action="<?php echo APP_URL; ?>app/ajax/ventaAjax.php" method="POST" autocomplete="off">
                                     <input type="hidden" name="articulo_codigo" value="<?php echo $productos['articulo_codigo']; ?>">
@@ -186,11 +186,11 @@
                                     <div class="select">
                                         <select name="financiacion" class="select" required>
                                             <option value="">Seleccionar opción</option>
-                                            <option value="Efectivo" <?php echo (isset($_SESSION['financiacion'][$codigo]) && $_SESSION['financiacion'][$codigo]['venta_detalle_financiacion_producto'] == 'Efectivo') ? 'selected' : ''; ?>>Efectivo</option>
                                             <option value="3cuotas" <?php echo (isset($_SESSION['financiacion'][$codigo]) && $_SESSION['financiacion'][$codigo]['venta_detalle_financiacion_producto'] == '3cuotas') ? 'selected' : ''; ?>>3 cuotas</option>
                                             <option value="6cuotas" <?php echo (isset($_SESSION['financiacion'][$codigo]) && $_SESSION['financiacion'][$codigo]['venta_detalle_financiacion_producto'] == '6cuotas') ? 'selected' : ''; ?>>6 cuotas</option>
                                             <option value="9cuotas" <?php echo (isset($_SESSION['financiacion'][$codigo]) && $_SESSION['financiacion'][$codigo]['venta_detalle_financiacion_producto'] == '9cuotas') ? 'selected' : ''; ?>>9 cuotas</option>
                                             <option value="12cuotas" <?php echo (isset($_SESSION['financiacion'][$codigo]) && $_SESSION['financiacion'][$codigo]['venta_detalle_financiacion_producto'] == '12cuotas') ? 'selected' : ''; ?>>12 cuotas</option>
+                                            <option value="Efectivo" <?php echo (isset($_SESSION['financiacion'][$codigo]) && $_SESSION['financiacion'][$codigo]['venta_detalle_financiacion_producto'] == 'Efectivo') ? 'selected' : ''; ?>>Efectivo</option>
                                         </select>
                                     </div>
                                     <button type="submit" class="button is-link is-light is-rounded">Financiar</button>
@@ -213,7 +213,7 @@
                                 }
                         ?>
                         <tr class="has-text-centered">
-                            <td colspan="4"></td>
+                            <td colspan="3"></td>
                             <td class="has-text-weight-bold">TOTAL</td>
                             <td class ="has-text-weight-bold">
                                 <?php echo MONEDA_SIMBOLO . number_format($_SESSION['venta_importe'], MONEDA_DECIMALES, MONEDA_SEPARADOR_DECIMAL, MONEDA_SEPARADOR_MILLAR) . " " . MONEDA_NOMBRE; ?>
@@ -234,9 +234,8 @@
         </div>
     </div>
 
-    <div class="container">
+    <div class="box">
         <h2 class="title has-text-centered">Datos de la venta</h2>
-        <hr>
 
         <?php if($_SESSION['venta_importe']>0){ ?>
         <form class="FormularioAjax" action="<?php echo APP_URL; ?>app/ajax/ventaAjax.php" method="POST" autocomplete="off" name="formsale" >
@@ -244,9 +243,6 @@
                 <?php }else { ?>
             <form name="formsale">
                 <?php } ?>
-                
-                
-
                 <label>Cliente <?php echo CAMPO_OBLIGATORIO; ?></label>
                 <?php
                     if(isset($_SESSION['datos_cliente_venta']) && count($_SESSION['datos_cliente_venta'])>=1 && $_SESSION['datos_cliente_venta']['id_cliente']!=1){

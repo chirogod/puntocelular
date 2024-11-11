@@ -77,7 +77,19 @@
 		if($_POST['modulo_orden']=="financiar_producto"){
 			echo $insOrden->financiarProducto();
 		}
+		/*--------- Cargar modelos por marca ---------*/
+		if ($_POST['modulo_orden'] == "cargar_modelos") {
+			$marca_id = $_POST['marca_id'];
+			// Llama al método del controlador para cargar los modelos
+			$modelos = $insOrden->cargarModelosPorMarca($marca_id);
+			// Devolver los modelos como JSON
+			echo json_encode($modelos);
+			exit;
+		}
+		
 	}else{
 		session_destroy();
 		header("Location: ".APP_URL."login/");
 	}
+
+	

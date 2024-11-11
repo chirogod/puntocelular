@@ -123,8 +123,14 @@
 		  	</div>
 		  	<div class="column">
 		    	<div class="control">
-					<label>Precio lista <?php echo CAMPO_OBLIGATORIO; ?></label>
-					<input class="input" type="number" name="articulo_precio_lista" pattern="[0-9.]{1,25}" maxlength="25" value="0.00">
+					<label>Porcentaje ganancia<?php echo CAMPO_OBLIGATORIO; ?></label>
+					<input class="input" type="number" name="articulo_porcentaje_ganancia">
+				</div>
+		  	</div>
+			<div class="column">
+		    	<div class="control">
+					<label>Precio venta<?php echo CAMPO_OBLIGATORIO; ?></label>
+					<input class="input" type="number" name="articulo_precio_venta">
 				</div>
 		  	</div>
 		</div>

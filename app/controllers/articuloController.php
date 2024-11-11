@@ -17,14 +17,13 @@ class articuloController extends mainModel{
         $articulo_activo = $this->limpiarCadena($_POST['articulo_activo']);
         $articulo_moneda = $this->limpiarCadena($_POST['articulo_moneda']);
         $articulo_precio_compra = $this->limpiarCadena($_POST['articulo_precio_compra']);
-        $articulo_precio_lista = $this->limpiarCadena($_POST['articulo_precio_lista']);
-        $articulo_precio_efectivo = $this->limpiarCadena($_POST['articulo_precio_efectivo']);
-        $articulo_financicion = $this->limpiarCadena($_POST['articulo_financiacion']);
+        
+        $articulo_porcentaje_ganancia = $this->limpiarCadena($_POST['articulo_porcentaje_ganancia']);
         $articulo_marca = $this->limpiarCadena($_POST['articulo_marca']);
         $articulo_modelo = $this->limpiarCadena($_POST['articulo_modelo']);
 
         //verificar campos obligatorios
-        if($articulo_descripcion == "" || $articulo_stock == "" || $id_rubro == "" || $id_sucursal == "" || $articulo_moneda == "" || $articulo_precio_compra == "" || $articulo_precio_lista == "" || $articulo_precio_efectivo == "" || $articulo_activo == ""){
+        if($articulo_descripcion == "" || $articulo_stock == "" || $id_rubro == "" || $id_sucursal == "" || $articulo_moneda == "" || $articulo_precio_compra == "" || $articulo_activo == ""){
             $alerta=[
                 "tipo"=>"simple",
                 "titulo"=>"Ocurrió un error inesperado",
@@ -167,6 +166,14 @@ class articuloController extends mainModel{
             }
         }
 
+        /* operaciones con el precio de compra */
+        if($articulo_porcentaje_ganancia == ""){
+            $precio_venta = $this->limpiarCadena($_POST['articulo_precio_venta']);
+        }else{
+            $precio_venta = $articulo_precio_compra * (1 + ($articulo_porcentaje_ganancia/100));
+        }
+        
+
         $datos_articulo = [
             [
                 "campo_nombre"=>"articulo_codigo",
@@ -224,9 +231,14 @@ class articuloController extends mainModel{
                 "campo_valor"=>$articulo_precio_compra
             ],
             [
-                "campo_nombre"=>"articulo_precio_lista",
-                "campo_marcador"=>":PrecioLista",
-                "campo_valor"=>$articulo_precio_lista
+                "campo_nombre"=>"articulo_porcentaje_ganancia",
+                "campo_marcador"=>":PorcentajeGanancia",
+                "campo_valor"=>$articulo_porcentaje_ganancia
+            ],
+            [
+                "campo_nombre"=>"articulo_precio_venta",
+                "campo_marcador"=>":PrecioVenta",
+                "campo_valor"=>$precio_venta
             ],
             [
                 "campo_nombre"=>"articulo_marca",
@@ -290,7 +302,9 @@ class articuloController extends mainModel{
         $nombre=$this->limpiarCadena($_POST['articulo_descripcion']);
 
         $precio_compra=$this->limpiarCadena($_POST['articulo_precio_compra']);
-        $articulo_precio_lista = $this->limpiarCadena($_POST['articulo_precio_lista']);
+        $articulo_porcentaje_ganancia = $this->limpiarCadena($_POST['articulo_porcentaje_ganancia']);
+        /* operaciones con el precio de compra */
+        $precio_venta = $precio_compra * (1 + ($articulo_porcentaje_ganancia/100));
 
         $stock=$this->limpiarCadena($_POST['articulo_stock']);
         $stock_minimo=$this->limpiarCadena($_POST['articulo_stock_min']);
@@ -484,9 +498,14 @@ class articuloController extends mainModel{
                 "campo_valor"=>$precio_compra
             ],
             [
-                "campo_nombre"=>"articulo_precio_lista",
-                "campo_marcador"=>":PrecioLista",
-                "campo_valor"=>$articulo_precio_lista
+                "campo_nombre"=>"articulo_porcentaje_ganancia",
+                "campo_marcador"=>":PorcentajeGanancia",
+                "campo_valor"=>$articulo_porcentaje_ganancia
+            ],
+            [
+                "campo_nombre"=>"articulo_precio_venta",
+                "campo_marcador"=>":PrecioVenta",
+                "campo_valor"=>$precio_venta
             ],
             [
                 "campo_nombre"=>"articulo_marca",
@@ -572,7 +591,12 @@ class articuloController extends mainModel{
 
         if(isset($busqueda) && $busqueda!=""){
 
-            $consulta_datos = "SELECT * FROM articulo WHERE id_sucursal = '$sucursal' AND articulo_descripcion LIKE '%$busqueda%' OR articulo_codigo LIKE '%$busqueda%'";
+            $consulta_datos="SELECT * 
+                            FROM articulo 
+                            WHERE 
+                                id_sucursal = '$sucursal' 
+                                AND articulo_descripcion LIKE '%$busqueda%'
+                                OR articulo_codigo LIKE '%$busqueda%'";
 
             $consulta_total="SELECT COUNT(id_articulo) FROM articulo WHERE id_sucursal = '$sucursal' AND articulo_descripcion LIKE '%$busqueda%' OR articulo_codigo LIKE '%$busqueda%'";
 
@@ -601,7 +625,7 @@ class articuloController extends mainModel{
                         <th class="has-text-centered">Articulo</th>
                         <th class="has-text-centered">Codigo</th>
                         <th class="has-text-centered">Stock</th>
-                        <th class="has-text-centered">Precio lista</th>
+                        <th class="has-text-centered">Precio venta</th>
                         <th class="has-text-centered">Detalle</th>
                     </tr>
                 </thead>
@@ -618,7 +642,7 @@ class articuloController extends mainModel{
                         <td>'.$rows['articulo_descripcion'].'</td>
                         <td>'.$rows['articulo_codigo'].'</td>
                         <td>'.$rows['articulo_stock'].'</td>
-                        <td>'.$rows['articulo_precio_lista'].'</td>
+                        <td>'.$rows['articulo_precio_venta'].'</td>
                         <td>
                             <a href="'.APP_URL.'artUpdate/'.$rows['id_articulo'].'/" class="button is-success is-rounded is-small">
                                 <i class="fas fa-search fa-fw"></i>

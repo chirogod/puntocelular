@@ -383,3 +383,7 @@ body,html{
 
 
 
+/* QUE LOS TEXTAREA NO SEAN MODIFICABLES DE TAMANIO*/
+textarea{
+    resize: none !important;
+}

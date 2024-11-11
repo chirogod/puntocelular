@@ -13,7 +13,7 @@
     ?>
     <div class="columns">
         <div class="column">
-            <form class="FormularioAjaxSinAlerta" action="<?php echo APP_URL; ?>app/ajax/buscadorAjax.php" method="POST" autocomplete="off" >
+            <form class="FormularioAjax" action="<?php echo APP_URL; ?>app/ajax/buscadorAjax.php" method="POST" autocomplete="off" >
                 <input type="hidden" name="modulo_buscador" value="buscar">
                 <input type="hidden" name="modulo_url" value="<?php echo $url[0]; ?>">
                 <div class="field is-grouped">

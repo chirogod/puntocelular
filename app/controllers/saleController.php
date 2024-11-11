@@ -41,7 +41,8 @@
 									<tr>
 										<th class="has-text-centered">Codigo</th>
 										<th class="has-text-centered">Articulo</th>
-										<th class="has-text-centered">P. Lista</th>
+										<th class="has-text-centered">P. lista</th>
+										<th class="has-text-centered">P. efectivo</th>
 										<th class="has-text-centered">Agregar</th>
 									</tr>
 								</thead>
@@ -52,7 +53,8 @@
 					<tr class="has-text-left">
 						<td class="has-text-centered">'.$rows['articulo_codigo'].'</td>
 						<td class="has-text-centered">'.$rows['articulo_descripcion'].'</td>
-						<td class="has-text-centered">'.$rows['articulo_precio_lista'].'</td>
+						<td class="has-text-centered">'.$rows['articulo_precio_venta'] * 1.4.'</td>
+						<td class="has-text-centered">'.$rows['articulo_precio_venta'] * 1.05.'</td>
 						<td class="has-text-centered">
 							<button type="button" class="button is-link is-rounded is-small" onclick="agregar_codigo(\''.$rows['articulo_codigo'].'\')"><i class="fas fa-plus-circle"></i></button>
 						</td>
@@ -142,7 +144,7 @@
 			        exit();
                 }
 
-                $detalle_total=$detalle_cantidad*$campos['articulo_precio_lista'];
+                $detalle_total=$detalle_cantidad*$campos['articulo_precio_venta'];
                 $detalle_total=number_format($detalle_total,MONEDA_DECIMALES,'.','');
 
                 $_SESSION['datos_producto_venta'][$codigo]=[
@@ -151,7 +153,7 @@
 					"articulo_stock"=>$stock_total,
 					"articulo_stock_old"=>$campos['articulo_stock'],
                     "venta_detalle_precio_compra_producto"=>$campos['articulo_precio_compra'],
-                    "venta_detalle_precio_lista_producto"=>$campos['articulo_precio_lista'],
+                    "venta_detalle_precio_venta_producto"=>$campos['articulo_precio_venta'],
                     "venta_detalle_cantidad_producto"=>1,
                     "venta_detalle_total"=>$detalle_total,
                     "venta_detalle_descripcion_producto"=>$campos['articulo_descripcion']
@@ -174,7 +176,7 @@
 			        exit();
                 }
 
-                $detalle_total=$detalle_cantidad*$campos['articulo_precio_lista'];
+                $detalle_total=$detalle_cantidad*$campos['articulo_precio_venta'];
                 $detalle_total=number_format($detalle_total,MONEDA_DECIMALES,'.','');
 
                 $_SESSION['datos_producto_venta'][$codigo]=[
@@ -183,7 +185,7 @@
 					"articulo_stock"=>$stock_total,
 					"articulo_stock_total_old"=>$campos['articulo_stock'],
                     "venta_detalle_precio_compra_producto"=>$campos['articulo_precio_compra'],
-                    "venta_detalle_precio_lista_producto"=>$campos['articulo_precio_lista'],
+                    "venta_detalle_precio_venta_producto"=>$campos['articulo_precio_venta'],
                     "venta_detalle_cantidad_producto"=>$detalle_cantidad,
                     "venta_detalle_total"=>$detalle_total,
                     "venta_detalle_descripcion_producto"=>$campos['articulo_descripcion']
@@ -228,7 +230,7 @@
 					"tipo"=>"recargar",
 					"titulo"=>"¡Ocurrio un error inesperado!",
 					"texto"=>"No se introdujo el codigo del producto",
-					"icono"=>"success"
+					"icono"=>"error"
 				];
 				return json_encode($alerta);
 				exit();
@@ -241,7 +243,7 @@
 					"tipo"=>"recargar",
 					"titulo"=>"¡Ocurrio un error inesperado!",
 					"texto"=>"No se encontro el articulo de codigo '$codigo'",
-					"icono"=>"success"
+					"icono"=>"error"
 				];
 				return json_encode($alerta);
 				exit();
@@ -256,7 +258,7 @@
 					"tipo"=>"recargar",
 					"titulo"=>"¡Ocurrio un error inesperado!",
 					"texto"=>"Forma de financiamiento no valida",
-					"icono"=>"success"
+					"icono"=>"error"
 				];
 				return json_encode($alerta);
 				exit();
@@ -395,7 +397,7 @@
                 }
 
 				
-                $precio_venta = $_SESSION['datos_producto_venta'][$codigo]['venta_detalle_precio_lista_producto'];
+                $precio_venta = $_SESSION['datos_producto_venta'][$codigo]['venta_detalle_precio_venta_producto'];
                 
                 $detalle_total=$detalle_cantidad*$precio_venta;
                 $detalle_total=number_format($detalle_total,MONEDA_DECIMALES,'.','');
@@ -406,7 +408,7 @@
 					"articulo_stock_total"=>$stock_total,
 					"articulo_stock_total_old"=>$campos['articulo_stock'],
                     "venta_detalle_precio_compra_producto"=>$campos['articulo_precio_compra'],
-                    "venta_detalle_precio_lista_producto"=>$precio_venta,
+                    "venta_detalle_precio_venta_producto"=>$precio_venta,
                     "venta_detalle_cantidad_producto"=>$detalle_cantidad,
                     "venta_detalle_total"=>$detalle_total,
                     "venta_detalle_descripcion_producto"=>$campos['articulo_descripcion']
@@ -844,9 +846,9 @@
 						"campo_valor"=>$venta_detalle['venta_detalle_precio_compra_producto']
 					],
 					[
-						"campo_nombre"=>"venta_detalle_precio_lista_producto",
+						"campo_nombre"=>"venta_detalle_precio_venta_producto",
 						"campo_marcador"=>":PrecioVenta",
-						"campo_valor"=>$venta_detalle['venta_detalle_precio_lista_producto']
+						"campo_valor"=>$venta_detalle['venta_detalle_precio_venta_producto']
 					],
 					[
 						"campo_nombre"=>"venta_detalle_financiacion_producto",
@@ -1017,8 +1019,7 @@
 		                    <th class="has-text-centered">Fecha</th>
 		                    <th class="has-text-centered">Cliente</th>
 		                    <th class="has-text-centered">Vendedor</th>
-		                    <th class="has-text-centered">Total</th>
-		                    <th class="has-text-centered">Detalle</th>
+		                    <th class="has-text-centered">Importe</th>
 		                </tr>
 		            </thead>
 		            <tbody>
@@ -1029,20 +1030,13 @@
 				$pag_inicio=$inicio+1;
 				foreach($datos as $rows){
 					$tabla.='
-						<tr class="has-text-centered" >
+						<tr class="has-text-centered" style="cursor: pointer;" onclick="window.location.href=\'' . APP_URL . 'saleDetail/' . $rows['venta_codigo'] . '/\'">
 							<td>'.$rows['id_venta'].'</td>
 							<td>'.$rows['venta_codigo'].'</td>
 							<td>'.date("d-m-Y", strtotime($rows['venta_fecha'])).' '.$rows['venta_hora'].'</td>
 							<td>'.$rows['cliente_nombre_completo'].'</td>
 							<td>'.$rows['usuario_nombre_completo'].'</td>
 							<td>'.MONEDA_SIMBOLO.number_format($rows['venta_importe'],MONEDA_DECIMALES,MONEDA_SEPARADOR_DECIMAL,MONEDA_SEPARADOR_MILLAR).' '.MONEDA_NOMBRE.'</td>
-			                <td>
-
-			                    <a href="'.APP_URL.'saleDetail/'.$rows['venta_codigo'].'/" class="button is-link is-rounded is-small" title="Informacion de venta Nro. '.$rows['id_venta'].'" >
-			                    	<i class="fas fa-shopping-bag fa-fw"></i>
-			                    </a>
-
-			                </td>
 						</tr>
 					';
 					$contador++;
@@ -1198,7 +1192,7 @@
                 $detalle_total=$_SESSION['datos_producto_venta'][$codigo]['venta_detalle_cantidad_producto']*$precio;
                 $detalle_total=number_format($detalle_total,MONEDA_DECIMALES,'.','');
 
-                $_SESSION['datos_producto_venta'][$codigo]['venta_detalle_precio_lista_producto']=$precio;
+                $_SESSION['datos_producto_venta'][$codigo]['venta_detalle_precio_venta_producto']=$precio;
                 $_SESSION['datos_producto_venta'][$codigo]['venta_detalle_total']=$detalle_total;
 
                 $alerta=[
