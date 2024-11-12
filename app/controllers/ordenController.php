@@ -839,8 +839,8 @@
 					<tr class="has-text-left">
 						<td class="has-text-centered">'.$rows['articulo_codigo'].'</td>
 						<td class="has-text-centered">'.$rows['articulo_descripcion'].'</td>
-						<td class="has-text-centered">'.$rows['articulo_precio_lista'].'</td>
-						<td class="has-text-centered">'.(($rows['articulo_precio_lista'])-($rows['articulo_precio_lista'])*0.25).'</td>
+						<td class="has-text-centered">'.$rows['articulo_precio_venta'] * 1.4.'</td>
+						<td class="has-text-centered">'.$rows['articulo_precio_venta'] * 1.05.'</td>
 						<td class="has-text-centered">
 							<button type="button" class="button is-link is-rounded is-small" onclick="agregar_codigo(\''.$rows['articulo_codigo'].'\')"><i class="fas fa-plus-circle"></i></button>
 						</td>
@@ -929,7 +929,7 @@
 			        exit();
                 }
 
-                $detalle_total=$detalle_cantidad*$campos['articulo_precio_lista'];
+                $detalle_total=$detalle_cantidad*$campos['articulo_precio_venta'];
                 $detalle_total=number_format($detalle_total,MONEDA_DECIMALES,'.','');
 
                 $_SESSION['datos_producto_orden'][$codigo]=[
@@ -938,7 +938,7 @@
 					"articulo_stock"=>$stock_total,
 					"articulo_stock_old"=>$campos['articulo_stock'],
                     "orden_detalle_precio_compra_producto"=>$campos['articulo_precio_compra'],
-                    "orden_detalle_precio_lista_producto"=>$campos['articulo_precio_lista'],
+                    "orden_detalle_precio_venta_producto"=>$campos['articulo_precio_venta'],
                     "orden_detalle_cantidad_producto"=>1,
                     "orden_detalle_total"=>$detalle_total,
                     "orden_detalle_descripcion_producto"=>$campos['articulo_descripcion']
@@ -960,7 +960,7 @@
 			        exit();
                 }
 
-                $detalle_total=$detalle_cantidad*$campos['articulo_precio_lista'];
+                $detalle_total=$detalle_cantidad*$campos['articulo_precio_venta'];
                 $detalle_total=number_format($detalle_total,MONEDA_DECIMALES,'.','');
 
                 $_SESSION['datos_producto_orden'][$codigo]=[
@@ -969,7 +969,7 @@
 					"articulo_stock"=>$stock_total,
 					"articulo_stock_total_old"=>$campos['articulo_stock'],
                     "orden_detalle_precio_compra_producto"=>$campos['articulo_precio_compra'],
-                    "orden_detalle_precio_lista_producto"=>$campos['articulo_precio_lista'],
+                    "orden_detalle_precio_venta_producto"=>$campos['articulo_precio_venta'],
                     "orden_detalle_cantidad_producto"=>$detalle_cantidad,
                     "orden_detalle_total"=>$detalle_total,
                     "orden_detalle_descripcion_producto"=>$campos['articulo_descripcion']
@@ -978,7 +978,7 @@
                 }
 
 				$alerta=[
-                    "tipo"=>"simple",
+                    "tipo"=>"recargar",
                     "titulo"=>"Articulo agregado!",
                     "texto"=>"El articulo se agrego al carrito de la orden",
                     "icono"=>"success"
@@ -1035,7 +1035,7 @@
 			
             $codigo = $this->limpiarCadena($_POST['articulo_codigo']);
 			$financiacion = $this->limpiarCadena($_POST['financiacion']);
-			$orden = $this->limpiarCadena($_POST['orden_codigo']);
+
 			// Validar el código del producto
 			if($codigo == ""){
 				$alerta=[
@@ -1085,9 +1085,10 @@
 			];
             
             $alerta=[
-				"tipo"=>"redireccionar",
-				"url"=>APP_URL."saleNew/"
-
+				"tipo"=>"recargar",
+				"titulo"=>"todo flama",
+				"texto"=>"Articulo financiado naseh",
+				"icono"=>"success"
 			];
 
 			return json_encode($alerta);
@@ -1259,9 +1260,9 @@
 						"campo_valor"=>$orden_detalle['orden_detalle_precio_compra_producto']
 					],
 					[
-						"campo_nombre"=>"orden_detalle_precio_lista_producto",
+						"campo_nombre"=>"orden_detalle_precio_venta_producto",
 						"campo_marcador"=>":PrecioVenta",
-						"campo_valor"=>$orden_detalle['orden_detalle_precio_lista_producto']
+						"campo_valor"=>$orden_detalle['orden_detalle_precio_venta_producto']
 					],
 					[
 						"campo_nombre"=>"orden_detalle_financiacion_producto",

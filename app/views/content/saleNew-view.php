@@ -184,7 +184,7 @@
                                     <input type="hidden" name="articulo_codigo" value="<?php echo $productos['articulo_codigo']; ?>">
                                     <input type="hidden" name="modulo_venta" value="financiar_producto">
                                     <div class="select">
-                                        <select name="financiacion" class="select" required>
+                                        <select name="financiacion" class="select" required onchange="financiarProducto('<?php echo $productos['articulo_codigo']; ?>', this.value)">
                                             <option value="">Seleccionar opción</option>
                                             <option value="3cuotas" <?php echo (isset($_SESSION['financiacion'][$codigo]) && $_SESSION['financiacion'][$codigo]['venta_detalle_financiacion_producto'] == '3cuotas') ? 'selected' : ''; ?>>3 cuotas</option>
                                             <option value="6cuotas" <?php echo (isset($_SESSION['financiacion'][$codigo]) && $_SESSION['financiacion'][$codigo]['venta_detalle_financiacion_producto'] == '6cuotas') ? 'selected' : ''; ?>>6 cuotas</option>
@@ -193,7 +193,7 @@
                                             <option value="Efectivo" <?php echo (isset($_SESSION['financiacion'][$codigo]) && $_SESSION['financiacion'][$codigo]['venta_detalle_financiacion_producto'] == 'Efectivo') ? 'selected' : ''; ?>>Efectivo</option>
                                         </select>
                                     </div>
-                                    <button type="submit" class="button is-link is-light is-rounded">Financiar</button>
+                                    <!--<button type="submit" class="button is-link is-light is-rounded">Financiar</button>-->
                                 </form>
                             </td>
                             <td>
@@ -424,6 +424,24 @@
 
 
 <script>
+
+    function financiarProducto(codigo, financiacion) {
+        if (financiacion !== "") {
+            let datos = new FormData();
+            datos.append("articulo_codigo", codigo);
+            datos.append("financiacion", financiacion);
+            datos.append("modulo_venta", "financiar_producto");
+
+            fetch('<?php echo APP_URL; ?>app/ajax/ventaAjax.php', {
+                method: 'POST',
+                body: datos
+            })
+            .then(respuesta => respuesta.json())
+            .then(respuesta => {
+                return alertas_ajax(respuesta);
+            });
+        }
+    }
 
     function saldarVenta() {
         const ventaCodigo = document.querySelector('input[name="venta_codigo"]').value;

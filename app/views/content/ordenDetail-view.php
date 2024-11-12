@@ -288,7 +288,6 @@
                             <th class="has-text-centered">Código</th>
                             <th class="has-text-centered">Artículo</th>
                             <th class="has-text-centered">Cant.</th>
-                            <th class="has-text-centered">P. Lista</th>
                             <th class="has-text-centered">F. de pago</th>
                             <th class="has-text-centered">Subtotal</th>
                             <th class="has-text-centered">Acciones</th>
@@ -313,13 +312,12 @@
                                     <input readonly class="input sale_input-cant has-text-centered" value="<?php echo $productos['orden_detalle_cantidad_producto']; ?>" id="sale_input_<?php echo str_replace(" ", "_", $productos['articulo_codigo']); ?>" type="text" style="max-width: 80px;">
                                 </div>
                             </td>
-                            <td><?php echo MONEDA_SIMBOLO . number_format($productos['orden_detalle_precio_lista_producto'], MONEDA_DECIMALES, MONEDA_SEPARADOR_DECIMAL, MONEDA_SEPARADOR_MILLAR) . " " . MONEDA_NOMBRE; ?></td>
                             <td>
                                 <form class="FormularioAjax" action="<?php echo APP_URL; ?>app/ajax/ordenAjax.php" method="POST" autocomplete="off">
                                     <input type="hidden" name="articulo_codigo" value="<?php echo $productos['articulo_codigo']; ?>">
                                     <input type="hidden" name="modulo_orden" value="financiar_producto">
                                     <div class="select">
-                                        <select name="financiacion" class="select" required>
+                                        <select name="financiacion" class="select" required onchange="financiarProducto('<?php echo $productos['articulo_codigo']; ?>', this.value)">
                                             <option value="">Seleccionar opción</option>
                                             <option value="Efectivo" <?php echo (isset($_SESSION['financiacion'][$codigo]) && $_SESSION['financiacion'][$codigo]['orden_detalle_financiacion_producto'] == 'Efectivo') ? 'selected' : ''; ?>>Efectivo</option>
                                             <option value="3cuotas" <?php echo (isset($_SESSION['financiacion'][$codigo]) && $_SESSION['financiacion'][$codigo]['orden_detalle_financiacion_producto'] == '3cuotas') ? 'selected' : ''; ?>>3 cuotas</option>
@@ -328,7 +326,7 @@
                                             <option value="12cuotas" <?php echo (isset($_SESSION['financiacion'][$codigo]) && $_SESSION['financiacion'][$codigo]['orden_detalle_financiacion_producto'] == '12cuotas') ? 'selected' : ''; ?>>12 cuotas</option>
                                         </select>
                                     </div>
-                                    <button type="submit" class="button is-link is-light is-rounded">Financiar</button>
+                                    <!--<button type="submit" class="button is-link is-light is-rounded">Financiar</button>-->
                                 </form>
                             </td>
                             <td>
@@ -559,7 +557,7 @@
                         </div>
                     </div>
                     <p class="has-text-centered">
-                        <button type="submit" class="button is-link is-light">Registrar pago</button>
+                        <button type="submit" class="button is-link is-light" name="accion" value="pagar" id="pagar">Registrar pago</button>
                     </p>
                 </div>
             </form>
@@ -762,6 +760,24 @@
 ?>
 
 <script>
+
+    function financiarProducto(codigo, financiacion) {
+        if (financiacion !== "") {
+            let datos = new FormData();
+            datos.append("articulo_codigo", codigo);
+            datos.append("financiacion", financiacion);
+            datos.append("modulo_orden", "financiar_producto");
+
+            fetch('<?php echo APP_URL; ?>app/ajax/ordenAjax.php', {
+                method: 'POST',
+                body: datos
+            })
+            .then(respuesta => respuesta.json())
+            .then(respuesta => {
+                return alertas_ajax(respuesta);
+            });
+        }
+    }
     
     /* Detectar cuando se envia el formulario para agregar producto */
     let sale_form_barcode = document.querySelector("#sale-barcode-form");
