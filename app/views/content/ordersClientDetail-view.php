@@ -1,32 +1,58 @@
-<div class="">
-	<?php 
-        use app\controllers\clientController;
-		$id = $insLogin->limpiarCadena($url[1]);
-        $insCliente = new clientController();
-	?>
-
+<?php include "./app/views/includes/admin_security.php"; ?>
+<div class="container is-fluid mb-6 is-max-desktop">
+	<h1 class="title">Ordenes</h1>
 </div>
-
-<div class="container is-max-desktop" >
-	<?php
+<div class="container is-max-desktop pb-1 pt-1">
+    <?php
 	
 		include "./app/views/includes/btn_back.php";
 
-		$datos_venta = $insLogin->seleccionarDatos("Unico","venta","id_cliente",$id);
-        $datos_cliente = $insLogin->seleccionarDatos("Unico","cliente","id_cliente",$id)->fetch();
-		if($datos_venta->rowCount()>=1){
-			$datos_venta=$datos_venta->fetch();
-	?>
+		$id_cliente = $insLogin->limpiarCadena($url[1]);
+        use app\controllers\ordenController;
+        $insOrden = new ordenController();
 
-	<h2 class="title has-text-centered"><?php echo $datos_cliente['cliente_nombre_completo'] ; ?></h2>
-	
-    <?php
-        echo $insCliente->listarOrdenesClienteControlador($url[1],15,$url[0],"", $datos_cliente['id_cliente']);
+        if(!isset($_SESSION[$url[0]]) && empty($_SESSION[$url[0]])){
     ?>
-	
+    <div class="columns">
+        <div class="column ">
+            <form class="FormularioAjax" action="<?php echo APP_URL; ?>app/ajax/buscadorAjax.php" method="POST" autocomplete="off" >
+                <input type="hidden" name="modulo_buscador" value="buscar">
+                <input type="hidden" name="modulo_url" value="<?php echo $url[0]; ?>">
+                <div class="field is-grouped">
+                    <p class="control is-expanded">
+                        <input class="input is-rounded" type="text" name="txt_buscador" placeholder="Busqueda de orden" pattern="[a-zA-Z0-9áéíóúÁÉÍÓÚñÑ\- ]{1,30}" maxlength="30" required >
+                    </p>
+                    <p class="control">
+                        <button class="button is-info" type="submit" >Buscar</button>
+                    </p>
+                </div>
+            </form>
+        </div>
+    </div>
+    <?php }else{ ?>
+    <div class="columns">
+        <div class="column">
+            <form class="has-text-centered mt-6 mb-6 FormularioAjax" action="<?php echo APP_URL; ?>app/ajax/buscadorAjax.php" method="POST" autocomplete="off" >
+                <input type="hidden" name="modulo_buscador" value="eliminar">
+                <input type="hidden" name="modulo_url" value="<?php echo $url[0]; ?>">
+                <p><i class="fas fa-search fa-fw"></i> &nbsp; Estas buscando por código <strong>“<?php echo $_SESSION[$url[0]]; ?>”</strong></p>
+                <br>
+                <button type="submit" class="button is-danger is-rounded"><i class="fas fa-trash-restore"></i> &nbsp; Eliminar busqueda</button>
+            </form>
+        </div>
+    </div>
+    <?php
+            echo $insOrden->listarOrdenesClienteControlador($url[1],15,$url[0],$_SESSION[$url[0]], $id_cliente);
+
+            include "./app/views/includes/print_invoice_script.php";
+        }
+    ?>
+</div>
+<div class="container is-max-desktop mt-3 mb-3">
 	<?php
-		}else{
-			include "./app/views/includes/error_alert.php";
-		}
+		$insOrden = new ordenController();
+		echo $insOrden->listarOrdenesClienteControlador($url[1],15,$url[0],"", $id_cliente);
 	?>
 </div>
+
+

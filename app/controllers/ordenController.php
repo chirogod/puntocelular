@@ -783,6 +783,107 @@
 			return $tabla;
 		}		
 
+		/*----------  Controlador listar ordenes de un cliente  ----------*/
+		public function listarOrdenesClienteControlador($pagina,$registros,$url,$busqueda, $id_cliente){
+
+			$pagina=$this->limpiarCadena($pagina);
+			$registros=$this->limpiarCadena($registros);
+
+			$url=$this->limpiarCadena($url);
+			$url=APP_URL.$url."/";
+
+			$busqueda=$this->limpiarCadena($busqueda);
+			$tabla="";
+
+			$pagina = (isset($pagina) && $pagina>0) ? (int) $pagina : 1;
+			$inicio = ($pagina>0) ? (($pagina * $registros)-$registros) : 0;
+
+			$campos_tablas = "orden.id_orden, orden.orden_codigo, orden.orden_fecha, orden.orden_hora, orden.orden_total, orden.id_usuario, orden.id_cliente, orden.id_caja, usuario.id_usuario, usuario.usuario_nombre_completo, cliente.id_cliente, cliente.cliente_nombre_completo";
+
+			$consulta_datos = "SELECT orden.id_orden, orden.orden_codigo, orden.orden_fecha, orden.orden_hora, orden.orden_total, orden.id_usuario, orden.id_cliente, orden.id_caja, usuario.id_usuario, usuario.usuario_nombre_completo, cliente.id_cliente, cliente.cliente_nombre_completo
+								FROM orden 
+								INNER JOIN cliente ON orden.id_cliente=cliente.id_cliente 
+								INNER JOIN usuario ON orden.id_usuario=usuario.id_usuario 
+								INNER JOIN caja ON orden.id_caja=caja.id_caja 
+								WHERE orden.id_sucursal = 1
+								AND orden.id_cliente = $id_cliente
+								ORDER BY orden.id_orden DESC";
+
+			$consulta_total = "SELECT count(orden.id_orden) from orden WHERE id_cliente = $id_cliente";
+
+			$datos = $this->ejecutarConsulta($consulta_datos);
+			$datos = $datos->fetchAll();
+
+			$total = $this->ejecutarConsulta($consulta_total);
+			$total = (int) $total->fetchColumn();
+
+			// Configuración de la paginación
+			$numeroPaginas = ceil($total / $registros);
+
+			$tabla.='
+		        <div class="table-container">
+		        <table class="table is-bordered is-striped is-narrow is-hoverable is-fullwidth">
+		            <thead>
+		                <tr>
+		                    <th class="has-text-centered">NRO.</th>
+		                    <th class="has-text-centered">Codigo</th>
+		                    <th class="has-text-centered">Fecha</th>
+		                    <th class="has-text-centered">Telefonista</th>
+		                    <th class="has-text-centered">Importe</th>
+		                </tr>
+		            </thead>
+		            <tbody>
+		    ';
+			$total = 1;
+		    if($total>=1 ){
+				$contador=$inicio+1;
+				$pag_inicio=$inicio+1;
+				foreach($datos as $rows){
+					$tabla.='
+						<tr class="has-text-centered" style="cursor: pointer;" onclick="window.location.href=\'' . APP_URL . 'ordenDetail/' . $rows['orden_codigo'] . '/\'">
+							<td>'.$rows['id_orden'].'</td>
+							<td>'.$rows['orden_codigo'].'</td>
+							<td>'.date("d-m-Y", strtotime($rows['orden_fecha'])).' '.$rows['orden_hora'].'</td>
+							<td>'.$rows['usuario_nombre_completo'].'</td>
+							<td>'.MONEDA_SIMBOLO.number_format($rows['orden_total'],MONEDA_DECIMALES,MONEDA_SEPARADOR_DECIMAL,MONEDA_SEPARADOR_MILLAR).' '.MONEDA_NOMBRE.'</td>
+						</tr>
+					';
+					$contador++;
+				}
+				$pag_final=$contador-1;
+			}else{
+				if($total>=1){
+					$tabla.='
+						<tr class="has-text-centered" >
+			                <td colspan="7">
+			                    <a href="'.$url.'5904/" class="button is-link is-rounded is-small mt-4 mb-4">
+			                        Haga clic acá para recargar el listado
+			                    </a>
+			                </td>
+			            </tr>
+					';
+				}else{
+					$tabla.='
+						<tr class="has-text-centered" >
+			                <td colspan="7">
+			                    No hay registros en el sistema
+			                </td>
+			            </tr>
+					';
+				}
+			}
+
+			$tabla.='</tbody></table></div>';
+
+			// Paginación
+			if ($total > 0 && $pagina <= $numeroPaginas) {
+				$tabla .= '<p class="has-text-right">Mostrando órdenes <strong>' . $pag_inicio . '</strong> al <strong>' . $pag_final . '</strong> de un <strong>total de ' . $total . '</strong></p>';
+				$tabla .= $this->paginadorTablas($pagina, $numeroPaginas, $url, 7);
+			}
+
+			return $tabla;
+		}
+
 		/* agregar PRODUCTOS A LA ORDEN  */
 
 		/*---------- Controlador buscar codigo de producto ----------*/
