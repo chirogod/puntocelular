@@ -246,15 +246,19 @@
 							$suma_pagos = $suma_pagos->fetch();
 							$saldo = $datos_venta['venta_importe'] - $suma_pagos['suma_pagos'];
 							echo "Saldo: ".MONEDA_SIMBOLO.number_format($saldo,MONEDA_DECIMALES,MONEDA_SEPARADOR_DECIMAL,MONEDA_SEPARADOR_MILLAR)." ".MONEDA_NOMBRE;
+							
 						}else{
 							echo "Saldo: ".MONEDA_SIMBOLO.number_format($datos_venta['venta_importe'],MONEDA_DECIMALES,MONEDA_SEPARADOR_DECIMAL,MONEDA_SEPARADOR_MILLAR)." ".MONEDA_NOMBRE;
 						}
+						
 						?>
+						<input type="hidden" name="saldo" value="<?php echo $saldo ?>">
 					</div>
 				</div>
 				<p class="has-text-centered">
 					
-					<button type="submit" class="button is-link is-light" >Registrar pago</button>
+					<button type="submit" class="button is-link is-light" name="action" value="pagar">Registrar pago</button>
+					<button type="submit" class="button is-link is-light" name="action" value="saldar">Registrar pago</button>
 				</p>
 			</form>
 		</section>

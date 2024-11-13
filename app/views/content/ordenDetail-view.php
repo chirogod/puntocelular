@@ -478,6 +478,7 @@
                         <button type="submit" class="button is-link is-light">Guardar</button>
                     </p>
                 </form>
+                
             </section>
         </div>
     </div>
@@ -554,10 +555,12 @@
                                     echo "Saldo: ".MONEDA_SIMBOLO.number_format($datos['orden_total'],MONEDA_DECIMALES,MONEDA_SEPARADOR_DECIMAL,MONEDA_SEPARADOR_MILLAR)." ".MONEDA_NOMBRE;
                                 }
                             ?>
+                            <input type="hidden" name="saldo" value="<?php echo $saldo ?>"> 
                         </div>
                     </div>
                     <p class="has-text-centered">
-                        <button type="submit" class="button is-link is-light" name="accion" value="pagar" id="pagar">Registrar pago</button>
+                        <button type="submit" class="button is-link is-light" name="action" value="pagar">Registrar pago</button>
+                        <button type="submit" class="button is-link is-light" name="action" value="saldar">Saldar</button>
                     </p>
                 </div>
             </form>
