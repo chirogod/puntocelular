@@ -206,7 +206,7 @@
 						<div class="select">
 							<select name="venta_pago_forma">
 								<option selected disabled>Seleccione una opcion</option>
-								<option value="Efectivo">Efectivo</option>
+								<option value="Efectivo" selected>Efectivo</option>
 								<option value="Transferencia">Transferencia</option>
 							</select>
 						</div>
@@ -256,9 +256,7 @@
 					</div>
 				</div>
 				<p class="has-text-centered">
-					
-					<button type="submit" class="button is-link is-light" name="action" value="pagar">Registrar pago</button>
-					<button type="submit" class="button is-link is-light" name="action" value="saldar">Registrar pago</button>
+					<button type="submit" class="button is-link is-light">Registrar pago</button>
 				</p>
 			</form>
 		</section>

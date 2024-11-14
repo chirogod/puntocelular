@@ -132,8 +132,7 @@
                                                 </div>
                                             <div class="container" id="resultado-busqueda"></div>
                                             <p class="has-text-centered">
-                                                <button type="submit" class="button is-link is-light" name="accion" value="pagar">Registrar pago</button>
-                                                <button type="submit" class="button is-link is-light" name="accion" value="saldar">Saldar totalidad pago</button>
+                                                <button type="submit" class="button is-link is-light">Registrar pago</button>
                                             </p>
                                         </form>
                                     </section>

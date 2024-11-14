@@ -11,27 +11,14 @@
 		$insPago = new pagoController();
 
 		/*--------- Registrar pago ---------*/
-		if($_POST['modulo_pago']=="registrar_pago_venta"){
-			if($_POST['action'] == 'pagar'){
-				echo $insPago->registrarPagoVentaControlador();
-			}
-			if($_POST['action'] == 'saldar'){
-				echo $insPago->saldarPagoVentaControlador();
-			}
+		if ($_POST['modulo_pago'] == "registrar_pago_venta") {
+			echo $insPago->registrarPagoVentaControlador();
 		}
 
-
-		/*--------- Registrar pago ---------*/
-		if($_POST['modulo_pago']=="registrar_pago_orden"){
-			if($_POST['action'] == 'pagar'){
-				echo $insPago->registrarPagoOrdenControlador();
-			}
-			if($_POST['action'] == 'saldar'){
-				echo $insPago->saldarPagoOrdenControlador();
-			}
+		/*--------- Registrar pago orden ---------*/
+		if ($_POST['modulo_pago'] == "registrar_pago_orden") {
+			echo $insPago->registrarPagoOrdenControlador();
 		}
-
-		
 		
 	}else{
 		session_destroy();

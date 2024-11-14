@@ -559,8 +559,7 @@
                         </div>
                     </div>
                     <p class="has-text-centered">
-                        <button type="submit" class="button is-link is-light" name="action" value="pagar">Registrar pago</button>
-                        <button type="submit" class="button is-link is-light" name="action" value="saldar">Saldar</button>
+                        <button type="submit" class="button is-link is-light">Registrar pago</button>
                     </p>
                 </div>
             </form>

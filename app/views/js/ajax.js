@@ -2,7 +2,7 @@
 const formularios_ajax=document.querySelectorAll(".FormularioAjax");
 
 formularios_ajax.forEach(formularios => {
-
+    console.log(formularios);
     formularios.addEventListener("submit",function(e){
         
         e.preventDefault();
