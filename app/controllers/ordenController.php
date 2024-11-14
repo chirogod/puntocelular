@@ -1187,8 +1187,7 @@
             
             $alerta=[
 				"tipo"=>"recargar",
-				"titulo"=>"todo flama",
-				"texto"=>"Articulo financiado naseh",
+				"titulo"=>"Articulo financiado",
 				"icono"=>"success"
 			];
 

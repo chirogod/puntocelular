@@ -228,7 +228,6 @@
 		                    <th class="has-text-centered">Nombre</th>
 		                    <th class="has-text-centered">Usuario</th>
                             <th class="has-text-centered">Rol</th>
-		                    <th class="has-text-centered">Detalles</th>
 		                </tr>
 		            </thead>
 		            <tbody>
@@ -239,19 +238,11 @@
 				$pag_inicio=$inicio+1;
 				foreach($datos as $rows){
 					$tabla.='
-						<tr class="has-text-centered" >
+						<tr class="has-text-centered" style="cursor: pointer;" onclick="window.location.href=\'' . APP_URL . 'userUpdate/' . $rows['id_usuario'] . '/\'">
 							<td>'.$contador.'</td>
 							<td>'.$rows['usuario_nombre_completo'].'</td>
 							<td>'.$rows['usuario_usuario'].'</td>
                             <td>'.$rows['usuario_rol'].'</td>
-                            
-							
-			                <td>
-			                    <a href="'.APP_URL.'userUpdate/'.$rows['id_usuario'].'/" class="button is-success is-rounded is-small">
-			                    	<i class="fas fa-search fa-fw"></i>
-			                    </a>
-			                </td>
-			                
 						</tr>
 					';
 					$contador++;

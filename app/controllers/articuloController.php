@@ -11,10 +11,10 @@ class articuloController extends mainModel{
         $articulo_stock_min = $this->limpiarCadena($_POST['articulo_stock_min']);
         $articulo_stock_max = $this->limpiarCadena($_POST['articulo_stock_max']);
         $id_rubro = $this->limpiarCadena($_POST['id_rubro']);
-        $id_sucursal = $this->limpiarCadena($_POST['id_sucursal']);
+        $id_sucursal = $_SESSION['id_sucursal'];
         $articulo_garantia = $this->limpiarCadena($_POST['articulo_garantia']);
         $articulo_observacion = $this->limpiarCadena($_POST['articulo_observacion']);
-        $articulo_activo = $this->limpiarCadena($_POST['articulo_activo']);
+        $articulo_activo = "SI";
         $articulo_moneda = $this->limpiarCadena($_POST['articulo_moneda']);
         $articulo_precio_compra = $this->limpiarCadena($_POST['articulo_precio_compra']);
         
@@ -23,7 +23,7 @@ class articuloController extends mainModel{
         $articulo_modelo = $this->limpiarCadena($_POST['articulo_modelo']);
 
         //verificar campos obligatorios
-        if($articulo_descripcion == "" || $articulo_stock == "" || $id_rubro == "" || $id_sucursal == "" || $articulo_moneda == "" || $articulo_precio_compra == "" || $articulo_activo == ""){
+        if($articulo_descripcion == "" || $articulo_stock == "" || $id_rubro == "" || $id_sucursal == "" || $articulo_moneda == "" || $articulo_precio_compra == "" ){
             $alerta=[
                 "tipo"=>"simple",
                 "titulo"=>"Ocurrió un error inesperado",
@@ -626,7 +626,6 @@ class articuloController extends mainModel{
                         <th class="has-text-centered">Codigo</th>
                         <th class="has-text-centered">Stock</th>
                         <th class="has-text-centered">Precio venta</th>
-                        <th class="has-text-centered">Detalle</th>
                     </tr>
                 </thead>
                 <tbody>
@@ -637,18 +636,12 @@ class articuloController extends mainModel{
             $pag_inicio=$inicio+1;
             foreach($datos as $rows){
                 $tabla.='
-                    <tr class="has-text-centered" >
+                    <tr class="has-text-centered" style="cursor: pointer;" onclick="window.location.href=\'' . APP_URL . 'artUpdate/' . $rows['id_articulo'] . '/\'" >
                         <td>'.$contador.'</td>
                         <td>'.$rows['articulo_descripcion'].'</td>
                         <td>'.$rows['articulo_codigo'].'</td>
                         <td>'.$rows['articulo_stock'].'</td>
-                        <td>'.$rows['articulo_precio_venta'].'</td>
-                        <td>
-                            <a href="'.APP_URL.'artUpdate/'.$rows['id_articulo'].'/" class="button is-success is-rounded is-small">
-                                <i class="fas fa-search fa-fw"></i>
-                            </a>
-                        </td>
-                        
+                        <td>'.$rows['articulo_precio_venta'].'</td>                        
                     </tr>
                 ';
                 $contador++;

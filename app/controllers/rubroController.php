@@ -5,7 +5,7 @@ use app\models\mainModel;
 class rubroController extends mainModel{
     public function registrarRubroControlador(){
         $rubro = $this->limpiarCadena($_POST['rubro_descripcion']);
-        $rubro_sucursal = $this->limpiarCadena($_POST['rubro_sucursal']);
+        $rubro_sucursal = $_SESSION['id_sucursal'];
 
         if($rubro == "" || $rubro_sucursal == ""){
             $alerta=[

@@ -15,21 +15,6 @@
 				  	<input class="input" type="text" name="rubro_descripcion" pattern="[a-zA-ZáéíóúÁÉÍÓÚñÑ ]{3,40}" maxlength="40" required >
 				</div>
 		  	</div>
-              <div class="column">
-		  		<label>Sucursal <?php echo CAMPO_OBLIGATORIO; ?></label><br>
-				<div class="select">
-				  	<select name="rubro_sucursal">
-				    	<option value="" selected="" >Seleccione una opción</option>
-                        <?php
-                            $datos_sucursal=$insLogin->seleccionarDatos("Normal","sucursal","*",0);
-
-                            while($campos_sucursal=$datos_sucursal->fetch()){
-                                echo '<option value="'.$campos_sucursal['id_sucursal'].'">-'.$campos_sucursal['sucursal_descripcion'].'</option>';
-                            }
-                        ?>
-				  	</select>
-				</div>
-		  	</div>
 		</div>
 
 		<p class="has-text-centered">
