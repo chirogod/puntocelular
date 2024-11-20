@@ -237,6 +237,13 @@
 			$orden_importe_lista = $_POST['orden_importe_lista'];
 			$orden_importe_efectivo = $_POST['orden_importe_efectivo'];
 
+			if($orden_importe_lista != ""){
+				$orden_total_lista = $orden_importe_lista;
+			}
+			if($orden_importe_efectivo != ""){
+				$orden_total_efectivo = $orden_importe_efectivo;
+			}
+
 			//codigo de orden incrementado en 1 cada vez q se hace una nueva orden
 			$correlativo=$this->ejecutarConsulta("SELECT id_orden FROM orden");
 			$correlativo=($correlativo->rowCount())+1;
@@ -344,6 +351,16 @@
 					"campo_nombre"=>"orden_importe_efectivo",
 					"campo_marcador"=>":Efectivo",
 					"campo_valor"=>$orden_importe_efectivo
+				],
+				[
+					"campo_nombre"=>"orden_total_lista",
+					"campo_marcador"=>":totalLista",
+					"campo_valor"=>$orden_total_lista
+				],
+				[
+					"campo_nombre"=>"orden_total_efectivo",
+					"campo_marcador"=>":totalefectivo",
+					"campo_valor"=>$orden_total_efectivo
 				],
 
 				//demas
@@ -456,7 +473,8 @@
 			$orden_importe_efectivo = $_POST['orden_importe_efectivo'];
 			$orden = $this->ejecutarConsulta("SELECT * FROM orden WHERE orden_codigo='$orden_codigo'");
 			$orden = $orden->fetch();
-			$orden_total = $orden_importe_lista;
+			$orden_total_lista = $orden_importe_lista;
+			$orden_total_efectivo = $orden_importe_efectivo;
 			
 			$datos =[
 				[
@@ -475,10 +493,15 @@
 					"campo_valor"=>$orden_importe_efectivo
 				],
 				[
-					"campo_nombre"=>"orden_total",
-					"campo_marcador"=>":Total",
-					"campo_valor"=>$orden_total
+					"campo_nombre"=>"orden_total_lista",
+					"campo_marcador"=>":TotalLista",
+					"campo_valor"=>$orden_total_lista
 				],
+				[
+					"campo_nombre"=>"orden_total_efectivo",
+					"campo_marcador"=>":TotalEfectivo",
+					"campo_valor"=>$orden_total_efectivo
+				]
 			];
 
 			$condicion=[
@@ -666,7 +689,8 @@
 							  orden.orden_codigo, 
 							  orden.orden_fecha, 
 							  orden.orden_hora, 
-							  orden.orden_total, 
+							  orden.orden_total_lista, 
+							  orden.orden_total_efectivo,
 							  orden.id_usuario, 
 							  orden.id_cliente, 
 							  orden.orden_tipo, 
@@ -746,7 +770,8 @@
 								<th class="has-text-centered">Fecha</th>
 								<th class="has-text-centered">Cliente</th>
 								<th class="has-text-centered">Vendedor</th>
-								<th class="has-text-centered">Total</th>
+								<th class="has-text-centered">Total Lista</th>
+								<th class="has-text-centered">Total Efectivo</th>
 							</tr>
 						</thead>
 						<tbody>
@@ -762,7 +787,8 @@
 							<td>' . date("d-m-Y", strtotime($rows['orden_fecha'])) . ' ' . $rows['orden_hora'] . '</td>
 							<td>' . $rows['cliente_nombre_completo'] . '</td>
 							<td>' . $rows['orden_telefonista'] . '</td>
-							<td>' . MONEDA_SIMBOLO . number_format($rows['orden_total'], MONEDA_DECIMALES, MONEDA_SEPARADOR_DECIMAL, MONEDA_SEPARADOR_MILLAR) . ' ' . MONEDA_NOMBRE . '</td>
+							<td>' . MONEDA_SIMBOLO . number_format($rows['orden_total_lista'], MONEDA_DECIMALES, MONEDA_SEPARADOR_DECIMAL, MONEDA_SEPARADOR_MILLAR) . ' ' . MONEDA_NOMBRE . '</td>
+							<td>' . MONEDA_SIMBOLO . number_format($rows['orden_total_efectivo'], MONEDA_DECIMALES, MONEDA_SEPARADOR_DECIMAL, MONEDA_SEPARADOR_MILLAR) . ' ' . MONEDA_NOMBRE . '</td>
 						</tr>
 					';
 					$contador++;
@@ -816,9 +842,9 @@
 			$pagina = (isset($pagina) && $pagina>0) ? (int) $pagina : 1;
 			$inicio = ($pagina>0) ? (($pagina * $registros)-$registros) : 0;
 
-			$campos_tablas = "orden.id_orden, orden.orden_codigo, orden.orden_fecha, orden.orden_hora, orden.orden_total, orden.id_usuario, orden.id_cliente, orden.id_caja, usuario.id_usuario, usuario.usuario_nombre_completo, cliente.id_cliente, cliente.cliente_nombre_completo";
+			$campos_tablas = "orden.id_orden, orden.orden_codigo, orden.orden_fecha, orden.orden_hora, orden.orden_total_lista, orden.orden_total_efectivo, orden.id_usuario, orden.id_cliente, orden.id_caja, usuario.id_usuario, usuario.usuario_nombre_completo, cliente.id_cliente, cliente.cliente_nombre_completo";
 
-			$consulta_datos = "SELECT orden.id_orden, orden.orden_codigo, orden.orden_fecha, orden.orden_hora, orden.orden_total, orden.id_usuario, orden.id_cliente, orden.id_caja, usuario.id_usuario, usuario.usuario_nombre_completo, cliente.id_cliente, cliente.cliente_nombre_completo
+			$consulta_datos = "SELECT orden.id_orden, orden.orden_codigo, orden.orden_fecha, orden.orden_hora, orden.orden_total, orden.orden_total_efectivo, orden.id_usuario, orden.id_cliente, orden.id_caja, usuario.id_usuario, usuario.usuario_nombre_completo, cliente.id_cliente, cliente.cliente_nombre_completo
 								FROM orden 
 								INNER JOIN cliente ON orden.id_cliente=cliente.id_cliente 
 								INNER JOIN usuario ON orden.id_usuario=usuario.id_usuario 
@@ -847,7 +873,8 @@
 		                    <th class="has-text-centered">Codigo</th>
 		                    <th class="has-text-centered">Fecha</th>
 		                    <th class="has-text-centered">Telefonista</th>
-		                    <th class="has-text-centered">Importe</th>
+		                    <th class="has-text-centered">Importe Lista</th>
+							<th class="has-text-centered">Importe Efectivo</th>
 		                </tr>
 		            </thead>
 		            <tbody>
@@ -863,7 +890,8 @@
 							<td>'.$rows['orden_codigo'].'</td>
 							<td>'.date("d-m-Y", strtotime($rows['orden_fecha'])).' '.$rows['orden_hora'].'</td>
 							<td>'.$rows['usuario_nombre_completo'].'</td>
-							<td>'.MONEDA_SIMBOLO.number_format($rows['orden_total'],MONEDA_DECIMALES,MONEDA_SEPARADOR_DECIMAL,MONEDA_SEPARADOR_MILLAR).' '.MONEDA_NOMBRE.'</td>
+							<td>'.MONEDA_SIMBOLO.number_format($rows['orden_total_lista'],MONEDA_DECIMALES,MONEDA_SEPARADOR_DECIMAL,MONEDA_SEPARADOR_MILLAR).' '.MONEDA_NOMBRE.'</td>
+							<td>'.MONEDA_SIMBOLO.number_format($rows['orden_total_efectivo'],MONEDA_DECIMALES,MONEDA_SEPARADOR_DECIMAL,MONEDA_SEPARADOR_MILLAR).' '.MONEDA_NOMBRE.'</td>
 						</tr>
 					';
 					$contador++;
@@ -1211,7 +1239,8 @@
                 $datos_orden=$check_orden->fetch();
             }
 			$codigo_orden =  $datos_orden['orden_codigo'];
-			$orden_total_old =  $datos_orden['orden_total'];
+			$orden_total_lista_old =  $datos_orden['orden_total_lista'];
+			$orden_total_efectivo_old =  $datos_orden['orden_total_efectivo'];
 
             if($_SESSION['orden_importe']<=0 || (!isset($_SESSION['datos_producto_orden']) && count($_SESSION['datos_producto_orden'])<=0)){
 				$alerta=[
@@ -1263,7 +1292,8 @@
 
             $total_caja=$datos_caja['caja_monto']+$movimiento_cantidad;
             $total_caja=number_format($total_caja,MONEDA_DECIMALES,'.','');
-			$orden_total = $orden_total_old + $movimiento_cantidad;
+			$orden_total_lista = $orden_total_lista_old + $movimiento_cantidad;
+			$orden_total_efectivo = $orden_total_efectivo_old + $movimiento_cantidad;
 			
 
 
@@ -1465,9 +1495,14 @@
 
 			$act_orden_total=[
 				[
-					"campo_nombre"=>"orden_total",
-					"campo_marcador"=>":Total",
-					"campo_valor"=>$orden_total
+					"campo_nombre"=>"orden_total_lista",
+					"campo_marcador"=>":TotalLista",
+					"campo_valor"=>$orden_total_lista
+				],
+				[
+					"campo_nombre"=>"orden_total_efectivo",
+					"campo_marcador"=>":TotalEfectivo",
+					"campo_valor"=>$orden_total_efectivo
 				],
 				[
 					"campo_nombre"=>"orden_total_productos",

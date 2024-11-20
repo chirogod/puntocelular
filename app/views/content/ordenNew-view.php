@@ -112,15 +112,15 @@
                     </div>
 
                     <div class="control">
-                        <label>Ingresa encendido?<?php echo CAMPO_OBLIGATORIO; ?></label>
+                        <label>Ingreso<?php echo CAMPO_OBLIGATORIO; ?></label>
                             <div class="field">
                                 <label class="radio">
-                                    <input type="radio" name="orden_equipo_ingresa_encendido" value="Si">
-                                    Si
+                                    <input type="radio" name="orden_equipo_ingresa_encendido" value="Encendido">
+                                    Encendido
                                 </label>
                                 <label class="radio">
-                                    <input type="radio" name="orden_equipo_ingresa_encendido" value="No">
-                                    No
+                                    <input type="radio" name="orden_equipo_ingresa_encendido" value="Apagado">
+                                    Apagado
                                 </label>
                             </div>
                         </label>

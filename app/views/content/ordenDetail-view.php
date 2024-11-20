@@ -215,7 +215,7 @@
                 <div class="column is-one-third">
                     <div class="control">
                         <h4 class="title is-5" style="margin-bottom: 5px;">Total</h4>
-                        <p class="has-text-weight-semibold" style="margin-top: 0; font-size: 1.2rem;"><?php echo $datos['orden_total']; ?></p>
+                        <p class="has-text-weight-semibold" style="margin-top: 0; font-size: 1.2rem;"><?php echo $datos['orden_total_lista']; ?> / <?php echo $datos['orden_total_efectivo']; ?></p>
                     </div>
                 </div>
                 <div class="column is-one-third">
@@ -404,7 +404,7 @@
             </header>
             <section class="modal-card-body">
                 
-                <form class="" action="<?php echo APP_URL; ?>app/ajax/ordenAjax.php" method="POST" autocomplete="off" name="formsale" >
+                <form class="FormularioAjax" action="<?php echo APP_URL; ?>app/ajax/ordenAjax.php" method="POST" autocomplete="off" name="formsale" >
                     <input type="hidden" name="modulo_orden" value="registrar_informe_tecnico">
                     <h2 class="subtitle">Datos:</h2>
                     <div class="columns">
@@ -511,12 +511,13 @@
                     <div class="column">
                         <label for="" class="label">Forma de pago: </label>
                         <div class="select">
-                            <select name="orden_pago_forma" id="" class="select">
-                                <option value="Efectivo">Efectivo</option>
-                                <option value="Transferencia">Transferencia</option>
+                            <select name="orden_pago_forma" id="orden_pago_forma" onchange="actualizarValores()">
+                                <option value="" selected="">Seleccione una opción</option>
+                                <?php
+                                    echo $insLogin->generarSelect(FORMAS_PAGO, "VACIO");
+                                ?>
                             </select>
                         </div>
-                        
                     </div>
                     <div class="column">
                         <label for="" class="label">Importe: </label>
@@ -528,41 +529,39 @@
                     </div>
                 </div>
                 <div class="columns">
-                    <div class="column">Total de la orden: <?php echo MONEDA_SIMBOLO.number_format($datos['orden_total'],MONEDA_DECIMALES,MONEDA_SEPARADOR_DECIMAL,MONEDA_SEPARADOR_MILLAR)." ".MONEDA_NOMBRE; ?> </div>
                     <div class="column">
-                        <?php
-                        $suma_pagos = $insLogin->seleccionarDatos("Normal", "pago_orden WHERE orden_codigo = '".$datos['orden_codigo']."'","SUM(orden_pago_importe) as suma_pagos",0);
-                        if($suma_pagos->rowCount() >= 1){
-                            $suma_pagos = $suma_pagos->fetch();
-                            if($suma_pagos['suma_pagos'] !== NULL){
-                                echo "Suma de sus pagos: ".MONEDA_SIMBOLO.number_format($suma_pagos['suma_pagos'],MONEDA_DECIMALES,MONEDA_SEPARADOR_DECIMAL,MONEDA_SEPARADOR_MILLAR)." ".MONEDA_NOMBRE;
-                            }else{
-                            echo "Suma de sus pagos: 0.00";
-                        }
-                        }else{
-                            echo "Suma de sus pagos: 0.00";
-                        }
-                        ?>
-                        </div>
-                        <div class="column">
+                        Total de la orden: <br>
+                        <span id="orden_total"><?php echo MONEDA_SIMBOLO . number_format(0, MONEDA_DECIMALES, MONEDA_SEPARADOR_DECIMAL, MONEDA_SEPARADOR_MILLAR) . " " . MONEDA_NOMBRE; ?></span>
+                    </div>
+                    <div class="column">
+                        Suma de sus pagos: <br>
+                        <span id="suma_pagos">
                             <?php
-                                $suma_pagos = $insLogin->seleccionarDatos("Normal", "pago_orden WHERE orden_codigo = '".$datos['orden_codigo']."'","SUM(orden_pago_importe) as suma_pagos",0);
-                                if($suma_pagos->rowCount() >= 1){
+                                $suma_pagos = $insLogin->seleccionarDatos("Normal", "pago_orden WHERE orden_codigo = '" . $datos['orden_codigo'] . "'", "SUM(orden_pago_importe) as suma_pagos", 0);
+                                if ($suma_pagos->rowCount() >= 1) {
                                     $suma_pagos = $suma_pagos->fetch();
-                                    $saldo = $datos['orden_total'] - $suma_pagos['suma_pagos'];
-                                    echo "Saldo: ".MONEDA_SIMBOLO.number_format($saldo,MONEDA_DECIMALES,MONEDA_SEPARADOR_DECIMAL,MONEDA_SEPARADOR_MILLAR)." ".MONEDA_NOMBRE;
-                                }else{
-                                    echo "Saldo: ".MONEDA_SIMBOLO.number_format($datos['orden_total'],MONEDA_DECIMALES,MONEDA_SEPARADOR_DECIMAL,MONEDA_SEPARADOR_MILLAR)." ".MONEDA_NOMBRE;
+                                    echo $suma_pagos['suma_pagos'] !== NULL ? MONEDA_SIMBOLO . number_format($suma_pagos['suma_pagos'], MONEDA_DECIMALES, MONEDA_SEPARADOR_DECIMAL, MONEDA_SEPARADOR_MILLAR) . " " . MONEDA_NOMBRE : "0.00";
+                                } else {
+                                    echo "0.00";
                                 }
                             ?>
-                            <input type="hidden" name="saldo" value="<?php echo $saldo ?>"> 
-                        </div>
+                        </span>
                     </div>
-                    <p class="has-text-centered">
+                    <div class="column">
+                        Saldo: <br>
+                        <span id="saldo">
+                            <?php
+                                $saldo =  ($suma_pagos['suma_pagos'] ?? 0);
+                                echo MONEDA_SIMBOLO . number_format($saldo, MONEDA_DECIMALES, MONEDA_SEPARADOR_DECIMAL, MONEDA_SEPARADOR_MILLAR) . " " . MONEDA_NOMBRE;
+                            ?>
+                        </span>
+                        <input type="hidden" name="saldo" id="saldo_input" value="<?php echo $saldo; ?>">
+                    </div>
+                    
+                </div><p class="has-text-centered">
                         <button type="submit" class="button is-link is-light" id="btnEnviar">Registrar pago</button>
                         <button type="button" class="button is-link is-light" id="btnSaldar">Saldar total</button>
                     </p>
-                </div>
             </form>
         </section>
     </div>
@@ -914,6 +913,31 @@
     function agregar_codigo($codigo){
         document.querySelector('#sale-barcode-input').value=$codigo;
         setTimeout('agregar_producto()',100);
+    }
+
+    function actualizarValores() {
+        const formaPago = document.getElementById("orden_pago_forma").value;
+        const ordenTotal = document.getElementById("orden_total");
+        const saldo = document.getElementById("saldo");
+        const saldoInput = document.getElementById("saldo_input");
+
+        // Datos desde el servidor (puedes ajustar esto con AJAX si necesitas valores más dinámicos)
+        const totalEfectivo = <?php echo $datos['orden_total_efectivo']; ?>;
+        const totalLista = <?php echo $datos['orden_total_lista']; ?>;
+        const sumaPagos = <?php echo $suma_pagos['suma_pagos'] ?? 0; ?>;
+
+        let nuevoTotal;
+        if (formaPago === "Efectivo") {
+            nuevoTotal = totalEfectivo;
+        } else {
+            nuevoTotal = totalLista;
+        }
+
+        // Actualizar DOM
+        ordenTotal.innerText = `${nuevoTotal.toFixed(2)} <?php echo MONEDA_NOMBRE; ?>`;
+        const nuevoSaldo = nuevoTotal - sumaPagos;
+        saldo.innerText = `${nuevoSaldo.toFixed(2)} <?php echo MONEDA_NOMBRE; ?>`;
+        saldoInput.value = nuevoSaldo;
     }
 
 </script>

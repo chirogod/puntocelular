@@ -85,11 +85,14 @@
                                                 <div class="column">
                                                     <label for="" class="label">Forma de pago: </label>
                                                     <div class="select">
-                                                        <select name="venta_pago_forma" id="" class="select">
-                                                            <option value="Efectivo">Efectivo</option>
-                                                            <option value="Transferencia">Transferencia</option>
+                                                        <select name="venta_pago_forma">
+                                                            <option value="" selected="" >Seleccione una opción</option>
+                                                            <?php
+                                                                echo $insLogin->generarSelect(FORMAS_PAGO,"VACIO");
+                                                            ?>
                                                         </select>
                                                     </div>
+                                                    
                                                 </div>
                                                 <div class="column">
                                                     <label for="" class="label">Importe: </label>
