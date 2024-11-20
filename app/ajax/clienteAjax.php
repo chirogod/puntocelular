@@ -16,10 +16,6 @@
             echo $insCliente->actualizarClienteControlador();
         }
 
-        if ($_POST['modulo_cliente'] == "eliminar") {
-            echo $insCliente->eliminarClienteControlador();
-        }
-
     }else{
         session_destroy();
         header("Location: ".APP_URL."login/");

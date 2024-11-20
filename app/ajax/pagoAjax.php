@@ -12,12 +12,16 @@
 
 		/*--------- Registrar pago ---------*/
 		if ($_POST['modulo_pago'] == "registrar_pago_venta") {
-			echo $insPago->registrarPagoVentaControlador();
+			echo $insPago->registrarPagoVentaControlador();	
 		}
 
 		/*--------- Registrar pago orden ---------*/
 		if ($_POST['modulo_pago'] == "registrar_pago_orden") {
-			echo $insPago->registrarPagoOrdenControlador();
+			if($_POST['action'] == 'pagar'){
+				echo $insPago->registrarPagoOrdenControlador();
+			}elseif($_POST['action'] == 'pagar'){
+				echo $insPago->saldarPagoOrdenControlador();
+			}
 		}
 		
 	}else{

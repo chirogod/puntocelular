@@ -28,7 +28,7 @@
 	const MONEDA_SEPARADOR_DECIMAL=",";
 
 	/*---------- Formas de pago ----------*/
-	const FORMAS_PAGO = ["Efectivo", "Transferencia", "Otro"];
+	const FORMAS_PAGO = ["Efectivo", "Transferencia", "Tarjeta de credito", "Tarjeta de debito", "QR MP", "Cuenta DNI"];
 
 
 	/*----------  Marcador de campos obligatorios (Font Awesome) ----------*/

@@ -9,6 +9,16 @@
             $venta_pago_fecha = $_POST['venta_pago_fecha'];
             $venta_pago_hora = date("h:i a");
             $venta_pago_forma = $_POST['venta_pago_forma'];
+            if($venta_pago_forma == ""){
+                $alerta=[
+                    "tipo"=>"simple",
+                    "titulo"=>"Ocurrió un error inesperado",
+                    "texto"=>"No introdujo el metodo de pago",
+                    "icono"=>"error"
+                ];
+                return json_encode($alerta);
+                exit();
+            }
             $venta_pago_detalle = $_POST['venta_pago_detalle'];
 
             $check_venta = $this->ejecutarConsulta("SELECT * FROM venta WHERE venta_codigo ='$venta_codigo'");
@@ -17,6 +27,16 @@
             $venta_importe = $datos_venta['venta_importe'];
             
             $venta_pago_importe = $_POST['venta_pago_importe'];
+            if($venta_pago_importe == ""){
+                $alerta=[
+                    "tipo"=>"simple",
+                    "titulo"=>"Ocurrió un error inesperado",
+                    "texto"=>"No introdujo el importe",
+                    "icono"=>"error"
+                ];
+                return json_encode($alerta);
+                exit();
+            }
 
             $caja=$_SESSION['caja'];
             $check_caja=$this->ejecutarConsulta("SELECT * FROM caja WHERE id_caja='$caja' ");
@@ -78,6 +98,7 @@
                     "texto"=>"El pago se registro con exito",
                     "icono"=>"success"
                 ];
+
             }else{
                 $alerta=[
                     "tipo"=>"simple",
@@ -85,6 +106,8 @@
                     "texto"=>"No se pudo registrar el pago, por favor intente nuevamente",
                     "icono"=>"error"
                 ];
+                return json_encode($alerta);
+                exit();
             }
             
             //movimientos para la caja
@@ -183,7 +206,6 @@
             }
 
             return json_encode($alerta);
-
         }
         
         public function saldarPagoVentaControlador(){
@@ -197,9 +219,19 @@
             $datos_venta = $check_venta->fetch();
             $id_venta = $datos_venta['id_venta'];
             $venta_importe = $datos_venta['venta_importe'];
-            $saldo = $_POST['saldo'];
             
-            $venta_pago_importe = $saldo;
+            $venta_pago_importe = $_POST['venta_pago_importe'];
+
+            if($venta_pago_importe == ""){
+                $alerta=[
+                    "tipo"=>"simple",
+                    "titulo"=>"Importe invalido",
+                    "texto"=>"Debe ingresar el importe",
+                    "icono"=>"error"
+                ];
+                return json_encode($alerta);
+                exit();
+            }
 
             $caja=$_SESSION['caja'];
             $check_caja=$this->ejecutarConsulta("SELECT * FROM caja WHERE id_caja='$caja' ");
@@ -207,7 +239,7 @@
             
             $cajaVentas = $datos_venta['id_caja'];
 
-            $movimiento_cantidad = $saldo;
+            $movimiento_cantidad = $venta_pago_importe;
             $movimiento_cantidad=number_format($movimiento_cantidad,MONEDA_DECIMALES,'.','');
 
             $total_caja=$datos_caja['caja_monto']+$movimiento_cantidad;
@@ -257,10 +289,11 @@
             if ($registrar_pago->rowCount()==1) {
                 $alerta=[
                     "tipo"=>"recargar",
-                    "titulo"=>"Pago registrado",
-                    "texto"=>"El pago se registro con exito",
+                    "titulo"=>"Pago saldado",
+                    "texto"=>"El pago se saldo con exito",
                     "icono"=>"success"
                 ];
+
             }else{
                 $alerta=[
                     "tipo"=>"simple",
@@ -268,6 +301,8 @@
                     "texto"=>"No se pudo registrar el pago, por favor intente nuevamente",
                     "icono"=>"error"
                 ];
+                return json_encode($alerta);
+                exit();
             }
             
             //movimientos para la caja
@@ -364,9 +399,17 @@
 		        exit();
 
             }
-
             return json_encode($alerta);
+        }
 
+        public function noPagoVentaControlador(){
+            $alerta=[
+                "tipo"=>"recargar",
+                "titulo"=>"no hay nada",
+                "texto"=>"no hay nada",
+                "icono"=>"success"
+            ];
+            return json_encode($alerta);
         }
 
         public function registrarPagoOrdenControlador(){
@@ -538,14 +581,15 @@
             $orden_pago_fecha = $_POST['orden_pago_fecha'];
             $orden_pago_hora = date("h:i a");
             $orden_pago_forma = $_POST['orden_pago_forma'];
-            $saldo = $_POST['saldo'];
-            $orden_pago_importe = $saldo;
             $orden_pago_detalle = $_POST['orden_pago_detalle'];
-            
+
             $check_orden = $this->ejecutarConsulta("SELECT * FROM orden WHERE orden_codigo ='$orden_codigo'");
             $datos_orden = $check_orden->fetch();
-
-            $orden_importe = $datos_orden['orden_total'];
+            $id_orden = $datos_orden['id_orden'];
+            $orden_importe = $datos_orden['orden_importe'];
+            $saldo = $_POST['saldo'];
+            
+            $orden_pago_importe = $saldo;
 
             $caja=$_SESSION['caja'];
             $check_caja=$this->ejecutarConsulta("SELECT * FROM caja WHERE id_caja='$caja' ");
@@ -603,15 +647,15 @@
             if ($registrar_pago->rowCount()==1) {
                 $alerta=[
                     "tipo"=>"recargar",
-                    "titulo"=>"Pago registrado",
-                    "texto"=>"El pago se registro con exito",
+                    "titulo"=>"Pago saldado",
+                    "texto"=>"El pago se saldo con exito",
                     "icono"=>"success"
                 ];
             }else{
                 $alerta=[
                     "tipo"=>"simple",
                     "titulo"=>"Ocurrió un error inesperado",
-                    "texto"=>"No se pudo registrar el pago, por favor intente nuevamente",
+                    "texto"=>"No se pudo saldar el pago, por favor intente nuevamente",
                     "icono"=>"error"
                 ];
             }
@@ -680,6 +724,25 @@
 
                 $this->eliminarRegistro("orden_detalle","orden_codigo",$orden_codigo);
                 $this->eliminarRegistro("orden","orden_codigo",$orden_codigo);
+
+                foreach($_SESSION['datos_producto_orden'] as $producto){
+
+                    $datos_producto_rs=[
+                        [
+							"campo_nombre"=>"articulo_stock",
+							"campo_marcador"=>":Stock",
+							"campo_valor"=>$producto['articulo_stock_total_old']
+						]
+                    ];
+
+                    $condicion=[
+                        "condicion_campo"=>"producto_id",
+                        "condicion_marcador"=>":ID",
+                        "condicion_valor"=>$producto['producto_id']
+                    ];
+
+                    $this->actualizarDatos("articulo",$datos_producto_rs,$condicion);
+                }
 
                 $alerta=[
 					"tipo"=>"simple",

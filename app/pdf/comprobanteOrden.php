@@ -68,9 +68,9 @@
 		$pdf->SetFont('Arial','',18);
 		$pdf->Text($pageWidth / 2 + 59, 38, $datos_orden['id_orden']);
         $pdf->SetFont('Arial','b',12);
-		$pdf->Text($pageWidth / 2 + 2 , 48, 'Contrasena:');
-        $pdf->SetFont('Arial','',12);
-		$pdf->Text($pageWidth / 2 + 28 , 48, $datos_orden['orden_equipo_contrasena']);
+		$pdf->Text($pageWidth / 2 + 38, 58, 'Estado:');
+		$pdf->SetFont('Arial','',18);
+		$pdf->Text($pageWidth / 2 + 58, 58, $datos_orden['orden_estado']);
 
 		$pdf->Ln(5);
 
@@ -154,6 +154,7 @@
 		//EQUIPO
         $pdf->Cell($pageWidth/3,7,"Marca: ".$datos_orden['marca_descripcion'],'',0,'L');
 		$pdf->Cell($pageWidth/3,7,"Modelo: ".$datos_orden['modelo_descripcion'],'',0,'L');
+		$pdf->Cell($pageWidth/3,7,"Contrasena: ".$datos_orden['orden_equipo_contrasena'],'',0,'L');
 		
         $pdf->Ln(2);
 
@@ -170,9 +171,9 @@
 
         $pdf->Ln(2);
         $pdf->SetFont('Arial','b',10);
-        $pdf->Text(10, $yNewRect+50, "Observaciones:");
+        $pdf->Text(10, $yNewRect+50, "Detalles fiscos:");
         $pdf->SetFont('Arial','',10);
-        $pdf->Text(10, $yNewRect+55, $datos_orden['orden_observaciones']);
+        $pdf->Text(10, $yNewRect+55, $datos_orden['orden_equipo_detalles_fisicos']);
         $pdf->Ln(75);
         $pdf->Line(10, $yNewRect+65, $pageWidth-10, $yNewRect+65);
         $pdf->MultiCell($pageWidth-40, 5, "IMPORTANTE: Transcurridos los 15 dias a partir de la REPARACION y NOTIFICACION, la empresa cobrara al propietario del dispositivo un recargo sobre el presupuesto, en concepto de interes punitorio y/o moratorio. La tasa del mismo sera de un 10% quincenal. Asimismo, cumplidos los 90 dias posteriores a la REPARACION y NOTIFICACION del dipositivo, de no ser retirado, se considerara abandonado, facultando a PUNTO CELULAR a disponer del bien. En caso de no aceptar el presupuesto, luego de ingresado el dispositivo, se debera abonar $5.000 de servicio de presupuestao SIN EXCEPCION.", 0, 'L');

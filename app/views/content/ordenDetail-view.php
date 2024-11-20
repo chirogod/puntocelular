@@ -301,7 +301,7 @@
                                 foreach($_SESSION['datos_producto_orden'] as $productos) {
                                     $codigo = $productos['articulo_codigo'];
                                     $financiacion = isset($_SESSION['financiacion'][$codigo]) ? $_SESSION['financiacion'][$codigo]['orden_detalle_financiacion_producto'] : 'n/a';
-                                    $subtotal = isset($_SESSION['financiacion'][$codigo]) ? $_SESSION['financiacion'][$codigo]['orden_detalle_total'] : $productos['orden_detalle_total'];
+                                    $subtotal = isset($_SESSION['financiacion'][$codigo]) ? $_SESSION['financiacion'][$codigo]['orden_detalle_total'] : '0';
                                     $_SESSION['orden_importe'] += $subtotal;
                         ?>
                         <tr class="has-text-centered">
@@ -404,7 +404,7 @@
             </header>
             <section class="modal-card-body">
                 
-                <form class="FormularioAjax" action="<?php echo APP_URL; ?>app/ajax/ordenAjax.php" method="POST" autocomplete="off" name="formsale" >
+                <form class="" action="<?php echo APP_URL; ?>app/ajax/ordenAjax.php" method="POST" autocomplete="off" name="formsale" >
                     <input type="hidden" name="modulo_orden" value="registrar_informe_tecnico">
                     <h2 class="subtitle">Datos:</h2>
                     <div class="columns">
@@ -466,10 +466,10 @@
                             <div class="control">
                                 <h3>TOTALES REPARACION</h3>
                                 <label>P. Lista</label>
-                                <input class="input" type="text" value="<?php echo $datos['orden_total_reparacion']?>" name="orden_total_reparacion">
+                                <input class="input" type="text" value="<?php echo $datos['orden_importe_lista']?>" name="orden_importe_lista">
                                 
                                 <label>P. Efectivo</label>
-                                <input class="input" type="text" value="<?php echo $datos['orden_total_reparacion']*0.75; ?>" name="orden_total">
+                                <input class="input" type="text" value="<?php echo $datos['orden_importe_efectivo'] ?>" name="orden_importe_efectivo">
                                 
                             </div>
                         </div>
@@ -494,7 +494,7 @@
             <button class="delete" aria-label="close"></button>
         </header>
         <section class="modal-card-body">
-            <form class="FormularioAjax" action="<?php echo APP_URL; ?>app/ajax/pagoAjax.php" method="POST" autocomplete="off" name="formsale" >
+            <form class="" action="<?php echo APP_URL; ?>app/ajax/pagoAjax.php" method="POST" autocomplete="off" name="formorden" >
                 <input type="hidden" name="modulo_pago" value="registrar_pago_orden">
                 <input type="hidden" name="orden_codigo" id="orden_codigo">
                 <div class="columns">
@@ -520,7 +520,7 @@
                     </div>
                     <div class="column">
                         <label for="" class="label">Importe: </label>
-                        <input class="input" type="number" name="orden_pago_importe">
+                        <input class="input" type="number" name="orden_pago_importe" id="orden_pago_importe">
                     </div>
                     <div class="column">
                         <label for="" class="label">Detalle: </label>
@@ -559,7 +559,8 @@
                         </div>
                     </div>
                     <p class="has-text-centered">
-                        <button type="submit" class="button is-link is-light">Registrar pago</button>
+                        <button type="submit" class="button is-link is-light" name="action" value="pagar">Registrar pago</button>
+                        <button type="submit" class="button is-link" name="action" value="saldar">Saldar Total</button>
                     </p>
                 </div>
             </form>

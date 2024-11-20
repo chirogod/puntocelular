@@ -180,8 +180,19 @@
 			}
 
 			$orden_equipo_detalles_fisicos = $_POST['orden_equipo_detalles_fisicos'];
+
 			$orden_equipo_contrasena = $_POST['orden_equipo_contrasena'];
 			$orden_falla = $_POST['orden_falla'];
+			if($orden_falla == ""){
+				$alerta=[
+					"tipo"=>"simple",
+					"titulo"=>"Ocurrió un error inesperado",
+					"texto"=>"Debe indicar la falla del equipo!",
+					"icono"=>"error"
+				];
+				return json_encode($alerta);
+		        exit();
+			}
 
 			//detalles
 			$orden_accesorios = $_POST['orden_accesorios'];
@@ -222,6 +233,7 @@
 				return json_encode($alerta);
 		        exit();
 			}
+			                                                                                                                                                                                                                                                                                        
 			$orden_importe_lista = $_POST['orden_importe_lista'];
 			$orden_importe_efectivo = $_POST['orden_importe_efectivo'];
 
@@ -440,10 +452,11 @@
 		public function registrarInformeTecnicoOrdenControlador(){
 			$orden_codigo = $_POST['orden_codigo'];
 			$orden_informe_tecnico = $_POST['orden_informe_tecnico'];
-			$orden_total_reparacion = $_POST['orden_total_reparacion'];
+			$orden_importe_lista = $_POST['orden_importe_lista'];
+			$orden_importe_efectivo = $_POST['orden_importe_efectivo'];
 			$orden = $this->ejecutarConsulta("SELECT * FROM orden WHERE orden_codigo='$orden_codigo'");
 			$orden = $orden->fetch();
-			$orden_total = $_POST['orden_total']+$orden_total_reparacion;
+			$orden_total = $orden_importe_lista;
 			
 			$datos =[
 				[
@@ -452,9 +465,14 @@
 					"campo_valor"=>$orden_informe_tecnico
 				],
 				[
-					"campo_nombre"=>"orden_total_reparacion",
-					"campo_marcador"=>":TotalReparacion",
-					"campo_valor"=>$orden_total_reparacion
+					"campo_nombre"=>"orden_importe_lista",
+					"campo_marcador"=>":Lista",
+					"campo_valor"=>$orden_importe_lista
+				],
+				[
+					"campo_nombre"=>"orden_importe_efectivo",
+					"campo_marcador"=>":Efectivo",
+					"campo_valor"=>$orden_importe_efectivo
 				],
 				[
 					"campo_nombre"=>"orden_total",
@@ -1492,7 +1510,13 @@
             unset($_SESSION['datos_cliente_orden']);
             unset($_SESSION['datos_producto_orden']);
 
-			header("Location: ".APP_URL."ordenDetail/$orden");
+			$alerta=[
+				"tipo"=>"recargar",
+				"titulo"=>"¡Producto agregado!",
+				"texto"=>"El producto se agrego correctamente a la orden",
+				"icono"=>"success"
+			];
+			return json_encode($alerta);
 			exit();
         }
 

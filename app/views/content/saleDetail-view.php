@@ -181,84 +181,87 @@
 <!-- Modal registrar pago -->
 <div class="modal" id="modal-js-pay">
     <div class="modal-background"></div>
-        <div class="modal-card">
-            <header class="modal-card-head">
-            	<p class="modal-card-title is-uppercase"><i class="fas fa-search"></i> &nbsp; Pagos de la venta: </p>
-            	<button class="delete" aria-label="close"></button>
-            </header>
+    <div class="modal-card">
+        <header class="modal-card-head">
+            <p class="modal-card-title is-uppercase"><i class="fas fa-search"></i> &nbsp; Pagos de la venta: </p>
+            <button class="delete" aria-label="close"></button>
+        </header>
         <section class="modal-card-body">
-            <form class="FormularioAjax" action="<?php echo APP_URL; ?>app/ajax/pagoAjax.php" method="POST" autocomplete="off" name="formsale" >
+            <form class="FormularioAjax" action="<?php echo APP_URL; ?>app/ajax/pagoAjax.php" method="POST" autocomplete="off" name="formsale">
                 <input type="hidden" name="modulo_pago" value="registrar_pago_venta">
                 <input type="hidden" name="venta_codigo" id="venta_codigo">
                 <div class="columns">
-					<div class="column">
-						<label for="" class="label">Venta codigo: </label>
-						<input readonly name="venta_codigo" class="input" type="text" value="<?php echo $datos_venta['venta_codigo']?> ">
-					</div>
-					<div class="column">
-						<label for="" class="label">Fecha: </label>
-						<input name="venta_pago_fecha" class="input" name="" type="date" value="<?php echo date("Y-m-d"); ?>" >
-					</div>
-				</div>
-				<div class="columns">
-					<div class="column">
-						<label for="" class="label">Forma de pago: </label>
-						<div class="select">
-							<select name="venta_pago_forma">
-								<option selected disabled>Seleccione una opcion</option>
-								<option value="Efectivo" selected>Efectivo</option>
-								<option value="Transferencia">Transferencia</option>
-							</select>
-						</div>
-						
-					</div>
-					<div class="column">
-						<label for="" class="label">Importe: </label>
-						<input class="input" type="number" name="venta_pago_importe">
-					</div>
-					<div class="column">
-						<label for="" class="label">Detalle: </label>
-						<input class="input" type="text" name="venta_pago_detalle">
-					</div>
-				</div>
-				<div class="columns">
-					<div class="column">Total de la venta: <?php echo $datos_venta['venta_importe'] ?></div>
-					<div class="column">
-						<?php
-						$suma_pagos = $insLogin->seleccionarDatos("Normal", "pago_venta WHERE venta_codigo = '".$datos_venta['venta_codigo']."'","SUM(venta_pago_importe) as suma_pagos",0);
-						$suma_pagos = $insLogin->seleccionarDatos("Normal", "pago_venta WHERE venta_codigo = '".$datos_venta['venta_codigo']."'","SUM(venta_pago_importe) as suma_pagos",0);
-						if($suma_pagos->rowCount() >= 1){
-							$suma_pagos = $suma_pagos->fetch();
-							if($suma_pagos['suma_pagos'] !== NULL){
-								echo "Suma de sus pagos: ".MONEDA_SIMBOLO.number_format($suma_pagos['suma_pagos'],MONEDA_DECIMALES,MONEDA_SEPARADOR_DECIMAL,MONEDA_SEPARADOR_MILLAR)." ".MONEDA_NOMBRE;
-							}else{
-								echo "Suma de sus pagos: 0.00";
-							}
-						}else{
-							echo "Suma de sus pagos: 0.00";
-						}
-						?>
-					</div>
-					<div class="column">
-						<?php
-						$suma_pagos = $insLogin->seleccionarDatos("Normal", "pago_venta WHERE venta_codigo = '".$datos_venta['venta_codigo']."'","SUM(venta_pago_importe) as suma_pagos",0);
-						if($suma_pagos->rowCount() >= 1){
-							$suma_pagos = $suma_pagos->fetch();
-							$saldo = $datos_venta['venta_importe'] - $suma_pagos['suma_pagos'];
-							echo "Saldo: ".MONEDA_SIMBOLO.number_format($saldo,MONEDA_DECIMALES,MONEDA_SEPARADOR_DECIMAL,MONEDA_SEPARADOR_MILLAR)." ".MONEDA_NOMBRE;
-							
-						}else{
-							echo "Saldo: ".MONEDA_SIMBOLO.number_format($datos_venta['venta_importe'],MONEDA_DECIMALES,MONEDA_SEPARADOR_DECIMAL,MONEDA_SEPARADOR_MILLAR)." ".MONEDA_NOMBRE;
-						}
-						
-						?>
-						<input type="hidden" name="saldo" value="<?php echo $saldo ?>">
-					</div>
-				</div>
-				<p class="has-text-centered">
-					<button type="submit" class="button is-link is-light">Registrar pago</button>
+                    <div class="column">
+                        <label for="" class="label">Venta código: </label>
+                        <input readonly name="venta_codigo" class="input" type="text" value="<?php echo $datos_venta['venta_codigo']; ?>">
+                    </div>
+                    <div class="column">
+                        <label for="" class="label">Fecha: </label>
+                        <input name="venta_pago_fecha" class="input" type="date" value="<?php echo date("Y-m-d"); ?>">
+                    </div>
+                </div>
+                <div class="columns">
+                    <div class="column">
+                        <label for="" class="label">Forma de pago: </label>
+                        <div class="select">
+                            <select name="venta_pago_forma">
+                                <option selected disabled>Seleccione una opción</option>
+                                <option value="Efectivo" selected>Efectivo</option>
+                                <option value="Transferencia">Transferencia</option>
+                            </select>
+                        </div>
+                    </div>
+                    <div class="column">
+                        <label for="" class="label">Importe: </label>
+                        <input class="input" type="number" name="venta_pago_importe" id="venta_pago_importe">
+                    </div>
+                    <div class="column">
+                        <label for="" class="label">Detalle: </label>
+                        <input class="input" type="text" name="venta_pago_detalle">
+                    </div>
+                </div>
+                <div class="columns">
+                    <div class="column">Total de la venta: <?php echo MONEDA_SIMBOLO.number_format($datos_venta['venta_importe'], MONEDA_DECIMALES, MONEDA_SEPARADOR_DECIMAL, MONEDA_SEPARADOR_MILLAR); ?></div>
+                    <div class="column">
+                        <?php
+                        $suma_pagos = $insLogin->seleccionarDatos("Normal", "pago_venta WHERE venta_codigo = '".$datos_venta['venta_codigo']."'", "SUM(venta_pago_importe) as suma_pagos", 0);
+                        if ($suma_pagos->rowCount() >= 1) {
+                            $suma_pagos = $suma_pagos->fetch();
+                            $suma_pagos_value = $suma_pagos['suma_pagos'] !== NULL ? $suma_pagos['suma_pagos'] : 0;
+                        } else {
+                            $suma_pagos_value = 0;
+                        }
+                        echo "Suma de sus pagos: ".MONEDA_SIMBOLO.number_format($suma_pagos_value, MONEDA_DECIMALES, MONEDA_SEPARADOR_DECIMAL, MONEDA_SEPARADOR_MILLAR)." ".MONEDA_NOMBRE;
+                        ?>
+                    </div>
+                    <div class="column">
+                        <?php
+                        $saldo = $datos_venta['venta_importe'] - $suma_pagos_value;
+                        echo "Saldo: ".MONEDA_SIMBOLO.number_format($saldo, MONEDA_DECIMALES, MONEDA_SEPARADOR_DECIMAL, MONEDA_SEPARADOR_MILLAR)." ".MONEDA_NOMBRE;
+                        ?>
+                        <input type="hidden" name="saldo" value="<?php echo $saldo; ?>">
+                    </div>
+                </div>
+                <p class="has-text-centered">
+					<button type="submit" class="button is-link is-light" id="btnEnviar">Registrar pago</button>
+					<button type="button" class="button is-link is-light" id="btnSaldar">Saldar total</button>
 				</p>
-			</form>
-		</section>
-	</div>
+            </form>
+        </section>
+    </div>
 </div>
+
+<script>
+	
+	document.getElementById('btnSaldar').addEventListener('click', function () {
+	// Obtener el saldo desde el campo oculto
+	const saldo = document.querySelector('input[name="saldo"]').value;
+
+	// Insertar el saldo en el campo "Importe"
+	const inputImporte = document.getElementById('venta_pago_importe');
+	inputImporte.value = saldo;
+
+	// Simular clic en el botón "Registrar pago" (submit)
+	document.getElementById('btnEnviar').click();
+	});
+</script>

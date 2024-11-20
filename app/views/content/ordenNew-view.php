@@ -132,7 +132,7 @@
 
                 <div class="column">
                     <div class="control">
-                        <label>El equipo tiene detalles fisicos?
+                        <label>Detalles fisicos <?php echo CAMPO_OBLIGATORIO; ?>
                             <div class="field">
                                 <textarea name="orden_equipo_detalles_fisicos" class="textarea" id=""></textarea>
                             </div>
@@ -141,8 +141,8 @@
                 </div>
 
                 <div class="column">
-                    <h3>Falla/Problema</h3>
-                    <textarea class="textarea"  name="orden_falla" id=""></textarea>
+                    <h3>Falla/Problema <?php echo CAMPO_OBLIGATORIO; ?></h3>
+                    <textarea class="textarea"  name="orden_falla" id="" required></textarea>
                 </div>
 
                 <!-- Estilo del textarea -->

@@ -46,7 +46,7 @@
             ?>
             <div class="notification is-info is-light mb-2 mt-2">
                 <h4 class="has-text-centered has-text-weight-bold">Venta realizada</h4>
-                <p class="has-text-centered mb-2">La venta se realizó con éxito. A continuacion el comprobante de venta. </p>
+                <p class="has-text-centered mb-2">La venta se realizó con éxito.</p>
                 <br>
                 <div class="container">
                     <div class="columns">
@@ -93,7 +93,7 @@
                                                 </div>
                                                 <div class="column">
                                                     <label for="" class="label">Importe: </label>
-                                                    <input class="input" type="number" name="venta_pago_importe">
+                                                    <input class="input" type="number" name="venta_pago_importe" id="venta_pago_importe">
                                                 </div>
                                                 <div class="column">
                                                     <label for="" class="label">Detalle: </label>
@@ -101,38 +101,40 @@
                                                 </div>
                                             </div>
                                             <div class="columns">
-                                                    <div class="column">Total de la venta: <?php echo MONEDA_SIMBOLO.number_format($_SESSION['venta_importe'],MONEDA_DECIMALES,MONEDA_SEPARADOR_DECIMAL,MONEDA_SEPARADOR_MILLAR)." ".MONEDA_NOMBRE; ?></div>
-                                                    <div class="column">
-                                                        <?php
-                                                        $suma_pagos = $insLogin->seleccionarDatos("Normal", "pago_venta WHERE venta_codigo = '".$_SESSION['venta_codigo_factura']."'","SUM(venta_pago_importe) as suma_pagos",0);
-                                                        if($suma_pagos->rowCount() >= 1){
-                                                            $suma_pagos = $suma_pagos->fetch();
-                                                            if($suma_pagos['suma_pagos'] !== NULL){
-                                                                echo "Suma de sus pagos: ".MONEDA_SIMBOLO.number_format($suma_pagos['suma_pagos'],MONEDA_DECIMALES,MONEDA_SEPARADOR_DECIMAL,MONEDA_SEPARADOR_MILLAR)." ".MONEDA_NOMBRE;
-                                                            }else{
-                                                                echo "Suma de sus pagos: 0.00";
-                                                            }
+                                                <div class="column">Total de la venta: <?php echo MONEDA_SIMBOLO.number_format($_SESSION['venta_importe'],MONEDA_DECIMALES,MONEDA_SEPARADOR_DECIMAL,MONEDA_SEPARADOR_MILLAR)." ".MONEDA_NOMBRE; ?></div>
+                                                <div class="column">
+                                                    <?php
+                                                    $suma_pagos = $insLogin->seleccionarDatos("Normal", "pago_venta WHERE venta_codigo = '".$_SESSION['venta_codigo_factura']."'","SUM(venta_pago_importe) as suma_pagos",0);
+                                                    if($suma_pagos->rowCount() >= 1){
+                                                        $suma_pagos = $suma_pagos->fetch();
+                                                        if($suma_pagos['suma_pagos'] !== NULL){
+                                                            echo "Suma de sus pagos: ".MONEDA_SIMBOLO.number_format($suma_pagos['suma_pagos'],MONEDA_DECIMALES,MONEDA_SEPARADOR_DECIMAL,MONEDA_SEPARADOR_MILLAR)." ".MONEDA_NOMBRE;
                                                         }else{
                                                             echo "Suma de sus pagos: 0.00";
                                                         }
-                                                        ?>
-                                                    </div>
-                                                    <div class="column">
-                                                        <?php
-                                                        $suma_pagos = $insLogin->seleccionarDatos("Normal", "pago_venta WHERE venta_codigo = '".$_SESSION['venta_codigo_factura']."'","SUM(venta_pago_importe) as suma_pagos",0);
-                                                        if($suma_pagos->rowCount() >= 1){
-                                                            $suma_pagos = $suma_pagos->fetch();
-                                                            $saldo = $_SESSION['venta_importe'] - $suma_pagos['suma_pagos'];
-                                                            echo "Saldo: ".MONEDA_SIMBOLO.number_format($saldo,MONEDA_DECIMALES,MONEDA_SEPARADOR_DECIMAL,MONEDA_SEPARADOR_MILLAR)." ".MONEDA_NOMBRE;
-                                                        }else{
-                                                            echo "Saldo: ".MONEDA_SIMBOLO.number_format($_SESSION['venta_importe'],MONEDA_DECIMALES,MONEDA_SEPARADOR_DECIMAL,MONEDA_SEPARADOR_MILLAR)." ".MONEDA_NOMBRE;
-                                                        }
-                                                        ?>
-                                                    </div>
+                                                    }else{
+                                                        echo "Suma de sus pagos: 0.00";
+                                                    }
+                                                    ?>
                                                 </div>
+                                                <div class="column">
+                                                    <?php
+                                                    $suma_pagos = $insLogin->seleccionarDatos("Normal", "pago_venta WHERE venta_codigo = '".$_SESSION['venta_codigo_factura']."'","SUM(venta_pago_importe) as suma_pagos",0);
+                                                    if($suma_pagos->rowCount() >= 1){
+                                                        $suma_pagos = $suma_pagos->fetch();
+                                                        $saldo = $_SESSION['venta_importe'] - $suma_pagos['suma_pagos'];
+                                                        echo "Saldo: ".MONEDA_SIMBOLO.number_format($saldo,MONEDA_DECIMALES,MONEDA_SEPARADOR_DECIMAL,MONEDA_SEPARADOR_MILLAR)." ".MONEDA_NOMBRE;
+                                                    }else{
+                                                        echo "Saldo: ".MONEDA_SIMBOLO.number_format($_SESSION['venta_importe'],MONEDA_DECIMALES,MONEDA_SEPARADOR_DECIMAL,MONEDA_SEPARADOR_MILLAR)." ".MONEDA_NOMBRE;
+                                                    }
+                                                    ?>
+                                                </div>
+                                            </div>
                                             <div class="container" id="resultado-busqueda"></div>
+                                            <input type="hidden" name="saldo" value="<?php echo $saldo; ?>">
                                             <p class="has-text-centered">
-                                                <button type="submit" class="button is-link is-light">Registrar pago</button>
+                                                <button type="submit" class="button is-link is-light" id="btnEnviar">Registrar pago</button>
+                                                <button type="button" class="button is-link is-light" id="btnSaldar">Saldar total</button>
                                             </p>
                                         </form>
                                     </section>
@@ -424,6 +426,27 @@
 
 <script>
 
+	
+    document.addEventListener('DOMContentLoaded', function () {
+    const btnSaldar = document.getElementById('btnSaldar');
+    
+    if (btnSaldar) {  // Verifica que el elemento exista
+        btnSaldar.addEventListener('click', function (event) {
+        event.preventDefault();  // Evita el envío inmediato del formulario
+
+        // Obtener el saldo desde el campo oculto
+        const saldo = document.querySelector('input[name="saldo"]').value;
+
+        // Insertar el saldo en el campo "Importe"
+        const inputImporte = document.getElementById('venta_pago_importe');
+        inputImporte.value = saldo;
+
+        // Simular clic en el botón "Registrar pago" (submit)
+        document.getElementById('btnEnviar').click();
+        });
+    }
+    });
+
     function financiarProducto(codigo, financiacion) {
         if (financiacion !== "") {
             let datos = new FormData();
@@ -441,35 +464,6 @@
             });
         }
     }
-
-    function saldarVenta() {
-        const ventaCodigo = document.querySelector('input[name="venta_codigo"]').value;
-
-        // Verificar que se haya ingresado un código de venta
-        if (!ventaCodigo) {
-            Swal.fire({
-                icon: 'error',
-                title: 'Ocurrió un error inesperado',
-                text: 'No se ha encontrado el código de la venta.',
-                confirmButtonText: 'Aceptar'
-            });
-            return;
-        }
-
-        let datos = new FormData();
-        datos.append("venta_codigo", ventaCodigo);
-        datos.append("accion", "saldar"); // Esta acción indica que se quiere saldar la venta
-
-        fetch('<?php echo APP_URL; ?>app/ajax/pagoAjax.php', {
-            method: 'POST',
-            body: datos
-        })
-        .then(respuesta => respuesta.json())
-        .then(respuesta => {
-            return alertas_ajax(respuesta);
-        });
-    }
-
 
 
     /* Detectar cuando se envia el formulario para agregar producto */
