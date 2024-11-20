@@ -133,16 +133,6 @@
 
                 $stock_total=$campos['articulo_stock']-$detalle_cantidad;
 
-                if($stock_total<=0){
-                    $alerta=[
-						"tipo"=>"simple",
-						"titulo"=>"Ocurrió un error inesperado",
-						"texto"=>"Lo sentimos, no hay existencias disponibles del producto seleccionado",
-						"icono"=>"error"
-					];
-					return json_encode($alerta);
-			        exit();
-                }
 
                 $detalle_total=$detalle_cantidad*$campos['articulo_precio_venta'];
                 $detalle_total=number_format($detalle_total,MONEDA_DECIMALES,'.','');
@@ -164,17 +154,6 @@
                 $detalle_cantidad=($_SESSION['datos_producto_venta'][$codigo]['venta_detalle_cantidad_producto'])+1;
 
                 $stock_total=$campos['articulo_stock']-$detalle_cantidad;
-
-                if($stock_total<0){
-                    $alerta=[
-						"tipo"=>"simple",
-						"titulo"=>"Ocurrió un error inesperado",
-						"texto"=>"Lo sentimos, no hay existencias disponibles del producto seleccionado",
-						"icono"=>"error"
-					];
-					return json_encode($alerta);
-			        exit();
-                }
 
                 $detalle_total=$detalle_cantidad*$campos['articulo_precio_venta'];
                 $detalle_total=number_format($detalle_total,MONEDA_DECIMALES,'.','');
