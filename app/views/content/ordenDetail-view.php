@@ -494,7 +494,7 @@
             <button class="delete" aria-label="close"></button>
         </header>
         <section class="modal-card-body">
-            <form class="" action="<?php echo APP_URL; ?>app/ajax/pagoAjax.php" method="POST" autocomplete="off" name="formorden" >
+            <form class="FormularioAjax" action="<?php echo APP_URL; ?>app/ajax/pagoAjax.php" method="POST" autocomplete="off" name="formorden" >
                 <input type="hidden" name="modulo_pago" value="registrar_pago_orden">
                 <input type="hidden" name="orden_codigo" id="orden_codigo">
                 <div class="columns">
@@ -559,8 +559,8 @@
                         </div>
                     </div>
                     <p class="has-text-centered">
-                        <button type="submit" class="button is-link is-light" name="action" value="pagar">Registrar pago</button>
-                        <button type="submit" class="button is-link" name="action" value="saldar">Saldar Total</button>
+                        <button type="submit" class="button is-link is-light" id="btnEnviar">Registrar pago</button>
+                        <button type="button" class="button is-link is-light" id="btnSaldar">Saldar total</button>
                     </p>
                 </div>
             </form>
@@ -763,6 +763,26 @@
 ?>
 
 <script>
+
+    document.addEventListener('DOMContentLoaded', function () {
+        const btnSaldar = document.getElementById('btnSaldar');
+        
+        if (btnSaldar) {  // Verifica que el elemento exista
+            btnSaldar.addEventListener('click', function (event) {
+            event.preventDefault();  // Evita el envío inmediato del formulario
+
+            // Obtener el saldo desde el campo oculto
+            const saldo = document.querySelector('input[name="saldo"]').value;
+
+            // Insertar el saldo en el campo "Importe"
+            const inputImporte = document.getElementById('orden_pago_importe');
+            inputImporte.value = saldo;
+
+            // Simular clic en el botón "Registrar pago" (submit)
+            document.getElementById('btnEnviar').click();
+            });
+        }
+    });
 
     function financiarProducto(codigo, financiacion) {
         if (financiacion !== "") {

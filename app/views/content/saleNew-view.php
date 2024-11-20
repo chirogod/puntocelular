@@ -428,23 +428,23 @@
 
 	
     document.addEventListener('DOMContentLoaded', function () {
-    const btnSaldar = document.getElementById('btnSaldar');
-    
-    if (btnSaldar) {  // Verifica que el elemento exista
-        btnSaldar.addEventListener('click', function (event) {
-        event.preventDefault();  // Evita el envío inmediato del formulario
+        const btnSaldar = document.getElementById('btnSaldar');
+        
+        if (btnSaldar) {  // Verifica que el elemento exista
+            btnSaldar.addEventListener('click', function (event) {
+            event.preventDefault();  // Evita el envío inmediato del formulario
 
-        // Obtener el saldo desde el campo oculto
-        const saldo = document.querySelector('input[name="saldo"]').value;
+            // Obtener el saldo desde el campo oculto
+            const saldo = document.querySelector('input[name="saldo"]').value;
 
-        // Insertar el saldo en el campo "Importe"
-        const inputImporte = document.getElementById('venta_pago_importe');
-        inputImporte.value = saldo;
+            // Insertar el saldo en el campo "Importe"
+            const inputImporte = document.getElementById('venta_pago_importe');
+            inputImporte.value = saldo;
 
-        // Simular clic en el botón "Registrar pago" (submit)
-        document.getElementById('btnEnviar').click();
-        });
-    }
+            // Simular clic en el botón "Registrar pago" (submit)
+            document.getElementById('btnEnviar').click();
+            });
+        }
     });
 
     function financiarProducto(codigo, financiacion) {

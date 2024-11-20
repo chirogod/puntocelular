@@ -17,11 +17,7 @@
 
 		/*--------- Registrar pago orden ---------*/
 		if ($_POST['modulo_pago'] == "registrar_pago_orden") {
-			if($_POST['action'] == 'pagar'){
-				echo $insPago->registrarPagoOrdenControlador();
-			}elseif($_POST['action'] == 'pagar'){
-				echo $insPago->saldarPagoOrdenControlador();
-			}
+			echo $insPago->registrarPagoOrdenControlador();
 		}
 		
 	}else{
