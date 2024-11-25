@@ -705,20 +705,19 @@ class articuloController extends mainModel{
             exit();
         }
 
-        /*== Seleccionando clientes en la DB ==*/
-        $datos_cliente=$this->ejecutarConsulta("SELECT * FROM articulo WHERE (articulo_descripcion LIKE '%$articulo%' OR articulo_codigo LIKE '%$articulo%') ORDER BY id_articulo DESC");
+        /*== Seleccionando articulos en la DB ==*/
+        $datos_articulo=$this->ejecutarConsulta("SELECT * FROM articulo WHERE id_sucursal = '$_SESSION[id_sucursal]' AND (articulo_descripcion LIKE '%$articulo%' OR articulo_codigo LIKE '%$articulo%' OR articulo_marca LIKE '%$articulo%' OR articulo_marca LIKE '%$articulo%') ORDER BY id_articulo DESC");
 
-        if($datos_cliente->rowCount()>=1){
+        if($datos_articulo->rowCount()>=1){
 
-            $datos_cliente=$datos_cliente->fetchAll();
+            $datos_articulo=$datos_articulo->fetchAll();
 
-            $tabla='<div class="table-container mb-6"><table class="table is-striped is-narrow is-hoverable is-fullwidth"><tbody>';
+            $tabla='<div class="table-container "><table class="table is-striped is-narrow is-hoverable is-fullwidth"><tbody>';
 
-            foreach($datos_cliente as $rows){
+            foreach($datos_articulo as $rows){
                 $tabla.='
-                <tr>
-                    <td class="has-text-left" ><i class="fas fa-male fa-fw"></i> &nbsp; '.$rows['articulo_descripcion'].' (Stock: '.$rows['articulo_stock'].')</td>
-
+                <tr style="cursor: pointer;" onclick="window.location.href=\'' . APP_URL . 'artUpdate/' . $rows['id_articulo'] . '/\'">
+                    <td class="has-text-left" ></i> &nbsp; '.$rows['articulo_descripcion'].' (Stock: '.$rows['articulo_stock'].')</td>
                 </tr>
                 ';
             }
