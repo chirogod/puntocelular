@@ -4,19 +4,34 @@
         <nav class="navBar-options-list">
             <ul class="list-unstyle">
                 <li class="text-condensedLight noLink" >
-
-                </li>
-                <li class="text-condensedLight noLink" >
-                    <small><?php echo $_SESSION['usuario_usuario']; ?></small>
-                </li>
-                <li class="text-condensedLight noLink" >
-                    <small><?php echo $_SESSION['sucursal_descripcion']; ?></small>
-                </li>
-                <li class="text-condensedLight noLink" >
-                    <small><?php echo $_SESSION['caja']; ?></small>
+                    <div id="dolarText" ></div>
                 </li>
             </ul>
         </nav>
     </div>
 </div>
 <li class="full-width divider-menu-h-large"></li>
+
+
+<script>
+    fetch("https://dolarapi.com/v1/dolares")
+        .then(response=>response.json())
+        .then(data=>{
+            const container = document.getElementById('dolarText')
+            data.forEach(dolar => {
+                const card = document.createElement('div');
+                card.innerHTML = `
+                    <p>Dolar ${dolar.nombre}: $${dolar.venta}</p>
+                `
+                if(dolar.nombre == "Blue"){
+                    container.appendChild(card)
+                }
+                
+            });
+            
+        })
+
+        .catch(error=>{
+            console.log("Error al obtener los datos.")
+        })
+</script>
