@@ -16,6 +16,11 @@
             echo $insCliente->actualizarClienteControlador();
         }
 
+        /*--------- Buscar cliente ---------*/
+		if($_POST['modulo_cliente']=="buscar_cliente"){
+			echo $insCliente->buscarClienteControlador();
+		}
+
     }else{
         session_destroy();
         header("Location: ".APP_URL."login/");

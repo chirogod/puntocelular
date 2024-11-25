@@ -108,27 +108,27 @@
 		$pdf->Ln(10);
 
 		if($datos_venta['id_cliente']==1){
+			$pdf->SetFont('Arial','B',10);
+			$pdf->Text(12, $yNewRect +10, 'Numero: ');
 			$pdf->SetFont('Arial','',10);
-			$pdf->SetTextColor(39,39,51);
-			$pdf->Cell(13,7,iconv("UTF-8", "ISO-8859-1",'Cliente:'),0,0);
-			$pdf->SetTextColor(97,97,97);
-			$pdf->Cell(60,7,iconv("UTF-8", "ISO-8859-1","Consumidor Final"),0,0,'L');
-			$pdf->SetTextColor(39,39,51);
-			$pdf->Cell(8,7,iconv("UTF-8", "ISO-8859-1","Doc: "),0,0,'L');
-			$pdf->SetTextColor(97,97,97);
-			$pdf->Cell(60,7,iconv("UTF-8", "ISO-8859-1","N/A"),0,0,'L');
-			$pdf->SetTextColor(39,39,51);
-			$pdf->Cell(7,7,iconv("UTF-8", "ISO-8859-1",'Tel:'),0,0,'L');
-			$pdf->SetTextColor(97,97,97);
-			$pdf->Cell(35,7,iconv("UTF-8", "ISO-8859-1","N/A"),0,0);
-			$pdf->SetTextColor(39,39,51);
-
-			$pdf->Ln(7);
-
-			$pdf->SetTextColor(39,39,51);
-			$pdf->Cell(6,7,iconv("UTF-8", "ISO-8859-1",'Dir:'),0,0);
-			$pdf->SetTextColor(97,97,97);
-			$pdf->Cell(109,7,iconv("UTF-8", "ISO-8859-1","N/A"),0,0);
+			$pdf->Text(28, $yNewRect +10, "1");
+	
+			$pdf->SetFont('Arial','B',10);
+			$pdf->Text(12, $yNewRect +15, 'Nombre: ');
+			$pdf->SetFont('Arial','',10);
+			$pdf->Text(28, $yNewRect +15, $datos_venta['cliente_nombre_completo']);
+	
+			$pdf->SetFont('Arial','B',10);
+			$pdf->Text(12, $yNewRect +20, 'Direccion: ');
+			
+			$pdf->SetFont('Arial','B',10);
+			$pdf->Text($pageWidth/2+30, $yNewRect +10, strtoupper($datos_venta['cliente_tipo_doc']).": ");
+	
+			$pdf->SetFont('Arial','B',10);
+			$pdf->Text($pageWidth/2+30, $yNewRect +15, 'Telefono: ');
+	
+			$pdf->SetFont('Arial','B',10);
+			$pdf->Text($pageWidth/2+30 , $yNewRect +20, 'Email: ');
 		}else{
 			$pdf->SetFont('Arial','B',10);
 			$pdf->Text(12, $yNewRect +10, 'Numero: ');

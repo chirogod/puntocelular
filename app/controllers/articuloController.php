@@ -602,7 +602,7 @@ class articuloController extends mainModel{
 
         }else{
 
-            $consulta_datos="SELECT * FROM articulo WHERE id_sucursal = '$sucursal'  ORDER BY articulo_descripcion ASC LIMIT $inicio,$registros";
+            $consulta_datos="SELECT * FROM articulo WHERE id_sucursal = '$sucursal'  ORDER BY id_articulo DESC LIMIT $inicio,$registros";
 
             $consulta_total="SELECT COUNT(id_articulo) FROM articulo WHERE id_sucursal = '$sucursal'";
 
@@ -682,6 +682,62 @@ class articuloController extends mainModel{
         }
 
         return $tabla;
+    }
+
+    /*---------- Controlador buscar cliente ----------*/
+    public function buscarArticuloControlador(){
+
+        /*== Recuperando termino de busqueda ==*/
+        $articulo=$this->limpiarCadena($_POST['buscar_articulo']);
+
+        /*== Comprobando que no este vacio el campo ==*/
+        if($articulo==""){
+            return '
+            <article class="message is-warning mt-4 mb-4">
+                 <div class="message-header">
+                    <p>¡Ocurrio un error inesperado!</p>
+                 </div>
+                <div class="message-body has-text-centered">
+                    <i class="fas fa-exclamation-triangle fa-2x"></i><br>
+                    Debes de introducir el nombre, descripcion, codigo del articulo.
+                </div>
+            </article>';
+            exit();
+        }
+
+        /*== Seleccionando clientes en la DB ==*/
+        $datos_cliente=$this->ejecutarConsulta("SELECT * FROM articulo WHERE (articulo_descripcion LIKE '%$articulo%' OR articulo_codigo LIKE '%$articulo%') ORDER BY id_articulo DESC");
+
+        if($datos_cliente->rowCount()>=1){
+
+            $datos_cliente=$datos_cliente->fetchAll();
+
+            $tabla='<div class="table-container mb-6"><table class="table is-striped is-narrow is-hoverable is-fullwidth"><tbody>';
+
+            foreach($datos_cliente as $rows){
+                $tabla.='
+                <tr>
+                    <td class="has-text-left" ><i class="fas fa-male fa-fw"></i> &nbsp; '.$rows['articulo_descripcion'].' (Stock: '.$rows['articulo_stock'].')</td>
+
+                </tr>
+                ';
+            }
+
+            $tabla.='</tbody></table></div>';
+            return $tabla;
+        }else{
+            return '
+            <article class="message is-warning mt-4 mb-4">
+                 <div class="message-header">
+                    <p>¡Ocurrio un error inesperado!</p>
+                 </div>
+                <div class="message-body has-text-centered">
+                    <i class="fas fa-exclamation-triangle fa-2x"></i><br>
+                    No hemos encontrado ningún articulo en el sistema que coincida con <strong>“'.$articulo.'”</strong>
+                </div>
+            </article>';
+            exit();
+        }
     }
 
     

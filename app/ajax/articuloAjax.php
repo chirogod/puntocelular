@@ -16,9 +16,10 @@
             echo $insArticulo->actualizarArticuloControlador();
         }
 
-        if ($_POST['modulo_articulo'] == "eliminar") {
-            echo $insArticulo->eliminarArticuloControlador();
-        }
+        /*--------- Buscar articuloArticulo ---------*/
+		if($_POST['modulo_articulo']=="buscar_articulo"){
+			echo $insArticulo->buscarArticuloControlador();
+		}
 
     }else{
         session_destroy();

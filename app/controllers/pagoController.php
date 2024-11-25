@@ -93,10 +93,8 @@
             $registrar_pago = $this->guardarDatos("pago_venta", $datos_pago);
             if ($registrar_pago->rowCount()==1) {
                 $alerta=[
-                    "tipo"=>"recargar",
-                    "titulo"=>"Pago registrado",
-                    "texto"=>"El pago se registro con exito",
-                    "icono"=>"success"
+                    "tipo"=>"redireccionar",
+                    "url"=>APP_URL."saleDetail/$venta_codigo"
                 ];
 
             }else{

@@ -827,6 +827,62 @@
 			return json_encode($alerta);
 
         }
+
+		/*---------- Controlador buscar cliente ----------*/
+        public function buscarClienteControlador(){
+
+            /*== Recuperando termino de busqueda ==*/
+			$cliente=$this->limpiarCadena($_POST['buscar_cliente']);
+
+			/*== Comprobando que no este vacio el campo ==*/
+			if($cliente==""){
+				return '
+				<article class="message is-warning mt-4 mb-4">
+					 <div class="message-header">
+					    <p>¡Ocurrio un error inesperado!</p>
+					 </div>
+				    <div class="message-body has-text-centered">
+				    	<i class="fas fa-exclamation-triangle fa-2x"></i><br>
+						Debes de introducir el Numero de documento, Nombre, Apellido o Teléfono del cliente
+				    </div>
+				</article>';
+				exit();
+            }
+
+            /*== Seleccionando clientes en la DB ==*/
+            $datos_cliente=$this->ejecutarConsulta("SELECT * FROM cliente WHERE (id_cliente!='1') AND (cliente_documento LIKE '%$cliente%' OR cliente_nombre_completo LIKE '%$cliente%' OR cliente_telefono_1 LIKE '%$cliente%' OR cliente_telefono_2  LIKE '%$cliente%' OR cliente_email LIKE '%$cliente%' OR cliente_codigo LIKE '%$cliente%' ) ORDER BY cliente_nombre_completo ASC");
+
+            if($datos_cliente->rowCount()>=1){
+
+				$datos_cliente=$datos_cliente->fetchAll();
+
+				$tabla='<div class="table-container mb-6"><table class="table is-striped is-narrow is-hoverable is-fullwidth"><tbody>';
+
+				foreach($datos_cliente as $rows){
+					$tabla.='
+					<tr>
+                        <td class="has-text-left" ><i class="fas fa-male fa-fw"></i> &nbsp; '.$rows['cliente_nombre_completo'].' ('.$rows['cliente_tipo_doc'].': '.$rows['cliente_documento'].')</td>
+
+                    </tr>
+                    ';
+				}
+
+				$tabla.='</tbody></table></div>';
+				return $tabla;
+			}else{
+				return '
+				<article class="message is-warning mt-4 mb-4">
+					 <div class="message-header">
+					    <p>¡Ocurrio un error inesperado!</p>
+					 </div>
+				    <div class="message-body has-text-centered">
+				    	<i class="fas fa-exclamation-triangle fa-2x"></i><br>
+						No hemos encontrado ningún cliente en el sistema que coincida con <strong>“'.$cliente.'”</strong>
+				    </div>
+				</article>';
+				exit();
+			}
+        }
     } 
   
 ?>
