@@ -686,47 +686,74 @@ class articuloController extends mainModel{
 
     /*---------- Controlador buscar cliente ----------*/
     public function buscarArticuloControlador(){
-
-        /*== Recuperando termino de busqueda ==*/
-        $articulo=$this->limpiarCadena($_POST['buscar_articulo']);
-
-        /*== Comprobando que no este vacio el campo ==*/
-        if($articulo==""){
-            /*== Seleccionando articulos en la DB ==*/
-             $datos_articulo=$this->ejecutarConsulta("SELECT * FROM articulo WHERE id_sucursal = '$_SESSION[id_sucursal]' ORDER BY id_articulo DESC");
-        }else{
-            /*== Seleccionando articulos en la DB ==*/
-            $datos_articulo=$this->ejecutarConsulta("SELECT * FROM articulo WHERE id_sucursal = '$_SESSION[id_sucursal]' AND (articulo_descripcion LIKE '%$articulo%' OR articulo_codigo LIKE '%$articulo%' OR articulo_marca LIKE '%$articulo%' OR articulo_marca LIKE '%$articulo%') ORDER BY id_articulo DESC");
-        }
+        $articulo = $this->limpiarCadena($_POST['buscar_articulo']);
+        $estado = $this->limpiarCadena($_POST['estado']);
+        $orden = $this->limpiarCadena($_POST['orden']);
+        $sucursal = $_SESSION['id_sucursal'];
+    
+        $where = "WHERE id_sucursal = '$sucursal'";
         
-        if($datos_articulo->rowCount()>=1){
-
-            $datos_articulo=$datos_articulo->fetchAll();
-
-            $tabla='<div class="table-container "><table class="table is-striped is-narrow is-hoverable is-fullwidth"><tbody>';
-
+        if($articulo != ""){
+            $where .= " AND (articulo_descripcion LIKE '%$articulo%' OR articulo_codigo LIKE '%$articulo%' OR articulo_marca LIKE '%$articulo%' OR articulo_modelo LIKE '%$articulo%')";
+        }
+    
+        if($estado == "activo"){
+            $where .= " AND articulo_activo = 'SI'";
+        } elseif($estado == "inactivo"){
+            $where .= " AND articulo_activo = 'NO'";
+        }
+    
+        switch($orden){
+            case 'nombre_asc':
+                $orderBy = "ORDER BY articulo_descripcion ASC";
+                break;
+            case 'nombre_desc':
+                $orderBy = "ORDER BY articulo_descripcion DESC";
+                break;
+            case 'stock_asc':
+                $orderBy = "ORDER BY articulo_stock ASC";
+                break;
+            case 'stock_desc':
+                $orderBy = "ORDER BY articulo_stock DESC";
+                break;
+            case 'precio_asc':
+                $orderBy = "ORDER BY articulo_precio_venta ASC";
+                break;
+            case 'precio_desc':
+                $orderBy = "ORDER BY articulo_precio_venta DESC";
+                break;
+            default:
+                $orderBy = "ORDER BY id_articulo DESC";
+                break;
+        }
+    
+        $consulta_datos = "SELECT * FROM articulo $where $orderBy";
+        $datos_articulo = $this->ejecutarConsulta($consulta_datos);
+    
+        if($datos_articulo->rowCount() >= 1){
+            $datos_articulo = $datos_articulo->fetchAll();
+            $tabla = '<div class="table-container"><table class="table is-striped is-narrow is-hoverable is-fullwidth"><tbody>';
+    
             foreach($datos_articulo as $rows){
-                $tabla.='
+                $tabla .= '
                 <tr style="cursor: pointer;" onclick="window.location.href=\'' . APP_URL . 'artUpdate/' . $rows['id_articulo'] . '/\'">
-                    <td class="has-text-left" ></i> &nbsp; '.$rows['articulo_descripcion'].' (Stock: '.$rows['articulo_stock'].')</td>
-                </tr>
-                ';
+                    <td class="has-text-left">&nbsp; '.$rows['articulo_descripcion'].' (Stock: '.$rows['articulo_stock'].')</td>
+                </tr>';
             }
-
-            $tabla.='</tbody></table></div>';
+    
+            $tabla .= '</tbody></table></div>';
             return $tabla;
-        }else{
+        } else {
             return '
             <article class="message is-warning mt-4 mb-4">
-                 <div class="message-header">
-                    <p>¡Ocurrio un error inesperado!</p>
-                 </div>
+                <div class="message-header">
+                    <p>¡Ocurrió un error inesperado!</p>
+                </div>
                 <div class="message-body has-text-centered">
                     <i class="fas fa-exclamation-triangle fa-2x"></i><br>
-                    No hemos encontrado ningún articulo en el sistema que coincida con <strong>“'.$articulo.'”</strong>
+                    No hemos encontrado ningún artículo en el sistema que coincida con <strong>“'.$articulo.'”</strong>
                 </div>
             </article>';
-            exit();
         }
     }
 
