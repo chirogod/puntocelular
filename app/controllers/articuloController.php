@@ -692,22 +692,13 @@ class articuloController extends mainModel{
 
         /*== Comprobando que no este vacio el campo ==*/
         if($articulo==""){
-            return '
-            <article class="message is-warning mt-4 mb-4">
-                 <div class="message-header">
-                    <p>¡Ocurrio un error inesperado!</p>
-                 </div>
-                <div class="message-body has-text-centered">
-                    <i class="fas fa-exclamation-triangle fa-2x"></i><br>
-                    Debes de introducir el nombre, descripcion, codigo del articulo.
-                </div>
-            </article>';
-            exit();
+            /*== Seleccionando articulos en la DB ==*/
+             $datos_articulo=$this->ejecutarConsulta("SELECT * FROM articulo WHERE id_sucursal = '$_SESSION[id_sucursal]' ORDER BY id_articulo DESC");
+        }else{
+            /*== Seleccionando articulos en la DB ==*/
+            $datos_articulo=$this->ejecutarConsulta("SELECT * FROM articulo WHERE id_sucursal = '$_SESSION[id_sucursal]' AND (articulo_descripcion LIKE '%$articulo%' OR articulo_codigo LIKE '%$articulo%' OR articulo_marca LIKE '%$articulo%' OR articulo_marca LIKE '%$articulo%') ORDER BY id_articulo DESC");
         }
-
-        /*== Seleccionando articulos en la DB ==*/
-        $datos_articulo=$this->ejecutarConsulta("SELECT * FROM articulo WHERE id_sucursal = '$_SESSION[id_sucursal]' AND (articulo_descripcion LIKE '%$articulo%' OR articulo_codigo LIKE '%$articulo%' OR articulo_marca LIKE '%$articulo%' OR articulo_marca LIKE '%$articulo%') ORDER BY id_articulo DESC");
-
+        
         if($datos_articulo->rowCount()>=1){
 
             $datos_articulo=$datos_articulo->fetchAll();

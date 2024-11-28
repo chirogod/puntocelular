@@ -12,38 +12,39 @@
             <input class="input" type="text" pattern="[a-zA-Z0-9áéíóúÁÉÍÓÚñÑ ]{1,30}" name="input_codigo" id="input_codigo" maxlength="30" >
         </div>
     </div>
-    <div class="container" id="resultado-busqueda"></div>
+    <div class="container" id="tabla_articulos"></div>
         </div>
     </div>
 </div>
 
 
 <script>
-    document.querySelector('#input_codigo').addEventListener('input', function(){
-        let input_codigo=document.querySelector('#input_codigo').value;
-
-        input_codigo=input_codigo.trim();
-
-        if(input_codigo!=""){
-
+    // Seleccionar el campo de entrada
+    const inputCodigo = document.querySelector('#input_codigo');
+    
+    // Función para manejar la búsqueda en tiempo real
+    const buscarCodigo = () => {
+        let input_codigo = inputCodigo.value;
+        input_codigo = input_codigo.trim();
             let datos = new FormData();
             datos.append("buscar_articulo", input_codigo);
             datos.append("modulo_articulo", "buscar_articulo");
 
-            fetch('<?php echo APP_URL; ?>app/ajax/articuloAjax.php',{
+            fetch('<?php echo APP_URL; ?>app/ajax/articuloAjax.php', {
                 method: 'POST',
                 body: datos
             })
             .then(respuesta => respuesta.text())
-            .then(respuesta =>{
-                let resultado_busqueda=document.querySelector('#resultado-busqueda');
-                resultado_busqueda.innerHTML=respuesta;
+            .then(respuesta => {
+                let tabla_articulos = document.querySelector('#tabla_articulos');
+                tabla_articulos.innerHTML = respuesta;
             });
+    };
 
-        }else{
-            let resultado_busqueda=document.querySelector('#resultado-busqueda');
-            resultado_busqueda.innerHTML='';
-        }
-    });
+    // Agregar evento al input
+    inputCodigo.addEventListener('input', buscarCodigo);
+
+    // Comprobar estado inicial al cargar la página
+    buscarCodigo();
     
 </script>

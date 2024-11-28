@@ -1,4 +1,3 @@
-<?php include "./app/views/includes/admin_security.php"; ?>
 <div class="container is-fluid mb-6 is-max-desktop">
 	<h1 class="title">Ordenes</h1>
 </div>

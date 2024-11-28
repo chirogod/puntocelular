@@ -74,7 +74,7 @@
                         <option value="Administrador">Administrador</option>
                         <option value="Empleado">Empleado</option>
 						<option value="Tecnico">Tecnico</option>
-                        <option value="Ventas">Ventas</option>
+                        <option value="Vendedor">Vendedor</option>
 				  	</select>
 				</div>
 		  	</div>

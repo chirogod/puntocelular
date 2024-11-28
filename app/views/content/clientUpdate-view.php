@@ -17,10 +17,11 @@
 	?>
 
 	<h2 class="title has-text-centered"><?php echo $datos['cliente_nombre_completo'] ; ?></h2>
-	<p class="has-text-centered">
-		SI desea actualizar informacion del cliente, solo modifique los campos y pulse en actualizar, SI NO dejar los campos como estan.
-	</p>
-
+	<?php if($_SESSION['usuario_rol']=="Administrador"){ ?>
+		<p class="has-text-centered">
+			SI desea actualizar informacion del cliente, solo modifique los campos y pulse en actualizar, SI NO dejar los campos como estan.
+		</p>
+	<?php } ?>
     <br>
 
 	<form class="FormularioAjax" action="<?php echo APP_URL; ?>app/ajax/clienteAjax.php" method="POST" autocomplete="off" >
@@ -132,11 +133,11 @@
 		  	</div>
 		</div>
 		<br>
-
-		<p class="has-text-centered">
-			<button type="submit" class="button is-success is-rounded"><i class="fas fa-sync-alt"></i> &nbsp; Actualizar</button>
-		</p>
-
+		<?php if($_SESSION['usuario_rol']=="Administrador"){ ?>
+			<p class="has-text-centered">
+				<button type="submit" class="button is-success is-rounded"><i class="fas fa-sync-alt"></i> &nbsp; Actualizar</button>
+			</p>
+		<?php } ?>
 	</form>
 	<?php
 		}else{

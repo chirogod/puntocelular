@@ -44,7 +44,6 @@
 
 <div class="container pb-6 pt-6 is-max-desktop">
   <div class="columns is-multiline">
-    <?php if ($_SESSION['usuario_rol'] == "Administrador") { ?>
 
     <div class="column is-one-third">
       <div class="card">
@@ -111,66 +110,6 @@
         </div>
       </a>
     </div>
-    
-    <!-- Tarjeta Usuarios
-    <div class="column is-one-quarter">
-      <div class="card">
-        <div class="card-content has-text-centered">
-          <p class="heading">Usuarios</p>
-          <p class="title"><?php echo $total_usuarios->rowCount(); ?></p>
-        </div>
-      </div>
-    </div>
-    <?php } ?>
-
-    <div class="column is-one-quarter">
-      <div class="card">
-        <div class="card-content has-text-centered">
-          <p class="heading">Clientes</p>
-          <p class="title"><?php echo $total_clientes->rowCount(); ?></p>
-        </div>
-      </div>
-    </div>
-
-    <?php if ($_SESSION['usuario_rol'] == "Administrador") { ?>
-    <div class="column is-one-quarter">
-      <div class="card">
-        <div class="card-content has-text-centered">
-          <p class="heading">Productos</p>
-          <p class="title"><?php echo $total_productos->rowCount(); ?></p>
-        </div>
-      </div>
-    </div>
-    <?php } ?>
-
-    <div class="column is-one-quarter">
-      <div class="card">
-        <div class="card-content has-text-centered">
-          <p class="heading">Ventas Totales</p>
-          <p class="title"><?php echo $total_ventas->rowCount(); ?></p>
-        </div>
-      </div>
-    </div>
-
-    <?php if ($_SESSION['usuario_rol'] == "Administrador") { ?>
-    <div class="column is-one-quarter">
-      <div class="card">
-        <div class="card-content has-text-centered">
-          <p class="heading">Ventas del Mes</p>
-          <p class="title"><?php echo $total_ventas_mes->rowCount(); ?></p>
-        </div>
-      </div>
-    </div>
-
-    <div class="column is-one-quarter">
-      <div class="card">
-        <div class="card-content has-text-centered">
-          <p class="heading">Total del Mes</p>
-          <p class="title">$<?php echo $total_montos_ventas_mes->fetchColumn(); ?></p>
-        </div>
-      </div>
-    </div> -->
-    <?php } ?>
   </div>
 
   <div class="columns is-multiline">

@@ -30,7 +30,7 @@
                         </article>;
                     ';  
                 }else{
-                    if ($this->verificarDatos("[a-zA-Z0-9$@.-]{7,100}", $clave)){
+                    if ($this->verificarDatos("[a-zA-Z0-9$@.-]{3,100}", $clave)){
                         echo '
                             <article class="message is-danger">
                                 <div class="message-body">
