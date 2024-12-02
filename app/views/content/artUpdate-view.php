@@ -136,41 +136,19 @@
 		  	<div class="column">
 		    	<div class="control">
 					<label> Precio compra <?php echo CAMPO_OBLIGATORIO; ?></label><br>
-                    <input class="input" type="number" name="articulo_precio_compra" pattern="[0-9.]{1,25}" maxlength="25" value="<?php echo $datos['articulo_precio_compra']; ?>">
+                    <input class="input" type="number" name="articulo_precio_compra" id="precio_compra" pattern="[0-9.]{1,25}" maxlength="25" value="<?php echo $datos['articulo_precio_compra']; ?>">
 				</div>
 		  	</div>
 			<div class="column">
 				<div class="control">
 					<label>Porcentaje ganancia<?php echo CAMPO_OBLIGATORIO; ?></label>
-					<div class="select">
-						<select name="articulo_porcentaje_ganancia">
-							<option value="100" <?php echo ($datos['articulo_porcentaje_ganancia'] == 100) ? 'selected' : ''; ?>>100</option>
-							<option value="95" <?php echo ($datos['articulo_porcentaje_ganancia'] == 95) ? 'selected' : ''; ?>>95</option>
-							<option value="90" <?php echo ($datos['articulo_porcentaje_ganancia'] == 90) ? 'selected' : ''; ?>>90</option>
-							<option value="85" <?php echo ($datos['articulo_porcentaje_ganancia'] == 85) ? 'selected' : ''; ?>>85</option>
-							<option value="80" <?php echo ($datos['articulo_porcentaje_ganancia'] == 80) ? 'selected' : ''; ?>>80</option>
-							<option value="75" <?php echo ($datos['articulo_porcentaje_ganancia'] == 75) ? 'selected' : ''; ?>>75</option>
-							<option value="70" <?php echo ($datos['articulo_porcentaje_ganancia'] == 70) ? 'selected' : ''; ?>>70</option>
-							<option value="65" <?php echo ($datos['articulo_porcentaje_ganancia'] == 65) ? 'selected' : ''; ?>>65</option>
-							<option value="60" <?php echo ($datos['articulo_porcentaje_ganancia'] == 60) ? 'selected' : ''; ?>>60</option>
-							<option value="55" <?php echo ($datos['articulo_porcentaje_ganancia'] == 55) ? 'selected' : ''; ?>>55</option>
-							<option value="50" <?php echo ($datos['articulo_porcentaje_ganancia'] == 50) ? 'selected' : ''; ?>>50</option>
-							<option value="45" <?php echo ($datos['articulo_porcentaje_ganancia'] == 45) ? 'selected' : ''; ?>>45</option>
-							<option value="40" <?php echo ($datos['articulo_porcentaje_ganancia'] == 40) ? 'selected' : ''; ?>>40</option>
-							<option value="35" <?php echo ($datos['articulo_porcentaje_ganancia'] == 35) ? 'selected' : ''; ?>>35</option>
-							<option value="30" <?php echo ($datos['articulo_porcentaje_ganancia'] == 30) ? 'selected' : ''; ?>>30</option>
-							<option value="25" <?php echo ($datos['articulo_porcentaje_ganancia'] == 25) ? 'selected' : ''; ?>>25</option>
-							<option value="20" <?php echo ($datos['articulo_porcentaje_ganancia'] == 20) ? 'selected' : ''; ?>>20</option>
-							<option value="15" <?php echo ($datos['articulo_porcentaje_ganancia'] == 15) ? 'selected' : ''; ?>>15</option>
-							<option value="10" <?php echo ($datos['articulo_porcentaje_ganancia'] == 10) ? 'selected' : ''; ?>>10</option>
-						</select>
-					</div>
+					<input class="input" onkeyup="actPrecioVenta()" onchange="actPrecioVenta()" type="number" id="porcentaje" name="articulo_porcentaje_ganancia" value="<?php echo $datos['articulo_porcentaje_ganancia']?>">
 				</div>
-		  	</div>
+			</div>
 		  	<div class="column">
 		    	<div class="control">
-					<label>Precio venta></label>
-					<input readonly class="input" type="number" name="articulo_precio_venta" pattern="[0-9.]{1,25}" maxlength="25" value="<?php echo $datos['articulo_precio_venta']; ?>">
+					<label>Precio venta</label>
+					<input readonly class="input" type="number" name="articulo_precio_venta" id="precio_venta" pattern="[0-9.]{1,25}" maxlength="25" value="<?php echo $datos['articulo_precio_venta']; ?>">
 				</div>
 		  	</div>
 		</div>
@@ -203,3 +181,16 @@
 		}
 	?>
 </div>
+
+
+<script>
+	function actPrecioVenta(){
+		var precioCompra = parseFloat(document.getElementById("precio_compra").value)||0;
+		var porcentaje = parseFloat(document.getElementById("porcentaje").value)||0;
+		var precioVenta = precioCompra + ((precioCompra * porcentaje)/100);
+		if(porcentaje != 0){
+			document.getElementById("precio_venta").value = precioVenta;
+		}
+		
+	}
+</script>
