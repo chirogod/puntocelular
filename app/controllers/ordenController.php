@@ -168,7 +168,7 @@
 			}
 
 			$orden_equipo_ingresa_encendido = $_POST['orden_equipo_ingresa_encendido'];
-			if($orden_equipo_ingresa_encendido == null){
+			if(!isset($orden_equipo_ingresa_encendido)){
 				$alerta=[
 					"tipo"=>"simple",
 					"titulo"=>"Ocurrió un error inesperado",
@@ -413,8 +413,16 @@
 		public function actualizarOrdenControlador(){
 			$orden_codigo = $_POST['orden_codigo'];
 			$orden_observaciones = $this->limpiarCadena($_POST['orden_observaciones']);
-			$orden_falla = $this->limpiarCadena($_POST['orden_falla']);
+			if(!isset($orden_observaciones)){
+				$orden_observaciones = "";
+			}
 			$orden_accesorios = $this->limpiarCadena($_POST['orden_accesorios']);
+			if(!isset($orden_accesorios)){
+				$orden_accesorios = "";
+			}
+			$id_tecnico = $_POST['id_tecnico'];
+
+
 
 			
 			$datos = [
@@ -424,17 +432,16 @@
 					"campo_marcador"=>":Observaciones",
 					"campo_valor"=>$orden_observaciones
 				],
-				
-				[
-					"campo_nombre"=>"orden_falla",
-					"campo_marcador"=>":Falla",
-					"campo_valor"=>$orden_falla
-				],
 				[
 					"campo_nombre"=>"orden_accesorios",
 					"campo_marcador"=>":Accesorios",
 					"campo_valor"=>$orden_accesorios
 				],
+				[
+					"campo_nombre"=>"id_tecnico",
+					"campo_marcador"=>":Tecnico",
+					"campo_valor"=>$id_tecnico
+				]
 			];
 
 			$condicion=[
@@ -473,8 +480,11 @@
 			$orden_importe_efectivo = $_POST['orden_importe_efectivo'];
 			$orden = $this->ejecutarConsulta("SELECT * FROM orden WHERE orden_codigo='$orden_codigo'");
 			$orden = $orden->fetch();
-			$orden_total_lista = $orden_importe_lista;
-			$orden_total_efectivo = $orden_importe_efectivo;
+			
+			$orden_total_lista = $orden['orden_total_lista'];
+			$orden_importe_lista += $orden_importe_lista ;
+			$orden_total_efectivo = $orden['orden_total_efectivo'];
+			$orden_importe_efectivo += $orden_importe_efectivo ;
 			
 			$datos =[
 				[

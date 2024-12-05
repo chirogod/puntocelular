@@ -132,7 +132,7 @@
 
                 <div class="column">
                     <div class="control">
-                        <label>Detalles fisicos <?php echo CAMPO_OBLIGATORIO; ?>
+                        <label>Detalles fisicos
                             <div class="field">
                                 <textarea name="orden_equipo_detalles_fisicos" class="textarea" id=""></textarea>
                             </div>
@@ -241,13 +241,13 @@
                 <div class="column">
                     <div class="control">
                         <h3>Importe lista</h3>
-                        <input type="text" class="input" name="orden_importe_lista" id="">
+                        <input type="number" class="input" name="orden_importe_lista" id="" value="0">
                     </div>
                 </div>
                 <div class="column">
                     <div class="control">
                         <h3>Importe efectivo</h3>
-                        <input type="text" class="input" name="orden_importe_efectivo" id="">
+                        <input type="number" class="input" name="orden_importe_efectivo" id="" value="0"> 
                     </div>
                 </div>
             </div>

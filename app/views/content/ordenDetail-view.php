@@ -23,8 +23,6 @@
             $datos_telefonista = $insLogin->seleccionarDatosEspecificos("usuario", "id_usuario", $datos['orden_telefonista']);
             $datos_telefonista = $datos_telefonista->fetch();
 	?>
-
-	<h2 class="title has-text-centered">INFORMACION ORDEN  <?php echo $datos['orden_codigo'] ; ?></h2>
     <button type="button" class="button is-link is-light" onclick="print_orden('<?php echo APP_URL."app/pdf/comprobanteOrden.php?code=".$datos['orden_codigo']; ?>')" >
         <i class="fas fa-file-invoice-dollar fa-2x"></i> &nbsp;
         Comprobante de orden
@@ -61,24 +59,21 @@
 		<input type="hidden" name="orden_codigo" value="<?php echo $datos['orden_codigo']; ?>">
         <!-- DATOS DE LA ORDEN -->
         <div class="box">
-            <h3 class="title is-4">Datos</h3>
+            <h3 class="title is-4">Datos de la orden</h3>
             <div class="columns">
-                <div class="column">
+                <!-- Columna izquierda: Marca, Modelo -->
+                <div class="column is-half">
                     <div class="control">
-                        <label>Cliente</label>
-                        <input class="input" type="text" readonly value="<?php echo $datos_cliente['cliente_nombre_completo'] ?>">
-                    </div>
-                    <div class="control">
-                        <label>Domicilio</label>
-                        <input class="input" type="text" readonly value="<?php echo $datos_cliente['cliente_domicilio'] ?>">
-                    </div>
-                    <div class="control">
-                        <label>Telefonos</label>
-                        <input class="input" type="text" readonly value="<?php echo $datos_cliente['cliente_telefono_1'] ?> / <?php echo $datos_cliente['cliente_telefono_2'] ?>">
+                        <label>Orden numero</label>
+                        <input class="input" type="text" readonly value="<?php echo $datos['id_orden'] ?>">
                     </div>
                     <div class="control">
                         <label>Fecha</label>
-                        <input class="input" type="date" name="orden_fecha" value="<?php echo $datos['orden_fecha']; ?>" >
+                        <input class="input" type="text" readonly value="<?php echo $datos['orden_fecha'] ?>">
+                    </div>
+                    <div class="control">
+                        <label>Cliente</label>
+                        <input class="input" type="text" readonly value="<?php echo $datos_cliente['cliente_nombre_completo'] ?>">
                     </div>
                     <div class="control">
                         <label>Tecnico asignado</label><br>
@@ -102,50 +97,25 @@
                         <h3>Telefonista/Operador</h3>
                         <input type="text" readonly class="input" name="orden_telefonista" value="<?php echo $datos_telefonista['usuario_nombre_completo'] ?>">
                     </div>
+
                 </div>
-
-                <!-- DATOS DE LA ORDEN -->                   
-                <div class="column">
-                    <div class="control">
-                        <h3>Ingresa encendido: <?php echo $datos['orden_equipo_ingresa_encendido']; ?></h3>
-                    </div>
-
-                    <div class="control">
-                        <h3>Contrasena: <?php echo $datos['orden_equipo_contrasena']; ?></h3>
-                    </div>
-
-                    <div class="control">
-                        <h3>Detalles fiscos: </h3>
-                        <?php if($datos['orden_equipo_detalles_fisicos'] != "") {?>
-                                <textarea readonly class="textarea"  name="orden_equipo_detalles_fisicos" id=""><?php echo $datos['orden_equipo_detalles_fisicos']; ?></textarea>
-                        <?php }else{?>
-                                <p class="textarea">No</p>
-                        <?php }?>
-                    </div>
+                
+                <!-- Columna derecha: falla y observaciones -->
+                <div class="column is-half">
                     <div class="control">
                         <h3>Observaciones</h3>
                         <textarea class="textarea"  name="orden_observaciones" ><?php echo $datos['orden_observaciones']; ?></textarea>
                     </div>
-                    
-                    
-                </div>
-            </div>
-            <div class="columns is-centered">
-                <div class="column">
-                    <h3>Falla/Problema</h3>
-                    <textarea class="textarea"  name="orden_falla" id=""><?php echo $datos['orden_falla']; ?></textarea>
-                </div>
-
-                <div class="column">
-                    <button type="button" class="button is-link is-light js-modal-trigger" data-target="modal-js-infTec" >
+                    <div class="control">
+                        <button type="button" class="button is-link is-light js-modal-trigger" data-target="modal-js-infTec" >
                         Informe tecnico
                     </button>
                     <button type="button" class="button is-link is-light js-modal-trigger" data-target="modal-js-pay" >
                         Registrar pago
                     </button>
+                    </div>
                 </div>
             </div>
-            
         </div>
         
         <!-- DETALLES DEL EQUIPO -->
@@ -189,13 +159,31 @@
                             </select>
                         </div>
                     </div>
-                </div>
 
+                    <div class="control">
+                        <label>Ingresa</label><br>
+                        <input type="text" readonly class="input" value="<?php echo $datos['orden_equipo_ingresa_encendido'] ?>">
+                    </div>
+
+                    <div class="control">
+                    <label>Contrasena</label><br>
+                    <input type="text" readonly class="input" value="<?php echo $datos['orden_equipo_contrasena'] ?>">
+                    </div>
+                </div>
+                
                 <!-- Columna derecha: Accesorios -->
                 <div class="column is-half">
                     <div class="control">
                         <label>Accesorios</label>
                         <textarea class="textarea" name="orden_accesorios"><?php echo $datos['orden_accesorios']; ?></textarea>
+                    </div>
+                    <div class="control">
+                        <h3>Detalles fiscos</h3>
+                        <?php if($datos['orden_equipo_detalles_fisicos'] != "") {?>
+                                <textarea readonly class="textarea"  name="orden_equipo_detalles_fisicos" id=""><?php echo $datos['orden_equipo_detalles_fisicos']; ?></textarea>
+                        <?php }else{?>
+                                <p class="textarea">No</p>
+                        <?php }?>
                     </div>
                 </div>
             </div>
@@ -259,7 +247,7 @@
 		</p>
 	</form>
 
-    <div class="container">
+    <div class="container" id="productos">
         <div class="column pb-6">
             <form class="FormularioAjax pt-6 pb-6" id="sale-barcode-form" autocomplete="off">
                 <div class="columns">
@@ -281,7 +269,7 @@
                 </div>
             </form>
 
-            <div class="table-container">
+            <div class="table-container" id="agregar-producto">
                 <table class="table is-bordered is-striped is-narrow is-hoverable is-fullwidth">
                     <thead>
                         <tr>
@@ -406,13 +394,11 @@
                 
                 <form class="FormularioAjax" action="<?php echo APP_URL; ?>app/ajax/ordenAjax.php" method="POST" autocomplete="off" name="formsale" >
                     <input type="hidden" name="modulo_orden" value="registrar_informe_tecnico">
+                    <input class="input" name="orden_codigo" type="hidden" readonly value="<?php echo $datos['orden_codigo'] ?> ">
+                    
                     <h2 class="subtitle">Datos:</h2>
                     <div class="columns">
                         <div class="column">
-                            <div class="control">
-                                <label for="">Numero de orden: </label>
-                                <input class="input" type="text" name="orden_codigo" readonly value="<?php echo $datos['orden_codigo']; ?>">
-                            </div>
                             <div class="control">
                                 <label>Marca</label><br>
                                 <div class="select">
@@ -463,14 +449,29 @@
                                 <label for="" class="label">Informe tecnico: </label>
                                 <textarea class="input" style="height: 200px;" name="orden_informe_tecnico" id=""><?php echo $datos['orden_informe_tecnico']; ?></textarea>
                             </div>
-                            <div class="control">
-                                <h3>TOTALES REPARACION</h3>
-                                <label>P. Lista</label>
-                                <input class="input" type="text" value="<?php echo $datos['orden_importe_lista']?>" name="orden_importe_lista">
-                                
-                                <label>P. Efectivo</label>
-                                <input class="input" type="text" value="<?php echo $datos['orden_importe_efectivo'] ?>" name="orden_importe_efectivo">
-                                
+                            
+                        </div>
+                    </div>
+                    <div class="columns is-vcentered is-centered">
+                        <div class="column has-text-centered">
+                            <h3 class="title is-5">TOTALES REPARACIÓN</h3>
+                            <div class="columns is-centered is-mobile">
+                                <div class="column is-half">
+                                    <div class="field">
+                                        <label class="label has-text-centered">P. Lista</label>
+                                        <div class="control">
+                                            <input class="input" type="text" value="<?php echo $datos['orden_importe_lista']; ?>" name="orden_importe_lista">
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="column is-half">
+                                    <div class="field">
+                                        <label class="label has-text-centered">P. Efectivo</label>
+                                        <div class="control">
+                                            <input class="input" type="text" value="<?php echo $datos['orden_importe_efectivo']; ?>" name="orden_importe_efectivo">
+                                        </div>
+                                    </div>
+                                </div>
                             </div>
                         </div>
                     </div>
@@ -531,8 +532,8 @@
                 <div class="columns">
                     <div class="column">
                         Total de la orden: <br>
-                        <span id="orden_total"><?php echo MONEDA_SIMBOLO . number_format(0, MONEDA_DECIMALES, MONEDA_SEPARADOR_DECIMAL, MONEDA_SEPARADOR_MILLAR) . " " . MONEDA_NOMBRE; ?></span>
-                    </div>
+                        <span id="orden_total_lista"><?php echo MONEDA_SIMBOLO . number_format($datos['orden_total_lista'], MONEDA_DECIMALES, MONEDA_SEPARADOR_DECIMAL, MONEDA_SEPARADOR_MILLAR) . " " . MONEDA_NOMBRE; ?></span><br>
+                        </div>
                     <div class="column">
                         Suma de sus pagos: <br>
                         <span id="suma_pagos">
@@ -551,11 +552,12 @@
                         Saldo: <br>
                         <span id="saldo">
                             <?php
-                                $saldo =  ($suma_pagos['suma_pagos'] ?? 0);
-                                echo MONEDA_SIMBOLO . number_format($saldo, MONEDA_DECIMALES, MONEDA_SEPARADOR_DECIMAL, MONEDA_SEPARADOR_MILLAR) . " " . MONEDA_NOMBRE;
+                                $saldo_lista =  $datos['orden_total_lista']-$suma_pagos['suma_pagos'];
+                                $saldo_efectivo =  $datos['orden_total_efectivo']-$suma_pagos['suma_pagos'];
+                                echo MONEDA_SIMBOLO . number_format($saldo_lista, MONEDA_DECIMALES, MONEDA_SEPARADOR_DECIMAL, MONEDA_SEPARADOR_MILLAR) . " " . MONEDA_NOMBRE;
                             ?>
                         </span>
-                        <input type="hidden" name="saldo" id="saldo_input" value="<?php echo $saldo; ?>">
+                        <input type="hidden" name="saldo" id="saldo_input" value="<?php echo $saldo_lista; ?>">
                     </div>
                     
                 </div><p class="has-text-centered">
@@ -762,7 +764,6 @@
 ?>
 
 <script>
-
     document.addEventListener('DOMContentLoaded', function () {
         const btnSaldar = document.getElementById('btnSaldar');
         
@@ -797,6 +798,7 @@
             .then(respuesta => respuesta.json())
             .then(respuesta => {
                 return alertas_ajax(respuesta);
+                // Desplazarse a la sección de productos después de agregar
             });
         }
     }
@@ -835,6 +837,7 @@
             .then(respuesta => respuesta.json())
             .then(respuesta =>{
                 return alertas_ajax(respuesta);
+                // Desplazarse a la sección de productos después de agregar
             });
 
         }else{

@@ -91,7 +91,7 @@
 		$pdf->SetFont('Arial','B',12);
 		$pdf->Text($pageWidth / 2 + 25, 44, 'Vendedor: ');
 		$pdf->SetFont('Arial','',12);
-		$pdf->Text($pageWidth / 2 + 47, 44, $datos_venta['venta_vendedor']);
+		$pdf->Text($pageWidth / 2 + 47, 44, $datos_venta['usuario_nombre_completo']);
 
 		$pdf->Ln(5);
 
@@ -213,12 +213,12 @@
 		$pdf->Ln(52);
 		// RECTANGULO DETALLE DE SUS PAGOS
 		$pdf->SetDrawColor(0,0,0);
-		$pdf->Rect(10, $yNewRect +100, 39, 5); 
+		$pdf->Rect(10, $yNewRect +96, 39, 5); 
 		$pdf->SetFont('Arial','b',10);
 		
 		$pdf->SetTextColor(0,0,0);
-		$pdf->Text(12, $yNewRect+104, "Detalle de sus pagos");
-		$pdf->Line(10, $yNewRect+105, $pageWidth-10, $yNewRect+105);
+		$pdf->Text(12, $yNewRect+100, "Detalle de sus pagos");
+		$pdf->Line(10, $yNewRect+101, $pageWidth-10, $yNewRect+101);
 		
 		$pdf->SetX(10); 
 
