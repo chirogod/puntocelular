@@ -12,9 +12,10 @@
             echo $insEquipo->registrarEquipoControlador();
         }
 
-        if ($_POST['modulo_equipo'] == "actualizar") {
-            echo $insEquipo->actualizarEquipoControlador();
+        if ($_POST['modulo_equipo'] == "buscar_equipo") {
+            echo $insEquipo->buscarEquipoControlador();
         }
+
 
     }else{
         session_destroy();

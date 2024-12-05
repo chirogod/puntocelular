@@ -4,143 +4,28 @@
 
     class equipoController extends mainModel{
         public function registrarEquipoControlador(){
-            $equipo_descripcion = $this->limpiarCadena($_POST['equipo_descripcion']);
-            $equipo_marca = $this->limpiarCadena($_POST['equipo_marca']);
-            $equipo_modelo = $this->limpiarCadena($_POST['equipo_modelo']);
-            $equipo_stock = $this->limpiarCadena($_POST['equipo_stock']);
-            $id_rubro = $this->limpiarCadena($_POST['id_rubro']);
-            $id_sucursal = $this->limpiarCadena($_POST['id_sucursal']);
-            $equipo_moneda = $this->limpiarCadena($_POST['equipo_moneda']);
-            $equipo_precio_compra = $this->limpiarCadena($_POST['equipo_precio_compra']);
-            $equipo_precio_venta = $this->limpiarCadena($_POST['equipo_precio_venta']);
-            $equipo_garantia = $this->limpiarCadena($_POST['equipo_garantia']);
-            
-    
-            //verificar campos obligatorios
-            if($equipo_descripcion == "" || $equipo_stock == "" || $id_rubro == "" || $id_sucursal == "" || $equipo_moneda == "" || $equipo_precio_compra == "" || $equipo_precio_venta == ""){
-                $alerta=[
-                    "tipo"=>"simple",
-                    "titulo"=>"Ocurrió un error inesperado",
-                    "texto"=>"No has llenado todos los campos que son obligatorios",
-                    "icono"=>"error"
-                ];
-                return json_encode($alerta);
-                exit();
-            }
-    
-            //verificar integridad datos
-            if($this->verificarDatos("[a-zA-ZáéíóúÁÉÍÓÚñÑ0-9 ]{3,100}", $equipo_descripcion)){
-                $alerta=[
-                    "tipo"=>"simple",
-                    "titulo"=>"Ocurrió un error inesperado",
-                    "texto"=>"El nombre del equipo no cumple con el formato solicitado",
-                    "icono"=>"error"
-                ];
-                return json_encode($alerta);
-                exit();
-            }
-            
-            $equipo_codigo = $this->limpiarCadena($_POST['equipo_codigo']);
-            //verificar codigo si se puso manualmente
-            if ($equipo_codigo != "") {
-                $check_codigo =$this->ejecutarConsulta("SELECT * FROM equipo WHERE equipo_codigo = '$equipo_codigo'");
-                if ($check_codigo->rowCount() > 0) {
-                    $alerta=[
-                        "tipo"=>"simple",
-                        "titulo"=>"Ocurrió un error inesperado",
-                        "texto"=>"El codigo del equipo ya existe",
-                        "icono"=>"error"
-                    ];
-                    return json_encode($alerta);
-                    exit();
-                }
-            }else{
-                /*== sino generar aleatoriamente el codigo del producto ==*/
-                $correlativo=$this->ejecutarConsulta("SELECT id_equipo FROM equipo");
-                $correlativo=($correlativo->rowCount())+1;
+            /*== sino generar aleatoriamente el codigo del equipo ==*/
+            $correlativo=$this->ejecutarConsulta("SELECT id_equipo FROM equipo");
+            $correlativo=($correlativo->rowCount())+1;
+            $equipo_codigo=$this->generarCodigoAleatorio(7,$correlativo);
+
+            // verificar que el codigo no exista ya
+            $check_codigo =$this->ejecutarConsulta("SELECT * FROM equipo WHERE equipo_codigo = '$equipo_codigo'");
+            if ($check_codigo->rowCount() > 0) {
+                // si ya existe generar otro
                 $equipo_codigo=$this->generarCodigoAleatorio(7,$correlativo);
-    
-                // verificar que el codigo no exista ya
-                $check_codigo =$this->ejecutarConsulta("SELECT * FROM equipo WHERE equipo_codigo = '$equipo_codigo'");
-                if ($check_codigo->rowCount() > 0) {
-                    // si ya existe generar otro
-                    $equipo_codigo=$this->generarCodigoAleatorio(7,$correlativo);
-                }
             }
-            
-    
-            
-            if($this->verificarDatos("^[0-9]+$", $equipo_stock)){
-                $alerta=[
-                    "tipo"=>"simple",
-                    "titulo"=>"Ocurrió un error inesperado",
-                    "texto"=>"El stock del equipo no cumple con el formato solicitado",
-                    "icono"=>"error"
-                ];
-                return json_encode($alerta);
-                exit();
-            }
-    
-            if ($equipo_garantia != "") {
-                if($this->verificarDatos("[a-zA-ZáéíóúÁÉÍÓÚñÑ0-9 ]{3,100}", $equipo_garantia)){
-                    $alerta=[
-                        "tipo"=>"simple",
-                        "titulo"=>"Ocurrió un error inesperado",
-                        "texto"=>"La garantia del equipo no cumple con el formato solicitado",
-                        "icono"=>"error"
-                    ];
-                    return json_encode($alerta);
-                    exit();
-                }
-            }
-    
-            if($this->verificarDatos("[0-9.]{1,25}", $equipo_precio_compra)){
-                $alerta=[
-                    "tipo"=>"simple",
-                    "titulo"=>"Ocurrió un error inesperado",
-                    "texto"=>"El precio de compra del equipo no cumple con el formato solicitado",
-                    "icono"=>"error"
-                ];
-                return json_encode($alerta);
-                exit();
-            }
-    
-            if($this->verificarDatos("[0-9.]{1,25}", $equipo_precio_venta)){
-                $alerta=[
-                    "tipo"=>"simple",
-                    "titulo"=>"Ocurrió un error inesperado",
-                    "texto"=>"El precio de venta del equipo no cumple con el formato solicitado",
-                    "icono"=>"error"
-                ];
-                return json_encode($alerta);
-                exit();
-            }
-    
-            if ($equipo_marca != "") {
-                if($this->verificarDatos("[a-zA-ZáéíóúÁÉÍÓÚñÑ0-9 -]{1,30}", $equipo_marca)){
-                    $alerta=[
-                        "tipo"=>"simple",
-                        "titulo"=>"Ocurrió un error inesperado",
-                        "texto"=>"La marca del equipo no cumple con el formato solicitado",
-                        "icono"=>"error"
-                    ];
-                    return json_encode($alerta);
-                    exit();
-                }
-            }
-    
-            if ($equipo_modelo != "") {
-                if($this->verificarDatos("[a-zA-ZáéíóúÁÉÍÓÚñÑ0-9 -]{1,30}", $equipo_modelo)){
-                    $alerta=[
-                        "tipo"=>"simple",
-                        "titulo"=>"Ocurrió un error inesperado",
-                        "texto"=>"El modelo del equipo no cumple con el formato solicitado",
-                        "icono"=>"error"
-                    ];
-                    return json_encode($alerta);
-                    exit();
-                }
-            }
+
+            $id_marca = $this->limpiarCadena($_POST['id_marca']);
+            $id_modelo = $this->limpiarCadena($_POST['id_modelo']);
+            $equipo_estado = "Disponible";
+            $equipo_almacenamiento = $this->limpiarCadena($_POST['equipo_almacenamiento']);
+            $equipo_color = $this->limpiarCadena($_POST['equipo_color']);
+            $equipo_ram = $this->limpiarCadena($_POST['equipo_ram']);
+            $equipo_costo = $this->limpiarCadena($_POST['equipo_costo']);
+            $equipo_imei = $this->limpiarCadena($_POST['equipo_imei']);
+            $id_sucursal = $_SESSION['id_sucursal'];
+            $equipo_modulo = $this->limpiarCadena($_POST['equipo_modulo']);
     
             $datos_equipo = [
                 [
@@ -149,19 +34,44 @@
                     "campo_valor"=>$equipo_codigo
                 ],
                 [
-                    "campo_nombre"=>"equipo_descripcion",
-                    "campo_marcador"=>":Descripcion",
-                    "campo_valor"=>$equipo_descripcion
+                    "campo_nombre"=>"equipo_estado",
+                    "campo_marcador"=>":Estado",
+                    "campo_valor"=>$equipo_estado
                 ],
                 [
-                    "campo_nombre"=>"equipo_stock",
-                    "campo_marcador"=>":Stock",
-                    "campo_valor"=>$equipo_stock
+                    "campo_nombre"=>"id_marca",
+                    "campo_marcador"=>":Marca",
+                    "campo_valor"=>$id_marca
                 ],
                 [
-                    "campo_nombre"=>"id_rubro",
-                    "campo_marcador"=>":Rubro",
-                    "campo_valor"=>$id_rubro
+                    "campo_nombre"=>"id_modelo",
+                    "campo_marcador"=>":Modelo",
+                    "campo_valor"=>$id_modelo
+                ],
+                [
+                    "campo_nombre"=>"equipo_almacenamiento",
+                    "campo_marcador"=>":Almacenamiento",
+                    "campo_valor"=>$equipo_almacenamiento
+                ],
+                [
+                    "campo_nombre"=>"equipo_ram",
+                    "campo_marcador"=>":Ram",
+                    "campo_valor"=>$equipo_ram
+                ],
+                [
+                    "campo_nombre"=>"equipo_color",
+                    "campo_marcador"=>":Color",
+                    "campo_valor"=>$equipo_color
+                ],
+                [
+                    "campo_nombre"=>"equipo_imei",
+                    "campo_marcador"=>":Imei",
+                    "campo_valor"=>$equipo_imei
+                ],
+                [
+                    "campo_nombre"=>"equipo_costo",
+                    "campo_marcador"=>":Costo",
+                    "campo_valor"=>$equipo_costo
                 ],
                 [
                     "campo_nombre"=>"id_sucursal",
@@ -169,35 +79,10 @@
                     "campo_valor"=>$id_sucursal
                 ],
                 [
-                    "campo_nombre"=>"equipo_garantia",
-                    "campo_marcador"=>":Garantia",
-                    "campo_valor"=>$equipo_garantia
+                    "campo_nombre"=>"equipo_modulo",
+                    "campo_marcador"=>":Modulo",
+                    "campo_valor"=>$equipo_modulo
                 ],
-                [
-                    "campo_nombre"=>"equipo_moneda",
-                    "campo_marcador"=>":Moneda",
-                    "campo_valor"=>$equipo_moneda
-                ],
-                [
-                    "campo_nombre"=>"equipo_precio_compra",
-                    "campo_marcador"=>":PrecioCompra",
-                    "campo_valor"=>$equipo_precio_compra
-                ],
-                [
-                    "campo_nombre"=>"equipo_precio_venta",
-                    "campo_marcador"=>":PrecioVenta",
-                    "campo_valor"=>$equipo_precio_venta
-                ],
-                [
-                    "campo_nombre"=>"equipo_marca",
-                    "campo_marcador"=>":Marca",
-                    "campo_valor"=>$equipo_marca
-                ],
-                [
-                    "campo_nombre"=>"equipo_modelo",
-                    "campo_marcador"=>":Modelo",
-                    "campo_valor"=>$equipo_modelo
-                ]
             ];
     
             $registrar_equipo = $this->guardarDatos("equipo", $datos_equipo);
@@ -205,7 +90,7 @@
                 $alerta=[
                     "tipo"=>"limpiar",
                     "titulo"=>"Equipo registrado con exito",
-                    "texto"=>"El equipo " .$equipo_descripcion. " se registro con exito",
+                    "texto"=>"El equipo se registro con exito",
                     "icono"=>"success"
                 ];
             }else{
@@ -220,14 +105,122 @@
             return json_encode($alerta);
         }
 
-        public function listarEquipoControlador(){
-
-        }
-
-        public function actualizarEquipoControlador(){
+        /*---------- Controlador buscar cliente ----------*/
+        public function buscarEquipoControlador(){
+            $estado = $this->limpiarCadena($_POST['estado']);
+            $modulo = $this->limpiarCadena($_POST['modulo']);
+            $sucursal = $_SESSION['id_sucursal'];
+        
+            $where = "WHERE id_sucursal = '$sucursal'";
+        
+            if($estado == "Disponible"){
+                $where .= " AND equipo_estado = 'Disponible'";
+            } elseif($estado == "Reservado"){
+                $where .= " AND equipo_estado = 'Reservado'";
+            }elseif($estado == "Vendido"){
+                $where .= " AND equipo_estado = 'Vendido'";
+            }elseif($estado == "Pausado"){
+                $where .= " AND equipo_estado = 'Pausado'";
+            }else{
+                $where .= "";
+            }
+        
+            switch($modulo){
+                case 'android_nuevo':
+                    $orderBy = " AND equipo_modulo = 'android_nuevo'";
+                    break;
+                case 'iphone_nuevo':
+                    $orderBy = " AND equipo_modulo = 'iphone_nuevo'";
+                    break;
+                case 'android_reac':
+                    $orderBy = " AND equipo_modulo = 'android_reac'";
+                    break;
+                case 'iphone_reac':
+                    $orderBy = " AND equipo_modulo = 'iphone_reac'";
+                    break;
+                case 'android':
+                    $orderBy = " AND equipo_modulo = 'android'";
+                    break;
+                case 'iphone':
+                    $orderBy = " AND equipo_modulo = 'iphone'";
+                    break;
+                case 'prestamo':
+                    $orderBy = " AND equipo_modulo = 'prestamo'";
+                    break;
+            }
+        
+            $consulta_datos = "SELECT 
+                                    e.id_equipo, e.equipo_codigo, e.equipo_estado, 
+                                    m.marca_descripcion, mo.modelo_descripcion,
+                                    e.equipo_almacenamiento, e.equipo_ram, e.equipo_color, 
+                                    e.equipo_costo, e.equipo_imei, e.id_sucursal, e.equipo_modulo
+                                FROM equipo e
+                                JOIN marca m ON e.id_marca = m.id_marca
+                                JOIN modelo mo ON e.id_modelo = mo.id_modelo 
+                                $where $orderBy";
+            $datos_equipo = $this->ejecutarConsulta($consulta_datos);
+        
+            if ($datos_equipo->rowCount() >= 1) {
+                $datos_equipo = $datos_equipo->fetchAll();
+                $tabla = '<div class="table-container style="border-collapse: collapse;">
+                    <table class="table is-striped is-narrow is-hoverable is-fullwidth">
+                    <thead>
+                        <tr>
+                            <th style="border: 1px solid black;">Estado</th>
+                            <th style="border: 1px solid black;">Marca</th>
+                            <th style="border: 1px solid black;">Modelo</th>
+                            <th style="border: 1px solid black;">Almacenamiento</th>
+                            <th style="border: 1px solid black;">RAM</th>
+                            <th style="border: 1px solid black;">Color</th>
+                            <th style="border: 1px solid black;">Costo</th>
+                            <th style="border: 1px solid black;">IMEI</th>
+                        </tr>
+                    </thead>
+                    <tbody>';
             
+                    foreach ($datos_equipo as $rows) {
+                        // Determinar clase CSS según el estado
+                        $clase_estado = '';
+                        switch (strtolower($rows['equipo_estado'])) {
+                            case 'disponible':
+                                $clase_estado = 'is-success'; // Verde
+                                break;
+                            case 'reservado':
+                                $clase_estado = 'is-warning'; // Amarillo
+                                break;
+                            case 'vendido':
+                                $clase_estado = 'is-danger'; // Rojo
+                                break;
+                            case 'pausado':
+                                $clase_estado = 'is-info'; // Azul
+                                break;
+                            default:
+                                $clase_estado = ''; // Sin clase
+                        }
+                    
+                        $tabla .= '
+                        <tr class="' . $clase_estado . '" style="cursor: pointer;" onclick="window.location.href=\'' . APP_URL . 'equipoUpdate/' . $rows['id_equipo'] . '/\'">
+                            <td class="has-text-centered" style="border: 1px solid black;">' . htmlspecialchars($rows['equipo_estado']) . '</td>
+                            <td class="has-text-centered" style="border: 1px solid black;">' . htmlspecialchars($rows['marca_descripcion']) . '</td>
+                            <td class="has-text-centered" style="border: 1px solid black;">' . htmlspecialchars($rows['modelo_descripcion']) . '</td>
+                            <td class="has-text-centered" style="border: 1px solid black;">' . htmlspecialchars($rows['equipo_almacenamiento']) . '</td>
+                            <td class="has-text-centered" style="border: 1px solid black;">' . htmlspecialchars($rows['equipo_ram']) . '</td>
+                            <td class="has-text-centered" style="border: 1px solid black;">' . htmlspecialchars($rows['equipo_color']) . '</td>
+                            <td class="has-text-centered" style="border: 1px solid black;">' . htmlspecialchars($rows['equipo_costo']) . '</td>
+                            <td class="has-text-centered" style="border: 1px solid black;">' . htmlspecialchars($rows['equipo_imei']) . '</td>
+                        </tr>';
+                    }
+            
+                $tabla .= '</tbody></table></div>';
+                echo $tabla;
+            } else {
+                echo '<p class="notification is-warning">No hay equipos registrados.</p>';
+            }
         }
+
     }
+
+    
 
 
 

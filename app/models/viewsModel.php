@@ -29,7 +29,7 @@
                 "saleList",
                 "sucursalNew",
                 "equipoNew",
-                "equipoSearch",
+                "equipoList",
                 "cajaIng",
                 "cajaEg",
                 "comprobanteVenta",
