@@ -27,6 +27,9 @@
 	const MONEDA_SEPARADOR_MILLAR=".";
 	const MONEDA_SEPARADOR_DECIMAL=",";
 
+	/* dolar punto celular */
+	const USD_PC = 1150;
+
 	/*---------- Formas de pago ----------*/
 	const FORMAS_PAGO = ["Efectivo", "Transferencia", "Tarjeta de credito", "Tarjeta de debito", "QR MP", "Cuenta DNI"];
 
@@ -36,5 +39,7 @@
 
 	/*----------  Zona horaria  ----------*/
 	date_default_timezone_set("America/Argentina/Buenos_Aires");
+
+	
 
 ?>

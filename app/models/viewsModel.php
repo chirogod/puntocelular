@@ -30,6 +30,8 @@
                 "sucursalNew",
                 "equipoNew",
                 "equipoList",
+                "equipoUpdate",
+                "saleEquipoNew",
                 "cajaIng",
                 "cajaEg",
                 "comprobanteVenta",

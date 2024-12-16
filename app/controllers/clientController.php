@@ -851,7 +851,6 @@
 					$tabla.='
 					<tr style="cursor: pointer;" onclick="window.location.href=\'' . APP_URL . 'clientUpdate/' . $rows['id_cliente'] . '/\'">
                         <td class="has-text-left" ><i class="fas fa-male fa-fw"></i> &nbsp; '.$rows['cliente_nombre_completo'].' ('.$rows['cliente_tipo_doc'].': '.$rows['cliente_documento'].')</td>
-
                     </tr>
                     ';
 				}

@@ -16,8 +16,7 @@
                 $equipo_codigo=$this->generarCodigoAleatorio(7,$correlativo);
             }
 
-            $id_marca = $this->limpiarCadena($_POST['id_marca']);
-            $id_modelo = $this->limpiarCadena($_POST['id_modelo']);
+            $equipo_descripcion = $this->limpiarCadena($_POST['equipo_descripcion']);
             $equipo_estado = "Disponible";
             $equipo_almacenamiento = $this->limpiarCadena($_POST['equipo_almacenamiento']);
             $equipo_color = $this->limpiarCadena($_POST['equipo_color']);
@@ -39,14 +38,9 @@
                     "campo_valor"=>$equipo_estado
                 ],
                 [
-                    "campo_nombre"=>"id_marca",
-                    "campo_marcador"=>":Marca",
-                    "campo_valor"=>$id_marca
-                ],
-                [
-                    "campo_nombre"=>"id_modelo",
-                    "campo_marcador"=>":Modelo",
-                    "campo_valor"=>$id_modelo
+                    "campo_nombre"=>"equipo_descripcion",
+                    "campo_marcador"=>":Descripcion",
+                    "campo_valor"=>$equipo_descripcion
                 ],
                 [
                     "campo_nombre"=>"equipo_almacenamiento",
@@ -105,6 +99,97 @@
             return json_encode($alerta);
         }
 
+        public function actualizarEquipoControlador(){
+            $equipo_codigo=$this->limpiarCadena($_POST['equipo_codigo']);
+
+            $equipo_descripcion = $this->limpiarCadena($_POST['equipo_descripcion']);
+            $equipo_estado = $this->limpiarCadena($_POST['equipo_estado']);
+            $equipo_almacenamiento = $this->limpiarCadena($_POST['equipo_almacenamiento']);
+            $equipo_color = $this->limpiarCadena($_POST['equipo_color']);
+            $equipo_ram = $this->limpiarCadena($_POST['equipo_ram']);
+            $equipo_costo = $this->limpiarCadena($_POST['equipo_costo']);
+            $equipo_imei = $this->limpiarCadena($_POST['equipo_imei']);
+            $id_sucursal = $_SESSION['id_sucursal'];
+            $equipo_modulo = $this->limpiarCadena($_POST['equipo_modulo']);
+    
+            $datos_equipo = [
+                [
+                    "campo_nombre"=>"equipo_codigo",
+                    "campo_marcador"=>":Codigo",
+                    "campo_valor"=>$equipo_codigo
+                ],
+                [
+                    "campo_nombre"=>"equipo_estado",
+                    "campo_marcador"=>":Estado",
+                    "campo_valor"=>$equipo_estado
+                ],
+                [
+                    "campo_nombre"=>"equipo_descripcion",
+                    "campo_marcador"=>":Descripcion",
+                    "campo_valor"=>$equipo_descripcion
+                ],
+                [
+                    "campo_nombre"=>"equipo_almacenamiento",
+                    "campo_marcador"=>":Almacenamiento",
+                    "campo_valor"=>$equipo_almacenamiento
+                ],
+                [
+                    "campo_nombre"=>"equipo_ram",
+                    "campo_marcador"=>":Ram",
+                    "campo_valor"=>$equipo_ram
+                ],
+                [
+                    "campo_nombre"=>"equipo_color",
+                    "campo_marcador"=>":Color",
+                    "campo_valor"=>$equipo_color
+                ],
+                [
+                    "campo_nombre"=>"equipo_imei",
+                    "campo_marcador"=>":Imei",
+                    "campo_valor"=>$equipo_imei
+                ],
+                [
+                    "campo_nombre"=>"equipo_costo",
+                    "campo_marcador"=>":Costo",
+                    "campo_valor"=>$equipo_costo
+                ],
+                [
+                    "campo_nombre"=>"id_sucursal",
+                    "campo_marcador"=>":Sucursal",
+                    "campo_valor"=>$id_sucursal
+                ],
+                [
+                    "campo_nombre"=>"equipo_modulo",
+                    "campo_marcador"=>":Modulo",
+                    "campo_valor"=>$equipo_modulo
+                ],
+            ];
+
+            $condicion=[
+                "condicion_campo"=>"equipo_codigo",
+                "condicion_marcador"=>":Codigo",
+                "condicion_valor"=>$equipo_codigo
+            ];
+    
+            if($this->actualizarDatos("equipo",$datos_equipo,$condicion)){
+                $alerta=[
+                    "tipo"=>"recargar",
+                    "titulo"=>"Equipo actualizado",
+                    "texto"=>"Los datos del equipo se actualizaron correctamente",
+                    "icono"=>"success"
+                ];
+            }else{
+                $alerta=[
+                    "tipo"=>"simple",
+                    "titulo"=>"Ocurrió un error inesperado",
+                    "texto"=>"No hemos podido actualizar los datos del equipo, por favor intente nuevamente",
+                    "icono"=>"error"
+                ];
+            }
+            //retornamos el json 
+            return json_encode($alerta);
+        }
+
         /*---------- Controlador buscar cliente ----------*/
         public function buscarEquipoControlador(){
             $estado = $this->limpiarCadena($_POST['estado']);
@@ -149,30 +234,28 @@
                     break;
             }
         
-            $consulta_datos = "SELECT 
-                                    e.id_equipo, e.equipo_codigo, e.equipo_estado, 
-                                    m.marca_descripcion, mo.modelo_descripcion,
-                                    e.equipo_almacenamiento, e.equipo_ram, e.equipo_color, 
-                                    e.equipo_costo, e.equipo_imei, e.id_sucursal, e.equipo_modulo
-                                FROM equipo e
-                                JOIN marca m ON e.id_marca = m.id_marca
-                                JOIN modelo mo ON e.id_modelo = mo.id_modelo 
-                                $where $orderBy";
+            $consulta_datos = "SELECT * FROM equipo $where $orderBy";
             $datos_equipo = $this->ejecutarConsulta($consulta_datos);
         
             if ($datos_equipo->rowCount() >= 1) {
                 $datos_equipo = $datos_equipo->fetchAll();
-                $tabla = '<div class="table-container style="border-collapse: collapse;">
+                $tabla = '<div class="table-container is-size-7" style="border-collapse: collapse;">
                     <table class="table is-striped is-narrow is-hoverable is-fullwidth">
                     <thead>
                         <tr>
                             <th style="border: 1px solid black;">Estado</th>
-                            <th style="border: 1px solid black;">Marca</th>
                             <th style="border: 1px solid black;">Modelo</th>
-                            <th style="border: 1px solid black;">Almacenamiento</th>
+                            <th style="border: 1px solid black;">Almac.</th>
                             <th style="border: 1px solid black;">RAM</th>
                             <th style="border: 1px solid black;">Color</th>
                             <th style="border: 1px solid black;">Costo</th>
+                            <th style="border: 1px solid black;">Precio</th>
+                            <th style="border: 1px solid black;">3 s/i</th>
+                            <th style="border: 1px solid black;">6 s/i</th>
+                            <th style="border: 1px solid black;">9 fijas</th>
+                            <th style="border: 1px solid black;">12 fijas</th>
+                            <th style="border: 1px solid black;">Efectivo</th>
+                            <th style="border: 1px solid black;">Efectivo usd</th>
                             <th style="border: 1px solid black;">IMEI</th>
                         </tr>
                     </thead>
@@ -198,17 +281,36 @@
                                 $clase_estado = ''; // Sin clase
                         }
                     
+                        
+                        $efectivo_usd = $rows['equipo_costo'] * 1.4;
+                        $precio = $efectivo_usd * 1.4 *USD_PC;
+                        $efectivo = $precio * 0.75;
+                        $sin_int_3 = $precio / 3;
+                        $sin_int_6 = $precio / 6; 
+                        $fijas_9 = ($efectivo_usd * 1.5 * USD_PC) / 9;
+                        $fijas_12 = ($efectivo_usd * 1.6 * USD_PC) / 12;
+                    
                         $tabla .= '
                         <tr class="' . $clase_estado . '" style="cursor: pointer;" onclick="window.location.href=\'' . APP_URL . 'equipoUpdate/' . $rows['id_equipo'] . '/\'">
                             <td class="has-text-centered" style="border: 1px solid black;">' . htmlspecialchars($rows['equipo_estado']) . '</td>
-                            <td class="has-text-centered" style="border: 1px solid black;">' . htmlspecialchars($rows['marca_descripcion']) . '</td>
-                            <td class="has-text-centered" style="border: 1px solid black;">' . htmlspecialchars($rows['modelo_descripcion']) . '</td>
+                            <td class="has-text-centered" style="border: 1px solid black;">' . htmlspecialchars($rows['equipo_descripcion']) . '</td>
                             <td class="has-text-centered" style="border: 1px solid black;">' . htmlspecialchars($rows['equipo_almacenamiento']) . '</td>
                             <td class="has-text-centered" style="border: 1px solid black;">' . htmlspecialchars($rows['equipo_ram']) . '</td>
                             <td class="has-text-centered" style="border: 1px solid black;">' . htmlspecialchars($rows['equipo_color']) . '</td>
                             <td class="has-text-centered" style="border: 1px solid black;">' . htmlspecialchars($rows['equipo_costo']) . '</td>
+                            <td class="has-text-centered" style="border: 1px solid black;">$' . htmlspecialchars(number_format(round($precio), 0)) . '</td>
+                            <td class="has-text-centered" style="border: 1px solid black;">$' . htmlspecialchars(number_format(round($sin_int_3), 0)) . '</td>
+                            <td class="has-text-centered" style="border: 1px solid black;">$' . htmlspecialchars(number_format(round($sin_int_6), 0)) . '</td>
+                            <td class="has-text-centered" style="border: 1px solid black;">$' . htmlspecialchars(number_format(round($fijas_9), 0)) . '</td>
+                            <td class="has-text-centered" style="border: 1px solid black;">$' . htmlspecialchars(number_format(round($fijas_12), 0)) . '</td>
+                            <td class="has-text-centered" style="border: 1px solid black;">$' . htmlspecialchars(number_format(round($efectivo), 0)) . '</td>
+                            <td class="has-text-centered" style="border: 1px solid black;">$' . htmlspecialchars(number_format(round($efectivo_usd), 0)) . '</td>
                             <td class="has-text-centered" style="border: 1px solid black;">' . htmlspecialchars($rows['equipo_imei']) . '</td>
-                        </tr>';
+                            <td onclick="window.location.href=\'' . APP_URL . 'saleEquipoNew/' . $rows['id_equipo'] . '/\'" class="has-text-centered" style="border: 1px solid black;"><i class="fas fa-cart-plus fa-fw"></i></td>
+                            <td onclick="window.location.href=\'' . APP_URL . 'saleEquipoNew/' . $rows['id_equipo'] . '/\'" class="has-text-centered" style="border: 1px solid black;"><i class="fas fa-cart-plus fa-fw"></i></td>
+                        </tr>
+                        ';
+                        
                     }
             
                 $tabla .= '</tbody></table></div>';
