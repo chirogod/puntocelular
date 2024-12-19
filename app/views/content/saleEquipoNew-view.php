@@ -29,9 +29,10 @@
             </thead>
             <tbody>
                 <?php
+                    $_SESSION['venta_equipo_importe'] = 0;
                     $id_equipo = $datos['id_equipo'];
                     $financiacion = isset($_SESSION['financiacion_equipo'][$id_equipo]) ? $_SESSION['financiacion_equipo'][$id_equipo]['venta_equipo_financiacion'] : 'n/a';
-                    $subtotal = isset($_SESSION['financiacion_equipo'][$id_equipo]) ? $_SESSION['financiacion_equipo'][$id_equipo]['venta_equipo_total'] : '0';
+                    $subtotal = isset($_SESSION['financiacion_equipo'][$id_equipo]) ? $_SESSION['financiacion_equipo'][$id_equipo]['venta_equipo_total'] : 0;
                     $_SESSION['venta_equipo_importe'] += $subtotal;
                 ?>
                 <tr>
@@ -40,12 +41,12 @@
                     <td class="has-text-centered" style="border: 1px solid black;"><?php echo $datos['equipo_ram']?></td>
                     <td class="has-text-centered" style="border: 1px solid black;"><?php echo $datos['equipo_color']?></td>
                     <td class="has-text-centered" style="border: 1px solid black;"><?php echo $datos['equipo_imei']?></td>
-                    <td>
+                    <td class="has-text-centered" style="border: 1px solid black;"> 
                         <form class="FormularioAjax" action="<?php echo APP_URL; ?>app/ajax/ventaEquipoAjax.php" method="POST" autocomplete="off">
                             <input type="hidden" name="id_equipo" value="<?php echo $datos['id_equipo']; ?>">
                             <input type="hidden" name="modulo_venta" value="financiar_producto">
                             <div class="select">
-                                <select name="financiacion" class="select" required onchange="financiarProducto('<?php echo $datos['id_equipo']; ?>', this.value)">
+                                <select name="financiacion_equipo" class="select" required onchange="financiarProducto('<?php echo $datos['id_equipo']; ?>', this.value)">
                                     <option value="">Seleccionar opción</option>_equipo
                                     <option value="3cuotas" <?php echo (isset($_SESSION['financiacion_equipo'][$id_equipo]) && $_SESSION['financiacion_equipo'][$id_equipo]['venta_equipo_financiacion'] == '3cuotas') ? 'selected' : ''; ?>>3 cuotas</option>
                                     <option value="6cuotas" <?php echo (isset($_SESSION['financiacion_equipo'][$id_equipo]) && $_SESSION['financiacion_equipo'][$id_equipo]['venta_equipo_financiacion'] == '6cuotas') ? 'selected' : ''; ?>>6 cuotas</option>
@@ -54,11 +55,10 @@
                                     <option value="Efectivo" <?php echo (isset($_SESSION['financiacion_equipo'][$id_equipo]) && $_SESSION['financiacion_equipo'][$id_equipo]['venta_equipo_financiacion'] == 'Efectivo') ? 'selected' : ''; ?>>Efectivo</option>
                                 </select>
                             </div>
-                            <!--<button type="submit" class="button is-link is-light is-rounded">Financiar</button>-->
                         </form>
                     </td>
-                    <td>
-                        <?php echo $total ?>
+                    <td class="has-text-centered" style="border: 1px solid black;">
+                        <?php echo MONEDA_SIMBOLO.number_format($total,MONEDA_DECIMALES,MONEDA_SEPARADOR_DECIMAL,MONEDA_SEPARADOR_MILLAR)." ".MONEDA_NOMBRE ?>
                     </td>
                 </tr>
             </tbody>
@@ -68,7 +68,7 @@
         <h2 class="subtitle">Detalle de la venta</h2>
         <div class="columns">
             <div class="column">
-                <form class="FormularioAjax" action="<?php echo APP_URL; ?>app/ajax/ventaAjax.php" method="POST" autocomplete="off" name="formsale" >
+                <form class="" action="<?php echo APP_URL; ?>app/ajax/ventaEquipoAjax.php" method="POST" autocomplete="off" name="formsale" >
                     <input type="hidden" name="modulo_venta" value="registrar_venta">
                     <input type="hidden" name="id_equipo" id="id_equipo" value="<?php echo $datos['id_equipo']?>">
                     <div class="control">
@@ -122,13 +122,23 @@
                     </div>
                     <div class="control">
                         <label for="">Fecha</label>
-                        <input class="input" type="date" name="sena_fecha" value="<?php echo date("Y-m-d"); ?>" >
+                        <input class="input" type="date" name="venta_fecha" value="<?php echo date("Y-m-d"); ?>" >
                     </div>
                     <div class="control">
                         <label for="">Vendedor</label>
-                        <input class="input" type="text" name="sena_vendedor">
+                        <input class="input" type="text" name="venta_vendedor">
                     </div>
-                    
+                    <h4 class="subtitle is-5 has-text-centered has-text-weight-bold mb-5"><small>TOTAL A PAGAR: <?php echo MONEDA_SIMBOLO.number_format($_SESSION['venta_equipo_importe'],MONEDA_DECIMALES,MONEDA_SEPARADOR_DECIMAL,MONEDA_SEPARADOR_MILLAR)." ".MONEDA_NOMBRE; ?></small></h4>
+
+                    <?php if($_SESSION['venta_equipo_importe']>0){ ?>
+                    <p class="has-text-centered">
+                        <button type="submit" class="button is-info is-rounded"><i class="far fa-save"></i> &nbsp; Registrar venta</button>
+                    </p>
+                    <?php } ?>
+                    <p class="has-text-centered pt-6">
+                        <small>Los campos marcados con <?php echo CAMPO_OBLIGATORIO; ?> son obligatorios</small>
+                    </p>
+                    <input type="hidden" value="<?php echo number_format($_SESSION['venta_equipo_importe'],MONEDA_DECIMALES,MONEDA_SEPARADOR_DECIMAL,""); ?>" id="venta_importe_hidden">                            
                 </form>
             </div>
         </div>
@@ -246,7 +256,7 @@
         if (financiacion !== "") {
             let datos = new FormData();
             datos.append("id_equipo", id_equipo);
-            datos.append("financiacion", financiacion);
+            datos.append("financiacion_equipo", financiacion);
             datos.append("modulo_venta", "financiar_producto");
 
             fetch('<?php echo APP_URL; ?>app/ajax/ventaEquipoAjax.php', {

@@ -291,26 +291,33 @@
                         $fijas_12 = ($efectivo_usd * 1.6 * USD_PC) / 12;
                     
                         $tabla .= '
-                        <tr class="' . $clase_estado . '" style="cursor: pointer;" onclick="window.location.href=\'' . APP_URL . 'equipoUpdate/' . $rows['id_equipo'] . '/\'">
-                            <td class="has-text-centered" style="border: 1px solid black;">' . htmlspecialchars($rows['equipo_estado']) . '</td>
-                            <td class="has-text-centered" style="border: 1px solid black;">' . htmlspecialchars($rows['equipo_descripcion']) . '</td>
-                            <td class="has-text-centered" style="border: 1px solid black;">' . htmlspecialchars($rows['equipo_almacenamiento']) . '</td>
-                            <td class="has-text-centered" style="border: 1px solid black;">' . htmlspecialchars($rows['equipo_ram']) . '</td>
-                            <td class="has-text-centered" style="border: 1px solid black;">' . htmlspecialchars($rows['equipo_color']) . '</td>
-                            <td class="has-text-centered" style="border: 1px solid black;">' . htmlspecialchars($rows['equipo_costo']) . '</td>
-                            <td class="has-text-centered" style="border: 1px solid black;">$' . htmlspecialchars(number_format(round($precio), 0)) . '</td>
-                            <td class="has-text-centered" style="border: 1px solid black;">$' . htmlspecialchars(number_format(round($sin_int_3), 0)) . '</td>
-                            <td class="has-text-centered" style="border: 1px solid black;">$' . htmlspecialchars(number_format(round($sin_int_6), 0)) . '</td>
-                            <td class="has-text-centered" style="border: 1px solid black;">$' . htmlspecialchars(number_format(round($fijas_9), 0)) . '</td>
-                            <td class="has-text-centered" style="border: 1px solid black;">$' . htmlspecialchars(number_format(round($fijas_12), 0)) . '</td>
-                            <td class="has-text-centered" style="border: 1px solid black;">$' . htmlspecialchars(number_format(round($efectivo), 0)) . '</td>
-                            <td class="has-text-centered" style="border: 1px solid black;">$' . htmlspecialchars(number_format(round($efectivo_usd), 0)) . '</td>
-                            <td class="has-text-centered" style="border: 1px solid black;">' . htmlspecialchars($rows['equipo_imei']) . '</td>
-                            <td onclick="window.location.href=\'' . APP_URL . 'saleEquipoNew/' . $rows['id_equipo'] . '/\'" class="has-text-centered" style="border: 1px solid black;"><i class="fas fa-cart-plus fa-fw"></i></td>
-                            <td onclick="window.location.href=\'' . APP_URL . 'saleEquipoNew/' . $rows['id_equipo'] . '/\'" class="has-text-centered" style="border: 1px solid black;"><i class="fas fa-cart-plus fa-fw"></i></td>
-                        </tr>
-                        ';
-                        
+                            <tr class="' . $clase_estado . '" style="cursor: pointer;" onclick="window.location.href=\'' . APP_URL . 'equipoUpdate/' . $rows['id_equipo'] . '/\'">
+                                <td class="has-text-centered" style="border: 1px solid black;">' . htmlspecialchars($rows['equipo_estado']) . '</td>
+                                <td class="has-text-centered" style="border: 1px solid black;">' . htmlspecialchars($rows['equipo_descripcion']) . '</td>
+                                <td class="has-text-centered" style="border: 1px solid black;">' . htmlspecialchars($rows['equipo_almacenamiento']) . '</td>
+                                <td class="has-text-centered" style="border: 1px solid black;">' . htmlspecialchars($rows['equipo_ram']) . '</td>
+                                <td class="has-text-centered" style="border: 1px solid black;">' . htmlspecialchars($rows['equipo_color']) . '</td>
+                                <td class="has-text-centered" style="border: 1px solid black;">$' . htmlspecialchars(number_format(round($rows['equipo_costo']), 0)) . '</td>
+                                <td class="has-text-centered" style="border: 1px solid black;">$' . htmlspecialchars(number_format(round($precio), 0)) . '</td>
+                                <td class="has-text-centered" style="border: 1px solid black;">$' . htmlspecialchars(number_format(round($sin_int_3), 0)) . '</td>
+                                <td class="has-text-centered" style="border: 1px solid black;">$' . htmlspecialchars(number_format(round($sin_int_6), 0)) . '</td>
+                                <td class="has-text-centered" style="border: 1px solid black;">$' . htmlspecialchars(number_format(round($fijas_9), 0)) . '</td>
+                                <td class="has-text-centered" style="border: 1px solid black;">$' . htmlspecialchars(number_format(round($fijas_12), 0)) . '</td>
+                                <td class="has-text-centered" style="border: 1px solid black;">$' . htmlspecialchars(number_format(round($efectivo), 0)) . '</td>
+                                <td class="has-text-centered" style="border: 1px solid black;">$' . htmlspecialchars(number_format(round($efectivo_usd), 0)) . '</td>
+                                <td class="has-text-centered" style="border: 1px solid black;">' . htmlspecialchars($rows['equipo_imei']) . '</td>
+                            ';
+
+                            if($rows['equipo_estado'] == "Disponible"){
+                                $tabla .= '
+                                <td class="has-text-centered" style="border: 1px solid black;" onclick="event.stopPropagation(); window.location.href=\'' . APP_URL . 'saleEquipoNew/' . $rows['id_equipo'] . '/\'">
+                                    <i class="fas fa-cart-plus fa-fw"></i>
+                                </td>
+                            </tr>';
+                            }else{
+                            $tabla .= '
+                            </tr>';
+                            }
                     }
             
                 $tabla .= '</tbody></table></div>';

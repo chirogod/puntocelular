@@ -1,8 +1,5 @@
 <?php 
     $id = $insLogin->limpiarCadena($url[1]);
-
-    
-
 		$datos = $insLogin->seleccionarDatos("Unico","equipo","id_equipo",$id);
         if($datos->rowCount()==1){
 			$datos=$datos->fetch();
@@ -85,24 +82,25 @@
 		</div>
 		
 		<p class="has-text-centered">
-			<button type="submit" class="button is-info is-rounded"><i class="far fa-save"></i> &nbsp; Actualizar</button>
-			<button type="button" class="button is-link is-rounded" onclick="vender('<?php echo $datos['equipo_codigo']; ?>')"><i class="fas fa-shopping-cart"></i>VENDER</button>
+			<button type="submit" class="button is-info is-rounded">
+				<i class="far fa-save"></i> &nbsp; Actualizar
+			</button>
+			<?php if ($datos['equipo_estado'] == "Vendido") { ?>
+				<button type="button" class="button is-link is-rounded" 
+						onclick="window.location.href='<?php echo APP_URL . 'saleEquipoDetail/' . $datos['id_equipo']; ?>'">
+					<i class="fas fa-shopping-cart"></i> Detalle venta
+				</button>
+			<?php } ?>
 		</p>
 		<p class="has-text-centered pt-1">
-            <small>Los campos marcados con <?php echo CAMPO_OBLIGATORIO; ?> son obligatorios</small>
-        </p>
+			<small>Los campos marcados con <?php echo CAMPO_OBLIGATORIO; ?> son obligatorios</small>
+		</p>
+
 	</form>
 </div>
 <?php
-		}else{
-			include "./app/views/includes/error_alert.php";
-		}
-	?>
-
-
-
-<script>
-	function vender($equipo_codigo){
-		console.log($equipo_codigo);
+	}else{
+		include "./app/views/includes/error_alert.php";
 	}
-</script>
+?>
+

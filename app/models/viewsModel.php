@@ -32,6 +32,7 @@
                 "equipoList",
                 "equipoUpdate",
                 "saleEquipoNew",
+                "saleEquipoDetail",
                 "cajaIng",
                 "cajaEg",
                 "comprobanteVenta",
