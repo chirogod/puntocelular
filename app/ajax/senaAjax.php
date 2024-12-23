@@ -3,13 +3,13 @@
 	require_once "../views/includes/session_start.php";
 	require_once "../../autoload.php";
 	
-	use app\controllers\rubroController;
+	use app\controllers\senaController;
 
-    if(isset($_POST['modulo_rubro'])){
-        $insRubro = new rubroController();
+    if(isset($_POST['modulo_sena'])){
+        $insSena = new senaController();
 
-        if ($_POST['modulo_rubro'] == "registrar") {
-            echo $insRubro->registrarRubroControlador();
+        if ($_POST['modulo_sena'] == "registrar") {
+            echo $insSena->registrarSenaControlador();
         }
 
     }else{

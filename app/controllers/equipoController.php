@@ -313,6 +313,9 @@
                                 <td class="has-text-centered" style="border: 1px solid black;" onclick="event.stopPropagation(); window.location.href=\'' . APP_URL . 'saleEquipoNew/' . $rows['id_equipo'] . '/\'">
                                     <i class="fas fa-cart-plus fa-fw"></i>
                                 </td>
+                                <td class="has-text-centered" style="border: 1px solid black;" onclick="event.stopPropagation(); window.location.href=\'' . APP_URL . 'senaEquipoNew/' . $rows['id_equipo'] . '/\'">
+                                    <i class="fas fa-sale fa-fw"></i>
+                                </td>
                             </tr>';
                             }else{
                             $tabla .= '

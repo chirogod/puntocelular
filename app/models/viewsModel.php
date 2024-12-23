@@ -40,7 +40,8 @@
                 "ordenList",
                 "ordenDetail",
                 "salesClientDetail",
-                "ordersClientDetail"
+                "ordersClientDetail",
+                "senaEquipoNew"
             ];
             //si la $vista esta en el array de las vistas que existe
             if (in_array($vista,$listaBlanca)){
