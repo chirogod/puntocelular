@@ -6,13 +6,13 @@
 			$datos=$datos->fetch();
             $id_equipo = $datos['id_equipo'];
             $efectivo_usd = $datos['equipo_costo'] * 1.4;
-            $precio = ($efectivo_usd * USD_PC) * 1.4;
             $efectivo = $efectivo_usd * USD_PC;
+            $precio = $efectivo * 1.4;
             $sin_int_3 = $precio / 3;
             $sin_int_6 = $precio / 6; 
-            $fijas_9 = ($efectivo *1.5) / 9;
+            $fijas_9 = ($efectivo * 1.5) / 9;
             $fijas_12 = ($efectivo * 1.6) / 12;
-            $pago1 = $efectivo *1.1;
+            $pago1 = $efectivo * 1.1;
 ?>
 
 <input type="hidden" id="usd_pc" value="<?php echo USD_PC?>">
@@ -129,6 +129,7 @@
             </div>
 
             <h2 class="subtitle">Detalles de Pago</h2>
+            <form class="FormularioAjax" action="<?php echo APP_URL; ?>app/ajax/senaAjax.php" method="POST" autocomplete="off" name="formsale" >
             <table class="table is-striped is-bordered">
                 <tbody>
                 <tr>
@@ -157,23 +158,23 @@
             </table>
         </div>
     <div class="box">
-        <h2 class="subtitle">Detalle de la venta</h2>
+        <h2 class="subtitle">Detalle de la sena</h2>
         <div class="columns">
             <div class="column">
-                <form class="" action="<?php echo APP_URL; ?>app/ajax/ventaEquipoAjax.php" method="POST" autocomplete="off" name="formsale" >
-                    <input type="hidden" name="modulo_venta" value="registrar_venta">
+                
+                    <input type="hidden" name="modulo_sena" value="registrar_sena">
                     <input type="hidden" name="id_equipo" id="id_equipo" value="<?php echo $datos['id_equipo']?>">
                     <div class="control">
                         <label>Cliente <?php echo CAMPO_OBLIGATORIO; ?></label>
                         <?php
-                            if(isset($_SESSION['datos_cliente_venta_equipo']) && count($_SESSION['datos_cliente_venta_equipo'])>=1 && $_SESSION['datos_cliente_venta_equipo']['id_cliente']!=1){
+                            if(isset($_SESSION['datos_cliente_sena']) && count($_SESSION['datos_cliente_sena'])>=1 && $_SESSION['datos_cliente_sena']['id_cliente']!=1){
                         ?>
                         <div class="field has-addons mb-5">
                             <div class="control">
-                                <input class="input" type="text" readonly id="venta_cliente" value="<?php echo $_SESSION['datos_cliente_venta_equipo']['cliente_nombre_completo']; ?>" >
+                                <input class="input" type="text" readonly id="venta_cliente" value="<?php echo $_SESSION['datos_cliente_sena']['cliente_nombre_completo']; ?>" >
                             </div>
                             <div class="control">
-                                <a class="button is-danger" title="Remove cliente" id="btn_remove_client" onclick="remover_cliente(<?php echo $_SESSION['datos_cliente_venta_equipo']['id_cliente']; ?>)">
+                                <a class="button is-danger" title="Remove cliente" id="btn_remove_client" onclick="remover_cliente(<?php echo $_SESSION['datos_cliente_sena']['id_cliente']; ?>)">
                                     <i class="fas fa-user-times fa-fw"></i>
                                 </a>
                             </div>
@@ -184,7 +185,7 @@
                                 if($datos_cliente->rowCount()==1){
                                     $datos_cliente=$datos_cliente->fetch();
 
-                                    $_SESSION['datos_cliente_venta_equipo']=[
+                                    $_SESSION['datos_cliente_sena']=[
                                         "id_cliente"=>$datos_cliente['id_cliente'],
                                         "cliente_tipo_doc"=>$datos_cliente['cliente_tipo_doc'],
                                         "cliente_documento"=>$datos_cliente['cliente_documento'],
@@ -192,7 +193,7 @@
                                     ];
 
                                 }else{
-                                    $_SESSION['datos_cliente_venta_equipo']=[
+                                    $_SESSION['datos_cliente_sena']=[
                                         "id_cliente"=>1,
                                         "cliente_tipo_doc"=>"N/A",
                                         "cliente_documento"=>"N/A",
@@ -202,7 +203,7 @@
                         ?>
                         <div class="field has-addons mb-5">
                             <div class="control">
-                                <input class="input" type="text" readonly id="venta_cliente" value="<?php echo $_SESSION['datos_cliente_venta_equipo']['cliente_nombre_completo']; ?>" >
+                                <input class="input" type="text" readonly id="venta_cliente" value="<?php echo $_SESSION['datos_cliente_sena']['cliente_nombre_completo']; ?>" >
                             </div>
                             <div class="control">
                                 <a class="button is-info js-modal-trigger" data-target="modal-js-client" title="Agregar cliente" id="btn_add_client" >
@@ -214,17 +215,20 @@
                     </div>
                     <div class="control">
                         <label for="">Fecha</label>
-                        <input class="input" type="date" name="venta_fecha" value="<?php echo date("Y-m-d"); ?>" >
+                        <input class="input" type="date" name="sena_fecha" value="<?php echo date("Y-m-d"); ?>" >
                     </div>
                     <div class="control">
                         <label for="">Vendedor</label>
-                        <input class="input" type="text" name="venta_vendedor">
+                        <input class="input" type="text" name="sena_vendedor">
                     </div>
                     
                     <p class="has-text-centered pt-6">
                         <small>Los campos marcados con <?php echo CAMPO_OBLIGATORIO; ?> son obligatorios</small>
                     </p>
-                    
+                    <p class="has-text-centered">
+                        <button type="reset" class="button is-link is-light is-rounded"><i class="fas fa-paint-roller"></i> &nbsp; Limpiar</button>
+                        <button type="submit" class="button is-info is-rounded"><i class="far fa-save"></i> &nbsp; Guardar</button>
+                    </p>
                 </form>
             </div>
         </div>
@@ -271,9 +275,9 @@
 
             let datos = new FormData();
             datos.append("buscar_cliente", input_cliente);
-            datos.append("modulo_venta", "buscar_cliente");
+            datos.append("modulo_sena", "buscar_cliente");
 
-            fetch('<?php echo APP_URL; ?>app/ajax/ventaEquipoAjax.php',{
+            fetch('<?php echo APP_URL; ?>app/ajax/senaAjax.php',{
                 method: 'POST',
                 body: datos
             })
@@ -295,9 +299,9 @@
         let datos = new FormData();
         datos.append("id_cliente", id);
         datos.append("id_equipo", id_equipo);
-        datos.append("modulo_venta", "agregar_cliente");
+        datos.append("modulo_sena", "agregar_cliente");
 
-        fetch('<?php echo APP_URL; ?>app/ajax/ventaEquipoAjax.php',{
+        fetch('<?php echo APP_URL; ?>app/ajax/senaAjax.php',{
             method: 'POST',
             body: datos
         })
@@ -323,9 +327,9 @@
 
                 let datos = new FormData();
                 datos.append("id_cliente", id);
-                datos.append("modulo_venta", "remover_cliente");
+                datos.append("modulo_sena", "remover_cliente");
 
-                fetch('<?php echo APP_URL; ?>app/ajax/ventaEquipoAjax.php',{
+                fetch('<?php echo APP_URL; ?>app/ajax/senaAjax.php',{
                     method: 'POST',
                     body: datos
                 })
@@ -366,7 +370,7 @@
 
 
         let precio = efectivo_usd * 1.4 * usd_pc;
-        let efectivo = precio * 0.75;
+        let efectivo = efectivo_usd * usd_pc;
         let sin_int_3 = precio / 3;
         let sin_int_6 = precio / 6; 
         let fijas_9 = (efectivo_usd * 1.5 * usd_pc) / 9;
@@ -377,8 +381,8 @@
         document.getElementById("restante_6").textContent = '$' + number_format(sin_int_6.toFixed(2));
         document.getElementById("restante_9").textContent = '$' + number_format(fijas_9.toFixed(2));
         document.getElementById("restante_12").textContent = '$' + number_format(fijas_12.toFixed(2));
-        document.getElementById("restante_1pago").textContent = '$' + number_format();
-        document.getElementById("restante_efectivo_ars").textContent = '$' + number_format(efectivo);
+        document.getElementById("restante_1pago").textContent = '$' + number_format(efectivo.toFixed(2));
+        document.getElementById("restante_efectivo_ars").textContent = '$' + number_format(efectivo.toFixed(2));
 
 
     }

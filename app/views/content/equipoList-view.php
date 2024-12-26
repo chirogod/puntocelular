@@ -1,21 +1,21 @@
 <?php include "app/views/includes/admin_security.php"; ?>
 
 
-<div class="container is-fluid mb-5">
+<div class="container is-fluid">
     <h1 class="title is-3">Equipos</h1>
     <h2 class="subtitle is-5">
         <i class="fas fa-list fa-fw"></i> Lista de equipos
     </h2>
 </div>
 
-<div class="container is-max-desktop">
-    <div class="columns is-vcentered box is-multiline">
+<div class="container p-6">
+    <div class="columns is-vcentered is-multiline">
         <!-- Filtros -->
-        <div class="column">
+        <div class="column is-narrow">
             <div class="field">
-                <label class="label">Modulo:</label>
+                <label class="label">Lista:</label>
                 <div class="control">
-                    <div class="select is-medium is-fullwidth">
+                    <div class="select is-small">
                         <select id="filter_modulo">
                             <option value="android_nuevo" selected>Android Nuevo</option>
                             <option value="iphone_nuevo">Iphone nuevo</option>
@@ -29,11 +29,11 @@
                 </div>
             </div>
         </div>
-        <div class="column">
+        <div class="column is-narrow">
             <div class="field">
                 <label class="label">Estado:</label>
                 <div class="control">
-                    <div class="select is-medium is-fullwidth">
+                    <div class="select is-small">
                         <select id="filter_estado">
                             <option value="Todos" selected>Todos</option>
                             <option value="Disponible">Disponible</option>

@@ -68,7 +68,7 @@
         <h2 class="subtitle">Detalle de la venta</h2>
         <div class="columns">
             <div class="column">
-                <form class="" action="<?php echo APP_URL; ?>app/ajax/ventaEquipoAjax.php" method="POST" autocomplete="off" name="formsale" >
+                <form class="FormularioAjax" action="<?php echo APP_URL; ?>app/ajax/ventaEquipoAjax.php" method="POST" autocomplete="off" name="formsale" >
                     <input type="hidden" name="modulo_venta" value="registrar_venta">
                     <input type="hidden" name="id_equipo" id="id_equipo" value="<?php echo $datos['id_equipo']?>">
                     <div class="control">
