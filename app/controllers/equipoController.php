@@ -16,7 +16,22 @@
                 $equipo_codigo=$this->generarCodigoAleatorio(7,$correlativo);
             }
 
-            $equipo_descripcion = $this->limpiarCadena($_POST['equipo_descripcion']);
+            $id_marca = $this->limpiarCadena($_POST['id_marca']);
+            $check_marca = $this->ejecutarConsulta("SELECT * FROM marca WHERE id_marca = '$id_marca'");
+            if ($check_marca->rowCount() > 0) {
+                // si ya existe generar otro
+                $marca=$check_marca->fetch();
+                $equipo_marca = $marca['marca_descripcion'];
+            }
+            
+            $id_modelo = $this->limpiarCadena($_POST['id_modelo']);
+            $check_modelo = $this->ejecutarConsulta("SELECT * FROM modelo WHERE id_modelo = '$id_modelo'");
+            if ($check_modelo->rowCount() > 0) {
+                // si ya existe generar otro
+                $modelo=$check_modelo->fetch();
+                $equipo_modelo = $modelo['modelo_descripcion'];
+            }
+
             $equipo_estado = "Disponible";
             $equipo_almacenamiento = $this->limpiarCadena($_POST['equipo_almacenamiento']);
             $equipo_color = $this->limpiarCadena($_POST['equipo_color']);
@@ -38,9 +53,14 @@
                     "campo_valor"=>$equipo_estado
                 ],
                 [
-                    "campo_nombre"=>"equipo_descripcion",
-                    "campo_marcador"=>":Descripcion",
-                    "campo_valor"=>$equipo_descripcion
+                    "campo_nombre"=>"equipo_marca",
+                    "campo_marcador"=>":Marca",
+                    "campo_valor"=>$equipo_marca
+                ],
+                [
+                    "campo_nombre"=>"equipo_modelo",
+                    "campo_marcador"=>":Modelo",
+                    "campo_valor"=>$equipo_modelo
                 ],
                 [
                     "campo_nombre"=>"equipo_almacenamiento",
@@ -102,7 +122,6 @@
         public function actualizarEquipoControlador(){
             $equipo_codigo=$this->limpiarCadena($_POST['equipo_codigo']);
 
-            $equipo_descripcion = $this->limpiarCadena($_POST['equipo_descripcion']);
             $equipo_estado = $this->limpiarCadena($_POST['equipo_estado']);
             $equipo_almacenamiento = $this->limpiarCadena($_POST['equipo_almacenamiento']);
             $equipo_color = $this->limpiarCadena($_POST['equipo_color']);
@@ -122,11 +141,6 @@
                     "campo_nombre"=>"equipo_estado",
                     "campo_marcador"=>":Estado",
                     "campo_valor"=>$equipo_estado
-                ],
-                [
-                    "campo_nombre"=>"equipo_descripcion",
-                    "campo_marcador"=>":Descripcion",
-                    "campo_valor"=>$equipo_descripcion
                 ],
                 [
                     "campo_nombre"=>"equipo_almacenamiento",
@@ -244,6 +258,7 @@
                     <thead>
                         <tr>
                             <th style="border: 1px solid black;">Estado</th>
+                            <th style="border: 1px solid black;">Marca</th>
                             <th style="border: 1px solid black;">Modelo</th>
                             <th style="border: 1px solid black;">Almac.</th>
                             <th style="border: 1px solid black;">RAM</th>
@@ -293,7 +308,8 @@
                         $tabla .= '
                             <tr class="' . $clase_estado . '" style="cursor: pointer;" onclick="window.location.href=\'' . APP_URL . 'equipoUpdate/' . $rows['id_equipo'] . '/\'">
                                 <td class="has-text-centered" style="border: 1px solid black;">' . htmlspecialchars($rows['equipo_estado']) . '</td>
-                                <td class="has-text-centered" style="border: 1px solid black;">' . htmlspecialchars($rows['equipo_descripcion']) . '</td>
+                                <td class="has-text-centered" style="border: 1px solid black;">' . htmlspecialchars($rows['equipo_marca']) . '</td>
+                                <td class="has-text-centered" style="border: 1px solid black;">' . htmlspecialchars($rows['equipo_modelo']) . '</td>
                                 <td class="has-text-centered" style="border: 1px solid black;">' . htmlspecialchars($rows['equipo_almacenamiento']) . '</td>
                                 <td class="has-text-centered" style="border: 1px solid black;">' . htmlspecialchars($rows['equipo_ram']) . '</td>
                                 <td class="has-text-centered" style="border: 1px solid black;">' . htmlspecialchars($rows['equipo_color']) . '</td>

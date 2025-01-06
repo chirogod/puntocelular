@@ -22,7 +22,7 @@
             $datos_equipo=$insLogin->seleccionarDatos("Unico","equipo","id_equipo",$id_equipo);
             $datos_equipo = $datos_equipo->fetch();
 	?>
-	<h2 class="title has-text-centered ">Datos de la venta <?php echo " (".$id.")"; ?></h2>
+	<h2 class="title has-text-centered ">Datos de la venta de <?php echo $datos_equipo['equipo_marca']." ".$datos_equipo['equipo_modelo'] ?></h2>
 	<div class="columns pb-1 pt-2">
 		<div class="column">
 
@@ -69,7 +69,7 @@
             <table class="table is-striped is-narrow is-hoverable is-fullwidth">
             <thead>
                 <tr>
-                    <th class="has-text-centered" style="border: 1px solid black;">Modelo</th>
+                    <th class="has-text-centered" style="border: 1px solid black;">Equipo</th>
                     <th class="has-text-centered" style="border: 1px solid black;">Almac.</th>
                     <th class="has-text-centered" style="border: 1px solid black;">RAM</th>
                     <th class="has-text-centered" style="border: 1px solid black;">Color</th>
@@ -80,7 +80,7 @@
             </thead>
             <tbody>
                 <tr>
-                    <td class="has-text-centered" style="border: 1px solid black;"><?php echo $datos_equipo['equipo_descripcion']?></td>
+                    <td class="has-text-centered" style="border: 1px solid black;"><?php echo $datos_equipo['equipo_marca']." ".$datos_equipo['equipo_modelo']?></td>
                     <td class="has-text-centered" style="border: 1px solid black;"><?php echo $datos_equipo['equipo_almacenamiento']?></td>
                     <td class="has-text-centered" style="border: 1px solid black;"><?php echo $datos_equipo['equipo_ram']?></td>
                     <td class="has-text-centered" style="border: 1px solid black;"><?php echo $datos_equipo['equipo_color']?></td>

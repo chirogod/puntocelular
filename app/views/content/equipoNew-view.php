@@ -13,21 +13,65 @@
 			<h2 class="subtitle">Datos del equipo</h2>
 			<div class="columns">
 				<div class="column">
-					<label for="">Equipo</label>
-					<input class="input" type="text" name="equipo_descripcion" id="">
+					<div class="control">
+						<label>Marca <?php echo CAMPO_OBLIGATORIO; ?></label><br>
+						<div class="select">
+							<select name="id_marca" id="select_marca" onchange="cargarModelos(this.value)" required>
+								<option value="" selected="">Seleccione una opción</option>
+								<?php
+									// Obtener las marcas de la base de datos
+									$datos_marca = $insLogin->seleccionarDatos("Normal", "marca", "*", 0);
+									while ($campos_marca = $datos_marca->fetch()) {
+										echo '<option value="' . $campos_marca['id_marca'] . '">' . $campos_marca['marca_descripcion'] . '</option>';
+									}
+								?>
+							</select>
+						</div>
+					</div>
 				</div>
 				<div class="column">
-					<label for="">Almacenamiento</label>
-					<input class="input" type="text" name="equipo_almacenamiento" id="">
+					<div class="control">
+						<label>Modelo <?php echo CAMPO_OBLIGATORIO; ?></label><br>
+						<div class="select">
+							<select name="id_modelo" id="select_modelo" required>
+								<option value="" selected="">Seleccione una opción</option>
+								<!-- Los modelos se llenarán aquí -->
+							</select>
+						</div>
+					</div>
 				</div>
 				<div class="column">
-					<label for="">Ram</label>
-					<input class="input" type="text" name="equipo_ram" id="">
+					<div class="control">
+						<label>Almacenamiento <?php echo CAMPO_OBLIGATORIO; ?></label><br>
+						<div class="select">
+							<select name="equipo_almacenamiento" required>
+								<option value="" selected="" >Seleccione una opción</option>
+								<?php
+									echo $insLogin->generarSelect(ALMACENAMIENTO,"VACIO");
+								?>
+							</select>
+						</div>
+					</div>
 				</div>
 				<div class="column">
-					<label for="">Modulo</label>
+					<div class="control">
+						<label>Ram <?php echo CAMPO_OBLIGATORIO; ?></label><br>
+						<div class="select">
+							<select name="equipo_ram" required>
+								<option value="" selected="" >Seleccione una opción</option>
+								<?php
+									echo $insLogin->generarSelect(RAM,"VACIO");
+								?>
+							</select>
+						</div>
+					</div>
+				</div>
+			</div>
+			<div class="columns">
+				<div class="column">
+					<label for="">Modulo <?php echo CAMPO_OBLIGATORIO; ?></label>
 					<div class="select">
-						<select name="equipo_modulo" id="">
+						<select name="equipo_modulo" id="" required>
 							<option>Seleccione una opción</option>
 							<option value="android_nuevo">Android Nuevo</option>
                             <option value="iphone_nuevo">Iphone nuevo</option>
@@ -39,20 +83,17 @@
 						</select>
 					</div>
 				</div>
-			</div>
-			<div class="columns">
-				
 				<div class="column">
 					<label for="">Color</label>
 					<input class="input" type="text" name="equipo_color" id="">
 				</div>
 				<div class="column">
-					<label for="">IMEI</label>
-					<input class="input" type="text" name="equipo_imei" id="">
+					<label for="">IMEI <?php echo CAMPO_OBLIGATORIO; ?></label>
+					<input class="input" type="text" name="equipo_imei" id="" required>
 				</div>
 				<div class="column">
-					<label for="">Costo</label>
-					<input class="input" type="number" name="equipo_costo" id="">
+					<label for="">Costo <?php echo CAMPO_OBLIGATORIO; ?></label>
+					<input class="input" type="number" name="equipo_costo" id="" required>
 				</div>
 			</div>
 		</div>
@@ -66,3 +107,30 @@
         </p>
 	</form>
 </div>
+
+<script>
+	function cargarModelos(marcaId) {
+        const modeloSelect = document.getElementById('select_modelo');
+        modeloSelect.innerHTML = '<option value="" selected="">Seleccione una opción</option>'; // Resetea el select de modelos
+
+        if (marcaId) {
+            let datos = new FormData();
+            datos.append("marca_id", marcaId);
+            datos.append("modulo_orden", "cargar_modelos");
+
+            fetch('<?php echo APP_URL; ?>app/ajax/ordenAjax.php', {
+                method: 'POST',
+                body: datos
+            })
+            .then(respuesta => respuesta.json())
+            .then(modelos => {
+                modelos.forEach(modelo => {
+                    modeloSelect.innerHTML += `<option value="${modelo.id_modelo}">${modelo.modelo_descripcion}</option>`;
+                });
+            })
+            .catch(error => {
+                console.error('Error al cargar los modelos:', error);
+            });
+        }
+    }
+</script>

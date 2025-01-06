@@ -33,6 +33,12 @@
 	/*---------- Formas de pago ----------*/
 	const FORMAS_PAGO = ["Efectivo", "Transferencia", "Tarjeta de credito", "Tarjeta de debito", "QR MP", "Cuenta DNI"];
 
+	/*----------  Tipos de almacenamientos para equipo  ----------*/
+	const ALMACENAMIENTO=["32GB","54GB","128GB","256GB","512GB", "1TB"];
+
+	/*----------  Tipos de almacenamientos para equipo  ----------*/
+	const RAM=["2GB","3GB","4GB","6GB","8GB", "12GB"];
+
 
 	/*----------  Marcador de campos obligatorios (Font Awesome) ----------*/
 	const CAMPO_OBLIGATORIO='<span class="material-symbols-outlined">emergency</span>';

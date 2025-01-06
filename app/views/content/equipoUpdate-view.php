@@ -25,8 +25,12 @@
 			<h2 class="subtitle">Datos del equipo</h2>
 			<div class="columns">
 				<div class="column">
-					<label for="">Equipo</label>
-					<input class="input" type="text" name="equipo_descripcion" value="<?php echo $datos['equipo_descripcion']?>">
+					<label for="">Marca</label>
+					<input readonly class="input" type="text" name="equipo_marca" value="<?php echo $datos['equipo_marca']?>">
+				</div>
+				<div class="column">
+					<label for="">Modelo</label>
+					<input readonly class="input" type="text" name="equipo_modelo" value="<?php echo $datos['equipo_modelo']?>">
 				</div>
 				<div class="column">
 					<label for="">Almacenamiento</label>

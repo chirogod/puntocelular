@@ -27,7 +27,7 @@
         <table class="table is-striped is-narrow is-hoverable is-fullwidth">
             <thead>
                 <tr >
-                    <th class="has-text-centered" style="border: 1px solid black;">Modelo</th>
+                    <th class="has-text-centered" style="border: 1px solid black;">Equipo</th>
                     <th class="has-text-centered" style="border: 1px solid black;">Almac.</th>
                     <th class="has-text-centered" style="border: 1px solid black;">RAM</th>
                     <th class="has-text-centered" style="border: 1px solid black;">Color</th>
@@ -36,7 +36,7 @@
             </thead>
             <tbody>
                 <tr>
-                    <td class="has-text-centered" style="border: 1px solid black;"><?php echo $datos['equipo_descripcion']?></td>
+                    <td class="has-text-centered" style="border: 1px solid black;"><?php echo $datos['equipo_marca']." ".$datos['equipo_modelo']?></td>
                     <td class="has-text-centered" style="border: 1px solid black;"><?php echo $datos['equipo_almacenamiento']?></td>
                     <td class="has-text-centered" style="border: 1px solid black;"><?php echo $datos['equipo_ram']?></td>
                     <td class="has-text-centered" style="border: 1px solid black;"><?php echo $datos['equipo_color']?></td>

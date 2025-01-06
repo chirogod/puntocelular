@@ -177,12 +177,19 @@
                 </tr>
                 </tbody>
             </table>
+            <button type="button" class="button is-link is-light" onclick="print_orden('<?php echo APP_URL."app/pdf/comprobanteSena.php?code=".$datos['id_sena']; ?>')" >
+                <i class="fas fa-file-invoice-dollar fa-2x"></i> &nbsp;
+                Comprobante de sena
+            </button>
     </div>
     
     <?php
         }
     ?>
 </div>
+<?php
+    include "./app/views/includes/print_invoice_script.php";
+?>
 
 <script>
     const usd_pc = document.getElementById("usd_pc").value;

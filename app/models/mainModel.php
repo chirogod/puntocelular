@@ -305,7 +305,7 @@
 					$text_select=' (Actual)';
 				}
 
-				$select.='<option value="'.$row.'" '.$check_select.'>'.$count_select.' - '.$row.$text_select.'</option>';
+				$select.='<option value="'.$row.'" '.$check_select.'>'.$row.$text_select.'</option>';
 
 				$check_select='';
 				$text_select='';
