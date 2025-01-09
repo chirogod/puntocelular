@@ -95,7 +95,7 @@
                     </div>
                     <div class="control">
                         <h3>Telefonista/Operador</h3>
-                        <input type="text" readonly class="input" name="orden_telefonista" value="<?php echo $datos_telefonista['usuario_nombre_completo'] ?>">
+                        <input type="text" readonly class="input" name="orden_telefonista" value="<?php echo $datos['id_usuario'] ?>">
                     </div>
 
                 </div>
@@ -460,7 +460,7 @@
                                     <div class="field">
                                         <label class="label has-text-centered">P. Lista</label>
                                         <div class="control">
-                                            <input class="input" type="text" value="<?php echo $datos['orden_importe_lista']; ?>" name="orden_importe_lista">
+                                            <input class="input" type="text" value="<?php echo $datos['orden_total_lista']; ?>" name="orden_total_lista">
                                         </div>
                                     </div>
                                 </div>
@@ -468,7 +468,7 @@
                                     <div class="field">
                                         <label class="label has-text-centered">P. Efectivo</label>
                                         <div class="control">
-                                            <input class="input" type="text" value="<?php echo $datos['orden_importe_efectivo']; ?>" name="orden_importe_efectivo">
+                                            <input class="input" type="text" value="<?php echo $datos['orden_total_efectivo']; ?>" name="orden_total_efectivo">
                                         </div>
                                     </div>
                                 </div>

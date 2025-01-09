@@ -234,15 +234,8 @@
 		        exit();
 			}
 			                                                                                                                                                                                                                                                                                        
-			$orden_importe_lista = $_POST['orden_importe_lista'];
-			$orden_importe_efectivo = $_POST['orden_importe_efectivo'];
-
-			if($orden_importe_lista != ""){
-				$orden_total_lista = $orden_importe_lista;
-			}
-			if($orden_importe_efectivo != ""){
-				$orden_total_efectivo = $orden_importe_efectivo;
-			}
+			$orden_total_lista = $_POST['orden_total_lista'];
+			$orden_total_efectivo = $_POST['orden_total_efectivo'];
 
 			//codigo de orden incrementado en 1 cada vez q se hace una nueva orden
 			$correlativo=$this->ejecutarConsulta("SELECT id_orden FROM orden");
@@ -343,16 +336,6 @@
 					"campo_valor"=>$fecha_prometida
 				],
 				[
-					"campo_nombre"=>"orden_importe_lista",
-					"campo_marcador"=>":Lista",
-					"campo_valor"=>$orden_importe_lista
-				],
-				[
-					"campo_nombre"=>"orden_importe_efectivo",
-					"campo_marcador"=>":Efectivo",
-					"campo_valor"=>$orden_importe_efectivo
-				],
-				[
 					"campo_nombre"=>"orden_total_lista",
 					"campo_marcador"=>":totalLista",
 					"campo_valor"=>$orden_total_lista
@@ -388,12 +371,10 @@
 
 			if ($registrar_orden->rowCount()==1) {
 				$alerta=[
-					"tipo"=>"limpiar",
-					"titulo"=>"Orden registrada con exito",
-					"texto"=>"La orden se registro con exito",
-					"icono"=>"success",
-					"comprobante_url" => APP_URL . "app/pdf/comprobanteOrden.php?code=" . $orden_codigo
+					"tipo"=>"redireccionar",
+					"url"=>APP_URL."ordenDetail/".$orden_codigo
 				];
+				unset($_SESSION['datos_cliente_orden']);
 			}else{
 				$alerta=[
 					"tipo"=>"simple",
@@ -476,15 +457,13 @@
 		public function registrarInformeTecnicoOrdenControlador(){
 			$orden_codigo = $_POST['orden_codigo'];
 			$orden_informe_tecnico = $_POST['orden_informe_tecnico'];
-			$orden_importe_lista = $_POST['orden_importe_lista'];
-			$orden_importe_efectivo = $_POST['orden_importe_efectivo'];
+			$orden_total_lista = $_POST['orden_total_lista'];
+			$orden_total_efectivo = $_POST['orden_total_efectivo'];
 			$orden = $this->ejecutarConsulta("SELECT * FROM orden WHERE orden_codigo='$orden_codigo'");
 			$orden = $orden->fetch();
 			
-			$orden_total_lista = $orden['orden_total_lista'];
-			$orden_importe_lista += $orden_importe_lista ;
-			$orden_total_efectivo = $orden['orden_total_efectivo'];
-			$orden_importe_efectivo += $orden_importe_efectivo ;
+			$orden_total_lista_anterior = $orden['orden_total_lista'];			
+			$orden_total_efectivo_anterior = $orden['orden_total_efectivo'];
 			
 			$datos =[
 				[
@@ -493,25 +472,15 @@
 					"campo_valor"=>$orden_informe_tecnico
 				],
 				[
-					"campo_nombre"=>"orden_importe_lista",
-					"campo_marcador"=>":Lista",
-					"campo_valor"=>$orden_importe_lista
-				],
-				[
-					"campo_nombre"=>"orden_importe_efectivo",
-					"campo_marcador"=>":Efectivo",
-					"campo_valor"=>$orden_importe_efectivo
-				],
-				[
 					"campo_nombre"=>"orden_total_lista",
-					"campo_marcador"=>":TotalLista",
+					"campo_marcador"=>":Lista",
 					"campo_valor"=>$orden_total_lista
 				],
 				[
 					"campo_nombre"=>"orden_total_efectivo",
-					"campo_marcador"=>":TotalEfectivo",
+					"campo_marcador"=>":Efectivo",
 					"campo_valor"=>$orden_total_efectivo
-				]
+				],
 			];
 
 			$condicion=[
