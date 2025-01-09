@@ -208,6 +208,7 @@
         public function buscarEquipoControlador(){
             $estado = $this->limpiarCadena($_POST['estado']);
             $modulo = $this->limpiarCadena($_POST['modulo']);
+            $precio = $this->limpiarCadena($_POST['precio']);
             $sucursal = $_SESSION['id_sucursal'];
         
             $where = "WHERE id_sucursal = '$sucursal'";
@@ -246,9 +247,26 @@
                 case 'prestamo':
                     $orderBy = " AND equipo_modulo = 'prestamo'";
                     break;
+                default:
+                    $orderBy = " ";
+                    break;
             }
+
+            switch ($precio) {
+                case 'menor2mayor':
+                    $orderPrice = " ORDER BY equipo_costo ASC";
+                    break;
+                case 'mayor2menor':
+                    $orderPrice = " ORDER BY equipo_costo DESC";
+                    break;
+                case 'todos':
+                    $orderPrice = "";
+                    break;
+            }
+
+
         
-            $consulta_datos = "SELECT * FROM equipo $where $orderBy";
+            $consulta_datos = "SELECT * FROM equipo $where $orderBy $orderPrice";
             $datos_equipo = $this->ejecutarConsulta($consulta_datos);
         
             if ($datos_equipo->rowCount() >= 1) {

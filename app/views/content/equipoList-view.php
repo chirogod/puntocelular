@@ -45,6 +45,20 @@
                 </div>
             </div>
         </div>
+        <div class="column is-narrow">
+            <div class="field">
+                <label class="label">Precio:</label>
+                <div class="control">
+                    <div class="select is-small">
+                        <select id="filter_precio">
+                            <option value="todos" selected>Todos</option>
+                            <option value="menor2mayor">Menor a mayor</option>
+                            <option value="mayor2menor">Mayor a menor</option>
+                        </select>
+                    </div>
+                </div>
+            </div>
+        </div>
     </div>
 
     <!-- Tabla de artículos -->
@@ -58,15 +72,18 @@
 <script>
     const filterEstado = document.querySelector('#filter_estado');
     const filterModulo = document.querySelector('#filter_modulo');
+    const filterPrecio = document.querySelector('#filter_precio');
 
     const buscarCodigo = () => {
         let estado = filterEstado.value;
         let modulo = filterModulo.value;
+        let precio = filterPrecio.value;
 
         let datos = new FormData();
         datos.append("modulo_equipo", "buscar_equipo");
         datos.append("estado", estado);
         datos.append("modulo", modulo);
+        datos.append("precio", precio);
 
         fetch('<?php echo APP_URL; ?>app/ajax/equipoAjax.php', {
             method: 'POST',
@@ -82,6 +99,7 @@
     // Agregar eventos a los elementos de entrada
     filterEstado.addEventListener('change', buscarCodigo);
     filterModulo.addEventListener('change', buscarCodigo);
+    filterPrecio.addEventListener('change', buscarCodigo);
 
     // Cargar artículos al iniciar
     buscarCodigo();

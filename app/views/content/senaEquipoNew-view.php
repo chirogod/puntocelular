@@ -20,32 +20,98 @@
 <div class="container is-fluid mb-1">
 	<h1 class="title">Sena de equipo</h1>
 </div>
+<form class="FormularioAjax" action="<?php echo APP_URL; ?>app/ajax/senaAjax.php" method="POST" autocomplete="off" name="formsale" >
+    <div class="container pt-2 is-max-desktop">
+        <div class="box">
+            <h2 class="subtitle">Equipo</h2>
+            <table class="table is-striped is-narrow is-hoverable is-fullwidth">
+                <thead>
+                    <tr >
+                        <th class="has-text-centered" style="border: 1px solid black;">Equipo</th>
+                        <th class="has-text-centered" style="border: 1px solid black;">Almac.</th>
+                        <th class="has-text-centered" style="border: 1px solid black;">RAM</th>
+                        <th class="has-text-centered" style="border: 1px solid black;">Color</th>
+                        <th class="has-text-centered" style="border: 1px solid black;">IMEI</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td class="has-text-centered" style="border: 1px solid black;"><?php echo $datos['equipo_marca']." ".$datos['equipo_modelo']?></td>
+                        <td class="has-text-centered" style="border: 1px solid black;"><?php echo $datos['equipo_almacenamiento']?></td>
+                        <td class="has-text-centered" style="border: 1px solid black;"><?php echo $datos['equipo_ram']?></td>
+                        <td class="has-text-centered" style="border: 1px solid black;"><?php echo $datos['equipo_color']?></td>
+                        <td class="has-text-centered" style="border: 1px solid black;"><?php echo $datos['equipo_imei']?></td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+        <div class="box">
+            <h2 class="subtitle">Detalle de la sena</h2>
+            <div class="columns">
+                <div class="column">
+                    <input type="hidden" name="modulo_sena" value="registrar_sena">
+                    <input type="hidden" name="id_equipo" id="id_equipo" value="<?php echo $datos['id_equipo']?>">
+                    <div class="control">
+                        <label>Cliente <?php echo CAMPO_OBLIGATORIO; ?></label>
+                        <?php
+                            if(isset($_SESSION['datos_cliente_sena']) && count($_SESSION['datos_cliente_sena'])>=1 && $_SESSION['datos_cliente_sena']['id_cliente']!=1){
+                        ?>
+                        <div class="field has-addons mb-5">
+                            <div class="control">
+                                <input class="input" type="text" readonly id="venta_cliente" value="<?php echo $_SESSION['datos_cliente_sena']['cliente_nombre_completo']; ?>" >
+                            </div>
+                            <div class="control">
+                                <a class="button is-danger" title="Remove cliente" id="btn_remove_client" onclick="remover_cliente(<?php echo $_SESSION['datos_cliente_sena']['id_cliente']; ?>)">
+                                    <i class="fas fa-user-times fa-fw"></i>
+                                </a>
+                            </div>
+                        </div>
+                        <?php 
+                            }else{
+                                $datos_cliente=$insLogin->seleccionarDatos("Normal","cliente WHERE id_cliente='1'","*",0);
+                                if($datos_cliente->rowCount()==1){
+                                    $datos_cliente=$datos_cliente->fetch();
 
-<div class="container pt-2 is-max-desktop">
-    <div class="box">
-        <h2 class="subtitle">Equipo</h2>
-        <table class="table is-striped is-narrow is-hoverable is-fullwidth">
-            <thead>
-                <tr >
-                    <th class="has-text-centered" style="border: 1px solid black;">Equipo</th>
-                    <th class="has-text-centered" style="border: 1px solid black;">Almac.</th>
-                    <th class="has-text-centered" style="border: 1px solid black;">RAM</th>
-                    <th class="has-text-centered" style="border: 1px solid black;">Color</th>
-                    <th class="has-text-centered" style="border: 1px solid black;">IMEI</th>
-                </tr>
-            </thead>
-            <tbody>
-                <tr>
-                    <td class="has-text-centered" style="border: 1px solid black;"><?php echo $datos['equipo_marca']." ".$datos['equipo_modelo']?></td>
-                    <td class="has-text-centered" style="border: 1px solid black;"><?php echo $datos['equipo_almacenamiento']?></td>
-                    <td class="has-text-centered" style="border: 1px solid black;"><?php echo $datos['equipo_ram']?></td>
-                    <td class="has-text-centered" style="border: 1px solid black;"><?php echo $datos['equipo_color']?></td>
-                    <td class="has-text-centered" style="border: 1px solid black;"><?php echo $datos['equipo_imei']?></td>
-                </tr>
-            </tbody>
-        </table>
-    </div>
-    <div class="box">
+                                    $_SESSION['datos_cliente_sena']=[
+                                        "id_cliente"=>$datos_cliente['id_cliente'],
+                                        "cliente_tipo_doc"=>$datos_cliente['cliente_tipo_doc'],
+                                        "cliente_documento"=>$datos_cliente['cliente_documento'],
+                                        "cliente_nombre_completo"=>$datos_cliente['cliente_nombre_completo']
+                                    ];
+
+                                }else{
+                                    $_SESSION['datos_cliente_sena']=[
+                                        "id_cliente"=>1,
+                                        "cliente_tipo_doc"=>"N/A",
+                                        "cliente_documento"=>"N/A",
+                                        "cliente_nombre_completo"=>"Publico General",
+                                    ];
+                                }
+                        ?>
+                        <div class="field has-addons mb-5">
+                            <div class="control">
+                                <input class="input" type="text" readonly id="venta_cliente" value="<?php echo $_SESSION['datos_cliente_sena']['cliente_nombre_completo']; ?>" >
+                            </div>
+                            <div class="control">
+                                <a class="button is-info js-modal-trigger" data-target="modal-js-client" title="Agregar cliente" id="btn_add_client" >
+                                    <i class="fas fa-user-plus fa-fw"></i>
+                                </a>
+                            </div>
+                        </div>
+                        <?php } ?>
+                    </div>
+                    <div class="control">
+                        <label for="">Fecha</label>
+                        <input class="input" type="date" name="sena_fecha" value="<?php echo date("Y-m-d"); ?>" >
+                    </div>
+                    <div class="control">
+                        <label for="">Vendedor</label>
+                        <input class="input" type="text" name="sena_vendedor">
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="box">
             <div class="columns">
                 <div class="column">
                     <h2 class="subtitle">Valor del Equipo</h2>
@@ -129,7 +195,6 @@
             </div>
 
             <h2 class="subtitle">Detalles de Pago</h2>
-            <form class="FormularioAjax" action="<?php echo APP_URL; ?>app/ajax/senaAjax.php" method="POST" autocomplete="off" name="formsale" >
             <table class="table is-striped is-bordered">
                 <tbody>
                 <tr>
@@ -156,85 +221,17 @@
                 </tr>
                 </tbody>
             </table>
-        </div>
-    <div class="box">
-        <h2 class="subtitle">Detalle de la sena</h2>
-        <div class="columns">
-            <div class="column">
-                
-                    <input type="hidden" name="modulo_sena" value="registrar_sena">
-                    <input type="hidden" name="id_equipo" id="id_equipo" value="<?php echo $datos['id_equipo']?>">
-                    <div class="control">
-                        <label>Cliente <?php echo CAMPO_OBLIGATORIO; ?></label>
-                        <?php
-                            if(isset($_SESSION['datos_cliente_sena']) && count($_SESSION['datos_cliente_sena'])>=1 && $_SESSION['datos_cliente_sena']['id_cliente']!=1){
-                        ?>
-                        <div class="field has-addons mb-5">
-                            <div class="control">
-                                <input class="input" type="text" readonly id="venta_cliente" value="<?php echo $_SESSION['datos_cliente_sena']['cliente_nombre_completo']; ?>" >
-                            </div>
-                            <div class="control">
-                                <a class="button is-danger" title="Remove cliente" id="btn_remove_client" onclick="remover_cliente(<?php echo $_SESSION['datos_cliente_sena']['id_cliente']; ?>)">
-                                    <i class="fas fa-user-times fa-fw"></i>
-                                </a>
-                            </div>
-                        </div>
-                        <?php 
-                            }else{
-                                $datos_cliente=$insLogin->seleccionarDatos("Normal","cliente WHERE id_cliente='1'","*",0);
-                                if($datos_cliente->rowCount()==1){
-                                    $datos_cliente=$datos_cliente->fetch();
-
-                                    $_SESSION['datos_cliente_sena']=[
-                                        "id_cliente"=>$datos_cliente['id_cliente'],
-                                        "cliente_tipo_doc"=>$datos_cliente['cliente_tipo_doc'],
-                                        "cliente_documento"=>$datos_cliente['cliente_documento'],
-                                        "cliente_nombre_completo"=>$datos_cliente['cliente_nombre_completo']
-                                    ];
-
-                                }else{
-                                    $_SESSION['datos_cliente_sena']=[
-                                        "id_cliente"=>1,
-                                        "cliente_tipo_doc"=>"N/A",
-                                        "cliente_documento"=>"N/A",
-                                        "cliente_nombre_completo"=>"Publico General",
-                                    ];
-                                }
-                        ?>
-                        <div class="field has-addons mb-5">
-                            <div class="control">
-                                <input class="input" type="text" readonly id="venta_cliente" value="<?php echo $_SESSION['datos_cliente_sena']['cliente_nombre_completo']; ?>" >
-                            </div>
-                            <div class="control">
-                                <a class="button is-info js-modal-trigger" data-target="modal-js-client" title="Agregar cliente" id="btn_add_client" >
-                                    <i class="fas fa-user-plus fa-fw"></i>
-                                </a>
-                            </div>
-                        </div>
-                        <?php } ?>
-                    </div>
-                    <div class="control">
-                        <label for="">Fecha</label>
-                        <input class="input" type="date" name="sena_fecha" value="<?php echo date("Y-m-d"); ?>" >
-                    </div>
-                    <div class="control">
-                        <label for="">Vendedor</label>
-                        <input class="input" type="text" name="sena_vendedor">
-                    </div>
-                    
-                    <p class="has-text-centered pt-6">
-                        <small>Los campos marcados con <?php echo CAMPO_OBLIGATORIO; ?> son obligatorios</small>
-                    </p>
-                    <p class="has-text-centered">
-                        <button type="reset" class="button is-link is-light is-rounded"><i class="fas fa-paint-roller"></i> &nbsp; Limpiar</button>
-                        <button type="submit" class="button is-info is-rounded"><i class="far fa-save"></i> &nbsp; Guardar</button>
-                    </p>
-                </form>
-            </div>
+            <p class="has-text-centered pt-1">
+                <small>Los campos marcados con <?php echo CAMPO_OBLIGATORIO; ?> son obligatorios</small>
+            </p>
+            <p class="has-text-centered">
+                <button type="reset" class="button is-link is-light is-rounded"><i class="fas fa-paint-roller"></i> &nbsp; Limpiar</button>
+                <button type="submit" class="button is-info is-rounded"><i class="far fa-save"></i> &nbsp; Guardar</button>
+            </p>
         </div>
     </div>
-</div>
-
+    
+</form>
 <?php
         }else{
             include "./app/views/includes/error_alert.php";
