@@ -105,8 +105,21 @@
                         <input class="input" type="date" name="sena_fecha" value="<?php echo date("Y-m-d"); ?>" >
                     </div>
                     <div class="control">
-                        <label for="">Vendedor</label>
-                        <input class="input" type="text" name="sena_vendedor">
+                        <label>Telefonista <?php echo CAMPO_OBLIGATORIO; ?></label><br>
+                        <div class="select">
+                            <select name="sena_vendedor" >
+                                <option value="" selected="" >Seleccione una opción</option>
+                                <?php
+                                    $datos_usuario=$insLogin->seleccionarDatos("Normal","usuario","*",0);
+
+                                    $cc=1;
+                                    while($campos_usuario=$datos_usuario->fetch()){
+                                        echo '<option value="'.$campos_usuario['id_usuario'].'">'.$cc.' - '.$campos_usuario['usuario_nombre_completo'].'</option>';
+                                        $cc++;
+                                    }
+                                ?>
+                            </select>
+                        </div>
                     </div>
                 </div>
             </div>

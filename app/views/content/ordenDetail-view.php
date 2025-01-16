@@ -383,107 +383,107 @@
 </div>
 
 <!-- Modal registrar informe tecnico -->
-<div class="modal" id="modal-js-infTec">
+<div class="modal is-active is-fullscreen" id="modal-js-infTec">
     <div class="modal-background"></div>
-        <div class="modal-card">
-            <header class="modal-card-head">
-                <p class="modal-card-title is-uppercase"><i class="fas fa-search"></i> &nbsp; Informe tecnico</p>
-                <button class="delete" aria-label="close"></button>
-            </header>
-            <section class="modal-card-body">
-                
-                <form class="FormularioAjax" action="<?php echo APP_URL; ?>app/ajax/ordenAjax.php" method="POST" autocomplete="off" name="formsale" >
-                    <input type="hidden" name="modulo_orden" value="registrar_informe_tecnico">
-                    <input class="input" name="orden_codigo" type="hidden" readonly value="<?php echo $datos['orden_codigo'] ?> ">
-                    
-                    <h2 class="subtitle">Datos:</h2>
-                    <div class="columns">
-                        <div class="column">
-                            <div class="control">
-                                <label>Marca</label><br>
-                                <div class="select">
-                                    <select disabled name="id_marca" >
-                                        <option value="" selected="" >Seleccione una opción</option>
-                                        <?php
-                                            $datos_marca=$insLogin->seleccionarDatos("Normal","marca","*",0);
+    <div class="modal-card">
+        <header class="modal-card-head">
+            <p class="modal-card-title is-uppercase has-text-weight-bold is-size-5">
+                <i class="fas fa-search"></i> &nbsp; Informe técnico
+            </p>
+            <button class="delete" aria-label="close"></button>
+        </header>
+        <section class="modal-card-body is-size-7">
+            <form class="FormularioAjax" action="<?php echo APP_URL; ?>app/ajax/ordenAjax.php" method="POST" autocomplete="off" name="formsale">
+                <input type="hidden" name="modulo_orden" value="registrar_informe_tecnico">
+                <input class="input" name="orden_codigo" type="hidden" readonly value="<?php echo $datos['orden_codigo'] ?>">
 
-                                            $cc=1;
-                                            while($campos_marca=$datos_marca->fetch()){
-                                                $selected = ($campos_marca['id_marca'] == $datos['id_marca']) ? 'selected' : '';
-                                                echo '<option value="'.$campos_marca['id_marca'].'" '.$selected.'>'.$cc.' - '.$campos_marca['marca_descripcion'].'</option>';
-                                                $cc++;
-                                            }
-                                        ?>
-                                    </select>
-                                </div>
+                <h2 class="subtitle is-size-6">Datos:</h2>
+                <div class="columns">
+                    <div class="column">
+                        <div class="control">
+                            <label>Marca</label><br>
+                            <div class="select is-small">
+                                <select disabled name="id_marca">
+                                    <option value="" selected>Seleccione una opción</option>
+                                    <?php
+                                    $datos_marca = $insLogin->seleccionarDatos("Normal", "marca", "*", 0);
+
+                                    $cc = 1;
+                                    while ($campos_marca = $datos_marca->fetch()) {
+                                        $selected = ($campos_marca['id_marca'] == $datos['id_marca']) ? 'selected' : '';
+                                        echo '<option value="' . $campos_marca['id_marca'] . '" ' . $selected . '>' . $cc . ' - ' . $campos_marca['marca_descripcion'] . '</option>';
+                                        $cc++;
+                                    }
+                                    ?>
+                                </select>
                             </div>
-
-                            <div class="control">
-                                <label>Marca</label><br>
-                                <div class="select">
-                                    <select disabled name="id_modelo" >
-                                        <option value="" selected="" >Seleccione una opción</option>
-                                        <?php
-                                            $datos_modelo=$insLogin->seleccionarDatos("Normal","modelo","*",0);
-
-                                            $cc=1;
-                                            while($campos_modelo=$datos_modelo->fetch()){
-                                                $selected = ($campos_modelo['id_modelo'] == $datos['id_modelo']) ? 'selected' : '';
-                                                echo '<option value="'.$campos_modelo['id_modelo'].'" '.$selected.'>'.$cc.' - '.$campos_modelo['modelo_descripcion'].'</option>';
-                                                $cc++;
-                                            }
-                                        ?>
-                                    </select>
-                                </div>
-                            </div>
-
-                            <div class="control">
-                                <label for="">Falla: </label>
-                                <textarea class="textarea" name="" readonly id=""><?php echo $datos['orden_falla']; ?></textarea>
-                            </div>
-                            
                         </div>
 
-                        <div class="column">
-                            <div class="control">
-                                <label for="" class="label">Informe tecnico: </label>
-                                <textarea class="input" style="height: 200px;" name="orden_informe_tecnico" id=""><?php echo $datos['orden_informe_tecnico']; ?></textarea>
+                        <div class="control">
+                            <label>Modelo</label><br>
+                            <div class="select is-small">
+                                <select disabled name="id_modelo">
+                                    <option value="" selected>Seleccione una opción</option>
+                                    <?php
+                                    $datos_modelo = $insLogin->seleccionarDatos("Normal", "modelo", "*", 0);
+
+                                    $cc = 1;
+                                    while ($campos_modelo = $datos_modelo->fetch()) {
+                                        $selected = ($campos_modelo['id_modelo'] == $datos['id_modelo']) ? 'selected' : '';
+                                        echo '<option value="' . $campos_modelo['id_modelo'] . '" ' . $selected . '>' . $cc . ' - ' . $campos_modelo['modelo_descripcion'] . '</option>';
+                                        $cc++;
+                                    }
+                                    ?>
+                                </select>
                             </div>
-                            
+                        </div>
+
+                        <div class="control">
+                            <label for="">Falla: </label>
+                            <textarea class="textarea is-small" name="" readonly id=""><?php echo $datos['orden_falla']; ?></textarea>
                         </div>
                     </div>
-                    <div class="columns is-vcentered is-centered">
-                        <div class="column has-text-centered">
-                            <h3 class="title is-5">TOTALES REPARACIÓN</h3>
-                            <div class="columns is-centered is-mobile">
-                                <div class="column is-half">
-                                    <div class="field">
-                                        <label class="label has-text-centered">P. Lista</label>
-                                        <div class="control">
-                                            <input class="input" type="text" value="<?php echo $datos['orden_total_lista']; ?>" name="orden_total_lista">
-                                        </div>
-                                    </div>
-                                </div>
-                                <div class="column is-half">
-                                    <div class="field">
-                                        <label class="label has-text-centered">P. Efectivo</label>
-                                        <div class="control">
-                                            <input class="input" type="text" value="<?php echo $datos['orden_total_efectivo']; ?>" name="orden_total_efectivo">
-                                        </div>
+
+                    <div class="column">
+                        <div class="control">
+                            <label for="" class="label">Informe técnico: </label>
+                            <textarea class="textarea is-small" style="height: 200px;" name="orden_informe_tecnico" id=""><?php echo $datos['orden_informe_tecnico']; ?></textarea>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="columns is-vcentered is-centered">
+                    <div class="column has-text-centered">
+                        <h3 class="title is-5">TOTALES REPARACIÓN</h3>
+                        <div class="columns is-centered is-mobile">
+                            <div class="column is-half">
+                                <div class="field">
+                                    <label class="label has-text-centered is-size-7">P. Lista</label>
+                                    <div class="control">
+                                        <input class="input is-small" type="text" value="<?php echo $datos['orden_total_lista']; ?>" name="orden_total_lista">
                                     </div>
                                 </div>
                             </div>
+                            <div class="column is-half">
+                                <div class="field">
+                                    <label class="label has-text-centered is-size-7">P. Efectivo</label>
+                                    <div class="control">
+                                        <input class="input is-small" type="text" value="<?php echo $datos['orden_total_efectivo']; ?>" name="orden_total_efectivo">
+                                    </div>
+                                </div>
+                            </div>
                         </div>
                     </div>
-                    <p class="has-text-centered">
-                        <button type="submit" class="button is-link is-light">Guardar</button>
-                    </p>
-                </form>
-                
-            </section>
-        </div>
+                </div>
+
+                <p class="has-text-centered">
+                    <button type="submit" class="button is-link is-light is-small">Guardar</button>
+                </p>
+            </form>
+        </section>
     </div>
 </div>
+
 
 
 <!-- Modal registrar pago -->

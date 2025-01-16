@@ -125,8 +125,21 @@
                         <input class="input" type="date" name="venta_fecha" value="<?php echo date("Y-m-d"); ?>" >
                     </div>
                     <div class="control">
-                        <label for="">Vendedor</label>
-                        <input class="input" type="text" name="venta_vendedor">
+                        <label>Vendedor <?php echo CAMPO_OBLIGATORIO; ?></label><br>
+                        <div class="select">
+                            <select name="venta_vendedor" >
+                                <option value="" selected="" >Seleccione una opción</option>
+                                <?php
+                                    $datos_usuario=$insLogin->seleccionarDatos("Normal","usuario","*",0);
+
+                                    $cc=1;
+                                    while($campos_usuario=$datos_usuario->fetch()){
+                                        echo '<option value="'.$campos_usuario['id_usuario'].'">'.$cc.' - '.$campos_usuario['usuario_nombre_completo'].'</option>';
+                                        $cc++;
+                                    }
+                                ?>
+                            </select>
+                        </div>
                     </div>
                     <h4 class="subtitle is-5 has-text-centered has-text-weight-bold mb-5"><small>TOTAL A PAGAR: <?php echo MONEDA_SIMBOLO.number_format($_SESSION['venta_equipo_importe'],MONEDA_DECIMALES,MONEDA_SEPARADOR_DECIMAL,MONEDA_SEPARADOR_MILLAR)." ".MONEDA_NOMBRE; ?></small></h4>
 

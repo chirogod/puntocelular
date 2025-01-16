@@ -138,6 +138,79 @@
         $pdf->Ln(5);
 
         $yNewRect = 62 + 5; 
+
+        // RECTANGULO DATOS DEL CLIENTE
+		$pdf->Rect(15, $yNewRect, 32, 5); 
+		$pdf->SetFont('Arial','b',10);
+		$pdf->Text(18, $yNewRect+4, "Datos del cliente");
+		$pdf->Line(15, $yNewRect+5, $pageWidth-30, $yNewRect+5);
+		$pdf->Ln(10);
+
+		if($datos_sena['id_cliente']==1){
+            $pdf->SetFont('Arial','B',10);
+			$pdf->Text(18, $yNewRect +10, 'Numero: ');
+			$pdf->SetFont('Arial','',10);
+			$pdf->Text(34, $yNewRect +10, $datos_sena['id_cliente']);
+	
+			$pdf->SetFont('Arial','B',10);
+			$pdf->Text(18, $yNewRect +15, 'Nombre: ');
+			$pdf->SetFont('Arial','',10);
+			$pdf->Text(34, $yNewRect +15, $datos_sena['cliente_nombre_completo']);
+	
+			$pdf->SetFont('Arial','B',10);
+			$pdf->Text(18, $yNewRect +20, 'Direccion: ');
+			$pdf->SetFont('Arial','',10);
+			$pdf->Text(36, $yNewRect +20, "N/A");
+			
+			$pdf->SetFont('Arial','B',10);
+			$pdf->Text($pageWidth/2+20, $yNewRect +10, strtoupper($datos_sena['cliente_tipo_doc']).": ");
+			$pdf->SetFont('Arial','',10);
+			$pdf->Text($pageWidth/2 + 28, $yNewRect +10, "N/A");
+	
+			$pdf->SetFont('Arial','B',10);
+			$pdf->Text($pageWidth/2+20, $yNewRect +15, 'Telefono: ');
+			$pdf->SetFont('Arial','',10);
+			$pdf->Text($pageWidth/2 + 37, $yNewRect +15, "N/A");
+	
+			$pdf->SetFont('Arial','B',10);
+			$pdf->Text($pageWidth/2+20 , $yNewRect +20, 'Email: ');
+			$pdf->SetFont('Arial','',10);
+			$pdf->Text($pageWidth/2 + 32, $yNewRect +20, "N/A");
+		}else{
+			$pdf->SetFont('Arial','B',10);
+			$pdf->Text(18, $yNewRect +10, 'Numero: ');
+			$pdf->SetFont('Arial','',10);
+			$pdf->Text(34, $yNewRect +10, $datos_sena['id_cliente']);
+	
+			$pdf->SetFont('Arial','B',10);
+			$pdf->Text(18, $yNewRect +15, 'Nombre: ');
+			$pdf->SetFont('Arial','',10);
+			$pdf->Text(34, $yNewRect +15, $datos_sena['cliente_nombre_completo']);
+	
+			$pdf->SetFont('Arial','B',10);
+			$pdf->Text(18, $yNewRect +20, 'Direccion: ');
+			$pdf->SetFont('Arial','',10);
+			$pdf->Text(36, $yNewRect +20, $datos_sena['cliente_domicilio'].", ".$datos_sena['cliente_localidad'].", ".$datos_sena['cliente_provincia'].", ".$datos_sena['cliente_pais']);
+			
+			$pdf->SetFont('Arial','B',10);
+			$pdf->Text($pageWidth/2+20, $yNewRect +10, strtoupper($datos_sena['cliente_tipo_doc']).": ");
+			$pdf->SetFont('Arial','',10);
+			$pdf->Text($pageWidth/2 + 28, $yNewRect +10, $datos_sena['cliente_documento']);
+	
+			$pdf->SetFont('Arial','B',10);
+			$pdf->Text($pageWidth/2+20, $yNewRect +15, 'Telefono: ');
+			$pdf->SetFont('Arial','',10);
+			$pdf->Text($pageWidth/2 + 37, $yNewRect +15, $datos_sena['cliente_telefono_1']." / ". $datos_sena['cliente_telefono_2']);
+	
+			$pdf->SetFont('Arial','B',10);
+			$pdf->Text($pageWidth/2+20 , $yNewRect +20, 'Email: ');
+			$pdf->SetFont('Arial','',10);
+			$pdf->Text($pageWidth/2 + 32, $yNewRect +20, $datos_sena['cliente_email']);
+		}
+        $pdf->Ln(18);
+
+        $yNewRect = 90 + 5; 
+
         // RECTANGULO DATOS DEL equipo
 		$pdf->Rect(15, $yNewRect, 17, 5); 
 		$pdf->SetFont('Arial','b',10);
@@ -145,7 +218,7 @@
 		$pdf->Line(15, $yNewRect+5, $pageWidth-30, $yNewRect+5);
 		$pdf->Ln(10);
         $pdf->SetFont('Arial','',10);
-        $pdf->Text(17,77,$datos_sena['equipo_marca']." ".$datos_sena['equipo_modelo']. " (".$datos_sena['equipo_almacenamiento'].")" . " (".$datos_sena['equipo_color'].")",0,0,'L');
+        $pdf->Text(17,$yNewRect+10,$datos_sena['equipo_marca']." ".$datos_sena['equipo_modelo']. " (".$datos_sena['equipo_almacenamiento'].")" . " (".$datos_sena['equipo_color'].")",0,0,'L');
 
         $pdf->Ln(20);
         
@@ -277,23 +350,23 @@
         $pdf->Cell(30, 5, "fecha" , 1, 1, 'R');
 
         //textos
-        $pdf->Text(106,151,"*Valor en PESOS de la sena abonada",0,0,'L');
-        $pdf->Text(106,156,"*Valor en DOLARES de la sena abonada",0,0,'L');
-        $pdf->Text(106,161,"*Valor en PESOS del equipo tomado en Plan Canje",0,0,'L');
-        $pdf->Text(106,166,"*Valor en DOLARES del equipo tomado en Plan Canje",0,0,'L');
+        $pdf->Text(106,179,"*Valor en PESOS de la sena abonada",0,0,'L');
+        $pdf->Text(106,184,"*Valor en DOLARES de la sena abonada",0,0,'L');
+        $pdf->Text(106,189,"*Valor en PESOS del equipo tomado en Plan Canje",0,0,'L');
+        $pdf->Text(106,194,"*Valor en DOLARES del equipo tomado en Plan Canje",0,0,'L');
 
         //firmas
-        $pdf->Line(40, 200, 90, 200);
-        $pdf->Text(53,205,"FIRMA CLIENTE",0,0,'L');
+        $pdf->Line(40, 220, 90, 220);
+        $pdf->Text(53,225,"FIRMA CLIENTE",0,0,'L');
 
-        $pdf->Line(40, 230, 90, 230);
-        $pdf->Text(128,205,"ACLARACION CLIENTE",0,0,'L');
+        $pdf->Line(40, 250, 90, 250);
+        $pdf->Text(128,225,"ACLARACION CLIENTE",0,0,'L');
 
-        $pdf->Line(120, 200, 170, 200);
-        $pdf->Text(50,235,"FIRMA VENDEDOR",0,0,'L');
+        $pdf->Line(120, 220, 170, 220);
+        $pdf->Text(50,255,"FIRMA VENDEDOR",0,0,'L');
 
-        $pdf->Line(120, 230, 170, 230);
-        $pdf->Text(125,235,"ACLARACION VENDEDOR",0,0,'L');
+        $pdf->Line(120, 250, 170, 250);
+        $pdf->Text(125,255,"ACLARACION VENDEDOR",0,0,'L');
 
 		
         $pdf->Output();
