@@ -1,3 +1,14 @@
+<style>
+    .icon-action {
+    cursor: pointer; /* Cambia el cursor a un puntero */
+    color: inherit;  /* Usa el color actual del texto */
+    transition: color 0.1s ease; /* Animación suave al cambiar de color */
+}
+
+.icon-action:hover {
+    color: orange; /* Cambia el color del ícono a naranja al pasar el mouse */
+}
+</style>
 
 <div class="container is-fluid mb-2">
     <h1 class="title">Cliente</h1>

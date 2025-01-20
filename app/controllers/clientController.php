@@ -849,9 +849,14 @@
 
 				foreach($datos_cliente as $rows){
 					$tabla.='
-					<tr style="cursor: pointer;" onclick="window.location.href=\'' . APP_URL . 'clientUpdate/' . $rows['id_cliente'] . '/\'">
-                        <td class="has-text-left" ><i class="fas fa-male fa-fw"></i> &nbsp; '.$rows['cliente_nombre_completo'].' ('.$rows['cliente_tipo_doc'].': '.$rows['cliente_documento'].')</td>
-                    </tr>
+					<tr style="cursor: pointer;" >
+                        <td class="has-text-left" onclick="window.location.href=\'' . APP_URL . 'clientUpdate/' . $rows['id_cliente'] . '/\'" ><i class="fas fa-male fa-fw"></i> &nbsp; '.$rows['cliente_nombre_completo'].' ('.$rows['cliente_tipo_doc'].': '.$rows['cliente_documento'].')</td>
+						<td class="has-text-right">
+							<i class="fas fa-shopping-cart icon-action" onclick="window.location.href=\'' . APP_URL . 'salesClientDetail/' . $rows['id_cliente'] . '/\'"></i>
+							<label>|</label>
+							<i class="fas fa-receipt icon-action" onclick="window.location.href=\'' . APP_URL . 'ordersClientDetail/' . $rows['id_cliente'] . '/\'"></i>
+						</td>
+						</tr>
                     ';
 				}
 

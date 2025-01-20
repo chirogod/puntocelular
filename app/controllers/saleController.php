@@ -1214,7 +1214,7 @@
 								INNER JOIN cliente ON venta.id_cliente=cliente.id_cliente 
 								INNER JOIN usuario ON venta.id_usuario=usuario.id_usuario 
 								INNER JOIN caja ON venta.id_caja=caja.id_caja 
-								WHERE venta.id_sucursal = 1
+								WHERE venta.id_sucursal = $_SESSION[id_sucursal]
 								AND venta.id_cliente = $id_cliente
 								ORDER BY venta.id_venta DESC";
 

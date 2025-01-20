@@ -4,6 +4,7 @@
 
     class equipoController extends mainModel{
         public function registrarEquipoControlador(){
+            $equipo_modulo = $this->limpiarCadena($_POST['equipo_modulo']);
             /*== sino generar aleatoriamente el codigo del equipo ==*/
             $correlativo=$this->ejecutarConsulta("SELECT id_equipo FROM equipo");
             $correlativo=($correlativo->rowCount())+1;
@@ -35,11 +36,27 @@
             $equipo_estado = "Disponible";
             $equipo_almacenamiento = $this->limpiarCadena($_POST['equipo_almacenamiento']);
             $equipo_color = $this->limpiarCadena($_POST['equipo_color']);
-            $equipo_ram = $this->limpiarCadena($_POST['equipo_ram']);
+
+            if($equipo_modulo == "iphone" || $equipo_modulo == "iphone_nuevo" || $equipo_modulo == "iphone_reac"){
+                $equipo_ram = "-";
+                
+            }else{
+                $equipo_ram = $this->limpiarCadena($_POST['equipo_ram']);
+            }
+
+            if($equipo_modulo == "iphone_reac"){
+                $equipo_bateria = $this->limpiarCadena($_POST['equipo_bateria']);
+            }else{
+                $equipo_bateria = "-";
+            }
+
+
+
+            
+            
             $equipo_costo = $this->limpiarCadena($_POST['equipo_costo']);
             $equipo_imei = $this->limpiarCadena($_POST['equipo_imei']);
             $id_sucursal = $_SESSION['id_sucursal'];
-            $equipo_modulo = $this->limpiarCadena($_POST['equipo_modulo']);
     
             $datos_equipo = [
                 [
@@ -71,6 +88,11 @@
                     "campo_nombre"=>"equipo_ram",
                     "campo_marcador"=>":Ram",
                     "campo_valor"=>$equipo_ram
+                ],
+                [
+                    "campo_nombre"=>"equipo_bateria",
+                    "campo_marcador"=>":Bateria",
+                    "campo_valor"=>$equipo_bateria
                 ],
                 [
                     "campo_nombre"=>"equipo_color",

@@ -5,13 +5,28 @@
 
 <div class="container pb-6 pt-6 is-max-desktop">
 
-	<form class="FormularioAjax" action="<?php echo APP_URL; ?>app/ajax/equipoAjax.php" method="POST" autocomplete="off" >
+	<form class="" action="<?php echo APP_URL; ?>app/ajax/equipoAjax.php" method="POST" autocomplete="off" >
 
 		<input type="hidden" name="modulo_equipo" value="registrar">
 
 		<div class="box">
 			<h2 class="subtitle">Datos del equipo</h2>
 			<div class="columns">
+				<div class="column">
+					<label for="">Modulo <?php echo CAMPO_OBLIGATORIO; ?></label>
+					<div class="select">
+						<select name="equipo_modulo" id="" required>
+							<option>Seleccione una opción</option>
+							<option value="android_nuevo">Android Nuevo</option>
+                            <option value="iphone_nuevo">Iphone nuevo</option>
+                            <option value="android_reac">Android reac</option>
+                            <option value="iphone_reac">Iphone reac</option>
+                            <option value="android">Android</option>
+                            <option value="iphone">Iphone</option>
+                            <option value="Prestamo">Prestamo</option>
+						</select>
+					</div>
+				</div>
 				<div class="column">
 					<div class="control">
 						<label>Marca <?php echo CAMPO_OBLIGATORIO; ?></label><br>
@@ -53,11 +68,13 @@
 						</div>
 					</div>
 				</div>
+			</div>
+			<div class="columns">
 				<div class="column">
 					<div class="control">
 						<label>Ram <?php echo CAMPO_OBLIGATORIO; ?></label><br>
 						<div class="select">
-							<select name="equipo_ram" required>
+							<select name="equipo_ram">
 								<option value="" selected="" >Seleccione una opción</option>
 								<?php
 									echo $insLogin->generarSelect(RAM,"VACIO");
@@ -66,22 +83,9 @@
 						</div>
 					</div>
 				</div>
-			</div>
-			<div class="columns">
 				<div class="column">
-					<label for="">Modulo <?php echo CAMPO_OBLIGATORIO; ?></label>
-					<div class="select">
-						<select name="equipo_modulo" id="" required>
-							<option>Seleccione una opción</option>
-							<option value="android_nuevo">Android Nuevo</option>
-                            <option value="iphone_nuevo">Iphone nuevo</option>
-                            <option value="android_reac">Android reac</option>
-                            <option value="iphone_reac">Iphone reac</option>
-                            <option value="android">Android</option>
-                            <option value="iphone">Iphone</option>
-                            <option value="Prestamo">Prestamo</option>
-						</select>
-					</div>
+					<label for="">Batería</label>
+					<input class="input" type="text" name="equipo_bateria" id="">
 				</div>
 				<div class="column">
 					<label for="">Color</label>
@@ -109,6 +113,39 @@
 </div>
 
 <script>
+	document.addEventListener('DOMContentLoaded', () => {
+        const moduloSelect = document.querySelector('[name="equipo_modulo"]');
+        const ramField = document.querySelector('[name="equipo_ram"]').closest('.column');
+        const bateriaField = document.querySelector('[name="equipo_bateria"]').closest('.column');
+
+        const toggleFields = () => {
+            const selectedValue = moduloSelect.value;
+
+            // Ocultar/Mosstrar campos según el módulo seleccionado
+            if (selectedValue === 'iphone_reac') {
+                ramField.style.display = 'none';
+                bateriaField.style.display = '';
+            } else if (selectedValue === 'iphone' || selectedValue === 'iphone_nuevo') {
+                ramField.style.display = 'none';
+                bateriaField.style.display = 'none';
+            } else if (
+                selectedValue === 'android' ||
+                selectedValue === 'android_nuevo' ||
+                selectedValue === 'android_reac'
+            ) {
+                ramField.style.display = '';
+                bateriaField.style.display = 'none';
+            } else {
+                // Por defecto, mostrar ambos
+                ramField.style.display = '';
+                bateriaField.style.display = '';
+            }
+        };
+
+        // Ejecutar al cargar y al cambiar el módulo
+        moduloSelect.addEventListener('change', toggleFields);
+        toggleFields();
+    });
 	function cargarModelos(marcaId) {
         const modeloSelect = document.getElementById('select_modelo');
         modeloSelect.innerHTML = '<option value="" selected="">Seleccione una opción</option>'; // Resetea el select de modelos
