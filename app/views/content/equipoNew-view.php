@@ -5,7 +5,7 @@
 
 <div class="container pb-6 pt-6 is-max-desktop">
 
-	<form class="" action="<?php echo APP_URL; ?>app/ajax/equipoAjax.php" method="POST" autocomplete="off" >
+	<form class="FormularioAjax" action="<?php echo APP_URL; ?>app/ajax/equipoAjax.php" method="POST" autocomplete="off" >
 
 		<input type="hidden" name="modulo_equipo" value="registrar">
 

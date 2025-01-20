@@ -383,7 +383,7 @@
 </div>
 
 <!-- Modal registrar informe tecnico -->
-<div class="modal is-active is-fullscreen" id="modal-js-infTec">
+<div class="modal is-fullscreen" id="modal-js-infTec">
     <div class="modal-background"></div>
     <div class="modal-card">
         <header class="modal-card-head">

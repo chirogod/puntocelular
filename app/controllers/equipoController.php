@@ -300,8 +300,18 @@
                             <th style="border: 1px solid black;">Estado</th>
                             <th style="border: 1px solid black;">Marca</th>
                             <th style="border: 1px solid black;">Modelo</th>
-                            <th style="border: 1px solid black;">Almac.</th>
-                            <th style="border: 1px solid black;">RAM</th>
+                            <th style="border: 1px solid black;">Almac.</th>';
+                // Verificar si los registros tienen "RAM" o "BATERIA"
+                foreach ($datos_equipo as $equipo) {
+                    if ($equipo['equipo_ram'] != "-") {
+                        $tabla .= '<th style="border: 1px solid black;">Ram</th>';
+                        break; // Evitamos seguir iterando innecesariamente
+                    } elseif ($equipo['equipo_bateria'] != "-") {
+                        $tabla .= '<th style="border: 1px solid black;">Bateria</th>';
+                        break;
+                    }
+                }
+                $tabla .='
                             <th style="border: 1px solid black;">Color</th>
                             <th style="border: 1px solid black;">Costo</th>
                             <th style="border: 1px solid black;">Precio</th>
@@ -350,9 +360,16 @@
                                 <td class="has-text-centered" style="border: 1px solid black;">' . htmlspecialchars($rows['equipo_estado']) . '</td>
                                 <td class="has-text-centered" style="border: 1px solid black;">' . htmlspecialchars($rows['equipo_marca']) . '</td>
                                 <td class="has-text-centered" style="border: 1px solid black;">' . htmlspecialchars($rows['equipo_modelo']) . '</td>
-                                <td class="has-text-centered" style="border: 1px solid black;">' . htmlspecialchars($rows['equipo_almacenamiento']) . '</td>
-                                <td class="has-text-centered" style="border: 1px solid black;">' . htmlspecialchars($rows['equipo_ram']) . '</td>
-                                <td class="has-text-centered" style="border: 1px solid black;">' . htmlspecialchars($rows['equipo_color']) . '</td>
+                                <td class="has-text-centered" style="border: 1px solid black;">' . htmlspecialchars($rows['equipo_almacenamiento']) . '</td>';
+                        if($rows['equipo_ram'] != "-"){
+                            $tabla .= ' <td class="has-text-centered" style="border: 1px solid black;">' . htmlspecialchars($rows['equipo_ram']) . '</td>';
+                        }                                
+                               
+                        if($rows['equipo_bateria'] != "-"){
+                            $tabla .= ' <td class="has-text-centered" style="border: 1px solid black;">' . htmlspecialchars($rows['equipo_bateria']) . '</td>';
+                        } 
+                        
+                        $tabla .= '<td class="has-text-centered" style="border: 1px solid black;">' . htmlspecialchars($rows['equipo_color']) . '</td>
                                 <td class="has-text-centered" style="border: 1px solid black;">$' . htmlspecialchars(number_format(round($rows['equipo_costo']), 0)) . '</td>
                                 <td class="has-text-centered" style="border: 1px solid black;">$' . htmlspecialchars(number_format(round($precio), 0)) . '</td>
                                 <td class="has-text-centered" style="border: 1px solid black;">$' . htmlspecialchars(number_format(round($sin_int_3), 0)) . '</td>

@@ -298,6 +298,141 @@ class senaController extends mainModel{
         return json_encode($alerta);
         exit();
     }
+
+    /*----------  Controlador listar sena  ----------*/
+		public function listarSenaControlador($pagina,$registros,$url,$busqueda){
+
+			$pagina=$this->limpiarCadena($pagina);
+			$registros=$this->limpiarCadena($registros);
+
+			$url=$this->limpiarCadena($url);
+			$url=APP_URL.$url."/";
+
+			$busqueda=$this->limpiarCadena($busqueda);
+			$tabla="";
+
+			$pagina = (isset($pagina) && $pagina>0) ? (int) $pagina : 1;
+			$inicio = ($pagina>0) ? (($pagina * $registros)-$registros) : 0;
+
+			$campos_tablas = "sena.id_sena, sena.sena_fecha, sena.sena_hora, sena.id_equipo, sena.sena_vendedor ,  sena.id_cliente, cliente.id_cliente, cliente.cliente_nombre_completo, sena.id_caja, sena.sena_ars, sena.sena_usd, sena.sena_pcp, sena_pcu, sena_fecha_entrega, equipo.id_equipo, equipo.equipo_codigo, equipo.equipo_estado, equipo.equipo_marca, equipo.equipo_modelo, equipo.equipo_almacenamiento, equipo.equipo_ram, equipo.equipo_bateria, equipo.equipo_color, equipo.equipo_costo, equipo.equipo_imei, equipo.equipo_modulo ";
+
+			if(isset($busqueda) && $busqueda!=""){
+
+				$consulta_datos="SELECT $campos_tablas 
+								FROM sena 
+								INNER JOIN cliente ON sena.id_cliente=cliente.id_cliente 
+								INNER JOIN equipo ON sena.id_equipo=equipo.id_equipo 
+								INNER JOIN caja ON sena.id_caja=caja.id_caja 
+								WHERE 
+									sena.id_sena LIKE '%$busqueda%'  
+									OR cliente.cliente_nombre_completo LIKE '%$busqueda%' 
+									OR equipo.equipo_marca LIKE '%$busqueda%' 
+                                    OR equipo.equipo_modelo LIKE '%$busqueda%' 
+									OR caja.caja_nombre LIKE '%$busqueda%' 
+									AND sena.id_sucursal = '$_SESSION[id_sucursal]'
+								ORDER BY sena.id_sena DESC LIMIT $inicio,$registros";
+			
+				$consulta_total="SELECT COUNT(id_sena) 
+								FROM sena 
+								INNER JOIN cliente ON sena.id_cliente=cliente.id_cliente 
+								INNER JOIN equipo ON sena.id_equipo=equipo.id_equipo 
+								INNER JOIN caja ON sena.id_caja=caja.id_caja 
+								WHERE 
+									sena.id_sena LIKE '%$busqueda%'  
+									OR cliente.cliente_nombre_completo LIKE '%$busqueda%' 
+									OR equipo.equipo_marca LIKE '%$busqueda%' 
+                                    OR equipo.equipo_modelo LIKE '%$busqueda%' 
+									OR caja.caja_nombre LIKE '%$busqueda%' 
+									AND sena.id_sucursal = '$_SESSION[id_sucursal]'";
+			
+			}else{
+			
+				$consulta_datos="SELECT $campos_tablas 
+								FROM sena 
+								INNER JOIN cliente ON sena.id_cliente=cliente.id_cliente 
+								INNER JOIN equipo ON sena.id_equipo=equipo.id_equipo 
+								INNER JOIN caja ON sena.id_caja=caja.id_caja  
+								WHERE sena.id_sucursal = '$_SESSION[id_sucursal]'
+								ORDER BY sena.id_sena DESC LIMIT $inicio,$registros";
+			
+				$consulta_total="SELECT COUNT(id_sena) 
+								FROM sena 
+								INNER JOIN cliente ON sena.id_cliente=cliente.id_cliente 
+								INNER JOIN equipo ON sena.id_equipo=equipo.id_equipo 
+								INNER JOIN caja ON sena.id_caja=caja.id_caja 
+								WHERE sena.id_sucursal = '$_SESSION[id_sucursal]'";
+			}
+
+			$datos = $this->ejecutarConsulta($consulta_datos);
+			$datos = $datos->fetchAll();
+
+			$total = $this->ejecutarConsulta($consulta_total);
+			$total = (int) $total->fetchColumn();
+
+			$numeroPaginas =ceil($total/$registros);
+
+			$tabla.='
+		        <div class="table-container">
+		        <table class="table is-bordered is-striped is-narrow is-hoverable is-fullwidth">
+		            <thead>
+		                <tr>
+		                    <th class="has-text-centered">NRO.</th>
+		                    <th class="has-text-centered">Fecha</th>
+                            <th class="has-text-centered">Equipo</th>
+		                    <th class="has-text-centered">Cliente</th>
+		                </tr>
+		            </thead>
+		            <tbody>
+		    ';
+
+		    if($total>=1 && $pagina<=$numeroPaginas){
+				$contador=$inicio+1;
+				$pag_inicio=$inicio+1;
+				foreach($datos as $rows){
+					$tabla.='
+						<tr class="has-text-centered" style="cursor: pointer;" onclick="window.location.href=\'' . APP_URL . 'senaEquipoDetail/' . $rows['id_equipo'] . '/\'">
+							<td>'.$rows['id_sena'].'</td>
+							<td>'.date("d-m-Y", strtotime($rows['sena_fecha'])).' '.$rows['sena_hora'].'</td>
+							<td>'.$rows['equipo_marca'].' ' . $rows['equipo_modelo'] .' '.$rows['equipo_almacenamiento'].' ' . $rows['equipo_color'] .'</td>
+							<td>'.$rows['cliente_nombre_completo'].'</td>
+						</tr>
+					';
+					$contador++;
+				}
+				$pag_final=$contador-1;
+			}else{
+				if($total>=1){
+					$tabla.='
+						<tr class="has-text-centered" >
+			                <td colspan="7">
+			                    <a href="'.$url.'1/" class="button is-link is-rounded is-small mt-4 mb-4">
+			                        Haga clic acá para recargar el listado
+			                    </a>
+			                </td>
+			            </tr>
+					';
+				}else{
+					$tabla.='
+						<tr class="has-text-centered" >
+			                <td colspan="7">
+			                    No hay registros en el sistema
+			                </td>
+			            </tr>
+					';
+				}
+			}
+
+			$tabla.='</tbody></table></div>';
+
+			### Paginacion ###
+			if($total>0 && $pagina<=$numeroPaginas){
+				$tabla.='<p class="has-text-right">Mostrando senas <strong>'.$pag_inicio.'</strong> al <strong>'.$pag_final.'</strong> de un <strong>total de '.$total.'</strong></p>';
+
+				$tabla.=$this->paginadorTablas($pagina,$numeroPaginas,$url,7);
+			}
+
+			return $tabla;
+		}
 }
 
 

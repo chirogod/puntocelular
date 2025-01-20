@@ -207,6 +207,16 @@
 								</div>
 							</a>
 						</li>
+						<li class="full-width">
+							<a href="<?php echo APP_URL; ?>senaList/" class="full-width">
+								<div class="navLateral-body-cl">
+									<i class="fas fa-clipboard-list fa-fw"></i>
+								</div>
+								<div class="navLateral-body-cr">
+									Lista de senas
+								</div>
+							</a>
+						</li>
 					</ul>
 				</li>
 
