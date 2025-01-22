@@ -196,9 +196,9 @@
 			// Si no hay resultados, asignamos 0
 			$importe_pago = 0;
 		}
-		$pdf->Cell(40,7,$datos_orden['orden_total_lista'],1,0,'C');
+		$pdf->Cell(40,7,$datos_orden['orden_total_lista']. " / ". $datos_orden['orden_total_efectivo'],1,0,'C');
         $pdf->Cell(40,7,$importe_pago,1,0,'C');
-        $pdf->Cell(40,7,$datos_orden['orden_total_lista'] - $importe_pago,1,0,'C');
+        $pdf->Cell(40,7,$datos_orden['orden_total_lista'] - $importe_pago . " / ". $datos_orden['orden_total_efectivo'] - $importe_pago ,1,0,'C');
         $pdf->Cell(60,7,'',1,1,'C');
 		
 

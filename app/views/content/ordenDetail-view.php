@@ -22,6 +22,12 @@
             $datos_cliente = $datos_cliente->fetch();
             $datos_telefonista = $insLogin->seleccionarDatosEspecificos("usuario", "id_usuario", $datos['orden_telefonista']);
             $datos_telefonista = $datos_telefonista->fetch();
+
+            $datos_marca = $insLogin->seleccionarDatosEspecificos("marca", "id_marca", $datos['id_marca']);
+            $datos_marca = $datos_marca->fetch();
+
+            $datos_modelo = $insLogin->seleccionarDatosEspecificos("modelo", "id_modelo", $datos['id_modelo']);
+            $datos_modelo = $datos_modelo->fetch();
 	?>
     <button type="button" class="button is-link is-light" onclick="print_orden('<?php echo APP_URL."app/pdf/comprobanteOrden.php?code=".$datos['orden_codigo']; ?>')" >
         <i class="fas fa-file-invoice-dollar fa-2x"></i> &nbsp;
@@ -59,21 +65,27 @@
 		<input type="hidden" name="orden_codigo" value="<?php echo $datos['orden_codigo']; ?>">
         <!-- DATOS DE LA ORDEN -->
         <div class="box">
-            <h3 class="title is-4">Datos de la orden</h3>
+            <h3 class="title is-4">Datos de la orden <?php echo $datos['id_orden'] ?></h3>
             <div class="columns">
                 <!-- Columna izquierda: Marca, Modelo -->
                 <div class="column is-half">
                     <div class="control">
-                        <label>Orden numero</label>
-                        <input class="input" type="text" readonly value="<?php echo $datos['id_orden'] ?>">
+                        <div class="full-width sale-details text-condensedLight">
+                            <div class="has-text-weight-bold">Fecha</div>
+                            <span class="has-text-link"><?php echo $datos['orden_fecha']; ?></span>
+                        </div>
                     </div>
                     <div class="control">
-                        <label>Fecha</label>
-                        <input class="input" type="text" readonly value="<?php echo $datos['orden_fecha'] ?>">
+                        <div class="full-width sale-details text-condensedLight">
+                            <div class="has-text-weight-bold">Cliente</div>
+                            <span class="has-text-link"><?php echo $datos_cliente['cliente_nombre_completo']; ?></span>
+                        </div>
                     </div>
                     <div class="control">
-                        <label>Cliente</label>
-                        <input class="input" type="text" readonly value="<?php echo $datos_cliente['cliente_nombre_completo'] ?>">
+                        <div class="full-width sale-details text-condensedLight">
+                            <div class="has-text-weight-bold">Telefonista/operador</div>
+                            <span class="has-text-link"><?php echo $datos_telefonista['usuario_nombre_completo']; ?></span>
+                        </div>
                     </div>
                     <div class="control">
                         <label>Tecnico asignado</label><br>
@@ -86,18 +98,13 @@
                                     $cc=1;
                                     while($campos_tecnico=$datos_tecnico->fetch()){
                                         $selected = ($campos_tecnico['id_tecnico'] == $datos['id_tecnico']) ? 'selected' : '';
-                                        echo '<option value="'.$campos_tecnico['id_tecnico'].'" '.$selected.'>'.$cc.' - '.$campos_tecnico['tecnico_descripcion'].'</option>';
+                                        echo '<option value="'.$campos_tecnico['id_tecnico'].'" '.$selected.'>'.$campos_tecnico['tecnico_descripcion'].'</option>';
                                         $cc++;
                                     }
                                 ?>
                             </select>
                         </div>
                     </div>
-                    <div class="control">
-                        <h3>Telefonista/Operador</h3>
-                        <input type="text" readonly class="input" name="orden_telefonista" value="<?php echo $datos['id_usuario'] ?>">
-                    </div>
-
                 </div>
                 
                 <!-- Columna derecha: falla y observaciones -->
@@ -106,13 +113,16 @@
                         <h3>Observaciones</h3>
                         <textarea class="textarea"  name="orden_observaciones" ><?php echo $datos['orden_observaciones']; ?></textarea>
                     </div>
-                    <div class="control">
-                        <button type="button" class="button is-link is-light js-modal-trigger" data-target="modal-js-infTec" >
-                        Informe tecnico
-                    </button>
-                    <button type="button" class="button is-link is-light js-modal-trigger" data-target="modal-js-pay" >
-                        Registrar pago
-                    </button>
+                    <div class="column">
+                        <div class="control">
+                            <button type="button" class="button is-link is-light js-modal-trigger" data-target="modal-js-infTec" >
+                            Informe tecnico
+                        </button>
+                        <button type="button" class="button is-link is-light js-modal-trigger" data-target="modal-js-pay" >
+                            Registrar pago
+                        </button>
+                    </div>
+                    
                     </div>
                 </div>
             </div>
@@ -139,6 +149,12 @@
                                     }
                                 ?>
                             </select>
+                        </div>
+                    </div>
+                    <div class="control">
+                        <div class="full-width sale-details text-condensedLight">
+                            <div class="has-text-weight-bold">Marca</div>
+                            <span class="has-text-link"><?php echo $datos_marca['marca_descripcion']; ?></span>
                         </div>
                     </div>
 

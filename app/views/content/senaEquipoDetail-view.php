@@ -41,28 +41,38 @@
 <div class="container">
     
     <div class="box">
-        <h2 class="title">Datos de la sena</h2>
+        <h2 class="title">Datos de la sena <?php echo $datos['id_sena']; ?></h2>
         <div class="columns">
             <div class="column">
-                <div class="full-width sale-details text-condensedLight">
-                    <div class="has-text-weight-bold">Fecha</div>
-                    <span class="has-text-link"><?php echo date("d-m-Y", strtotime($datos['sena_fecha']))." ".$datos['sena_hora']; ?></span>
+                <div class="control">
+                    <div class="full-width sale-details text-condensedLight">
+                        <div class="has-text-weight-bold">Fecha</div>
+                        <span class="has-text-link"><?php echo date("d-m-Y", strtotime($datos['sena_fecha']))." ".$datos['sena_hora']; ?></span>
+                    </div>
                 </div>
-                
+                <div class="control">
+                    <div class="full-width sale-details text-condensedLight">
+                        <div class="has-text-weight-bold">Cliente</div>
+                        <span class="has-text-link"><?php echo $datos['cliente_nombre_completo']; ?></span>
+                    </div>
+                </div>
             </div>
+            
             <div class="column">
-            <div class="full-width sale-details text-condensedLight">
-                    <div class="has-text-weight-bold">Cliente</div>
-                    <span class="has-text-link"><?php echo $datos['cliente_nombre_completo']; ?></span>
+                <div class="control">
+                    <div class="full-width sale-details text-condensedLight">
+                        <div class="has-text-weight-bold">Equipo</div>
+                        <span class="has-text-link"><?php echo $datos['equipo_marca'] ." ". $datos['equipo_modelo'] ." - ". $datos['equipo_almacenamiento'] ." - ". $datos['equipo_color'] ; ?></span>
+                    </div>
+                </div>
+                <div class="control">
+                    <div class="full-width sale-details text-condensedLight">
+                        <div class="has-text-weight-bold">Vendedor</div>
+                        <span class="has-text-link"><?php echo $datos['sena_vendedor']; ?></span>
+                    </div>
                 </div>
             </div>
-
-            <div class="column">
-                <div class="full-width sale-details text-condensedLight">
-                    <div class="has-text-weight-bold">Vendedor</div>
-                    <span class="has-text-link"><?php echo $datos['sena_vendedor']; ?></span>
-                </div>
-            </div>
+            
         </div>
     </div>
 

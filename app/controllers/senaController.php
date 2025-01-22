@@ -138,7 +138,16 @@ class senaController extends mainModel{
         /*== Comprobando equipo en la DB ==*/
         $equipo = $this->seleccionarDatos("Normal", "equipo", "id_equipo", $id_equipo);
         $equipo = $equipo->fetch();
-        $sena_vendedor = $this->limpiarCadena($_POST['sena_vendedor']);
+
+        /*== Comprobando cliente en la DB ==*/
+        $id_usuario = $this->limpiarCadena($_POST['sena_vendedor']);
+        $check_usuario = $this->ejecutarConsulta("SELECT * FROM usuario WHERE id_usuario = '$id_usuario'");
+        if ($check_usuario->rowCount() > 0) {
+            // si ya existe generar otro
+            $usuario=$check_usuario->fetch();
+            $sena_vendedor = $usuario['usuario_nombre_completo'];
+        }
+
 
         $caja=$_SESSION['caja'];
 
@@ -183,7 +192,7 @@ class senaController extends mainModel{
             $datos_caja=$check_caja->fetch();
         }
 
-        if($sena_vendedor == ""){
+        if($id_usuario == ""){
             $alerta=[
                 "tipo"=>"simple",
                 "titulo"=>"Ocurrió un error inesperado",
