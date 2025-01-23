@@ -6,7 +6,7 @@
 
 </div>
 
-<div class="container is-max-desktop" >
+<div class="container is-fluid" >
 	<?php
 	
 		include "./app/views/includes/btn_back.php";
@@ -17,16 +17,20 @@
 			$datos=$datos->fetch();
             $_SESSION['orden'] = $datos['orden_codigo'];
             $orden_codigo = $_SESSION['orden'];
+
             $id_cliente = $datos['id_cliente'];
             $datos_cliente = $insLogin->seleccionarDatos("Unico","cliente","id_cliente",$id_cliente);
             $datos_cliente = $datos_cliente->fetch();
+
             $datos_telefonista = $insLogin->seleccionarDatosEspecificos("usuario", "id_usuario", $datos['orden_telefonista']);
             $datos_telefonista = $datos_telefonista->fetch();
 
-            $datos_marca = $insLogin->seleccionarDatosEspecificos("marca", "id_marca", $datos['id_marca']);
+            $id_marca = $datos['id_marca'];
+            $id_modelo = $datos['id_modelo'];
+            $datos_marca = $insLogin->seleccionarDatosEspecificos("marca", "id_marca", $id_marca);
             $datos_marca = $datos_marca->fetch();
 
-            $datos_modelo = $insLogin->seleccionarDatosEspecificos("modelo", "id_modelo", $datos['id_modelo']);
+            $datos_modelo = $insLogin->seleccionarDatosEspecificos("modelo", "id_modelo", $id_modelo);
             $datos_modelo = $datos_modelo->fetch();
 	?>
     <button type="button" class="button is-link is-light" onclick="print_orden('<?php echo APP_URL."app/pdf/comprobanteOrden.php?code=".$datos['orden_codigo']; ?>')" >
@@ -58,9 +62,7 @@
             ENTREGADA
         </button>
     </div>
-
 	<form class="FormularioAjax" action="<?php echo APP_URL; ?>app/ajax/ordenAjax.php" method="POST" autocomplete="off" >
-
 		<input type="hidden" name="modulo_orden" value="actualizar_orden">
 		<input type="hidden" name="orden_codigo" value="<?php echo $datos['orden_codigo']; ?>">
         <!-- DATOS DE LA ORDEN -->
@@ -72,38 +74,40 @@
                     <div class="control">
                         <div class="full-width sale-details text-condensedLight">
                             <div class="has-text-weight-bold">Fecha</div>
-                            <span class="has-text-link"><?php echo $datos['orden_fecha']; ?></span>
+                            <span class="has-text-bold"><?php echo $datos['orden_fecha']; ?></span>
                         </div>
                     </div>
                     <div class="control">
                         <div class="full-width sale-details text-condensedLight">
                             <div class="has-text-weight-bold">Cliente</div>
-                            <span class="has-text-link"><?php echo $datos_cliente['cliente_nombre_completo']; ?></span>
+                            <span class="has-text-bold"><?php echo $datos_cliente['cliente_nombre_completo']; ?></span>
                         </div>
                     </div>
                     <div class="control">
                         <div class="full-width sale-details text-condensedLight">
                             <div class="has-text-weight-bold">Telefonista/operador</div>
-                            <span class="has-text-link"><?php echo $datos_telefonista['usuario_nombre_completo']; ?></span>
+                            <span class="has-text-bold"><?php echo $datos_telefonista['usuario_nombre_completo']; ?></span>
                         </div>
                     </div>
                     <div class="control">
-                        <label>Tecnico asignado</label><br>
-                        <div class="select">
-                            <select name="id_tecnico" >
-                                <option value="" selected="" >Seleccione una opción</option>
-                                <?php
-                                    $datos_tecnico=$insLogin->seleccionarDatos("Normal","tecnico","*",0);
-
-                                    $cc=1;
-                                    while($campos_tecnico=$datos_tecnico->fetch()){
-                                        $selected = ($campos_tecnico['id_tecnico'] == $datos['id_tecnico']) ? 'selected' : '';
-                                        echo '<option value="'.$campos_tecnico['id_tecnico'].'" '.$selected.'>'.$campos_tecnico['tecnico_descripcion'].'</option>';
-                                        $cc++;
-                                    }
-                                ?>
-                            </select>
+                        <div class="full-width sale-details text-condensedLight">
+                            <label class="has-text-weight-bold">Tecnico asignado</label><br>
+                            <div class="select">
+                                <select name="id_tecnico" >
+                                    <option value="" selected="" >Seleccione una opción</option>
+                                    <?php
+                                        $datos_tecnico=$insLogin->seleccionarDatos("Normal","tecnico","*",0);
+                                        $cc=1;
+                                        while($campos_tecnico=$datos_tecnico->fetch()){
+                                            $selected = ($campos_tecnico['id_tecnico'] == $datos['id_tecnico']) ? 'selected' : '';
+                                            echo '<option value="'.$campos_tecnico['id_tecnico'].'" '.$selected.'>'.$campos_tecnico['tecnico_descripcion'].'</option>';
+                                            $cc++;
+                                        }
+                                    ?>
+                                </select>
+                            </div>
                         </div>
+                        
                     </div>
                 </div>
                 
@@ -113,8 +117,11 @@
                         <h3>Observaciones</h3>
                         <textarea class="textarea"  name="orden_observaciones" ><?php echo $datos['orden_observaciones']; ?></textarea>
                     </div>
-                    <div class="column">
-                        <div class="control">
+                </div>
+            </div>
+            <div class="columns">
+                <div class="column has-text-centered">
+                    <div class="control">
                             <button type="button" class="button is-link is-light js-modal-trigger" data-target="modal-js-infTec" >
                             Informe tecnico
                         </button>
@@ -122,83 +129,62 @@
                             Registrar pago
                         </button>
                     </div>
-                    
-                    </div>
                 </div>
             </div>
         </div>
-        
         <!-- DETALLES DEL EQUIPO -->
         <div class="box">
             <h3 class="title is-4">Detalles del equipo</h3>
             <div class="columns">
                 <!-- Columna izquierda: Marca, Modelo -->
-                <div class="column is-half">
-                    <div class="control">
-                        <label>Marca</label><br>
-                        <div class="select is-fullwidth">
-                            <select disabled name="id_marca">
-                                <option value="" selected>Seleccione una opción</option>
-                                <?php
-                                    $datos_marca = $insLogin->seleccionarDatos("Normal", "marca", "*", 0);
-                                    $cc = 1;
-                                    while ($campos_marca = $datos_marca->fetch()) {
-                                        $selected = ($campos_marca['id_marca'] == $datos['id_marca']) ? 'selected' : '';
-                                        echo '<option value="' . $campos_marca['id_marca'] . '" ' . $selected . '>' . $cc . ' - ' . $campos_marca['marca_descripcion'] . '</option>';
-                                        $cc++;
-                                    }
-                                ?>
-                            </select>
-                        </div>
-                    </div>
+                <div class="column is-one-third">
                     <div class="control">
                         <div class="full-width sale-details text-condensedLight">
                             <div class="has-text-weight-bold">Marca</div>
-                            <span class="has-text-link"><?php echo $datos_marca['marca_descripcion']; ?></span>
+                            <span class="has-text-bold"><?php echo $datos_marca['marca_descripcion']; ?></span>
                         </div>
                     </div>
 
                     <div class="control">
-                        <label>Modelo</label><br>
-                        <div class="select is-fullwidth">
-                            <select disabled name="id_modelo">
-                                <option value="" selected>Seleccione una opción</option>
-                                <?php
-                                    $datos_modelo = $insLogin->seleccionarDatos("Normal", "modelo", "*", 0);
-                                    $cc = 1;
-                                    while ($campos_modelo = $datos_modelo->fetch()) {
-                                        $selected = ($campos_modelo['id_modelo'] == $datos['id_modelo']) ? 'selected' : '';
-                                        echo '<option value="' . $campos_modelo['id_modelo'] . '" ' . $selected . '>' . $cc . ' - ' . $campos_modelo['modelo_descripcion'] . '</option>';
-                                        $cc++;
-                                    }
-                                ?>
-                            </select>
+                        <div class="full-width sale-details text-condensedLight">
+                            <div class="has-text-weight-bold">Modelo</div>
+                            <span class="has-text-bold"><?php echo $datos_modelo['modelo_descripcion']; ?></span>
                         </div>
                     </div>
 
                     <div class="control">
-                        <label>Ingresa</label><br>
-                        <input type="text" readonly class="input" value="<?php echo $datos['orden_equipo_ingresa_encendido'] ?>">
+                        <div class="full-width sale-details text-condensedLight">
+                            <div class="has-text-weight-bold">Ingresa</div>
+                            <span class="has-text-bold"><?php echo $datos['orden_equipo_ingresa_encendido']; ?></span>
+                        </div>
                     </div>
 
                     <div class="control">
-                    <label>Contrasena</label><br>
-                    <input type="text" readonly class="input" value="<?php echo $datos['orden_equipo_contrasena'] ?>">
+                        <div class="full-width sale-details text-condensedLight">
+                            <div class="has-text-weight-bold">Contrasena</div>
+                            <span class="has-text-bold"><?php echo $datos['orden_equipo_contrasena']; ?></span>
+                        </div>
                     </div>
                 </div>
-                
-                <!-- Columna derecha: Accesorios -->
-                <div class="column is-half">
+
+                <!-- Columna central: Accesorios -->
+                <div class="column is-one-third">
                     <div class="control">
                         <label>Accesorios</label>
                         <textarea class="textarea" name="orden_accesorios"><?php echo $datos['orden_accesorios']; ?></textarea>
                     </div>
+                </div>
+
+                <!-- Columna derecha: Detalles físicos -->
+                <div class="column is-one-third">
                     <div class="control">
-                        <h3>Detalles fiscos</h3>
+                        <label>Detalles físicos</label>
                         <?php if($datos['orden_equipo_detalles_fisicos'] != "") {?>
-                                <textarea readonly class="textarea"  name="orden_equipo_detalles_fisicos" id=""><?php echo $datos['orden_equipo_detalles_fisicos']; ?></textarea>
-                        <?php }else{?>
-                                <p class="textarea">No</p>
+                            <textarea readonly class="textarea" name="orden_equipo_detalles_fisicos" id="">
+                                <?php echo $datos['orden_equipo_detalles_fisicos']; ?>
+                            </textarea>
+                        <?php } else {?>
+                            <p class="textarea">No</p>
                         <?php }?>
                     </div>
                 </div>
