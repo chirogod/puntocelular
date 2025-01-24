@@ -413,146 +413,6 @@
         }
 
 
-        /*----------  Controlador listar venta  ----------*/
-		public function listarVentaControlador($pagina,$registros,$url,$busqueda){
-
-			$pagina=$this->limpiarCadena($pagina);
-			$registros=$this->limpiarCadena($registros);
-
-			$url=$this->limpiarCadena($url);
-			$url=APP_URL.$url."/";
-
-			$busqueda=$this->limpiarCadena($busqueda);
-			$tabla="";
-
-			$pagina = (isset($pagina) && $pagina>0) ? (int) $pagina : 1;
-			$inicio = ($pagina>0) ? (($pagina * $registros)-$registros) : 0;
-
-			$campos_tablas = "venta.id_venta, venta.venta_codigo, venta.venta_fecha, venta.venta_hora, venta.venta_importe, venta.id_usuario, venta.id_cliente, venta.id_caja, usuario.id_usuario, usuario.usuario_nombre_completo, cliente.id_cliente, cliente.cliente_nombre_completo";
-
-			if(isset($busqueda) && $busqueda!=""){
-
-				$consulta_datos="SELECT $campos_tablas 
-								FROM venta 
-								INNER JOIN cliente ON venta.id_cliente=cliente.id_cliente 
-								INNER JOIN usuario ON venta.id_usuario=usuario.id_usuario 
-								INNER JOIN caja ON venta.id_caja=caja.id_caja 
-								WHERE 
-									venta.id_venta LIKE '%$busqueda%' 
-									OR venta.venta_codigo LIKE '%$busqueda%' 
-									OR cliente.cliente_nombre_completo LIKE '%$busqueda%' 
-									OR usuario.usuario_nombre_completo LIKE '%$busqueda%' 
-									OR caja.caja_nombre LIKE '%$busqueda%' 
-									AND venta.id_sucursal = '$_SESSION[id_sucursal]'
-								ORDER BY venta.id_venta DESC LIMIT $inicio,$registros";
-			
-				$consulta_total="SELECT COUNT(id_venta) 
-								FROM venta 
-								INNER JOIN cliente ON venta.id_cliente=cliente.id_cliente 
-								INNER JOIN usuario ON venta.id_usuario=usuario.id_usuario 
-								INNER JOIN caja ON venta.id_caja=caja.id_caja 
-								WHERE 
-									venta.id_venta LIKE '%$busqueda%' 
-									OR venta.venta_codigo LIKE '%$busqueda%' 
-									OR cliente.cliente_nombre_completo LIKE '%$busqueda%' 
-									OR usuario.usuario_nombre_completo LIKE '%$busqueda%' 
-									OR caja.caja_nombre LIKE '%$busqueda%'
-									AND venta.id_sucursal = '$_SESSION[id_sucursal]'";
-			
-			}else{
-			
-				$consulta_datos="SELECT $campos_tablas 
-								FROM venta 
-								INNER JOIN cliente ON venta.id_cliente=cliente.id_cliente 
-								INNER JOIN usuario ON venta.id_usuario=usuario.id_usuario 
-								INNER JOIN caja ON venta.id_caja=caja.id_caja 
-								WHERE venta.id_sucursal = '$_SESSION[id_sucursal]'
-								ORDER BY venta.id_venta DESC LIMIT $inicio,$registros";
-			
-				$consulta_total="SELECT COUNT(id_venta) 
-								FROM venta 
-								INNER JOIN cliente ON venta.id_cliente=cliente.id_cliente 
-								INNER JOIN usuario ON venta.id_usuario=usuario.id_usuario 
-								INNER JOIN caja ON venta.id_caja=caja.id_caja
-								WHERE venta.id_sucursal = '$_SESSION[id_sucursal]'";
-			}
-
-			$datos = $this->ejecutarConsulta($consulta_datos);
-			$datos = $datos->fetchAll();
-
-			$total = $this->ejecutarConsulta($consulta_total);
-			$total = (int) $total->fetchColumn();
-
-			$numeroPaginas =ceil($total/$registros);
-
-			$tabla.='
-		        <div class="table-container">
-		        <table class="table is-bordered is-striped is-narrow is-hoverable is-fullwidth">
-		            <thead>
-		                <tr>
-		                    <th class="has-text-centered">NRO.</th>
-		                    <th class="has-text-centered">Codigo</th>
-		                    <th class="has-text-centered">Fecha</th>
-		                    <th class="has-text-centered">Cliente</th>
-		                    <th class="has-text-centered">Vendedor</th>
-		                    <th class="has-text-centered">Importe</th>
-		                </tr>
-		            </thead>
-		            <tbody>
-		    ';
-
-		    if($total>=1 && $pagina<=$numeroPaginas){
-				$contador=$inicio+1;
-				$pag_inicio=$inicio+1;
-				foreach($datos as $rows){
-					$tabla.='
-						<tr class="has-text-centered" style="cursor: pointer;" onclick="window.location.href=\'' . APP_URL . 'saleDetail/' . $rows['venta_codigo'] . '/\'">
-							<td>'.$rows['id_venta'].'</td>
-							<td>'.$rows['venta_codigo'].'</td>
-							<td>'.date("d-m-Y", strtotime($rows['venta_fecha'])).' '.$rows['venta_hora'].'</td>
-							<td>'.$rows['cliente_nombre_completo'].'</td>
-							<td>'.$rows['usuario_nombre_completo'].'</td>
-							<td>'.MONEDA_SIMBOLO.number_format($rows['venta_importe'],MONEDA_DECIMALES,MONEDA_SEPARADOR_DECIMAL,MONEDA_SEPARADOR_MILLAR).' '.MONEDA_NOMBRE.'</td>
-						</tr>
-					';
-					$contador++;
-				}
-				$pag_final=$contador-1;
-			}else{
-				if($total>=1){
-					$tabla.='
-						<tr class="has-text-centered" >
-			                <td colspan="7">
-			                    <a href="'.$url.'1/" class="button is-link is-rounded is-small mt-4 mb-4">
-			                        Haga clic acá para recargar el listado
-			                    </a>
-			                </td>
-			            </tr>
-					';
-				}else{
-					$tabla.='
-						<tr class="has-text-centered" >
-			                <td colspan="7">
-			                    No hay registros en el sistema
-			                </td>
-			            </tr>
-					';
-				}
-			}
-
-			$tabla.='</tbody></table></div>';
-
-			### Paginacion ###
-			if($total>0 && $pagina<=$numeroPaginas){
-				$tabla.='<p class="has-text-right">Mostrando ventas <strong>'.$pag_inicio.'</strong> al <strong>'.$pag_final.'</strong> de un <strong>total de '.$total.'</strong></p>';
-
-				$tabla.=$this->paginadorTablas($pagina,$numeroPaginas,$url,7);
-			}
-
-			return $tabla;
-		}
-
-
 		/*----------  Controlador eliminar venta  ----------*/
 		public function eliminarVentaControlador(){
 
@@ -704,16 +564,16 @@
 			$pagina = (isset($pagina) && $pagina>0) ? (int) $pagina : 1;
 			$inicio = ($pagina>0) ? (($pagina * $registros)-$registros) : 0;
 
-			$campos_tablas = "venta.id_venta, venta.venta_codigo, venta.venta_fecha, venta.venta_hora, venta.venta_importe, venta.id_usuario, venta.id_cliente, venta.id_caja, usuario.id_usuario, usuario.usuario_nombre_completo, cliente.id_cliente, cliente.cliente_nombre_completo";
+			$campos_tablas = "venta_equipo.id_venta, venta_equipo.venta_codigo, venta_equipo.venta_fecha, venta_equipo.venta_hora, venta_equipo.venta_importe, venta_equipo.id_usuario, venta_equipo.id_cliente, venta_equipo.id_caja, usuario.id_usuario, usuario.usuario_nombre_completo, cliente.id_cliente, cliente.cliente_nombre_completo";
 
-			$consulta_datos = "SELECT venta.id_venta, venta.venta_codigo, venta.venta_fecha, venta.venta_hora, venta.venta_importe, venta.id_usuario, venta.id_cliente, venta.id_caja, usuario.id_usuario, usuario.usuario_nombre_completo, cliente.id_cliente, cliente.cliente_nombre_completo
+			$consulta_datos = "SELECT venta_equipo.id_venta, venta_equipo.venta_codigo, venta_equipo.venta_fecha, venta_equipo.venta_hora, venta_equipo.venta_importe, venta_equipo.id_usuario, venta_equipo.id_cliente, venta_equipo.id_caja, usuario.id_usuario, usuario.usuario_nombre_completo, cliente.id_cliente, cliente.cliente_nombre_completo
 								FROM venta 
-								INNER JOIN cliente ON venta.id_cliente=cliente.id_cliente 
-								INNER JOIN usuario ON venta.id_usuario=usuario.id_usuario 
-								INNER JOIN caja ON venta.id_caja=caja.id_caja 
-								WHERE venta.id_sucursal = 1
-								AND venta.id_cliente = $id_cliente
-								ORDER BY venta.id_venta DESC";
+								INNER JOIN cliente ON venta_equipo.id_cliente=cliente.id_cliente 
+								INNER JOIN usuario ON venta_equipo.id_usuario=usuario.id_usuario 
+								INNER JOIN caja ON venta_equipo.id_caja=caja.id_caja 
+								WHERE venta_equipo.id_sucursal = 1
+								AND venta_equipo.id_cliente = $id_cliente
+								ORDER BY venta_equipo.id_venta_equipo DESC";
 
 			$datos = $this->ejecutarConsulta($consulta_datos);
 			$datos = $datos->fetchAll();
@@ -738,7 +598,7 @@
 				$pag_inicio=$inicio+1;
 				foreach($datos as $rows){
 					$tabla.='
-						<tr class="has-text-centered" style="cursor: pointer;" onclick="window.location.href=\'' . APP_URL . 'saleDetail/' . $rows['venta_codigo'] . '/\'">
+						<tr class="has-text-centered" style="cursor: pointer;" onclick="window.location.href=\'' . APP_URL . 'saleEquipoDetail/' . $rows['id_equipo'] . '/\'">
 							<td>'.$rows['id_venta'].'</td>
 							<td>'.$rows['venta_codigo'].'</td>
 							<td>'.date("d-m-Y", strtotime($rows['venta_fecha'])).' '.$rows['venta_hora'].'</td>
@@ -773,6 +633,143 @@
 
 			$tabla.='</tbody></table></div>';
 
+
+			return $tabla;
+		}
+
+		/*----------  Controlador listar venta  ----------*/
+		public function listarVentaEquipoControlador($pagina,$registros,$url,$busqueda){
+
+			$pagina=$this->limpiarCadena($pagina);
+			$registros=$this->limpiarCadena($registros);
+
+			$url=$this->limpiarCadena($url);
+			$url=APP_URL.$url."/";
+
+			$busqueda=$this->limpiarCadena($busqueda);
+			$tabla="";
+
+			$pagina = (isset($pagina) && $pagina>0) ? (int) $pagina : 1;
+			$inicio = ($pagina>0) ? (($pagina * $registros)-$registros) : 0;
+
+			$campos_tablas = "venta_equipo.id_venta_equipo, venta_equipo.venta_equipo_codigo, venta_equipo.venta_equipo_fecha, venta_equipo.venta_equipo_hora, venta_equipo.venta_equipo_financiacion, venta_equipo.venta_equipo_vendedor, venta_equipo.venta_equipo_importe, venta_equipo.id_cliente, venta_equipo.id_cliente, venta_equipo.id_caja, cliente.id_cliente, cliente.cliente_nombre_completo";
+
+			if(isset($busqueda) && $busqueda!=""){
+
+				$consulta_datos="SELECT $campos_tablas 
+								FROM venta_equipo
+								INNER JOIN cliente ON venta_equipo.id_cliente=cliente.id_cliente
+								INNER JOIN caja ON venta_equipo.id_caja=caja.id_caja 
+								WHERE 
+									venta_equipo.id_venta_equipo LIKE '%$busqueda%' 
+									OR venta_equipo.venta_equipo_codigo LIKE '%$busqueda%' 
+									OR cliente.cliente_nombre_completo LIKE '%$busqueda%' 
+									OR caja.caja_nombre LIKE '%$busqueda%' 
+									OR equipo.equipo_marca LIKE '%$busqueda%' 
+									OR equipo.equipo_modelo LIKE '%$busqueda%' 
+									AND venta_equipo.id_sucursal = '$_SESSION[id_sucursal]'
+								ORDER BY venta_equipo.id_venta_equipo DESC LIMIT $inicio,$registros";
+			
+				$consulta_total="SELECT COUNT(id_venta_equipo) 
+								FROM venta_equipo
+								INNER JOIN cliente ON venta_equipo.id_cliente=cliente.id_cliente 
+								INNER JOIN caja ON venta_equipo.id_caja=caja.id_caja 
+								WHERE 
+									venta_equipo.id_venta_equipo LIKE '%$busqueda%' 
+									OR venta_equipo.venta_codigo LIKE '%$busqueda%' 
+									OR cliente.cliente_nombre_completo LIKE '%$busqueda%'
+									OR caja.caja_nombre LIKE '%$busqueda%'
+									OR equipo.equipo_marca LIKE '%$busqueda%' 
+									OR equipo.equipo_modelo LIKE '%$busqueda%'
+									AND venta_equipo.id_sucursal = '$_SESSION[id_sucursal]'";
+			
+			}else{
+			
+				$consulta_datos="SELECT $campos_tablas 
+								FROM venta_equipo
+								INNER JOIN cliente ON venta_equipo.id_cliente=cliente.id_cliente
+								INNER JOIN caja ON venta_equipo.id_caja=caja.id_caja 
+								WHERE venta_equipo.id_sucursal = '$_SESSION[id_sucursal]'
+								ORDER BY venta_equipo.id_venta_equipo DESC LIMIT $inicio,$registros";
+			
+				$consulta_total="SELECT COUNT(id_venta_equipo) 
+								FROM venta_equipo
+								INNER JOIN cliente ON venta_equipo.id_cliente=cliente.id_cliente
+								INNER JOIN caja ON venta_equipo.id_caja=caja.id_caja
+								WHERE venta_equipo.id_sucursal = '$_SESSION[id_sucursal]'";
+			}
+
+			$datos = $this->ejecutarConsulta($consulta_datos);
+			$datos = $datos->fetchAll();
+
+			$total = $this->ejecutarConsulta($consulta_total);
+			$total = (int) $total->fetchColumn();
+
+			$numeroPaginas =ceil($total/$registros);
+
+			$tabla.='
+		        <div class="table-container">
+		        <table class="table is-bordered is-striped is-narrow is-hoverable is-fullwidth">
+		            <thead>
+		                <tr>
+		                    <th class="has-text-centered">NRO.</th>
+		                    <th class="has-text-centered">Codigo</th>
+		                    <th class="has-text-centered">Fecha</th>
+		                    <th class="has-text-centered">Cliente</th>
+		                    <th class="has-text-centered">Vendedor</th>
+		                    <th class="has-text-centered">Importe</th>
+		                </tr>
+		            </thead>
+		            <tbody>
+		    ';
+
+		    if($total>=1 && $pagina<=$numeroPaginas){
+				$contador=$inicio+1;
+				$pag_inicio=$inicio+1;
+				foreach($datos as $rows){
+					$tabla.='
+						<tr class="has-text-centered" style="cursor: pointer;" onclick="window.location.href=\'' . APP_URL . 'saleEquipoDetail/' . $rows['id_equipo'] . '/\'">
+							<td>'.$rows['id_venta_equipo'].'</td>
+							<td>'.$rows['venta_equipo_codigo'].'</td>
+							<td>'.date("d-m-Y", strtotime($rows['venta_equipo_fecha'])).' '.$rows['venta_equipo_hora'].'</td>
+							<td>'.$rows['cliente_nombre_completo'].'</td>
+							<td>'.$rows['venta_equipo_vendedor'].'</td>
+							<td>'.MONEDA_SIMBOLO.number_format($rows['venta_equipo_importe'],MONEDA_DECIMALES,MONEDA_SEPARADOR_DECIMAL,MONEDA_SEPARADOR_MILLAR).' '.MONEDA_NOMBRE.'</td>
+						</tr>
+					';
+					$contador++;
+				}
+				$pag_final=$contador-1;
+			}else{
+				if($total>=1){
+					$tabla.='
+						<tr class="has-text-centered" >
+			                <td colspan="7">
+			                    <a href="'.$url.'1/" class="button is-link is-rounded is-small mt-4 mb-4">
+			                        Haga clic acá para recargar el listado
+			                    </a>
+			                </td>
+			            </tr>
+					';
+				}else{
+					$tabla.='
+						<tr class="has-text-centered" >
+			                <td colspan="7">
+			                    No hay registros en el sistema
+			                </td>
+			            </tr>
+					';
+				}
+			}
+
+			$tabla.='</tbody></table></div>';
+
+			### Paginacion ###
+			if($total>0 && $pagina<=$numeroPaginas){
+				$tabla.='<p class="has-text-right">Mostrando ventas <strong>'.$pag_inicio.'</strong> al <strong>'.$pag_final.'</strong> de un <strong>total de '.$total.'</strong></p>';
+
+				$tabla.=$this->paginadorTablas($pagina,$numeroPaginas,$url,7);
+			}
 
 			return $tabla;
 		}

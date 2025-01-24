@@ -203,7 +203,17 @@
 									<i class="fas fa-clipboard-list fa-fw"></i>
 								</div>
 								<div class="navLateral-body-cr">
-									Lista de ventas
+									Ventas de articulos
+								</div>
+							</a>
+						</li>
+						<li class="full-width">
+							<a href="<?php echo APP_URL; ?>saleEquipoList/" class="full-width">
+								<div class="navLateral-body-cl">
+									<i class="fas fa-clipboard-list fa-fw"></i>
+								</div>
+								<div class="navLateral-body-cr">
+									Ventas de equipos
 								</div>
 							</a>
 						</li>
