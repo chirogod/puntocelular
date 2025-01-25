@@ -15,6 +15,16 @@
 			echo $insPago->registrarPagoVentaControlador();	
 		}
 
+		/*--------- Registrar pago ---------*/
+		if ($_POST['modulo_pago'] == "registrar_pago_venta_equipo") {
+			echo $insPago->registrarPagoVentaEquipoControlador();	
+		}
+
+		/*--------- Registrar pago ---------*/
+		if ($_POST['modulo_pago'] == "registrar_pago_sena_equipo") {
+			echo $insPago->registrarPagoSenaEquipoControlador();	
+		}
+
 		/*--------- Registrar pago orden ---------*/
 		if ($_POST['modulo_pago'] == "registrar_pago_orden") {
 			echo $insPago->registrarPagoOrdenControlador();

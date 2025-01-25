@@ -652,7 +652,7 @@
 			$pagina = (isset($pagina) && $pagina>0) ? (int) $pagina : 1;
 			$inicio = ($pagina>0) ? (($pagina * $registros)-$registros) : 0;
 
-			$campos_tablas = "venta_equipo.id_venta_equipo, venta_equipo.venta_equipo_codigo, venta_equipo.venta_equipo_fecha, venta_equipo.venta_equipo_hora, venta_equipo.venta_equipo_financiacion, venta_equipo.venta_equipo_vendedor, venta_equipo.venta_equipo_importe, venta_equipo.id_cliente, venta_equipo.id_cliente, venta_equipo.id_caja, cliente.id_cliente, cliente.cliente_nombre_completo";
+			$campos_tablas = "venta_equipo.id_venta_equipo, venta_equipo.venta_equipo_codigo, venta_equipo.venta_equipo_fecha, venta_equipo.venta_equipo_hora, venta_equipo.venta_equipo_financiacion, venta_equipo.venta_equipo_vendedor, venta_equipo.venta_equipo_importe, venta_equipo.id_cliente, venta_equipo.id_cliente, venta_equipo.id_caja, cliente.id_cliente, cliente.cliente_nombre_completo, venta_equipo.id_equipo";
 
 			if(isset($busqueda) && $busqueda!=""){
 

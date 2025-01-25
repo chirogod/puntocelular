@@ -206,6 +206,367 @@
             return json_encode($alerta);
         }
 
+        public function registrarPagoVentaEquipoControlador(){
+            $venta_equipo_codigo = $_POST['venta_equipo_codigo'];
+            $id_equipo = $_POST['id_equipo'];
+            $venta_pago_equipo_fecha = $_POST['venta_pago_equipo_fecha'];
+            $venta_pago_equipo_hora = date("h:i a");
+            $venta_pago_equipo_forma = $_POST['venta_pago_equipo_forma'];
+            if($venta_pago_equipo_forma == ""){
+                $alerta=[
+                    "tipo"=>"simple",
+                    "titulo"=>"Ocurrió un error inesperado",
+                    "texto"=>"No introdujo el metodo de pago",
+                    "icono"=>"error"
+                ];
+                return json_encode($alerta);
+                exit();
+            }
+            $venta_pago_equipo_detalle = $_POST['venta_pago_equipo_detalle'];
+
+            $check_venta = $this->ejecutarConsulta("SELECT * FROM venta_equipo WHERE venta_equipo_codigo ='$venta_equipo_codigo'");
+            $datos_venta = $check_venta->fetch();
+            
+            $venta_pago_equipo_importe = $_POST['venta_pago_equipo_importe'];
+            if($venta_pago_equipo_importe == ""){
+                $alerta=[
+                    "tipo"=>"simple",
+                    "titulo"=>"Ocurrió un error inesperado",
+                    "texto"=>"No introdujo el importe",
+                    "icono"=>"error"
+                ];
+                return json_encode($alerta);
+                exit();
+            }
+
+            $caja=$_SESSION['caja'];
+            $check_caja=$this->ejecutarConsulta("SELECT * FROM caja WHERE id_caja='$caja' ");
+			$datos_caja=$check_caja->fetch();
+
+            $movimiento_cantidad = $venta_pago_equipo_importe;
+            $movimiento_cantidad=number_format($movimiento_cantidad,MONEDA_DECIMALES,'.','');
+
+            $total_caja=$datos_caja['caja_monto']+$movimiento_cantidad;
+
+            $total_caja=number_format($total_caja,MONEDA_DECIMALES,'.','');
+
+
+            $datos_pago = [
+                [
+                    "campo_nombre"=>"venta_pago_equipo_fecha",
+                    "campo_marcador"=>":Fecha",
+                    "campo_valor"=>$venta_pago_equipo_fecha
+                ],
+                [
+                    "campo_nombre"=>"venta_pago_equipo_hora",
+                    "campo_marcador"=>":Hora",
+                    "campo_valor"=>$venta_pago_equipo_hora
+                ],
+                [
+                    "campo_nombre"=>"venta_pago_equipo_forma",
+                    "campo_marcador"=>":Forma",
+                    "campo_valor"=>$venta_pago_equipo_forma
+                ],
+                [
+                    "campo_nombre"=>"venta_pago_equipo_detalle",
+                    "campo_marcador"=>":Detalle",
+                    "campo_valor"=>$venta_pago_equipo_detalle
+                ],
+                [
+                    "campo_nombre"=>"venta_pago_equipo_importe",
+                    "campo_marcador"=>":Importe",
+                    "campo_valor"=>$venta_pago_equipo_importe
+                ],
+                [
+                    "campo_nombre"=>"venta_equipo_codigo",
+                    "campo_marcador"=>":VentaCodigo",
+                    "campo_valor"=>$venta_equipo_codigo
+                ],
+                [
+                    "campo_nombre"=>"id_sucursal",
+                    "campo_marcador"=>":Sucursal",
+                    "campo_valor"=>$_SESSION['id_sucursal']
+                ]
+            ];
+    
+            $registrar_pago = $this->guardarDatos("pago_venta_equipo", $datos_pago);
+            if ($registrar_pago->rowCount()==1) {
+                $alerta=[
+                    "tipo"=>"redireccionar",
+                    "url"=>APP_URL."saleEquipoDetail/$id_equipo"
+                ];
+
+            }else{
+                $alerta=[
+                    "tipo"=>"simple",
+                    "titulo"=>"Ocurrió un error inesperado",
+                    "texto"=>"No se pudo registrar el pago, por favor intente nuevamente",
+                    "icono"=>"error"
+                ];
+                return json_encode($alerta);
+                exit();
+            }
+            
+            //movimientos para la caja
+            if ($venta_pago_equipo_forma == 'Efectivo') {
+				// Update cash balance in "caja ventas"
+				$datos_caja_up=[
+					[
+						"campo_nombre"=>"caja_monto",
+						"campo_marcador"=>":Monto",
+						"campo_valor"=>$total_caja
+					]
+				];
+			
+				$condicion_caja=[
+					"condicion_campo"=>"id_caja",
+					"condicion_marcador"=>":ID",
+					"condicion_valor"=>$caja
+				];
+			
+				$this->actualizarDatos("caja",$datos_caja_up,$condicion_caja);
+			
+				// Update cash balance in "caja fisica" of the corresponding branch
+				$sucursal_id = $datos_caja['id_sucursal'];
+				$caja_fisica = $this->ejecutarConsulta("SELECT * FROM caja WHERE caja_codigo LIKE '%Efectivo%' AND id_sucursal = '$_SESSION[id_sucursal]'")->fetch();
+				$total_caja_fisica=$caja_fisica['caja_monto']+$movimiento_cantidad;
+            	$total_caja_fisica=number_format($total_caja_fisica,MONEDA_DECIMALES,'.','');
+				if ($caja_fisica) {
+					$datos_caja_fisica_up=[
+						[
+							"campo_nombre"=>"caja_monto",
+							"campo_marcador"=>":Monto",
+							"campo_valor"=>$total_caja_fisica
+						]
+					];
+			
+					$condicion_caja_fisica=[
+						"condicion_campo"=>"id_caja",
+						"condicion_marcador"=>":ID",
+						"condicion_valor"=>$caja_fisica['id_caja']
+					];
+			
+					$this->actualizarDatos("caja",$datos_caja_fisica_up,$condicion_caja_fisica);
+				}
+			} else {
+				// Update cash balance in "caja ventas"
+				$datos_caja_up=[
+					[
+						"campo_nombre"=>"caja_monto",
+						"campo_marcador"=>":Monto",
+						"campo_valor"=>$total_caja
+					]
+				];
+			
+				$condicion_caja=[
+					"condicion_campo"=>"id_caja",
+					"condicion_marcador"=>":ID",
+					"condicion_valor"=>$caja
+				];
+			
+				$this->actualizarDatos("caja",$datos_caja_up,$condicion_caja);
+			}
+
+            if(!$this->actualizarDatos("caja",$datos_caja_up,$condicion_caja)){
+
+                $this->eliminarRegistro("venta_equipo_detalle","venta_equipo_codigo",$venta_equipo_codigo);
+                $this->eliminarRegistro("venta_equipo","venta_equipo_codigo",$venta_equipo_codigo);
+
+                $alerta=[
+					"tipo"=>"simple",
+					"titulo"=>"Ocurrió un error inesperado",
+					"texto"=>"No hemos podido registrar la venta, por favor intente nuevamente. Código de error: 003",
+					"icono"=>"error"
+				];
+				return json_encode($alerta);
+		        exit();
+
+            }
+
+            return json_encode($alerta);
+        }
+
+        public function registrarPagoSenaEquipoControlador(){
+            $venta_equipo_codigo = $_POST['venta_equipo_codigo'];
+            $id_equipo = $_POST['id_equipo'];
+            $venta_pago_equipo_fecha = $_POST['venta_pago_equipo_fecha'];
+            $venta_pago_equipo_hora = date("h:i a");
+            $venta_pago_equipo_forma = $_POST['venta_pago_equipo_forma'];
+            if($venta_pago_equipo_forma == ""){
+                $alerta=[
+                    "tipo"=>"simple",
+                    "titulo"=>"Ocurrió un error inesperado",
+                    "texto"=>"No introdujo el metodo de pago",
+                    "icono"=>"error"
+                ];
+                return json_encode($alerta);
+                exit();
+            }
+            $venta_pago_equipo_detalle = $_POST['venta_pago_equipo_detalle'];
+
+            $check_venta = $this->ejecutarConsulta("SELECT * FROM venta_equipo WHERE venta_equipo_codigo ='$venta_equipo_codigo'");
+            $datos_venta = $check_venta->fetch();
+            
+            $venta_pago_equipo_importe = $_POST['venta_pago_equipo_importe'];
+            if($venta_pago_equipo_importe == ""){
+                $alerta=[
+                    "tipo"=>"simple",
+                    "titulo"=>"Ocurrió un error inesperado",
+                    "texto"=>"No introdujo el importe",
+                    "icono"=>"error"
+                ];
+                return json_encode($alerta);
+                exit();
+            }
+
+            $caja=$_SESSION['caja'];
+            $check_caja=$this->ejecutarConsulta("SELECT * FROM caja WHERE id_caja='$caja' ");
+			$datos_caja=$check_caja->fetch();
+
+            $movimiento_cantidad = $venta_pago_equipo_importe;
+            $movimiento_cantidad=number_format($movimiento_cantidad,MONEDA_DECIMALES,'.','');
+
+            $total_caja=$datos_caja['caja_monto']+$movimiento_cantidad;
+
+            $total_caja=number_format($total_caja,MONEDA_DECIMALES,'.','');
+
+
+            $datos_pago = [
+                [
+                    "campo_nombre"=>"venta_pago_equipo_fecha",
+                    "campo_marcador"=>":Fecha",
+                    "campo_valor"=>$venta_pago_equipo_fecha
+                ],
+                [
+                    "campo_nombre"=>"venta_pago_equipo_hora",
+                    "campo_marcador"=>":Hora",
+                    "campo_valor"=>$venta_pago_equipo_hora
+                ],
+                [
+                    "campo_nombre"=>"venta_pago_equipo_forma",
+                    "campo_marcador"=>":Forma",
+                    "campo_valor"=>$venta_pago_equipo_forma
+                ],
+                [
+                    "campo_nombre"=>"venta_pago_equipo_detalle",
+                    "campo_marcador"=>":Detalle",
+                    "campo_valor"=>$venta_pago_equipo_detalle
+                ],
+                [
+                    "campo_nombre"=>"venta_pago_equipo_importe",
+                    "campo_marcador"=>":Importe",
+                    "campo_valor"=>$venta_pago_equipo_importe
+                ],
+                [
+                    "campo_nombre"=>"venta_equipo_codigo",
+                    "campo_marcador"=>":VentaCodigo",
+                    "campo_valor"=>$venta_equipo_codigo
+                ],
+                [
+                    "campo_nombre"=>"id_sucursal",
+                    "campo_marcador"=>":Sucursal",
+                    "campo_valor"=>$_SESSION['id_sucursal']
+                ]
+            ];
+    
+            $registrar_pago = $this->guardarDatos("pago_venta_equipo", $datos_pago);
+            if ($registrar_pago->rowCount()==1) {
+                $alerta=[
+                    "tipo"=>"redireccionar",
+                    "url"=>APP_URL."saleEquipoDetail/$id_equipo"
+                ];
+
+            }else{
+                $alerta=[
+                    "tipo"=>"simple",
+                    "titulo"=>"Ocurrió un error inesperado",
+                    "texto"=>"No se pudo registrar el pago, por favor intente nuevamente",
+                    "icono"=>"error"
+                ];
+                return json_encode($alerta);
+                exit();
+            }
+            
+            //movimientos para la caja
+            if ($venta_pago_equipo_forma == 'Efectivo') {
+				// Update cash balance in "caja ventas"
+				$datos_caja_up=[
+					[
+						"campo_nombre"=>"caja_monto",
+						"campo_marcador"=>":Monto",
+						"campo_valor"=>$total_caja
+					]
+				];
+			
+				$condicion_caja=[
+					"condicion_campo"=>"id_caja",
+					"condicion_marcador"=>":ID",
+					"condicion_valor"=>$caja
+				];
+			
+				$this->actualizarDatos("caja",$datos_caja_up,$condicion_caja);
+			
+				// Update cash balance in "caja fisica" of the corresponding branch
+				$sucursal_id = $datos_caja['id_sucursal'];
+				$caja_fisica = $this->ejecutarConsulta("SELECT * FROM caja WHERE caja_codigo LIKE '%Efectivo%' AND id_sucursal = '$_SESSION[id_sucursal]'")->fetch();
+				$total_caja_fisica=$caja_fisica['caja_monto']+$movimiento_cantidad;
+            	$total_caja_fisica=number_format($total_caja_fisica,MONEDA_DECIMALES,'.','');
+				if ($caja_fisica) {
+					$datos_caja_fisica_up=[
+						[
+							"campo_nombre"=>"caja_monto",
+							"campo_marcador"=>":Monto",
+							"campo_valor"=>$total_caja_fisica
+						]
+					];
+			
+					$condicion_caja_fisica=[
+						"condicion_campo"=>"id_caja",
+						"condicion_marcador"=>":ID",
+						"condicion_valor"=>$caja_fisica['id_caja']
+					];
+			
+					$this->actualizarDatos("caja",$datos_caja_fisica_up,$condicion_caja_fisica);
+				}
+			} else {
+				// Update cash balance in "caja ventas"
+				$datos_caja_up=[
+					[
+						"campo_nombre"=>"caja_monto",
+						"campo_marcador"=>":Monto",
+						"campo_valor"=>$total_caja
+					]
+				];
+			
+				$condicion_caja=[
+					"condicion_campo"=>"id_caja",
+					"condicion_marcador"=>":ID",
+					"condicion_valor"=>$caja
+				];
+			
+				$this->actualizarDatos("caja",$datos_caja_up,$condicion_caja);
+			}
+
+            if(!$this->actualizarDatos("caja",$datos_caja_up,$condicion_caja)){
+
+                $this->eliminarRegistro("venta_equipo_detalle","venta_equipo_codigo",$venta_equipo_codigo);
+                $this->eliminarRegistro("venta_equipo","venta_equipo_codigo",$venta_equipo_codigo);
+
+                $alerta=[
+					"tipo"=>"simple",
+					"titulo"=>"Ocurrió un error inesperado",
+					"texto"=>"No hemos podido registrar la venta, por favor intente nuevamente. Código de error: 003",
+					"icono"=>"error"
+				];
+				return json_encode($alerta);
+		        exit();
+
+            }
+
+            return json_encode($alerta);
+        }
+        
+
         public function registrarPagoOrdenControlador(){
             $orden_codigo = $_POST['orden_codigo'];
             $orden_pago_fecha = $_POST['orden_pago_fecha'];
