@@ -20,6 +20,14 @@
             echo $insEquipo->buscarEquipoControlador();
         }
 
+        if ($_POST['modulo_equipo'] == "registrar_marca") {
+            echo $insEquipo->registrarMarcaControlador();
+        }
+
+        if ($_POST['modulo_equipo'] == "registrar_modelo") {
+            echo $insEquipo->registrarModeloControlador();
+        }
+
 
     }else{
         session_destroy();

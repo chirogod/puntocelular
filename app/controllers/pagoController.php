@@ -387,12 +387,12 @@
         }
 
         public function registrarPagoSenaEquipoControlador(){
-            $venta_equipo_codigo = $_POST['venta_equipo_codigo'];
+            $id_sena = $_POST['id_sena'];
             $id_equipo = $_POST['id_equipo'];
-            $venta_pago_equipo_fecha = $_POST['venta_pago_equipo_fecha'];
-            $venta_pago_equipo_hora = date("h:i a");
-            $venta_pago_equipo_forma = $_POST['venta_pago_equipo_forma'];
-            if($venta_pago_equipo_forma == ""){
+            $sena_pago_fecha = $_POST['sena_pago_fecha'];
+            $sena_pago_hora = date("h:i a");
+            $sena_pago_forma = $_POST['sena_pago_forma'];
+            if($sena_pago_forma == ""){
                 $alerta=[
                     "tipo"=>"simple",
                     "titulo"=>"Ocurrió un error inesperado",
@@ -402,13 +402,13 @@
                 return json_encode($alerta);
                 exit();
             }
-            $venta_pago_equipo_detalle = $_POST['venta_pago_equipo_detalle'];
+            $sena_pago_detalle = $_POST['sena_pago_detalle'];
 
-            $check_venta = $this->ejecutarConsulta("SELECT * FROM venta_equipo WHERE venta_equipo_codigo ='$venta_equipo_codigo'");
-            $datos_venta = $check_venta->fetch();
+            $check_sena = $this->ejecutarConsulta("SELECT * FROM sena WHERE id_sena ='$id_sena'");
+            $datos_sena = $check_sena->fetch();
             
-            $venta_pago_equipo_importe = $_POST['venta_pago_equipo_importe'];
-            if($venta_pago_equipo_importe == ""){
+            $sena_pago_importe = $_POST['sena_pago_importe'];
+            if($sena_pago_importe == ""){
                 $alerta=[
                     "tipo"=>"simple",
                     "titulo"=>"Ocurrió un error inesperado",
@@ -423,7 +423,7 @@
             $check_caja=$this->ejecutarConsulta("SELECT * FROM caja WHERE id_caja='$caja' ");
 			$datos_caja=$check_caja->fetch();
 
-            $movimiento_cantidad = $venta_pago_equipo_importe;
+            $movimiento_cantidad = $sena_pago_importe;
             $movimiento_cantidad=number_format($movimiento_cantidad,MONEDA_DECIMALES,'.','');
 
             $total_caja=$datos_caja['caja_monto']+$movimiento_cantidad;
@@ -433,34 +433,34 @@
 
             $datos_pago = [
                 [
-                    "campo_nombre"=>"venta_pago_equipo_fecha",
+                    "campo_nombre"=>"sena_pago_fecha",
                     "campo_marcador"=>":Fecha",
-                    "campo_valor"=>$venta_pago_equipo_fecha
+                    "campo_valor"=>$sena_pago_fecha
                 ],
                 [
-                    "campo_nombre"=>"venta_pago_equipo_hora",
+                    "campo_nombre"=>"sena_pago_hora",
                     "campo_marcador"=>":Hora",
-                    "campo_valor"=>$venta_pago_equipo_hora
+                    "campo_valor"=>$sena_pago_hora
                 ],
                 [
-                    "campo_nombre"=>"venta_pago_equipo_forma",
+                    "campo_nombre"=>"sena_pago_forma",
                     "campo_marcador"=>":Forma",
-                    "campo_valor"=>$venta_pago_equipo_forma
+                    "campo_valor"=>$sena_pago_forma
                 ],
                 [
-                    "campo_nombre"=>"venta_pago_equipo_detalle",
+                    "campo_nombre"=>"sena_pago_detalle",
                     "campo_marcador"=>":Detalle",
-                    "campo_valor"=>$venta_pago_equipo_detalle
+                    "campo_valor"=>$sena_pago_detalle
                 ],
                 [
-                    "campo_nombre"=>"venta_pago_equipo_importe",
+                    "campo_nombre"=>"sena_pago_importe",
                     "campo_marcador"=>":Importe",
-                    "campo_valor"=>$venta_pago_equipo_importe
+                    "campo_valor"=>$sena_pago_importe
                 ],
                 [
-                    "campo_nombre"=>"venta_equipo_codigo",
-                    "campo_marcador"=>":VentaCodigo",
-                    "campo_valor"=>$venta_equipo_codigo
+                    "campo_nombre"=>"id_sena",
+                    "campo_marcador"=>":IdSena",
+                    "campo_valor"=>$id_sena
                 ],
                 [
                     "campo_nombre"=>"id_sucursal",
@@ -469,11 +469,11 @@
                 ]
             ];
     
-            $registrar_pago = $this->guardarDatos("pago_venta_equipo", $datos_pago);
+            $registrar_pago = $this->guardarDatos("pago_sena", $datos_pago);
             if ($registrar_pago->rowCount()==1) {
                 $alerta=[
                     "tipo"=>"redireccionar",
-                    "url"=>APP_URL."saleEquipoDetail/$id_equipo"
+                    "url"=>APP_URL."senaEquipoDetail/$id_equipo"
                 ];
 
             }else{
@@ -488,7 +488,7 @@
             }
             
             //movimientos para la caja
-            if ($venta_pago_equipo_forma == 'Efectivo') {
+            if ($sena_pago_forma == 'Efectivo') {
 				// Update cash balance in "caja ventas"
 				$datos_caja_up=[
 					[
@@ -546,22 +546,6 @@
 			
 				$this->actualizarDatos("caja",$datos_caja_up,$condicion_caja);
 			}
-
-            if(!$this->actualizarDatos("caja",$datos_caja_up,$condicion_caja)){
-
-                $this->eliminarRegistro("venta_equipo_detalle","venta_equipo_codigo",$venta_equipo_codigo);
-                $this->eliminarRegistro("venta_equipo","venta_equipo_codigo",$venta_equipo_codigo);
-
-                $alerta=[
-					"tipo"=>"simple",
-					"titulo"=>"Ocurrió un error inesperado",
-					"texto"=>"No hemos podido registrar la venta, por favor intente nuevamente. Código de error: 003",
-					"icono"=>"error"
-				];
-				return json_encode($alerta);
-		        exit();
-
-            }
 
             return json_encode($alerta);
         }

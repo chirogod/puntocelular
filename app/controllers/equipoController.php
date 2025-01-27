@@ -3,6 +3,7 @@
     use app\models\mainModel;
 
     class equipoController extends mainModel{
+
         public function registrarEquipoControlador(){
             $equipo_modulo = $this->limpiarCadena($_POST['equipo_modulo']);
             /*== sino generar aleatoriamente el codigo del equipo ==*/
@@ -403,12 +404,142 @@
             }
         }
 
-    }
-
+        public function registrarMarcaControlador(){
+            $marca_descripcion = $this->limpiarCadena($_POST['marca_descripcion']);
+            $check_marca = $this->ejecutarConsulta("SELECT * FROM marca WHERE marca_descripcion = '$marca_descripcion'");
+            if ($check_marca->rowCount() > 0) {
+                $alerta=[
+                    "tipo"=>"limpiar",
+                    "titulo"=>"Error",
+                    "texto"=>"La marca '$marca_descripcion' ya esta registrada",
+                    "icono"=>"error"
+                ];
+                return json_encode($alerta);
+			    exit();
+            }
+            $datos_marca = [
+                [
+                    "campo_nombre"=>"marca_descripcion",
+                    "campo_marcador"=>":Marca",
+                    "campo_valor"=>$marca_descripcion
+                ]
+            ];
     
+            $registrar_marca = $this->guardarDatos("marca", $datos_marca);
+            if ($registrar_marca->rowCount()==1) {
+                $alerta=[
+                    "tipo"=>"recargar",
+                    "titulo"=>"Marca registrada con exito",
+                    "texto"=>"La marca '$marca_descripcion' se registro con exito",
+                    "icono"=>"success"
+                ];
+            }else{
+                $alerta=[
+                    "tipo"=>"simple",
+                    "titulo"=>"Ocurrió un error inesperado",
+                    "texto"=>"No se pudo registrar la marca, por favor intente nuevamente",
+                    "icono"=>"error"
+                ];
+            }
+            //retornamos el json 
+            return json_encode($alerta);
+        }
 
+        public function registrarModeloControlador(){
+            $id_marca = $this->limpiarCadena($_POST['id_marca']);
+            $modelo_descripcion = $this->limpiarCadena($_POST['modelo_descripcion']);
+            $check_modelo = $this->ejecutarConsulta("SELECT * FROM modelo WHERE modelo_descripcion = '$modelo_descripcion'");
+            if ($check_modelo->rowCount() > 0) {
+                $alerta=[
+                    "tipo"=>"limpiar",
+                    "titulo"=>"Error",
+                    "texto"=>"El modelo '$modelo_descripcion' ya esta registrada",
+                    "icono"=>"error"
+                ];
+                return json_encode($alerta);
+			    exit();
+            }
+            $datos_modelo = [
+                [
+                    "campo_nombre"=>"modelo_descripcion",
+                    "campo_marcador"=>":Modelo",
+                    "campo_valor"=>$modelo_descripcion
+                ],
+                [
+                    "campo_nombre"=>"id_marca",
+                    "campo_marcador"=>":Marca",
+                    "campo_valor"=>$id_marca
+                ]
+            ];
+    
+            $registrar_modelo = $this->guardarDatos("modelo", $datos_modelo);
+            if ($registrar_modelo->rowCount()==1) {
+                $alerta=[
+                    "tipo"=>"recargar",
+                    "titulo"=>"Modelo registrado con exito",
+                    "texto"=>"El modelo '$modelo_descripcion' se registro con exito",
+                    "icono"=>"success"
+                ];
+            }else{
+                $alerta=[
+                    "tipo"=>"simple",
+                    "titulo"=>"Ocurrió un error inesperado",
+                    "texto"=>"No se pudo registrar el modelo, por favor intente nuevamente",
+                    "icono"=>"error"
+                ];
+            }
+            //retornamos el json 
+            return json_encode($alerta);
+        }
 
+        public function listarMarcasModelosControlador(){
+            $datos = $this->ejecutarConsulta("SELECT marca.id_marca, marca.marca_descripcion, modelo.id_modelo, modelo.modelo_descripcion FROM marca LEFT JOIN modelo ON marca.id_marca = modelo.id_marca ORDER BY marca.marca_descripcion, modelo.modelo_descripcion");
 
+            // Agrupar los modelos por marca
+            $marcasModelos = [];
+            foreach ($datos as $fila) {
+                $idMarca = $fila['id_marca'];
+                $marcaDescripcion = $fila['marca_descripcion'];
+                $modeloDescripcion = $fila['modelo_descripcion'];
 
+                if (!isset($marcasModelos[$idMarca])) {
+                    $marcasModelos[$idMarca] = [
+                        'marca' => $marcaDescripcion,
+                        'modelos' => []
+                    ];
+                }
+                if (!empty($modeloDescripcion)) {
+                    $marcasModelos[$idMarca]['modelos'][] = $modeloDescripcion;
+                }
+            }
 
+            // Generar la tabla HTML
+            echo '<table class="table is-striped is-hoverable is-fullwidth"';
+            echo '<thead>';
+            echo '<tr>';
+            echo '<th>Marca</th>';
+            echo '<th>Modelos</th>';
+            echo '</tr>';
+            echo '</thead>';
+            echo '<tbody>';
+
+            foreach ($marcasModelos as $marca) {
+                echo '<tr>';
+                echo '<td>' . htmlspecialchars($marca['marca']) . '</td>';
+                echo '<td>';
+                if (!empty($marca['modelos'])) {
+                    echo implode(", ", array_map('htmlspecialchars', $marca['modelos']));
+                } else {
+                    echo '<span class="has-text-grey">Sin modelos asociados</span>';
+                }
+                echo '</td>';
+                echo '</tr>';
+            }
+
+            echo '</tbody>';
+            echo '</table>';
+            
+        }
+
+    }
 ?>

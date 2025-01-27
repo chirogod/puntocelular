@@ -107,16 +107,6 @@
 					</a>
 					<ul class="full-width menu-principal sub-menu-options">
 						<li class="full-width">
-							<a href="<?php echo APP_URL; ?>rubroNew/" class="full-width">
-								<div class="navLateral-body-cl">
-									<i class="fas fa-cubes fa-fw"></i>
-								</div>
-								<div class="navLateral-body-cr">
-									Rubros
-								</div>
-							</a>
-						</li>
-						<li class="full-width">
 							<a href="<?php echo APP_URL; ?>artNew/" class="full-width">
 								<div class="navLateral-body-cl">
 									<i class="fas fa-box fa-fw"></i>
@@ -359,6 +349,26 @@
 								</div>
 								<div class="navLateral-body-cr">
 									Datos de empresa
+								</div>
+							</a>
+						</li>
+						<li class="full-width">
+							<a href="<?php echo APP_URL; ?>rubroNew/" class="full-width">
+								<div class="navLateral-body-cl">
+									<i class="fas fa-cubes fa-fw"></i>
+								</div>
+								<div class="navLateral-body-cr">
+									Rubros
+								</div>
+							</a>
+						</li>
+						<li class="full-width">
+							<a href="<?php echo APP_URL; ?>marcaModeloNew/" class="full-width">
+								<div class="navLateral-body-cl">
+									<i class="fas fa-mobile fa-fw"></i>
+								</div>
+								<div class="navLateral-body-cr">
+									Marcas/Modelos
 								</div>
 							</a>
 						</li>
