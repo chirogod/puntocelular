@@ -285,16 +285,22 @@
                 $datos_caja=$check_caja->fetch();
             }
 
-			if($venta_vendedor == ""){
+			/*== Comprobando vendedor en la DB ==*/
+            $check_vendedor=$this->ejecutarConsulta("SELECT * FROM usuario WHERE id_usuario='$venta_vendedor' ");
+			if($check_vendedor->rowCount()<=0){
 				$alerta=[
 					"tipo"=>"simple",
 					"titulo"=>"Ocurrió un error inesperado",
-					"texto"=>"No se ha ingresado el vendedor!",
+					"texto"=>"El vendedor no está registrada en el sistema",
 					"icono"=>"error"
 				];
 				return json_encode($alerta);
 		        exit();
-			}
+            }else{
+                $datos_vendedor=$check_vendedor->fetch();
+            }
+
+
 
 
             /*== Formateando variables ==*/
@@ -356,7 +362,7 @@
 				[
 					"campo_nombre"=>"venta_equipo_vendedor",
 					"campo_marcador"=>":Vendedor",
-					"campo_valor"=>$venta_vendedor
+					"campo_valor"=>$datos_vendedor['usuario_nombre_completo']
 				],
 				[
 					"campo_nombre"=>"id_sucursal",
@@ -404,7 +410,7 @@
 
 				$alerta=[
 					"tipo"=>"redireccionar",
-					"url"=>APP_URL."saleNew/"
+					"url"=>APP_URL."saleEquipoDetail/".$id_equipo
 				];
 			
             }
