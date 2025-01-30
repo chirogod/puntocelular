@@ -446,12 +446,18 @@
                         </div>
                     </div>
 
-                    <div class="column">
+                    <?php
+                    $id_usuario = $_SESSION['usuario_nombre'];
+                    $fecha_actual = date('Y-m-d'); 
+                    $hora_actual = date('H:i:s'); 
+                    ?>
+
+                    <div class="column"> 
                         <div class="control">
                             <label for="" class="label">Informe técnico: </label>
-                            <textarea class="textarea is-small" style="height: 200px;" name="orden_informe_tecnico" id=""><?php echo $datos['orden_informe_tecnico']; ?></textarea>
+                            <textarea class="textarea is-small" spellcheck="true" style="height: 200px;" name="orden_informe_tecnico" id="orden_informe_tecnico"><?php echo $datos['orden_informe_tecnico']; ?></textarea>
                         </div>
-                    </div>
+                    </div>  
                 </div>
 
                 <div class="columns is-vcentered is-centered">
@@ -766,6 +772,7 @@
 ?>
 
 <script>
+
     document.addEventListener('DOMContentLoaded', function () {
         const btnSaldar = document.getElementById('btnSaldar');
         
@@ -784,6 +791,51 @@
             document.getElementById('btnEnviar').click();
             });
         }
+
+        const textarea = document.getElementById("orden_informe_tecnico");
+        textarea.addEventListener("keydown", function (event) {
+            if (event.key.length === 1 && !textarea.dataset.prefixed) { // Solo cuando presiona una tecla que genera texto y no está prefijado
+                const idUsuario = "<?php echo $id_usuario; ?>";
+                const fecha = "<?php echo $fecha_actual; ?>";
+                const hora = new Date().toLocaleTimeString(); // Captura la hora actual en JS
+
+                // Formato que quieres insertar antes de escribir
+                const prefix = `[${idUsuario} - ${fecha} ${hora}]: \n      `;
+
+                // Obtener la posición actual del cursor
+                const startPos = textarea.selectionStart;
+                const endPos = textarea.selectionEnd;
+
+                // Insertar el prefijo en la posición actual del cursor
+                const textBefore = textarea.value.substring(0, startPos);
+                const textAfter = textarea.value.substring(endPos, textarea.value.length);
+                textarea.value = textBefore + prefix + textAfter;
+
+                // Mover el cursor a la posición después del prefijo
+                textarea.setSelectionRange(startPos + prefix.length, startPos + prefix.length);
+
+                textarea.dataset.prefixed = true; // Marcar como prefijado
+            }
+        });
+
+        textarea.addEventListener("keydown", function (event) {
+        if (event.key === "Enter") {
+            event.preventDefault(); // Evita el comportamiento predeterminado de Enter
+
+            // Obtener la posición actual del cursor
+            const startPos = textarea.selectionStart;
+            const endPos = textarea.selectionEnd;
+
+            // Insertar un salto de línea seguido de seis espacios
+            const textBefore = textarea.value.substring(0, startPos);
+            const textAfter = textarea.value.substring(endPos, textarea.value.length);
+            const newText = textBefore + "\n      " + textAfter;
+            textarea.value = newText;
+
+            // Mover el cursor a la posición después de los seis espacios
+            textarea.setSelectionRange(startPos + 7, startPos + 7);
+        }
+    });
     });
 
     function financiarProducto(codigo, financiacion) {

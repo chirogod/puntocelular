@@ -457,6 +457,7 @@
 		public function registrarInformeTecnicoOrdenControlador(){
 			$orden_codigo = $_POST['orden_codigo'];
 			$orden_informe_tecnico = $_POST['orden_informe_tecnico'];
+			$orden_informe_tecnico .= "\n \n";
 			$orden_total_lista = $_POST['orden_total_lista'];
 			$orden_total_efectivo = $_POST['orden_total_efectivo'];
 			$orden = $this->ejecutarConsulta("SELECT * FROM orden WHERE orden_codigo='$orden_codigo'");
