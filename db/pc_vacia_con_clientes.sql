@@ -3,9 +3,9 @@
 -- https://www.phpmyadmin.net/
 --
 -- Servidor: 127.0.0.1:3306
--- Tiempo de generación: 13-11-2024 a las 18:04:58
--- Versión del servidor: 8.3.0
--- Versión de PHP: 8.2.18
+-- Tiempo de generación: 30-01-2025 a las 22:56:05
+-- Versión del servidor: 10.11.10-MariaDB
+-- Versión de PHP: 7.2.34
 
 SET SQL_MODE = "NO_AUTO_VALUE_ON_ZERO";
 START TRANSACTION;
@@ -18,7 +18,7 @@ SET time_zone = "+00:00";
 /*!40101 SET NAMES utf8mb4 */;
 
 --
--- Base de datos: `punto_celular`
+-- Base de datos: `u109504566_puntocelular`
 --
 
 -- --------------------------------------------------------
@@ -27,28 +27,24 @@ SET time_zone = "+00:00";
 -- Estructura de tabla para la tabla `articulo`
 --
 
-DROP TABLE IF EXISTS `articulo`;
-CREATE TABLE IF NOT EXISTS `articulo` (
-  `id_articulo` int NOT NULL AUTO_INCREMENT,
-  `articulo_codigo` varchar(200) COLLATE utf8mb4_general_ci NOT NULL,
-  `articulo_descripcion` varchar(100) COLLATE utf8mb4_general_ci NOT NULL,
-  `articulo_stock` int NOT NULL,
-  `articulo_stock_min` int NOT NULL,
-  `articulo_stock_max` int NOT NULL,
-  `id_rubro` int NOT NULL,
-  `id_sucursal` int NOT NULL,
-  `articulo_garantia` varchar(50) COLLATE utf8mb4_general_ci NOT NULL,
-  `articulo_observacion` text CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NOT NULL,
-  `articulo_activo` varchar(10) COLLATE utf8mb4_general_ci NOT NULL,
-  `articulo_moneda` varchar(10) COLLATE utf8mb4_general_ci NOT NULL,
+CREATE TABLE `articulo` (
+  `id_articulo` int(11) NOT NULL,
+  `articulo_codigo` varchar(200) NOT NULL,
+  `articulo_descripcion` varchar(100) NOT NULL,
+  `articulo_stock` int(11) NOT NULL,
+  `articulo_stock_min` int(11) NOT NULL,
+  `articulo_stock_max` int(11) NOT NULL,
+  `id_rubro` int(11) NOT NULL,
+  `id_sucursal` int(11) NOT NULL,
+  `articulo_garantia` varchar(50) NOT NULL,
+  `articulo_observacion` text NOT NULL,
+  `articulo_activo` varchar(10) NOT NULL,
+  `articulo_moneda` varchar(10) NOT NULL,
   `articulo_precio_compra` decimal(30,2) NOT NULL,
-  `articulo_porcentaje_ganancia` varchar(5) COLLATE utf8mb4_general_ci NOT NULL,
+  `articulo_porcentaje_ganancia` int(11) NOT NULL,
   `articulo_precio_venta` decimal(30,2) NOT NULL,
-  `articulo_marca` varchar(200) COLLATE utf8mb4_general_ci NOT NULL,
-  `articulo_modelo` varchar(200) COLLATE utf8mb4_general_ci NOT NULL,
-  PRIMARY KEY (`id_articulo`),
-  KEY `id_rubro` (`id_rubro`),
-  KEY `id_sucursal` (`id_sucursal`)
+  `articulo_marca` varchar(50) NOT NULL,
+  `articulo_modelo` varchar(50) NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 -- --------------------------------------------------------
@@ -57,17 +53,13 @@ CREATE TABLE IF NOT EXISTS `articulo` (
 -- Estructura de tabla para la tabla `caja`
 --
 
-DROP TABLE IF EXISTS `caja`;
-CREATE TABLE IF NOT EXISTS `caja` (
-  `id_caja` int NOT NULL AUTO_INCREMENT,
-  `caja_codigo` varchar(200) COLLATE utf8mb4_general_ci NOT NULL,
-  `caja_nombre` varchar(100) COLLATE utf8mb4_general_ci NOT NULL,
+CREATE TABLE `caja` (
+  `id_caja` int(11) NOT NULL,
+  `caja_codigo` varchar(200) NOT NULL,
+  `caja_nombre` varchar(100) NOT NULL,
   `caja_monto` decimal(20,2) NOT NULL,
-  `id_sucursal` int NOT NULL,
-  PRIMARY KEY (`id_caja`),
-  KEY `id_sucursal` (`id_sucursal`),
-  KEY `id_sucursal_2` (`id_sucursal`)
-) ENGINE=InnoDB AUTO_INCREMENT=8 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+  `id_sucursal` int(11) NOT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 --
 -- Volcado de datos para la tabla `caja`
@@ -87,18 +79,16 @@ INSERT INTO `caja` (`id_caja`, `caja_codigo`, `caja_nombre`, `caja_monto`, `id_s
 -- Estructura de tabla para la tabla `caja_movimiento`
 --
 
-DROP TABLE IF EXISTS `caja_movimiento`;
-CREATE TABLE IF NOT EXISTS `caja_movimiento` (
-  `id_caja_movimiento` int NOT NULL AUTO_INCREMENT,
+CREATE TABLE `caja_movimiento` (
+  `id_caja_movimiento` int(11) NOT NULL,
   `fecha_caja_movimiento` date NOT NULL,
-  `hora_caja_movimiento` varchar(17) COLLATE utf8mb4_general_ci NOT NULL,
-  `tipo_movimiento` varchar(100) COLLATE utf8mb4_general_ci NOT NULL,
-  `importe_movimiento` int NOT NULL,
-  `detalle_movimiento` varchar(100) COLLATE utf8mb4_general_ci NOT NULL,
-  `id_sucursal` int NOT NULL,
-  `id_usuario` int NOT NULL,
-  `caja_codigo` varchar(200) COLLATE utf8mb4_general_ci NOT NULL,
-  PRIMARY KEY (`id_caja_movimiento`)
+  `hora_caja_movimiento` varchar(17) NOT NULL,
+  `tipo_movimiento` varchar(100) NOT NULL,
+  `importe_movimiento` int(11) NOT NULL,
+  `detalle_movimiento` varchar(100) NOT NULL,
+  `id_sucursal` int(11) NOT NULL,
+  `id_usuario` int(11) NOT NULL,
+  `caja_codigo` varchar(200) NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 -- --------------------------------------------------------
@@ -107,23 +97,21 @@ CREATE TABLE IF NOT EXISTS `caja_movimiento` (
 -- Estructura de tabla para la tabla `cliente`
 --
 
-DROP TABLE IF EXISTS `cliente`;
-CREATE TABLE IF NOT EXISTS `cliente` (
-  `id_cliente` int NOT NULL AUTO_INCREMENT,
-  `cliente_codigo` int NOT NULL,
-  `cliente_nombre_completo` varchar(300) COLLATE utf8mb4_general_ci NOT NULL,
-  `cliente_email` varchar(200) COLLATE utf8mb4_general_ci NOT NULL,
-  `cliente_telefono_1` bigint NOT NULL,
-  `cliente_telefono_2` bigint NOT NULL,
-  `cliente_domicilio` varchar(200) COLLATE utf8mb4_general_ci NOT NULL,
-  `cliente_localidad` varchar(100) COLLATE utf8mb4_general_ci NOT NULL,
-  `cliente_provincia` varchar(100) COLLATE utf8mb4_general_ci NOT NULL,
-  `cliente_pais` varchar(100) COLLATE utf8mb4_general_ci NOT NULL,
-  `cliente_tipo_doc` varchar(200) COLLATE utf8mb4_general_ci NOT NULL,
-  `cliente_documento` varchar(200) COLLATE utf8mb4_general_ci NOT NULL,
-  `cliente_nacimiento` date NOT NULL,
-  PRIMARY KEY (`id_cliente`)
-) ENGINE=InnoDB AUTO_INCREMENT=7440 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+CREATE TABLE `cliente` (
+  `id_cliente` int(11) NOT NULL,
+  `cliente_codigo` int(11) NOT NULL,
+  `cliente_nombre_completo` varchar(300) NOT NULL,
+  `cliente_email` varchar(200) NOT NULL,
+  `cliente_telefono_1` bigint(20) NOT NULL,
+  `cliente_telefono_2` bigint(20) NOT NULL,
+  `cliente_domicilio` varchar(200) NOT NULL,
+  `cliente_localidad` varchar(100) NOT NULL,
+  `cliente_provincia` varchar(100) NOT NULL,
+  `cliente_pais` varchar(100) NOT NULL,
+  `cliente_tipo_doc` varchar(200) NOT NULL,
+  `cliente_documento` varchar(200) NOT NULL,
+  `cliente_nacimiento` date NOT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 --
 -- Volcado de datos para la tabla `cliente`
@@ -7046,45 +7034,23 @@ INSERT INTO `cliente` (`id_cliente`, `cliente_codigo`, `cliente_nombre_completo`
 -- --------------------------------------------------------
 
 --
--- Estructura de tabla para la tabla `cotizacion`
+-- Estructura de tabla para la tabla `equipo`
 --
 
-DROP TABLE IF EXISTS `cotizacion`;
-CREATE TABLE IF NOT EXISTS `cotizacion` (
-  `id_cotizacion` int NOT NULL AUTO_INCREMENT,
-  `cotizacion_codigo` varchar(200) COLLATE utf8mb4_general_ci NOT NULL,
-  `cotizacion_fecha` date NOT NULL,
-  `id_usuario` int NOT NULL,
-  `id_cliente` int NOT NULL,
-  `id_sucursal` int NOT NULL,
-  `cotizacion_validez` varchar(100) COLLATE utf8mb4_general_ci NOT NULL,
-  `cotizacion_observaciones` text COLLATE utf8mb4_general_ci NOT NULL,
-  `cotizacion_forma_pago` varchar(100) COLLATE utf8mb4_general_ci NOT NULL,
-  `cotizacion_importe` decimal(20,2) NOT NULL,
-  PRIMARY KEY (`id_cotizacion`),
-  KEY `id_sucursal` (`id_sucursal`),
-  KEY `id_cliente` (`id_cliente`),
-  KEY `id_usuario` (`id_usuario`),
-  KEY `cotizacion_codigo` (`cotizacion_codigo`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
-
--- --------------------------------------------------------
-
---
--- Estructura de tabla para la tabla `cotizacion_detalle`
---
-
-DROP TABLE IF EXISTS `cotizacion_detalle`;
-CREATE TABLE IF NOT EXISTS `cotizacion_detalle` (
-  `id_cotizacion_detalle` int NOT NULL AUTO_INCREMENT,
-  `cotizacion_detalle_codigo` varchar(200) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NOT NULL,
-  `id_articulo` int NOT NULL,
-  `cotizacion_detalle_monto` decimal(20,2) NOT NULL,
-  `cotizacion_detalle_descripcion_producto` varchar(200) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NOT NULL,
-  `cotizacion_codigo` varchar(200) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NOT NULL,
-  PRIMARY KEY (`id_cotizacion_detalle`),
-  KEY `cotizacion_codigo` (`cotizacion_codigo`),
-  KEY `id_articulo` (`id_articulo`)
+CREATE TABLE `equipo` (
+  `id_equipo` int(11) NOT NULL,
+  `equipo_codigo` varchar(5) NOT NULL,
+  `equipo_estado` varchar(20) NOT NULL,
+  `equipo_marca` varchar(50) NOT NULL,
+  `equipo_modelo` varchar(50) NOT NULL,
+  `equipo_almacenamiento` varchar(6) NOT NULL,
+  `equipo_ram` varchar(6) NOT NULL,
+  `equipo_bateria` varchar(5) NOT NULL,
+  `equipo_color` varchar(50) NOT NULL,
+  `equipo_costo` decimal(20,2) NOT NULL,
+  `equipo_imei` int(11) NOT NULL,
+  `id_sucursal` int(11) NOT NULL,
+  `equipo_modulo` varchar(20) NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 -- --------------------------------------------------------
@@ -7093,17 +7059,13 @@ CREATE TABLE IF NOT EXISTS `cotizacion_detalle` (
 -- Estructura de tabla para la tabla `gasto`
 --
 
-DROP TABLE IF EXISTS `gasto`;
-CREATE TABLE IF NOT EXISTS `gasto` (
-  `id_gasto` int NOT NULL AUTO_INCREMENT,
+CREATE TABLE `gasto` (
+  `id_gasto` int(11) NOT NULL,
   `gasto_fecha` date NOT NULL,
   `gasto_importe` decimal(20,2) NOT NULL,
-  `gasto_detalle` text CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NOT NULL,
-  `id_usuario` int NOT NULL,
-  `id_sucursal` int NOT NULL,
-  PRIMARY KEY (`id_gasto`),
-  KEY `id_sucursal` (`id_sucursal`),
-  KEY `id_usuario` (`id_usuario`)
+  `gasto_detalle` text NOT NULL,
+  `id_usuario` int(11) NOT NULL,
+  `id_sucursal` int(11) NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 -- --------------------------------------------------------
@@ -7112,21 +7074,10 @@ CREATE TABLE IF NOT EXISTS `gasto` (
 -- Estructura de tabla para la tabla `marca`
 --
 
-DROP TABLE IF EXISTS `marca`;
-CREATE TABLE IF NOT EXISTS `marca` (
-  `id_marca` int NOT NULL AUTO_INCREMENT,
-  `marca_descripcion` varchar(50) COLLATE utf8mb4_general_ci NOT NULL,
-  PRIMARY KEY (`id_marca`)
-) ENGINE=InnoDB AUTO_INCREMENT=4 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
-
---
--- Volcado de datos para la tabla `marca`
---
-
-INSERT INTO `marca` (`id_marca`, `marca_descripcion`) VALUES
-(1, 'Apple'),
-(2, 'Samsung'),
-(3, 'LG');
+CREATE TABLE `marca` (
+  `id_marca` int(11) NOT NULL,
+  `marca_descripcion` varchar(50) NOT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 -- --------------------------------------------------------
 
@@ -7134,24 +7085,11 @@ INSERT INTO `marca` (`id_marca`, `marca_descripcion`) VALUES
 -- Estructura de tabla para la tabla `modelo`
 --
 
-DROP TABLE IF EXISTS `modelo`;
-CREATE TABLE IF NOT EXISTS `modelo` (
-  `id_modelo` int NOT NULL AUTO_INCREMENT,
-  `modelo_descripcion` varchar(20) COLLATE utf8mb4_general_ci NOT NULL,
-  `id_marca` int NOT NULL,
-  PRIMARY KEY (`id_modelo`)
-) ENGINE=InnoDB AUTO_INCREMENT=6 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
-
---
--- Volcado de datos para la tabla `modelo`
---
-
-INSERT INTO `modelo` (`id_modelo`, `modelo_descripcion`, `id_marca`) VALUES
-(1, 'Iphone 15', 1),
-(2, 'Iphone 14', 1),
-(3, 'Iphone 13', 1),
-(4, 'Galaxy S24', 2),
-(5, 'Galaxy S23', 2);
+CREATE TABLE `modelo` (
+  `id_modelo` int(11) NOT NULL,
+  `modelo_descripcion` varchar(20) NOT NULL,
+  `id_marca` int(11) NOT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 -- --------------------------------------------------------
 
@@ -7159,47 +7097,36 @@ INSERT INTO `modelo` (`id_modelo`, `modelo_descripcion`, `id_marca`) VALUES
 -- Estructura de tabla para la tabla `orden`
 --
 
-DROP TABLE IF EXISTS `orden`;
-CREATE TABLE IF NOT EXISTS `orden` (
-  `id_orden` int NOT NULL AUTO_INCREMENT,
-  `orden_codigo` varchar(200) COLLATE utf8mb4_general_ci NOT NULL,
+CREATE TABLE `orden` (
+  `id_orden` int(11) NOT NULL,
+  `orden_codigo` varchar(200) NOT NULL,
   `orden_fecha` date NOT NULL,
-  `orden_hora` varchar(20) COLLATE utf8mb4_general_ci NOT NULL,
-  `orden_importe_lista` decimal(20,2) NOT NULL,
-  `orden_importe_efectivo` decimal(20,2) NOT NULL,
-  `orden_total` decimal(20,2) NOT NULL,
+  `orden_hora` varchar(20) NOT NULL,
+  `orden_total_lista` decimal(20,2) NOT NULL,
+  `orden_total_efectivo` decimal(20,2) NOT NULL,
   `orden_total_reparacion` decimal(20,2) NOT NULL,
   `orden_total_productos` decimal(20,2) NOT NULL,
-  `id_cliente` int NOT NULL,
-  `id_usuario` int NOT NULL,
-  `id_sucursal` int NOT NULL,
-  `orden_tipo` varchar(100) COLLATE utf8mb4_general_ci NOT NULL,
+  `id_cliente` int(11) NOT NULL,
+  `id_usuario` int(11) NOT NULL,
+  `id_sucursal` int(11) NOT NULL,
+  `orden_tipo` varchar(100) NOT NULL,
   `orden_fecha_aceptada` date NOT NULL,
   `orden_fecha_prometida` date NOT NULL,
   `orden_fecha_entregada` date NOT NULL,
   `orden_fecha_garantia` date NOT NULL,
-  `orden_estado` varchar(20) COLLATE utf8mb4_general_ci NOT NULL,
-  `orden_falla` text CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NOT NULL,
-  `orden_informe_tecnico` text CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NOT NULL,
-  `orden_equipo_ingresa_encendido` varchar(5) COLLATE utf8mb4_general_ci NOT NULL,
-  `orden_equipo_detalles_fisicos` text COLLATE utf8mb4_general_ci NOT NULL,
-  `orden_equipo_contrasena` varchar(50) COLLATE utf8mb4_general_ci NOT NULL,
-  `orden_observaciones` text CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NOT NULL,
-  `id_marca` int NOT NULL,
-  `id_modelo` int NOT NULL,
-  `orden_accesorios` text COLLATE utf8mb4_general_ci NOT NULL,
-  `id_tecnico` int NOT NULL,
-  `orden_telefonista` varchar(50) COLLATE utf8mb4_general_ci NOT NULL,
-  `id_caja` int NOT NULL,
-  PRIMARY KEY (`id_orden`),
-  KEY `id_sucursal` (`id_sucursal`),
-  KEY `id_usuario` (`id_usuario`),
-  KEY `id_cliente` (`id_cliente`),
-  KEY `orden_codigo` (`orden_codigo`),
-  KEY `id_marca` (`id_marca`),
-  KEY `id_tecnico` (`id_tecnico`),
-  KEY `id_caja` (`id_caja`),
-  KEY `id_modelo` (`id_modelo`)
+  `orden_estado` varchar(20) NOT NULL,
+  `orden_falla` text NOT NULL,
+  `orden_informe_tecnico` text NOT NULL,
+  `orden_equipo_ingresa_encendido` varchar(10) NOT NULL,
+  `orden_equipo_detalles_fisicos` text NOT NULL,
+  `orden_equipo_contrasena` varchar(50) NOT NULL,
+  `orden_observaciones` text NOT NULL,
+  `id_marca` int(11) NOT NULL,
+  `id_modelo` int(11) NOT NULL,
+  `orden_accesorios` text NOT NULL,
+  `id_tecnico` int(11) NOT NULL,
+  `orden_telefonista` varchar(50) NOT NULL,
+  `id_caja` int(11) NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 -- --------------------------------------------------------
@@ -7208,20 +7135,16 @@ CREATE TABLE IF NOT EXISTS `orden` (
 -- Estructura de tabla para la tabla `orden_productos`
 --
 
-DROP TABLE IF EXISTS `orden_productos`;
-CREATE TABLE IF NOT EXISTS `orden_productos` (
-  `id_orden_productos` int NOT NULL AUTO_INCREMENT,
-  `orden_detalle_cantidad_producto` int NOT NULL,
+CREATE TABLE `orden_productos` (
+  `id_orden_productos` int(11) NOT NULL,
+  `orden_detalle_cantidad_producto` int(11) NOT NULL,
   `orden_detalle_precio_compra_producto` decimal(20,2) NOT NULL,
-  `orden_detalle_precio_lista_producto` decimal(20,2) NOT NULL,
+  `orden_detalle_precio_venta_producto` decimal(20,2) NOT NULL,
   `orden_detalle_total` decimal(20,2) NOT NULL,
-  `id_articulo` int NOT NULL,
-  `orden_codigo` varchar(50) COLLATE utf8mb4_general_ci NOT NULL,
-  `orden_detalle_descripcion_producto` varchar(20) COLLATE utf8mb4_general_ci NOT NULL,
-  `orden_detalle_financiacion_producto` varchar(100) COLLATE utf8mb4_general_ci NOT NULL,
-  PRIMARY KEY (`id_orden_productos`),
-  KEY `orden_codigo` (`orden_codigo`),
-  KEY `id_articulo` (`id_articulo`)
+  `id_articulo` int(11) NOT NULL,
+  `orden_codigo` varchar(50) NOT NULL,
+  `orden_detalle_descripcion_producto` varchar(20) NOT NULL,
+  `orden_detalle_financiacion_producto` varchar(100) NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 -- --------------------------------------------------------
@@ -7230,18 +7153,32 @@ CREATE TABLE IF NOT EXISTS `orden_productos` (
 -- Estructura de tabla para la tabla `pago_orden`
 --
 
-DROP TABLE IF EXISTS `pago_orden`;
-CREATE TABLE IF NOT EXISTS `pago_orden` (
-  `id_pago_orden` int NOT NULL AUTO_INCREMENT,
+CREATE TABLE `pago_orden` (
+  `id_pago_orden` int(11) NOT NULL,
   `orden_pago_fecha` date NOT NULL,
-  `orden_pago_hora` varchar(20) COLLATE utf8mb4_general_ci NOT NULL,
-  `orden_pago_forma` varchar(20) COLLATE utf8mb4_general_ci NOT NULL,
-  `orden_pago_detalle` varchar(100) COLLATE utf8mb4_general_ci NOT NULL,
-  `orden_pago_importe` int NOT NULL,
-  `orden_codigo` varchar(200) COLLATE utf8mb4_general_ci NOT NULL,
-  `id_sucursal` int NOT NULL,
-  PRIMARY KEY (`id_pago_orden`),
-  KEY `orden_codigo` (`orden_codigo`)
+  `orden_pago_hora` varchar(20) NOT NULL,
+  `orden_pago_forma` varchar(20) NOT NULL,
+  `orden_pago_detalle` varchar(100) NOT NULL,
+  `orden_pago_importe` int(11) NOT NULL,
+  `orden_codigo` varchar(200) NOT NULL,
+  `id_sucursal` int(11) NOT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+
+-- --------------------------------------------------------
+
+--
+-- Estructura de tabla para la tabla `pago_sena`
+--
+
+CREATE TABLE `pago_sena` (
+  `id_pago_sena` int(11) NOT NULL,
+  `sena_pago_fecha` date NOT NULL,
+  `sena_pago_hora` varchar(20) NOT NULL,
+  `sena_pago_forma` varchar(20) NOT NULL,
+  `sena_pago_detalle` varchar(100) NOT NULL,
+  `sena_pago_importe` int(11) NOT NULL,
+  `id_sena` varchar(200) NOT NULL,
+  `id_sucursal` int(11) NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 -- --------------------------------------------------------
@@ -7250,18 +7187,32 @@ CREATE TABLE IF NOT EXISTS `pago_orden` (
 -- Estructura de tabla para la tabla `pago_venta`
 --
 
-DROP TABLE IF EXISTS `pago_venta`;
-CREATE TABLE IF NOT EXISTS `pago_venta` (
-  `id_pago_venta` int NOT NULL AUTO_INCREMENT,
+CREATE TABLE `pago_venta` (
+  `id_pago_venta` int(11) NOT NULL,
   `venta_pago_fecha` date NOT NULL,
-  `venta_pago_hora` varchar(20) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NOT NULL,
-  `venta_pago_forma` varchar(20) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NOT NULL,
-  `venta_pago_detalle` varchar(100) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NOT NULL,
-  `venta_pago_importe` int NOT NULL,
-  `venta_codigo` varchar(200) COLLATE utf8mb4_general_ci NOT NULL,
-  `id_sucursal` int NOT NULL,
-  PRIMARY KEY (`id_pago_venta`),
-  KEY `venta_codigo` (`venta_codigo`)
+  `venta_pago_hora` varchar(20) NOT NULL,
+  `venta_pago_forma` varchar(20) NOT NULL,
+  `venta_pago_detalle` varchar(100) NOT NULL,
+  `venta_pago_importe` int(11) NOT NULL,
+  `venta_codigo` varchar(200) NOT NULL,
+  `id_sucursal` int(11) NOT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+
+-- --------------------------------------------------------
+
+--
+-- Estructura de tabla para la tabla `pago_venta_equipo`
+--
+
+CREATE TABLE `pago_venta_equipo` (
+  `id_pago_venta_equipo` int(11) NOT NULL,
+  `venta_pago_equipo_fecha` date NOT NULL,
+  `venta_pago_equipo_hora` varchar(20) NOT NULL,
+  `venta_pago_equipo_forma` varchar(20) NOT NULL,
+  `venta_pago_equipo_detalle` varchar(100) NOT NULL,
+  `venta_pago_equipo_importe` int(11) NOT NULL,
+  `venta_equipo_codigo` varchar(200) NOT NULL,
+  `id_sucursal` int(11) NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 -- --------------------------------------------------------
@@ -7270,39 +7221,44 @@ CREATE TABLE IF NOT EXISTS `pago_venta` (
 -- Estructura de tabla para la tabla `rubro`
 --
 
-DROP TABLE IF EXISTS `rubro`;
-CREATE TABLE IF NOT EXISTS `rubro` (
-  `id_rubro` int NOT NULL AUTO_INCREMENT,
-  `rubro_descripcion` varchar(200) COLLATE utf8mb4_general_ci NOT NULL,
-  `id_sucursal` int NOT NULL,
-  PRIMARY KEY (`id_rubro`),
-  KEY `id_sucursal` (`id_sucursal`)
-) ENGINE=InnoDB AUTO_INCREMENT=20 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+CREATE TABLE `rubro` (
+  `id_rubro` int(11) NOT NULL,
+  `rubro_descripcion` varchar(200) NOT NULL,
+  `id_sucursal` int(11) NOT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 --
 -- Volcado de datos para la tabla `rubro`
 --
 
 INSERT INTO `rubro` (`id_rubro`, `rubro_descripcion`, `id_sucursal`) VALUES
-(1, 'computadora', 1),
-(2, 'celular', 1),
-(3, 'accesorio', 1),
-(4, 'cable', 1),
-(5, 'reloj', 1),
-(6, 'notebook', 1),
-(7, 'informatica', 1),
-(8, 'monitor', 1),
-(9, 'nose', 1),
-(10, 'wdasdasda', 1),
-(11, 'wdasdasdadwa', 1),
-(12, 'maquina', 1),
-(13, 'wqesad', 1),
-(14, 'pinchos', 1),
-(15, 'asdas', 1),
-(16, 'asdasw', 2),
-(17, 'augusr', 1),
-(18, 'rubrito', 1),
-(19, 'ponfelino', 1);
+(1, 'Funda', 1),
+(2, 'Celular', 1),
+(3, 'Cargador', 1),
+(4, 'Notebook', 1),
+(5, 'Otro', 2);
+
+-- --------------------------------------------------------
+
+--
+-- Estructura de tabla para la tabla `sena`
+--
+
+CREATE TABLE `sena` (
+  `id_sena` int(11) NOT NULL,
+  `sena_fecha` date NOT NULL,
+  `sena_hora` varchar(10) NOT NULL,
+  `sena_vendedor` varchar(50) NOT NULL,
+  `id_equipo` int(11) NOT NULL,
+  `id_cliente` int(11) NOT NULL,
+  `id_sucursal` int(11) NOT NULL,
+  `id_caja` int(11) NOT NULL,
+  `sena_ars` decimal(20,2) NOT NULL,
+  `sena_usd` decimal(20,2) NOT NULL,
+  `sena_pcp` decimal(20,2) NOT NULL,
+  `sena_pcu` decimal(20,2) NOT NULL,
+  `sena_fecha_entrega` date NOT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 -- --------------------------------------------------------
 
@@ -7310,19 +7266,17 @@ INSERT INTO `rubro` (`id_rubro`, `rubro_descripcion`, `id_sucursal`) VALUES
 -- Estructura de tabla para la tabla `sucursal`
 --
 
-DROP TABLE IF EXISTS `sucursal`;
-CREATE TABLE IF NOT EXISTS `sucursal` (
-  `id_sucursal` int NOT NULL AUTO_INCREMENT,
-  `sucursal_descripcion` varchar(100) COLLATE utf8mb4_general_ci NOT NULL,
-  `sucursal_direccion` varchar(100) COLLATE utf8mb4_general_ci NOT NULL,
-  `sucursal_localidad` varchar(30) COLLATE utf8mb4_general_ci NOT NULL,
-  `sucursal_telefono` varchar(20) COLLATE utf8mb4_general_ci NOT NULL,
-  `sucursal_email` varchar(100) COLLATE utf8mb4_general_ci NOT NULL,
-  `sucursal_pie_nota` text CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NOT NULL,
-  `sucursal_pie_comprobante` text CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NOT NULL,
-  `sucursal_firma_email` text CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NOT NULL,
-  PRIMARY KEY (`id_sucursal`)
-) ENGINE=InnoDB AUTO_INCREMENT=5 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+CREATE TABLE `sucursal` (
+  `id_sucursal` int(11) NOT NULL,
+  `sucursal_descripcion` varchar(100) NOT NULL,
+  `sucursal_direccion` varchar(100) NOT NULL,
+  `sucursal_localidad` varchar(30) NOT NULL,
+  `sucursal_telefono` varchar(20) NOT NULL,
+  `sucursal_email` varchar(100) NOT NULL,
+  `sucursal_pie_nota` text NOT NULL,
+  `sucursal_pie_comprobante` text NOT NULL,
+  `sucursal_firma_email` text NOT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 --
 -- Volcado de datos para la tabla `sucursal`
@@ -7339,21 +7293,10 @@ INSERT INTO `sucursal` (`id_sucursal`, `sucursal_descripcion`, `sucursal_direcci
 -- Estructura de tabla para la tabla `tecnico`
 --
 
-DROP TABLE IF EXISTS `tecnico`;
-CREATE TABLE IF NOT EXISTS `tecnico` (
-  `id_tecnico` int NOT NULL AUTO_INCREMENT,
-  `tecnico_descripcion` varchar(50) COLLATE utf8mb4_general_ci NOT NULL,
-  PRIMARY KEY (`id_tecnico`)
-) ENGINE=InnoDB AUTO_INCREMENT=4 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
-
---
--- Volcado de datos para la tabla `tecnico`
---
-
-INSERT INTO `tecnico` (`id_tecnico`, `tecnico_descripcion`) VALUES
-(1, 'A REPARAR'),
-(2, 'AUGUSTO'),
-(3, 'MATIAS');
+CREATE TABLE `tecnico` (
+  `id_tecnico` int(11) NOT NULL,
+  `tecnico_descripcion` varchar(50) NOT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 -- --------------------------------------------------------
 
@@ -7361,20 +7304,18 @@ INSERT INTO `tecnico` (`id_tecnico`, `tecnico_descripcion`) VALUES
 -- Estructura de tabla para la tabla `usuario`
 --
 
-DROP TABLE IF EXISTS `usuario`;
-CREATE TABLE IF NOT EXISTS `usuario` (
-  `id_usuario` int NOT NULL AUTO_INCREMENT,
-  `usuario_nombre_completo` varchar(200) COLLATE utf8mb4_general_ci NOT NULL,
-  `usuario_email` varchar(100) COLLATE utf8mb4_general_ci NOT NULL,
-  `usuario_telefono` bigint NOT NULL,
-  `usuario_dni` int NOT NULL,
+CREATE TABLE `usuario` (
+  `id_usuario` int(11) NOT NULL,
+  `usuario_nombre_completo` varchar(200) NOT NULL,
+  `usuario_email` varchar(100) NOT NULL,
+  `usuario_telefono` bigint(20) NOT NULL,
+  `usuario_dni` int(11) NOT NULL,
   `usuario_nacimiento` date NOT NULL,
-  `usuario_usuario` varchar(20) COLLATE utf8mb4_general_ci NOT NULL,
-  `usuario_clave` varchar(200) COLLATE utf8mb4_general_ci NOT NULL,
-  `usuario_rol` varchar(50) COLLATE utf8mb4_general_ci NOT NULL,
-  `usuario_activo` varchar(510) COLLATE utf8mb4_general_ci NOT NULL,
-  PRIMARY KEY (`id_usuario`)
-) ENGINE=InnoDB AUTO_INCREMENT=6 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+  `usuario_usuario` varchar(20) NOT NULL,
+  `usuario_clave` varchar(200) NOT NULL,
+  `usuario_rol` varchar(50) NOT NULL,
+  `usuario_activo` varchar(510) NOT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 --
 -- Volcado de datos para la tabla `usuario`
@@ -7382,10 +7323,9 @@ CREATE TABLE IF NOT EXISTS `usuario` (
 
 INSERT INTO `usuario` (`id_usuario`, `usuario_nombre_completo`, `usuario_email`, `usuario_telefono`, `usuario_dni`, `usuario_nacimiento`, `usuario_usuario`, `usuario_clave`, `usuario_rol`, `usuario_activo`) VALUES
 (1, 'Augusto Rolandelli', 'augus@gmail.com', 2323212593, 44357255, '2024-08-19', 'augus', 'agucapo123', 'Administrador', 'SI'),
-(2, 'Augusto Martinez', 'augusm@gmail.com', 2323212121, 0, '0000-00-00', 'augusm', 'agucapo', 'Vendedor', 'SI'),
-(3, 'Juan Perez', 'juan@gmail.com', 2323643464, 28586621, '1972-10-18', 'juan', 'agucapo', 'Tecnico', 'SI'),
+(3, 'admin', 'admin@gmail.com', 0, 0, '0000-00-00', 'admin', 'admin', 'Administrador', 'SI'),
 (4, 'Ventas Central', 'ventascentral', 0, 0, '0000-00-00', 'ventascentral', 'ventascentral', 'Vendedor', 'SI'),
-(5, 'Matias', 'mati@gmail.com', 2323232323, 44444444, '2024-10-07', 'mati', 'agucapo123', 'Vendedor', '');
+(5, 'VentasSM', '', 0, 0, '0000-00-00', 'ventasm', 'ventas', 'Vendedor', 'SI');
 
 -- --------------------------------------------------------
 
@@ -7393,24 +7333,18 @@ INSERT INTO `usuario` (`id_usuario`, `usuario_nombre_completo`, `usuario_email`,
 -- Estructura de tabla para la tabla `venta`
 --
 
-DROP TABLE IF EXISTS `venta`;
-CREATE TABLE IF NOT EXISTS `venta` (
-  `id_venta` int NOT NULL AUTO_INCREMENT,
-  `venta_codigo` varchar(200) COLLATE utf8mb4_general_ci NOT NULL,
+CREATE TABLE `venta` (
+  `id_venta` int(11) NOT NULL,
+  `venta_codigo` varchar(200) NOT NULL,
   `venta_fecha` date NOT NULL,
-  `venta_hora` varchar(30) COLLATE utf8mb4_general_ci DEFAULT NULL,
+  `venta_hora` varchar(30) DEFAULT NULL,
   `venta_importe` decimal(20,2) NOT NULL,
-  `venta_observaciones` text COLLATE utf8mb4_general_ci NOT NULL,
-  `venta_vendedor` varchar(30) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NOT NULL,
-  `id_sucursal` int NOT NULL,
-  `id_cliente` int NOT NULL,
-  `id_usuario` int NOT NULL,
-  `id_caja` int NOT NULL,
-  PRIMARY KEY (`id_venta`),
-  KEY `venta_codigo` (`venta_codigo`),
-  KEY `id_sucursal` (`id_sucursal`),
-  KEY `id_cliente` (`id_cliente`),
-  KEY `id_usuario` (`id_usuario`)
+  `venta_observaciones` text NOT NULL,
+  `venta_vendedor` varchar(30) NOT NULL,
+  `id_sucursal` int(11) NOT NULL,
+  `id_cliente` int(11) NOT NULL,
+  `id_usuario` int(11) NOT NULL,
+  `id_caja` int(11) NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 -- --------------------------------------------------------
@@ -7419,21 +7353,337 @@ CREATE TABLE IF NOT EXISTS `venta` (
 -- Estructura de tabla para la tabla `venta_detalle`
 --
 
-DROP TABLE IF EXISTS `venta_detalle`;
-CREATE TABLE IF NOT EXISTS `venta_detalle` (
-  `id_venta_detalle` int NOT NULL AUTO_INCREMENT,
-  `venta_detalle_cantidad_producto` int NOT NULL,
+CREATE TABLE `venta_detalle` (
+  `id_venta_detalle` int(11) NOT NULL,
+  `venta_detalle_cantidad_producto` int(11) NOT NULL,
   `venta_detalle_precio_compra_producto` decimal(20,2) NOT NULL,
   `venta_detalle_precio_venta_producto` decimal(20,2) NOT NULL,
-  `venta_detalle_financiacion_producto` varchar(100) COLLATE utf8mb4_general_ci NOT NULL,
-  `venta_detalle_descripcion_producto` varchar(100) COLLATE utf8mb4_general_ci NOT NULL,
+  `venta_detalle_financiacion_producto` varchar(100) NOT NULL,
+  `venta_detalle_descripcion_producto` varchar(100) NOT NULL,
   `venta_detalle_total` decimal(20,2) NOT NULL,
-  `id_articulo` int NOT NULL,
-  `venta_codigo` varchar(200) COLLATE utf8mb4_general_ci NOT NULL,
-  PRIMARY KEY (`id_venta_detalle`),
-  KEY `id_articulo` (`id_articulo`),
-  KEY `venta_codigo` (`venta_codigo`)
+  `id_articulo` int(11) NOT NULL,
+  `venta_codigo` varchar(200) NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+
+-- --------------------------------------------------------
+
+--
+-- Estructura de tabla para la tabla `venta_equipo`
+--
+
+CREATE TABLE `venta_equipo` (
+  `id_venta_equipo` int(11) NOT NULL,
+  `venta_equipo_codigo` varchar(10) NOT NULL,
+  `venta_equipo_fecha` date NOT NULL,
+  `venta_equipo_hora` varchar(10) NOT NULL,
+  `id_equipo` int(11) NOT NULL,
+  `venta_equipo_financiacion` varchar(20) NOT NULL,
+  `venta_equipo_importe` decimal(20,2) NOT NULL,
+  `venta_equipo_vendedor` varchar(30) NOT NULL,
+  `id_caja` int(11) NOT NULL,
+  `id_cliente` int(11) NOT NULL,
+  `id_sucursal` int(11) NOT NULL
+) ENGINE=MyISAM DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+
+--
+-- Índices para tablas volcadas
+--
+
+--
+-- Indices de la tabla `articulo`
+--
+ALTER TABLE `articulo`
+  ADD PRIMARY KEY (`id_articulo`),
+  ADD KEY `id_rubro` (`id_rubro`),
+  ADD KEY `id_sucursal` (`id_sucursal`);
+
+--
+-- Indices de la tabla `caja`
+--
+ALTER TABLE `caja`
+  ADD PRIMARY KEY (`id_caja`),
+  ADD KEY `id_sucursal` (`id_sucursal`),
+  ADD KEY `id_sucursal_2` (`id_sucursal`);
+
+--
+-- Indices de la tabla `caja_movimiento`
+--
+ALTER TABLE `caja_movimiento`
+  ADD PRIMARY KEY (`id_caja_movimiento`);
+
+--
+-- Indices de la tabla `cliente`
+--
+ALTER TABLE `cliente`
+  ADD PRIMARY KEY (`id_cliente`);
+
+--
+-- Indices de la tabla `equipo`
+--
+ALTER TABLE `equipo`
+  ADD PRIMARY KEY (`id_equipo`),
+  ADD KEY `id_sucursal` (`id_sucursal`);
+
+--
+-- Indices de la tabla `gasto`
+--
+ALTER TABLE `gasto`
+  ADD PRIMARY KEY (`id_gasto`),
+  ADD KEY `id_sucursal` (`id_sucursal`),
+  ADD KEY `id_usuario` (`id_usuario`);
+
+--
+-- Indices de la tabla `marca`
+--
+ALTER TABLE `marca`
+  ADD PRIMARY KEY (`id_marca`);
+
+--
+-- Indices de la tabla `modelo`
+--
+ALTER TABLE `modelo`
+  ADD PRIMARY KEY (`id_modelo`);
+
+--
+-- Indices de la tabla `orden`
+--
+ALTER TABLE `orden`
+  ADD PRIMARY KEY (`id_orden`),
+  ADD KEY `id_sucursal` (`id_sucursal`),
+  ADD KEY `id_usuario` (`id_usuario`),
+  ADD KEY `id_cliente` (`id_cliente`),
+  ADD KEY `orden_codigo` (`orden_codigo`),
+  ADD KEY `id_marca` (`id_marca`),
+  ADD KEY `id_tecnico` (`id_tecnico`),
+  ADD KEY `id_caja` (`id_caja`),
+  ADD KEY `id_modelo` (`id_modelo`);
+
+--
+-- Indices de la tabla `orden_productos`
+--
+ALTER TABLE `orden_productos`
+  ADD PRIMARY KEY (`id_orden_productos`),
+  ADD KEY `orden_codigo` (`orden_codigo`),
+  ADD KEY `id_articulo` (`id_articulo`);
+
+--
+-- Indices de la tabla `pago_orden`
+--
+ALTER TABLE `pago_orden`
+  ADD PRIMARY KEY (`id_pago_orden`),
+  ADD KEY `orden_codigo` (`orden_codigo`);
+
+--
+-- Indices de la tabla `pago_sena`
+--
+ALTER TABLE `pago_sena`
+  ADD PRIMARY KEY (`id_pago_sena`),
+  ADD KEY `id_sena` (`id_sena`);
+
+--
+-- Indices de la tabla `pago_venta`
+--
+ALTER TABLE `pago_venta`
+  ADD PRIMARY KEY (`id_pago_venta`),
+  ADD KEY `venta_codigo` (`venta_codigo`);
+
+--
+-- Indices de la tabla `pago_venta_equipo`
+--
+ALTER TABLE `pago_venta_equipo`
+  ADD PRIMARY KEY (`id_pago_venta_equipo`),
+  ADD KEY `venta_equipo_codigo` (`venta_equipo_codigo`);
+
+--
+-- Indices de la tabla `rubro`
+--
+ALTER TABLE `rubro`
+  ADD PRIMARY KEY (`id_rubro`),
+  ADD KEY `id_sucursal` (`id_sucursal`);
+
+--
+-- Indices de la tabla `sena`
+--
+ALTER TABLE `sena`
+  ADD PRIMARY KEY (`id_sena`);
+
+--
+-- Indices de la tabla `sucursal`
+--
+ALTER TABLE `sucursal`
+  ADD PRIMARY KEY (`id_sucursal`);
+
+--
+-- Indices de la tabla `tecnico`
+--
+ALTER TABLE `tecnico`
+  ADD PRIMARY KEY (`id_tecnico`);
+
+--
+-- Indices de la tabla `usuario`
+--
+ALTER TABLE `usuario`
+  ADD PRIMARY KEY (`id_usuario`);
+
+--
+-- Indices de la tabla `venta`
+--
+ALTER TABLE `venta`
+  ADD PRIMARY KEY (`id_venta`),
+  ADD KEY `venta_codigo` (`venta_codigo`),
+  ADD KEY `id_sucursal` (`id_sucursal`),
+  ADD KEY `id_cliente` (`id_cliente`),
+  ADD KEY `id_usuario` (`id_usuario`);
+
+--
+-- Indices de la tabla `venta_detalle`
+--
+ALTER TABLE `venta_detalle`
+  ADD PRIMARY KEY (`id_venta_detalle`),
+  ADD KEY `id_articulo` (`id_articulo`),
+  ADD KEY `venta_codigo` (`venta_codigo`);
+
+--
+-- Indices de la tabla `venta_equipo`
+--
+ALTER TABLE `venta_equipo`
+  ADD PRIMARY KEY (`id_venta_equipo`);
+
+--
+-- AUTO_INCREMENT de las tablas volcadas
+--
+
+--
+-- AUTO_INCREMENT de la tabla `articulo`
+--
+ALTER TABLE `articulo`
+  MODIFY `id_articulo` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=446;
+
+--
+-- AUTO_INCREMENT de la tabla `caja`
+--
+ALTER TABLE `caja`
+  MODIFY `id_caja` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=8;
+
+--
+-- AUTO_INCREMENT de la tabla `caja_movimiento`
+--
+ALTER TABLE `caja_movimiento`
+  MODIFY `id_caja_movimiento` int(11) NOT NULL AUTO_INCREMENT;
+
+--
+-- AUTO_INCREMENT de la tabla `cliente`
+--
+ALTER TABLE `cliente`
+  MODIFY `id_cliente` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=7440;
+
+--
+-- AUTO_INCREMENT de la tabla `equipo`
+--
+ALTER TABLE `equipo`
+  MODIFY `id_equipo` int(11) NOT NULL AUTO_INCREMENT;
+
+--
+-- AUTO_INCREMENT de la tabla `gasto`
+--
+ALTER TABLE `gasto`
+  MODIFY `id_gasto` int(11) NOT NULL AUTO_INCREMENT;
+
+--
+-- AUTO_INCREMENT de la tabla `marca`
+--
+ALTER TABLE `marca`
+  MODIFY `id_marca` int(11) NOT NULL AUTO_INCREMENT;
+
+--
+-- AUTO_INCREMENT de la tabla `modelo`
+--
+ALTER TABLE `modelo`
+  MODIFY `id_modelo` int(11) NOT NULL AUTO_INCREMENT;
+
+--
+-- AUTO_INCREMENT de la tabla `orden`
+--
+ALTER TABLE `orden`
+  MODIFY `id_orden` int(11) NOT NULL AUTO_INCREMENT;
+
+--
+-- AUTO_INCREMENT de la tabla `orden_productos`
+--
+ALTER TABLE `orden_productos`
+  MODIFY `id_orden_productos` int(11) NOT NULL AUTO_INCREMENT;
+
+--
+-- AUTO_INCREMENT de la tabla `pago_orden`
+--
+ALTER TABLE `pago_orden`
+  MODIFY `id_pago_orden` int(11) NOT NULL AUTO_INCREMENT;
+
+--
+-- AUTO_INCREMENT de la tabla `pago_sena`
+--
+ALTER TABLE `pago_sena`
+  MODIFY `id_pago_sena` int(11) NOT NULL AUTO_INCREMENT;
+
+--
+-- AUTO_INCREMENT de la tabla `pago_venta`
+--
+ALTER TABLE `pago_venta`
+  MODIFY `id_pago_venta` int(11) NOT NULL AUTO_INCREMENT;
+
+--
+-- AUTO_INCREMENT de la tabla `pago_venta_equipo`
+--
+ALTER TABLE `pago_venta_equipo`
+  MODIFY `id_pago_venta_equipo` int(11) NOT NULL AUTO_INCREMENT;
+
+--
+-- AUTO_INCREMENT de la tabla `rubro`
+--
+ALTER TABLE `rubro`
+  MODIFY `id_rubro` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=6;
+
+--
+-- AUTO_INCREMENT de la tabla `sena`
+--
+ALTER TABLE `sena`
+  MODIFY `id_sena` int(11) NOT NULL AUTO_INCREMENT;
+
+--
+-- AUTO_INCREMENT de la tabla `sucursal`
+--
+ALTER TABLE `sucursal`
+  MODIFY `id_sucursal` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=5;
+
+--
+-- AUTO_INCREMENT de la tabla `tecnico`
+--
+ALTER TABLE `tecnico`
+  MODIFY `id_tecnico` int(11) NOT NULL AUTO_INCREMENT;
+
+--
+-- AUTO_INCREMENT de la tabla `usuario`
+--
+ALTER TABLE `usuario`
+  MODIFY `id_usuario` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=7;
+
+--
+-- AUTO_INCREMENT de la tabla `venta`
+--
+ALTER TABLE `venta`
+  MODIFY `id_venta` int(11) NOT NULL AUTO_INCREMENT;
+
+--
+-- AUTO_INCREMENT de la tabla `venta_detalle`
+--
+ALTER TABLE `venta_detalle`
+  MODIFY `id_venta_detalle` int(11) NOT NULL AUTO_INCREMENT;
+
+--
+-- AUTO_INCREMENT de la tabla `venta_equipo`
+--
+ALTER TABLE `venta_equipo`
+  MODIFY `id_venta_equipo` int(11) NOT NULL AUTO_INCREMENT;
 
 --
 -- Restricciones para tablas volcadas
@@ -7447,14 +7697,6 @@ ALTER TABLE `articulo`
   ADD CONSTRAINT `articulo_ibfk_2` FOREIGN KEY (`id_sucursal`) REFERENCES `sucursal` (`id_sucursal`);
 
 --
--- Filtros para la tabla `cotizacion`
---
-ALTER TABLE `cotizacion`
-  ADD CONSTRAINT `cotizacion_ibfk_1` FOREIGN KEY (`id_usuario`) REFERENCES `usuario` (`id_usuario`),
-  ADD CONSTRAINT `cotizacion_ibfk_2` FOREIGN KEY (`id_sucursal`) REFERENCES `sucursal` (`id_sucursal`),
-  ADD CONSTRAINT `cotizacion_ibfk_3` FOREIGN KEY (`id_cliente`) REFERENCES `cliente` (`id_cliente`);
-
---
 -- Filtros para la tabla `orden`
 --
 ALTER TABLE `orden`
@@ -7463,39 +7705,6 @@ ALTER TABLE `orden`
   ADD CONSTRAINT `orden_ibfk_3` FOREIGN KEY (`id_cliente`) REFERENCES `cliente` (`id_cliente`),
   ADD CONSTRAINT `orden_ibfk_4` FOREIGN KEY (`id_marca`) REFERENCES `marca` (`id_marca`),
   ADD CONSTRAINT `orden_ibfk_5` FOREIGN KEY (`id_tecnico`) REFERENCES `tecnico` (`id_tecnico`);
-
---
--- Filtros para la tabla `pago_orden`
---
-ALTER TABLE `pago_orden`
-  ADD CONSTRAINT `pago_orden_ibfk_1` FOREIGN KEY (`orden_codigo`) REFERENCES `orden` (`orden_codigo`);
-
---
--- Filtros para la tabla `pago_venta`
---
-ALTER TABLE `pago_venta`
-  ADD CONSTRAINT `pago_venta_ibfk_1` FOREIGN KEY (`venta_codigo`) REFERENCES `venta` (`venta_codigo`);
-
---
--- Filtros para la tabla `rubro`
---
-ALTER TABLE `rubro`
-  ADD CONSTRAINT `rubro_ibfk_1` FOREIGN KEY (`id_sucursal`) REFERENCES `sucursal` (`id_sucursal`);
-
---
--- Filtros para la tabla `venta`
---
-ALTER TABLE `venta`
-  ADD CONSTRAINT `venta_ibfk_1` FOREIGN KEY (`id_cliente`) REFERENCES `cliente` (`id_cliente`),
-  ADD CONSTRAINT `venta_ibfk_2` FOREIGN KEY (`id_sucursal`) REFERENCES `sucursal` (`id_sucursal`),
-  ADD CONSTRAINT `venta_ibfk_3` FOREIGN KEY (`id_usuario`) REFERENCES `usuario` (`id_usuario`);
-
---
--- Filtros para la tabla `venta_detalle`
---
-ALTER TABLE `venta_detalle`
-  ADD CONSTRAINT `venta_detalle_ibfk_1` FOREIGN KEY (`id_articulo`) REFERENCES `articulo` (`id_articulo`),
-  ADD CONSTRAINT `venta_detalle_ibfk_2` FOREIGN KEY (`venta_codigo`) REFERENCES `venta` (`venta_codigo`);
 COMMIT;
 
 /*!40101 SET CHARACTER_SET_CLIENT=@OLD_CHARACTER_SET_CLIENT */;
