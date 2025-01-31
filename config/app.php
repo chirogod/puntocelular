@@ -30,6 +30,9 @@
 	/* dolar punto celular */
 	const USD_PC = 1300;
 
+	/* dolar punto celular */
+	const COSTO_OPERATIVO_HORA = 24000;
+
 	/*---------- Formas de pago ----------*/
 	const FORMAS_PAGO = ["Efectivo", "Transferencia", "Tarjeta de credito", "Tarjeta de debito", "QR MP", "Cuenta DNI"];
 

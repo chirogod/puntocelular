@@ -163,6 +163,16 @@
 								</div>
 							</a>
 						</li>
+						<li class="full-width">
+							<a href="<?php echo APP_URL; ?>calcularCostos/" class="full-width">
+								<div class="navLateral-body-cl">
+									<i class="fas fa-calculator fa-fw"></i>
+								</div>
+								<div class="navLateral-body-cr">
+									Calculadora de costos
+								</div>
+							</a>
+						</li>
 					</ul>
 				</li>
 
