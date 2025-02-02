@@ -1123,7 +1123,7 @@
 		private function calcularOperadorFinanciacion($financiacion) {
 			switch ($financiacion) {
 				case "Efectivo":
-					return 1.05;
+					return 1;
 				case "3cuotas":
 					return 1.4;
 				case "6cuotas":

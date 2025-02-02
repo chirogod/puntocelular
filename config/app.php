@@ -28,7 +28,7 @@
 	const MONEDA_SEPARADOR_DECIMAL=",";
 
 	/* dolar punto celular */
-	const USD_PC = 1300;
+	const USD_PC = 1350;
 
 	/* dolar punto celular */
 	const COSTO_OPERATIVO_HORA = 24000;
@@ -37,7 +37,7 @@
 	const FORMAS_PAGO = ["Efectivo", "Transferencia", "Tarjeta de credito", "Tarjeta de debito", "QR MP", "Cuenta DNI"];
 
 	/*----------  Tipos de almacenamientos para equipo  ----------*/
-	const ALMACENAMIENTO=["32GB","64GB","128GB","256GB","512GB", "1TB"];
+	const ALMACENAMIENTO=["16GB","32GB","64GB","128GB","256GB","512GB", "1TB"];
 
 	/*----------  Tipos de almacenamientos para equipo  ----------*/
 	const RAM=["2GB","3GB","4GB","6GB","8GB", "12GB"];

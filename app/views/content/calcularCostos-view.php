@@ -78,6 +78,7 @@
                 <tr>
                     <td>3 CUOTAS SIN INTERÉS</td>
                     <td class="has-text-right" id="cuotas_3_sin_int"></td>
+                    <td class="has-text-right" id="precio_cuota_3"></td>
                 </tr>
                 <tr>
                     <td>20% DE DESCUENTO EN EFECTIVO</td>
@@ -86,10 +87,12 @@
                 <tr>
                     <td>6 CUOTAS</td>
                     <td class="has-text-right" id="cuotas_6"></td>
+                    <td class="has-text-right" id="precio_cuota_6"></td>
                 </tr>
                 <tr>
                     <td>12 CUOTAS</td>
                     <td class="has-text-right" id="cuotas_12"></td>
+                    <td class="has-text-right" id="precio_cuota_12"></td>
                 </tr>
                 <tr>
                     <td>UPSELLING EFECTIVO</td>
@@ -98,6 +101,7 @@
                 <tr>
                     <td>UPSELLING 3 CUOTAS</td>
                     <td class="has-text-right" id="upsel_3_cuotas"></td>
+                    <td class="has-text-right" id="precio_cuota_upsel_3"></td>
                 </tr>
             </tbody>
         </table>
@@ -140,13 +144,21 @@
             var mano_de_obra = descuento_efectivo - costoRepuesto;
             var upsel_efectivo = ((mano_de_obra - costoRepuesto) / 2) + costoRepuesto;
             var upsel_3_cuotas = upsel_efectivo * 1.35;
+            var precio_cuota_3 = cuotas_sin_interes/3;
+            var precio_cuota_6 = cuotas_6/6;
+            var precio_cuota_12 = cuotas_12/12;
+            var precio_cuota_upsel_3 = upsel_3_cuotas/3;
 
             document.getElementById('cuotas_3_sin_int').innerHTML = "$" + cuotas_sin_interes.toLocaleString('es-AR', { minimumFractionDigits: 2, maximumFractionDigits: 2 });
+            document.getElementById('precio_cuota_3').innerHTML = "$" + precio_cuota_3.toLocaleString('es-AR', { minimumFractionDigits: 2, maximumFractionDigits: 2 });
             document.getElementById('descuento_efectivo').innerHTML = "$" + descuento_efectivo.toLocaleString('es-AR', { minimumFractionDigits: 2, maximumFractionDigits: 2 });
             document.getElementById('cuotas_6').innerHTML = "$" + cuotas_6.toLocaleString('es-AR', { minimumFractionDigits: 2, maximumFractionDigits: 2 });
+            document.getElementById('precio_cuota_6').innerHTML = "$" + precio_cuota_6.toLocaleString('es-AR', { minimumFractionDigits: 2, maximumFractionDigits: 2 });
             document.getElementById('cuotas_12').innerHTML = "$" + cuotas_12.toLocaleString('es-AR', { minimumFractionDigits: 2, maximumFractionDigits: 2 });
+            document.getElementById('precio_cuota_12').innerHTML = "$" + precio_cuota_12.toLocaleString('es-AR', { minimumFractionDigits: 2, maximumFractionDigits: 2 });
             document.getElementById('upsel_efectivo').innerHTML = "$" + upsel_efectivo.toLocaleString('es-AR', { minimumFractionDigits: 2, maximumFractionDigits: 2 });
             document.getElementById('upsel_3_cuotas').innerHTML = "$" + upsel_3_cuotas.toLocaleString('es-AR', { minimumFractionDigits: 2, maximumFractionDigits: 2 });
+            document.getElementById('precio_cuota_upsel_3').innerHTML = "$" + precio_cuota_upsel_3.toLocaleString('es-AR', { minimumFractionDigits: 2, maximumFractionDigits: 2 });
         }
     }
 

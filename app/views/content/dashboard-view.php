@@ -43,9 +43,8 @@
 ?>
 
 <div class="container pb-6 pt-6 is-max-desktop">
-  <div class="columns is-multiline">
-
-    <div class="column is-one-third">
+  <div class="columns">
+    <div class="column is-one-quarter">
       <div class="card">
         <div class="card-content has-text-centered">
           <p class="heading">Caja Física</p>
@@ -53,7 +52,7 @@
         </div>
       </div>
     </div>
-
+    <!-- Tarjeta Ventas del Día -->
     <div class="column is-one-quarter">
       <div class="card">
         <div class=" card-content has-text-centered">
@@ -65,54 +64,80 @@
 
     <!-- Tarjeta Realizar Venta -->
     <div class="column is-one-quarter">
-      <a href="<?php echo APP_URL; ?>saleNew/" class="has-text-dark">
-        <div class="card">
-          <div class="card-content has-text-centered">
-            <p class="heading">Realizar Venta</p>
-            <p class="title">
-                <i class="fas fa-shopping-cart fa-1x"></i>
-            </p>
-          </div>
-        </div>
-      </a>
+        <a href="<?php echo APP_URL; ?>saleNew/" class="has-text-dark">
+            <div class="card">
+                <div class="card-content has-text-centered">
+                    <p class="heading">Realizar Venta</p>
+                    <p class="title">
+                        <i class="fas fa-shopping-cart fa-1x"></i>
+                    </p>
+                </div>
+            </div>
+        </a>
     </div>
 
-    
-
-    <div class="column is-one-third">
-      <div class="card">
-        <div class="card-content has-text-centered">
-          <p class="heading">Total del Día</p>
-          <p class="title">$<?php echo $total_montos_caja_dia; ?></p>
-        </div>
-      </div>
-    </div>
-
+    <!-- Nueva Tarjeta -->
     <div class="column is-one-quarter">
-      <div class="card">
-        <div class="card-content has-text-centered">
-          <p class="heading">Órdenes del Día</p>
-          <p class="title"><?php echo $total_ordenes_dia; ?></p>
-        </div>
-      </div>
-    </div>
-
-    <!-- Tarjeta Realizar Orden -->
-    <div class="column is-one-quarter">
-      <a href="<?php echo APP_URL; ?>ordenNew/" class="has-text-dark">
-        <div class="card">
-          <div class="card-content has-text-centered">
-            <p class="heading">Realizar Orden</p>
-            <p class="title">
-                <i class="fas fa-screwdriver-wrench fa-1x"></i>
-            </p>
-          </div>
-        </div>
-      </a>
+        <a href="<?php echo APP_URL; ?>equipoList/" class="has-text-dark">
+            <div class="card">
+                <div class="card-content has-text-centered">
+                    <p class="heading">Lista equipos</p>
+                    <p class="title">
+                        <i class="fas fa-list fa-1x"></i>
+                    </p>
+                </div>
+            </div>
+        </a>
     </div>
   </div>
 
-  <div class="columns is-multiline">
-    
+  <div class="columns">
+      <!-- Tarjeta Total del Día -->
+      <div class="column is-one-quarter">
+          <div class="card">
+              <div class="card-content has-text-centered">
+                  <p class="heading">Total del Día</p>
+                  <p class="title">$<?php echo $total_montos_caja_dia; ?></p>
+              </div>
+          </div>
+      </div>
+
+      <!-- Tarjeta Órdenes del Día -->
+      <div class="column is-one-quarter">
+          <div class="card">
+              <div class="card-content has-text-centered">
+                  <p class="heading">Órdenes del Día</p>
+                  <p class="title"><?php echo $total_ordenes_dia; ?></p>
+              </div>
+          </div>
+      </div>
+
+      <!-- Tarjeta Realizar Orden -->
+      <div class="column is-one-quarter">
+        <a href="<?php echo APP_URL; ?>ordenNew/" class="has-text-dark">
+          <div class="card">
+            <div class="card-content has-text-centered">
+              <p class="heading">Realizar Orden</p>
+              <p class="title">
+                  <i class="fas fa-screwdriver-wrench fa-1x"></i>
+              </p>
+            </div>
+          </div>
+        </a>
+      </div>
+
+      <!-- Tarjeta calculadora de cotos -->
+      <div class="column is-one-quarter">
+        <a href="<?php echo APP_URL; ?>calcularCostos/" class="has-text-dark">
+          <div class="card">
+            <div class="card-content has-text-centered">
+              <p class="heading">Calcular costos</p>
+              <p class="title">
+                  <i class="fas fa-calculator fa-1x"></i>
+              </p>
+            </div>
+          </div>
+        </a>
+      </div>
   </div>
 </div>
