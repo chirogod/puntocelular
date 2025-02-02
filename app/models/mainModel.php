@@ -107,6 +107,11 @@
 					];
 				}
 			}
+			
+			// Ordenar alfabéticamente por 'modelo_descripcion'
+			usort($modelos, function ($a, $b) {
+				return strcmp($a['modelo_descripcion'], $b['modelo_descripcion']);
+			});
 		
 			return $modelos;
 		}

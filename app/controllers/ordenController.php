@@ -967,7 +967,7 @@
 						<td class="has-text-centered">'.$rows['articulo_codigo'].'</td>
 						<td class="has-text-centered">'.$rows['articulo_descripcion'].'</td>
 						<td class="has-text-centered">'.$rows['articulo_precio_venta'] * 1.4.'</td>
-						<td class="has-text-centered">'.$rows['articulo_precio_venta'] * 1.05.'</td>
+						<td class="has-text-centered">'.$rows['articulo_precio_venta'] .'</td>
 						<td class="has-text-centered">
 							<button type="button" class="button is-link is-rounded is-small" onclick="agregar_codigo(\''.$rows['articulo_codigo'].'\')"><i class="fas fa-plus-circle"></i></button>
 						</td>
