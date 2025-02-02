@@ -822,13 +822,14 @@
 			$pagina = (isset($pagina) && $pagina>0) ? (int) $pagina : 1;
 			$inicio = ($pagina>0) ? (($pagina * $registros)-$registros) : 0;
 
-			$campos_tablas = "orden.id_orden, orden.orden_codigo, orden.orden_fecha, orden.orden_hora, orden.orden_total_lista, orden.orden_total_efectivo, orden.id_usuario, orden.id_cliente, orden.id_caja, usuario.id_usuario, usuario.usuario_nombre_completo, cliente.id_cliente, cliente.cliente_nombre_completo";
+			$campos_tablas = "orden.id_orden, orden.orden_codigo, orden.orden_fecha, orden.orden_hora, orden.orden_total_lista, orden.orden_total_efectivo, orden.id_usuario, orden.id_cliente, orden.id_caja, orden.id_sucursal, sucursal.id_sucursal, sucursal.sucursal_descripcion, usuario.id_usuario, usuario.usuario_nombre_completo, cliente.id_cliente, cliente.cliente_nombre_completo";
 
-			$consulta_datos = "SELECT orden.id_orden, orden.orden_codigo, orden.orden_fecha, orden.orden_hora, orden.orden_total, orden.orden_total_efectivo, orden.id_usuario, orden.id_cliente, orden.id_caja, usuario.id_usuario, usuario.usuario_nombre_completo, cliente.id_cliente, cliente.cliente_nombre_completo
+			$consulta_datos = "SELECT orden.id_orden, orden.orden_codigo, orden.orden_fecha, orden.orden_hora, orden.orden_total_lista, orden.orden_total_efectivo, orden.id_usuario, orden.id_cliente, orden.id_caja, orden.id_sucursal, sucursal.id_sucursal, sucursal.sucursal_descripcion, usuario.id_usuario, usuario.usuario_nombre_completo, cliente.id_cliente, cliente.cliente_nombre_completo
 								FROM orden 
 								INNER JOIN cliente ON orden.id_cliente=cliente.id_cliente 
 								INNER JOIN usuario ON orden.id_usuario=usuario.id_usuario 
 								INNER JOIN caja ON orden.id_caja=caja.id_caja 
+								INNER JOIN sucursal ON orden.id_sucursal=sucursal.id_sucursal
 								WHERE orden.id_sucursal = 1
 								AND orden.id_cliente = $id_cliente
 								ORDER BY orden.id_orden DESC";
@@ -855,6 +856,7 @@
 		                    <th class="has-text-centered">Telefonista</th>
 		                    <th class="has-text-centered">Importe Lista</th>
 							<th class="has-text-centered">Importe Efectivo</th>
+							<th class="has-text-centered">Sucursal</th>
 		                </tr>
 		            </thead>
 		            <tbody>
@@ -872,6 +874,7 @@
 							<td>'.$rows['usuario_nombre_completo'].'</td>
 							<td>'.MONEDA_SIMBOLO.number_format($rows['orden_total_lista'],MONEDA_DECIMALES,MONEDA_SEPARADOR_DECIMAL,MONEDA_SEPARADOR_MILLAR).' '.MONEDA_NOMBRE.'</td>
 							<td>'.MONEDA_SIMBOLO.number_format($rows['orden_total_efectivo'],MONEDA_DECIMALES,MONEDA_SEPARADOR_DECIMAL,MONEDA_SEPARADOR_MILLAR).' '.MONEDA_NOMBRE.'</td>
+							<td>'.$rows['sucursal_descripcion'].'</td>
 						</tr>
 					';
 					$contador++;

@@ -1207,14 +1207,14 @@
 			$pagina = (isset($pagina) && $pagina>0) ? (int) $pagina : 1;
 			$inicio = ($pagina>0) ? (($pagina * $registros)-$registros) : 0;
 
-			$campos_tablas = "venta.id_venta, venta.venta_codigo, venta.venta_fecha, venta.venta_hora, venta.venta_importe, venta.id_usuario, venta.id_cliente, venta.id_caja, usuario.id_usuario, usuario.usuario_nombre_completo, cliente.id_cliente, cliente.cliente_nombre_completo";
+			$campos_tablas = "venta.id_venta, venta.venta_codigo, venta.venta_fecha, venta.venta_hora, venta.venta_importe, venta.id_usuario, venta.id_cliente, venta.id_caja, venta.id_sucursal, sucursal.id_sucursal, sucursal.sucursal_descripcion, usuario.id_usuario, usuario.usuario_nombre_completo, cliente.id_cliente, cliente.cliente_nombre_completo";
 
-			$consulta_datos = "SELECT venta.id_venta, venta.venta_codigo, venta.venta_fecha, venta.venta_hora, venta.venta_importe, venta.id_usuario, venta.id_cliente, venta.id_caja, usuario.id_usuario, usuario.usuario_nombre_completo, cliente.id_cliente, cliente.cliente_nombre_completo
+			$consulta_datos = "SELECT venta.id_venta, venta.venta_codigo, venta.venta_fecha, venta.venta_hora, venta.venta_importe, venta.id_usuario, venta.id_cliente, venta.id_caja, venta.id_sucursal, sucursal.id_sucursal, sucursal.sucursal_descripcion, usuario.id_usuario, usuario.usuario_nombre_completo, cliente.id_cliente, cliente.cliente_nombre_completo
 								FROM venta 
 								INNER JOIN cliente ON venta.id_cliente=cliente.id_cliente 
 								INNER JOIN usuario ON venta.id_usuario=usuario.id_usuario 
 								INNER JOIN caja ON venta.id_caja=caja.id_caja 
-								WHERE venta.id_sucursal = $_SESSION[id_sucursal]
+								INNER JOIN sucursal ON venta.id_sucursal=sucursal.id_sucursal 
 								AND venta.id_cliente = $id_cliente
 								ORDER BY venta.id_venta DESC";
 
@@ -1231,6 +1231,7 @@
 		                    <th class="has-text-centered">Fecha</th>
 		                    <th class="has-text-centered">Vendedor</th>
 		                    <th class="has-text-centered">Importe</th>
+							<th class="has-text-centered">Sucursal</th>
 		                </tr>
 		            </thead>
 		            <tbody>
@@ -1247,6 +1248,7 @@
 							<td>'.date("d-m-Y", strtotime($rows['venta_fecha'])).' '.$rows['venta_hora'].'</td>
 							<td>'.$rows['usuario_nombre_completo'].'</td>
 							<td>'.MONEDA_SIMBOLO.number_format($rows['venta_importe'],MONEDA_DECIMALES,MONEDA_SEPARADOR_DECIMAL,MONEDA_SEPARADOR_MILLAR).' '.MONEDA_NOMBRE.'</td>
+							<td>'.$rows['sucursal_descripcion'].'</td>
 						</tr>
 					';
 					$contador++;
