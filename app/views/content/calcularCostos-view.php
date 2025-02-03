@@ -6,6 +6,38 @@
     a:hover {
         color: orange; /* Cambia el color según tus necesidades */
     }
+    #modal-js-info.is-active {
+        display: flex;
+        justify-content: center;
+        align-items: center;
+    }
+
+    #modal-js-info .modal-card {
+        width: 100vw;  /* Ocupa todo el ancho de la pantalla */
+        height: 100vh; /* Ocupa todo el alto de la pantalla */
+        max-width: none; /* Elimina la restricción de ancho */
+        max-height: none; /* Elimina la restricción de alto */
+        display: flex;
+        flex-direction: column;
+        padding: 0;
+        margin: 0;
+        overflow: hidden;
+    }
+
+    #modal-js-info .modal-card-body {
+        flex-grow: 1; /* Hace que el contenido crezca para llenar el espacio */
+    }
+
+    
+    #modal-js-info .modal-card-body iframe {
+        width: 100%;
+        height: 100%;
+    }
+
+    #modal-js-info .modal-card-head {
+        padding: 10px; /* Reduce padding */
+        font-size: 0.9rem; /* Reduce font size */
+    }
 </style>
 
 <?php 
@@ -41,6 +73,7 @@
                             <td class="has-text-right"><input id="riesgo" type="number" class="input is-small"></td>
                         </tr>
                     </tbody>
+                    
                 </table>
             </div>
         </div>
@@ -67,6 +100,9 @@
                         </tr>
                     </tbody>
                 </table>
+                <button type="button" class="button is-link is-light js-modal-trigger has-text-centered" data-target="modal-js-info" >
+                    Criterios
+                </button>
             </div>
         </div>
     </div>
@@ -107,6 +143,21 @@
         </table>
     </div>
 </div>
+
+<!-- Modal criterios -->
+<div class="modal" id="modal-js-info">
+    <div class="modal-background"></div>
+    <div class="modal-card">
+        <header class="modal-card-head">
+            <p class="modal-card-title is-uppercase">&nbsp; criterios </p>
+            <button class="delete" aria-label="close"></button>
+        </header>
+        <section class="modal-card-body">
+            <iframe src="https://docs.google.com/spreadsheets/d/1ELs5ZnZjj98Y5B-v1ddYEx9-r6cw7-bgCRWxFfiI9BA/preview" frameborder="0"></iframe>
+        </section>
+    </div>
+</div>
+
 
 <script>
     function calcularCuotasSinInteres() {
