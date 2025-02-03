@@ -243,13 +243,13 @@
                 <div class="column">
                     <div class="control">
                         <h3>Importe lista</h3>
-                        <input type="number" class="input" name="orden_importe_lista" id="" value="0">
+                        <input type="number" class="input" name="orden_total_lista" id="" value="0">
                     </div>
                 </div>
                 <div class="column">
                     <div class="control">
                         <h3>Importe efectivo</h3>
-                        <input type="number" class="input" name="orden_importe_efectivo" id="" value="0"> 
+                        <input type="number" class="input" name="orden_total_efectivo" id="" value="0"> 
                     </div>
                 </div>
             </div>
