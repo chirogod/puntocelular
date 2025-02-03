@@ -45,12 +45,12 @@
 							</a>
 						</li>
 						<li class="full-width">
-							<a href="<?php  echo APP_URL; ?>userSearch/" class="full-width">
+							<a href="<?php echo APP_URL; ?>tecnico/" class="full-width">
 								<div class="navLateral-body-cl">
-									<i class="fas fa-search fa-fw"></i>
+									<i class="fas fa-user fa-fw"></i>
 								</div>
 								<div class="navLateral-body-cr">
-									Buscar usuario
+									Tecnicos
 								</div>
 							</a>
 						</li>

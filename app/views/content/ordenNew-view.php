@@ -165,7 +165,7 @@
                     </div>
                 </div>   
                 <div class="column">
-                <div class="control">
+                    <div class="control">
                         <label>Tecnico asignado <?php echo CAMPO_OBLIGATORIO; ?></label><br>
                         <div class="select">
                             <select name="id_tecnico" >

@@ -498,6 +498,109 @@
 			return json_encode($alerta);
 
         }
+
+		//////////// TECNICOS
+		public function registrarTecnicoControlador(){
+            //almacenar datos del nuevo usuario
+            $tecnico_descripcion = $this->limpiarCadena($_POST['tecnico_descripcion']);
+            
+
+            if ($tecnico_descripcion == "" ) {
+                $alerta=[
+					"tipo"=>"simple",
+					"titulo"=>"Ocurrió un error inesperado",
+					"texto"=>"No has llenado todos los campos que son obligatorios",
+					"icono"=>"error"
+				];
+				return json_encode($alerta);
+		        exit();
+            }
+
+            //verificar tecnico
+            $check_tecnico =$this->ejecutarConsulta("SELECT * FROM tecnico WHERE tecnico_descripcion = '$tecnico_descripcion'");
+            if ($check_tecnico->rowCount() > 0) {
+                $alerta=[
+                    "tipo"=>"simple",
+                    "titulo"=>"Ocurrió un error inesperado",
+                    "texto"=>"El tecnico ya existe",
+                    "icono"=>"error"
+                ];
+                return json_encode($alerta);
+                exit();
+            }
+
+            //almacenar los datos en un arreglo para guardarlos
+            $datos_tecnico = [
+                [
+                    "campo_nombre"=>"tecnico_descripcion",
+                    "campo_marcador"=>":TecnicoDescripcion",
+                    "campo_valor"=>$tecnico_descripcion
+                ]
+            ];
+
+            $registrar_tecnico = $this->guardarDatos("tecnico", $datos_tecnico);
+            if ($registrar_tecnico->rowCount()==1) {
+                $alerta=[
+					"tipo"=>"limpiar",
+					"titulo"=>"Tecnico registrado con exito",
+					"texto"=>"El Tecnico " .$tecnico_descripcion. " se registro con exito",
+					"icono"=>"success"
+				];
+            }else{
+                $alerta=[
+					"tipo"=>"simple",
+					"titulo"=>"Ocurrió un error inesperado",
+					"texto"=>"No se pudo registrar el tecnico, por favor intente nuevamente",
+					"icono"=>"error"
+				];
+            }
+            //retornamos el json 
+            return json_encode($alerta);
+        }
+
+		public function listarTecnicosControlador(){
+			$datos = $this->ejecutarConsulta("SELECT * FROM tecnico ORDER BY tecnico_descripcion ASC");
+			$datos = $datos->fetchAll();
+
+			$tabla='
+		        <table class="table is-bordered is-striped is-narrow is-hoverable is-fullwidth">
+		            <thead>
+		                <tr>
+		                    <th class="has-text-centered">#</th>
+		                    <th class="has-text-centered">Tecnico</th>
+		                </tr>
+		            </thead>
+		            <tbody>
+		    ';
+
+		    if(count($datos)>=1){
+				$contador=1;
+				foreach($datos as $rows){
+					$tabla.='
+						<tr class="has-text-centered" style="cursor: pointer;" onclick="window.location.href=\'' . APP_URL . 'tecnicoUpdate/' . $rows['id_tecnico'] . '/\'">
+							<td>'.$contador.'</td>
+							<td>'.$rows['tecnico_descripcion'].'</td>
+						</tr>
+					';
+					$contador++;
+				}
+			}else{
+				$tabla.='
+					<tr class="has-text-centered" >
+		                <td colspan="7">
+		                    <a href="'.APP_URL.'tecnicoNew/" class="button is-success is-rounded is-small mt-4 mb-4">
+		                        Haga clic acá para registrar un nuevo tecnico
+		                    </a>
+		                </td>
+		            </tr>
+				';
+			}
+
+			$tabla.='</tbody></table>';
+
+			return $tabla;
+		}
+
     }
 
 ?>

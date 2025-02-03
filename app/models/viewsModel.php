@@ -46,7 +46,9 @@
                 "senaEquipoDetail",
                 "senaList",
                 "marcaModeloNew",
-                "calcularCostos"
+                "calcularCostos",
+                "tecnico",
+                "pedidoRepuestoNew"
             ];
             //si la $vista esta en el array de las vistas que existe
             if (in_array($vista,$listaBlanca)){
