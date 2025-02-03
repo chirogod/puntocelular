@@ -1,4 +1,4 @@
-<?php include "app/views/includes/admin_security.php"; ?>
+
 
 <div class="container is-fluid mb-5">
     <h1 class="title is-3">Gestión de Artículos</h1>

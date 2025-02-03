@@ -1,4 +1,4 @@
-<?php include "app/views/includes/admin_security.php"; ?>
+
 
 
 <div class="container is-fluid">

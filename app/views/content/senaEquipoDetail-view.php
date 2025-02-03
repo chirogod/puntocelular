@@ -1,4 +1,4 @@
-<?php include "./app/views/includes/admin_security.php"; ?>
+
 <div class="container is-fluid is-max-desktop">
 	<h1 class="title">Sena</h1>
 </div>

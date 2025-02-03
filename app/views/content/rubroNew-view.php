@@ -1,3 +1,4 @@
+<?php include "./app/views/includes/admin_security.php"; ?>
 <div class="container is-fluid mb-4">
 	<h1 class="title">Rubros</h1>
 </div>

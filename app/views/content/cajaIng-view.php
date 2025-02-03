@@ -1,4 +1,4 @@
-<?php include "./app/views/includes/admin_security.php"; ?>
+
 <div class="container is-fluid is-max-desktop">
 	<h1 class="title">Caja</h1>
 	<h2 class="subtitle"><i class="fas fa-male fa-fw"></i> &nbsp; Ingreso de dinero</h2>
