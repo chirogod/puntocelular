@@ -174,7 +174,7 @@
                 multiplicadorRiesgo = 1.75;
                 break;
             case 3:
-                multiplicadorRiesgo = 2.0;
+                multiplicadorRiesgo = 2.2;
                 break;
             case 4:
                 multiplicadorRiesgo = 2.6;
