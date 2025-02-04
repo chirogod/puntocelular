@@ -265,8 +265,6 @@
 				</li>
 
 
-				<?php if($_SESSION['usuario_rol']=="Administrador"){ ?>
-
 				<li class="full-width">
 					<a href="#" class="full-width btn-subMenu">
 						<div class="navLateral-body-cl">
@@ -300,7 +298,6 @@
 						</li>
 					</ul>
 				</li>
-				<?php } ?>
 
 				<?php if($_SESSION['usuario_rol']=="Administrador"){ ?>
 

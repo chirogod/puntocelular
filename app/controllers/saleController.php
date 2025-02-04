@@ -915,6 +915,146 @@
 	        exit();
         }
 
+		/*---------- Controlador eliminar venta ---------- */
+		public function eliminarVentaControlador() {
+			$venta_codigo = $this->limpiarCadena($_POST['venta_codigo']);
+
+			// Obtener los datos de la venta
+			$datos_venta = $this->ejecutarConsulta("SELECT * FROM venta WHERE venta_codigo = '$venta_codigo'");
+			$datos_venta_detalle = $this->ejecutarConsulta("SELECT * FROM venta_detalle WHERE venta_codigo = '$venta_codigo'");
+			$datos_pago_venta = $this->ejecutarConsulta("SELECT * FROM pago_venta WHERE venta_codigo = '$venta_codigo'");
+
+			$datos_venta = $datos_venta->fetch();
+			$datos_venta_detalle = $datos_venta_detalle->fetchAll();
+			$datos_pago_venta = $datos_pago_venta->fetchAll();
+
+			// Verificar si la venta existe
+			if (!$datos_venta) {
+				$alerta = [
+					"tipo" => "simple",
+					"titulo" => "Ocurrió un error inesperado",
+					"texto" => "No hemos encontrado la venta en el sistema",
+					"icono" => "error"
+				];
+				return json_encode($alerta);
+				exit();
+			}
+
+			// Calcular el total pagado en efectivo y en otras formas
+			$pagado_efectivo = 0;
+			$pagado_otra_forma = 0;
+			foreach ($datos_pago_venta as $pago) {
+				if ($pago['venta_pago_forma'] == "Efectivo") {
+					$pagado_efectivo += $pago['venta_pago_importe'];
+				} else {
+					$pagado_otra_forma += $pago['venta_pago_importe'];
+				}
+			}
+
+			// Obtener los datos de la caja
+			$id_caja = $datos_venta['id_caja'];
+			$datos_caja = $this->ejecutarConsulta("SELECT * FROM caja WHERE id_caja = '$id_caja'");
+			$datos_caja = $datos_caja->fetch();
+
+			// Verificar si la caja existe
+			if (!$datos_caja) {
+				$alerta = [
+					"tipo" => "simple",
+					"titulo" => "Ocurrió un error inesperado",
+					"texto" => "No hemos encontrado la caja en el sistema",
+					"icono" => "error"
+				];
+				return json_encode($alerta);
+				exit();
+			}
+
+			// Restar el importe de la venta de la caja
+			$total_caja = $datos_caja['caja_monto'] - $datos_venta['venta_importe'];
+			$total_caja = number_format($total_caja, MONEDA_DECIMALES, '.', '');
+			$datos_caja_up = [
+				[
+					"campo_nombre" => "caja_monto",
+					"campo_marcador" => ":Monto",
+					"campo_valor" => $total_caja
+				]
+			];
+			$condicion_caja = [
+				"condicion_campo" => "id_caja",
+				"condicion_marcador" => ":ID",
+				"condicion_valor" => $id_caja
+			];
+			$this->actualizarDatos("caja", $datos_caja_up, $condicion_caja);
+
+			// Restar el importe en efectivo de la caja física
+			$id_sucursal = $datos_venta['id_sucursal'];
+			$caja_fisica = $this->ejecutarConsulta("SELECT * FROM caja WHERE caja_codigo LIKE '%Efectivo%' AND id_sucursal = '$id_sucursal'");
+			$caja_fisica = $caja_fisica->fetch();
+
+			// Verificar si la caja física existe
+			if ($caja_fisica) {
+				$total_caja_fisica = $caja_fisica['caja_monto'] - $pagado_efectivo;
+				$total_caja_fisica = number_format($total_caja_fisica, MONEDA_DECIMALES, '.', '');
+				$datos_caja_fisica_up = [
+					[
+						"campo_nombre" => "caja_monto",
+						"campo_marcador" => ":Monto",
+						"campo_valor" => $total_caja_fisica
+					]
+				];
+				$condicion_caja_fisica = [
+					"condicion_campo" => "id_caja",
+					"condicion_marcador" => ":ID",
+					"condicion_valor" => $caja_fisica['id_caja']
+				];
+				$this->actualizarDatos("caja", $datos_caja_fisica_up, $condicion_caja_fisica);
+			}
+
+			// Eliminar los detalles de la venta
+			foreach ($datos_venta_detalle as $detalle) {
+				$this->eliminarRegistro("venta_detalle", "id_venta_detalle", $detalle['id_venta_detalle']);
+			}
+
+			// Eliminar los pagos de la venta
+			foreach ($datos_pago_venta as $pago) {
+				$this->eliminarRegistro("pago_venta", "id_pago_venta", $pago['id_pago_venta']);
+			}
+
+			// Eliminar la venta
+			$this->eliminarRegistro("venta", "venta_codigo", $venta_codigo);
+
+			// Actualizar el stock de los productos
+			foreach ($datos_venta_detalle as $detalle) {
+				$producto = $this->ejecutarConsulta("SELECT * FROM articulo WHERE id_articulo = '".$detalle['id_articulo']."'");
+				$producto = $producto->fetch();
+
+				$nuevo_stock = $producto['articulo_stock'] + $detalle['venta_detalle_cantidad_producto'];
+
+				$datos_producto_up = [
+					[
+						"campo_nombre" => "articulo_stock",
+						"campo_marcador" => ":Stock",
+						"campo_valor" => $nuevo_stock
+					]
+				];
+
+				$condicion = [
+					"condicion_campo" => "id_articulo",
+					"condicion_marcador" => ":ID",
+					"condicion_valor" => $detalle['id_articulo']
+				];
+
+				$this->actualizarDatos("articulo", $datos_producto_up, $condicion);
+			}
+
+			$alerta = [
+				"tipo" => "redireccionar",
+				"url" => APP_URL."saleList/"
+			];
+			return json_encode($alerta);
+			exit();
+		}
+
+
 
         /*----------  Controlador listar venta  ----------*/
 		public function listarVentaControlador($pagina,$registros,$url,$busqueda){
@@ -1056,70 +1196,7 @@
 		}
 
 
-		/*----------  Controlador eliminar venta  ----------*/
-		public function eliminarVentaControlador(){
-
-			$id=$this->limpiarCadena($_POST['id_venta']);
-
-			# Verificando venta #
-		    $datos=$this->ejecutarConsulta("SELECT * FROM venta WHERE id_venta='$id'");
-		    if($datos->rowCount()<=0){
-		        $alerta=[
-					"tipo"=>"simple",
-					"titulo"=>"Ocurrió un error inesperado",
-					"texto"=>"No hemos encontrado la venta en el sistema",
-					"icono"=>"error"
-				];
-				return json_encode($alerta);
-		        exit();
-		    }else{
-		    	$datos=$datos->fetch();
-		    }
-
-		    # Verificando detalles de venta #
-		    $check_detalle_venta=$this->ejecutarConsulta("SELECT venta_detalle_id FROM venta_detalle WHERE venta_codigo='".$datos['venta_codigo']."'");
-		    $check_detalle_venta=$check_detalle_venta->rowCount();
-
-		    if($check_detalle_venta>0){
-
-		        $eliminarVentaDetalle=$this->eliminarRegistro("venta_detalle","venta_codigo",$datos['venta_codigo']);
-
-		        if($eliminarVentaDetalle->rowCount()!=$check_detalle_venta){
-		        	$alerta=[
-						"tipo"=>"simple",
-						"titulo"=>"Ocurrió un error inesperado",
-						"texto"=>"No hemos podido eliminar la venta del sistema, por favor intente nuevamente",
-						"icono"=>"error"
-					];
-					return json_encode($alerta);
-			        exit();
-		        }
-
-		    }
-
-
-		    $eliminarVenta=$this->eliminarRegistro("venta","id_venta",$id);
-
-		    if($eliminarVenta->rowCount()==1){
-
-		        $alerta=[
-					"tipo"=>"recargar",
-					"titulo"=>"Venta eliminada",
-					"texto"=>"La venta ha sido eliminada del sistema correctamente",
-					"icono"=>"success"
-				];
-
-		    }else{
-		    	$alerta=[
-					"tipo"=>"simple",
-					"titulo"=>"Ocurrió un error inesperado",
-					"texto"=>"No hemos podido eliminar la venta del sistema, por favor intente nuevamente",
-					"icono"=>"error"
-				];
-		    }
-
-		    return json_encode($alerta);
-		}
+		
 
 
 		/*----------  Controlador actualizar precio producto  ----------*/

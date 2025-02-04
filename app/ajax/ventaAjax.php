@@ -50,7 +50,7 @@
 			echo $insVenta->registrarVentaControlador();
 		}
 
-		/*--------- Eliminar venta ---------*/
+		/*--------- eliminar venta ---------*/
 		if($_POST['modulo_venta']=="eliminar_venta"){
 			echo $insVenta->eliminarVentaControlador();
 		}
