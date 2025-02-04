@@ -313,7 +313,11 @@
                                         $cc=1;
                                         while($campos_usuario=$datos_usuario->fetch()){
                                             if ($campos_usuario['usuario_rol']!="Administrador") {
-                                                echo '<option value="'.$campos_usuario['id_usuario'].'">'.$cc.' - '.$campos_usuario['usuario_nombre_completo'].'</option>';
+                                                if($campos_usuario['id_usuario'] == $_SESSION['id_usuario']){
+                                                    echo '<option value="'.$campos_usuario['id_usuario'].'" selected>'.$cc.' - '.$campos_usuario['usuario_nombre_completo'].'</option>';
+                                                }else{
+                                                    echo '<option value="'.$campos_usuario['id_usuario'].'">'.$cc.' - '.$campos_usuario['usuario_nombre_completo'].'</option>';
+                                                }
                                             }
                                             $cc++;
                                         }

@@ -163,7 +163,7 @@
 			?>
 		</p>
 		<p class="has-text-centered full-width">
-			<form class="FormularioAJax" action="<?php echo APP_URL; ?>app/ajax/ventaAjax.php" method="POST" autocomplete="off" name="formsale">
+			<form class="FormularioAjax" action="<?php echo APP_URL; ?>app/ajax/ventaAjax.php" method="POST" autocomplete="off" name="formsale">
 				<input type="hidden" name="modulo_venta" value="eliminar_venta">
 				<input type="hidden" name="venta_codigo" value="<?php echo $datos_venta['venta_codigo']; ?>">
 				<button type="submit" class="button is-link is-light is-medium" title="Eliminar venta" >
@@ -173,8 +173,8 @@
 		</p>
 		<p class="has-text-centered full-width">
 			<?php
-			echo '<button type="button" class="button is-link is-light js-modal-trigger" data-target="modal-js-pay" >
-                                Registrar pago
+			echo '<button type="button" class="button is-link is-light is-medium js-modal-trigger" data-target="modal-js-pay" >
+                                <i class="fas fa-money fa-fw"></i> &nbsp;Registrar pago
                             </button> &nbsp;&nbsp;'
 			?>
 		</p>

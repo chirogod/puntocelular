@@ -1020,7 +1020,7 @@
 			}
 
 			// Eliminar la venta
-			$this->eliminarRegistro("venta", "venta_codigo", $venta_codigo);
+			$eliminar_venta = $this->eliminarRegistro("venta", "venta_codigo", $venta_codigo);
 
 			// Actualizar el stock de los productos
 			foreach ($datos_venta_detalle as $detalle) {
@@ -1046,12 +1046,23 @@
 				$this->actualizarDatos("articulo", $datos_producto_up, $condicion);
 			}
 
-			$alerta = [
-				"tipo" => "redireccionar",
-				"url" => APP_URL."saleList/"
-			];
+			if($eliminar_venta->rowCount() == 1){
+				$alerta=[
+                    "tipo"=>"recargar",
+                    "titulo"=>"Pago registrado",
+                    "texto"=>"El pago se registro con exito",
+                    "icono"=>"success"
+                ];
+            }else{
+                $alerta=[
+                    "tipo"=>"simple",
+                    "titulo"=>"Ocurrió un error inesperado",
+                    "texto"=>"No se pudo registrar el pago, por favor intente nuevamente",
+                    "icono"=>"error"
+                ];
+            }
+
 			return json_encode($alerta);
-			exit();
 		}
 
 
