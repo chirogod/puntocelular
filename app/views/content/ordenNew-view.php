@@ -4,7 +4,7 @@
 
 <div class="container pb-6 pt-1 is-max-desktop">
 
-	<form class="FormularioAjax" action="<?php echo APP_URL; ?>app/ajax/ordenAjax.php" method="POST" autocomplete="off" >
+	<form class="" action="<?php echo APP_URL; ?>app/ajax/ordenAjax.php" method="POST" autocomplete="off" >
 
 		<input type="hidden" name="modulo_orden" value="registrar_orden">
 		<div class="box">
@@ -103,6 +103,20 @@
                                 <option value="" selected="">Seleccione una opción</option>
                                 <!-- Los modelos se llenarán aquí -->
                             </select>
+                        </div>
+                    </div>
+
+                    <div class="field">
+                        <label class="radio">
+                            <input type="radio" name="orden_equipo_otro" value="Otro" onclick="otroEquipo(true)">
+                            Otro
+                        </label>
+                        <!-- Input de  prometida que estará oculto inicialmente -->
+                        <div class="field" id="otro_equipo_field" style="display: none;">
+                            <label class="label">Marca</label>
+                            <input class="input" type="text" name="orden_otra_marca">
+                            <label class="label">Modelo</label>
+                            <input class="input" type="text" name="orden_otro_modelo">
                         </div>
                     </div>
 
@@ -423,6 +437,16 @@
     //si se marca prometido para en la fecha se activa un input date
     function toggleDateInput(show) {
         const dateField = document.getElementById('fecha_reparacion_field');
+        if (show) {
+            dateField.style.display = 'block';
+        } else {
+            dateField.style.display = 'none';
+        }
+    }
+
+    //si se marca prometido para en la fecha se activa un input date
+    function otroEquipo(show) {
+        const dateField = document.getElementById('otro_equipo_field');
         if (show) {
             dateField.style.display = 'block';
         } else {

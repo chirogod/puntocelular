@@ -142,29 +142,52 @@
 			$orden_fecha = date("Y-m-d");
 			$orden_hora = date("h:i a");
 			$orden_observaciones = $this->limpiarCadena($_POST['orden_observaciones']);
-			
+			$id_marca = "";
+			$id_modelo = "";
+			$orden_equipo_marca = "";
+			$orden_otro_modelo = "";
+
 			//agregar equipo
-			$id_marca = $_POST['id_marca'];
-			if($id_marca == ""){  
-				$alerta=[
-					"tipo"=>"simple",
-					"titulo"=>"Ocurrió un error inesperado",
-					"texto"=>"Debe indicar la marca del equipo!",
-					"icono"=>"error"
-				];
-				return json_encode($alerta);
-		        exit();
+			// Check if an existing brand is selected or a new brand is entered
+			if (isset($_POST['id_marca']) && $_POST['id_marca'] !== "") {
+				$id_marca = $this->limpiarCadena($_POST['id_marca']);
+				$datos_marca = $this->seleccionarDatos("Unico", "marca", "id_marca", $id_marca);
+				$datos_marca = $datos_marca->fetch();
+				$orden_equipo_marca = $datos_marca['marca_descripcion'];
+			} else if (isset($_POST['orden_otra_marca']) && $_POST['orden_otra_marca'] !== "") {
+				$orden_equipo_marca = $this->limpiarCadena($_POST['orden_otra_marca']);
 			}
-			$id_modelo = $_POST['id_modelo'];
-			if($id_modelo == ""){
-				$alerta=[
-					"tipo"=>"simple",
-					"titulo"=>"Ocurrió un error inesperado",
-					"texto"=>"Debe indicar el modelo del equipo!",
-					"icono"=>"error"
+		
+			if ($orden_equipo_marca == "") {
+				$alerta = [
+					"tipo" => "simple",
+					"titulo" => "Ocurrió un error inesperado",
+					"texto" => "Debe indicar la marca del equipo!",
+					"icono" => "error"
 				];
 				return json_encode($alerta);
-		        exit();
+				exit();
+			}
+		
+			// Check if an existing model is selected or a new model is entered
+			if (isset($_POST['id_modelo']) && $_POST['id_modelo'] !== "") {
+				$id_modelo = $this->limpiarCadena($_POST['id_modelo']);
+				$datos_modelo = $this->seleccionarDatos("Unico", "modelo", "id_modelo", $id_modelo);
+				$datos_modelo = $datos_modelo->fetch();
+				$orden_equipo_modelo = $datos_modelo['modelo_descripcion'];
+			} else if (isset($_POST['orden_otro_modelo']) && $_POST['orden_otro_modelo'] !== "") {
+				$orden_equipo_modelo = $this->limpiarCadena($_POST['orden_otro_modelo']);
+			}
+		
+			if ($orden_equipo_modelo == "") {
+				$alerta = [
+					"tipo" => "simple",
+					"titulo" => "Ocurrió un error inesperado",
+					"texto" => "Debe indicar el modelo del equipo!",
+					"icono" => "error"
+				];
+				return json_encode($alerta);
+				exit();
 			}
 
 			$orden_equipo_ingresa_encendido = $_POST['orden_equipo_ingresa_encendido'];
@@ -272,14 +295,14 @@
 
 				//agregar equipo
 				[
-					"campo_nombre"=>"id_marca",
+					"campo_nombre"=>"orden_equipo_marca",
 					"campo_marcador"=>":Marca",
-					"campo_valor"=>$id_marca
+					"campo_valor"=>$orden_equipo_marca
 				],
 				[
-					"campo_nombre"=>"id_modelo",
+					"campo_nombre"=>"orden_equipo_modelo",
 					"campo_marcador"=>":Modelo",
-					"campo_valor"=>$id_modelo
+					"campo_valor"=>$orden_equipo_modelo
 				],
 				[
 					"campo_nombre"=>"orden_equipo_ingresa_encendido",
@@ -677,17 +700,15 @@
 							  orden.orden_falla, 
 							  orden.orden_informe_tecnico, 
 							  orden.orden_observaciones, 
-							  orden.id_marca, 
-							  orden.id_modelo, 
+							  orden.orden_equipo_marca, 
+							  orden.orden_equipo_modelo, 
 							  orden.orden_accesorios,
 							  orden.orden_telefonista, 
 							  orden.id_tecnico, 
 							  usuario.id_usuario,
 							  usuario.usuario_nombre_completo, 
 							  cliente.id_cliente, 
-							  cliente.cliente_nombre_completo, 
-							  marca.id_marca, 
-							  marca.marca_descripcion";
+							  cliente.cliente_nombre_completo";
 
 			// Consulta con búsqueda
 			if (isset($busqueda) && $busqueda != "") {
@@ -695,7 +716,6 @@
 								   FROM orden 
 								   INNER JOIN cliente ON orden.id_cliente = cliente.id_cliente 
 								   INNER JOIN usuario ON orden.id_usuario = usuario.id_usuario 
-								   INNER JOIN marca ON orden.id_marca = marca.id_marca 
 								   WHERE 
 									   orden.id_orden LIKE '%$busqueda%' 
 									   OR orden.orden_codigo LIKE '%$busqueda%' 
@@ -719,7 +739,6 @@
 								   FROM orden 
 								   INNER JOIN cliente ON orden.id_cliente = cliente.id_cliente 
 								   INNER JOIN usuario ON orden.id_usuario = usuario.id_usuario 
-								   INNER JOIN marca ON orden.id_marca = marca.id_marca 
 								   WHERE orden.id_sucursal = '$_SESSION[id_sucursal]' 
 								   ORDER BY orden.id_orden DESC LIMIT $inicio, $registros";
 		

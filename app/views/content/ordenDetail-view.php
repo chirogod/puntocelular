@@ -24,14 +24,6 @@
 
             $datos_telefonista = $insLogin->seleccionarDatosEspecificos("usuario", "id_usuario", $datos['orden_telefonista']);
             $datos_telefonista = $datos_telefonista->fetch();
-
-            $id_marca = $datos['id_marca'];
-            $id_modelo = $datos['id_modelo'];
-            $datos_marca = $insLogin->seleccionarDatosEspecificos("marca", "id_marca", $id_marca);
-            $datos_marca = $datos_marca->fetch();
-
-            $datos_modelo = $insLogin->seleccionarDatosEspecificos("modelo", "id_modelo", $id_modelo);
-            $datos_modelo = $datos_modelo->fetch();
 	?>
     <button type="button" class="button is-link is-light" onclick="print_orden('<?php echo APP_URL."app/pdf/comprobanteOrden.php?code=".$datos['orden_codigo']; ?>')" >
         <i class="fas fa-file-invoice-dollar fa-2x"></i> &nbsp;
@@ -141,14 +133,14 @@
                     <div class="control">
                         <div class="full-width sale-details text-condensedLight">
                             <div class="has-text-weight-bold">Marca</div>
-                            <span class="has-text-bold"><?php echo $datos_marca['marca_descripcion']; ?></span>
+                            <span class="has-text-bold"><?php echo $datos['orden_equipo_marca']; ?></span>
                         </div>
                     </div>
 
                     <div class="control">
                         <div class="full-width sale-details text-condensedLight">
                             <div class="has-text-weight-bold">Modelo</div>
-                            <span class="has-text-bold"><?php echo $datos_modelo['modelo_descripcion']; ?></span>
+                            <span class="has-text-bold"><?php echo $datos['orden_equipo_modelo']; ?></span>
                         </div>
                     </div>
 
@@ -399,49 +391,24 @@
                 <input type="hidden" name="modulo_orden" value="registrar_informe_tecnico">
                 <input class="input" name="orden_codigo" type="hidden" readonly value="<?php echo $datos['orden_codigo'] ?>">
 
-                <h2 class="subtitle is-size-6">Datos:</h2>
                 <div class="columns">
                     <div class="column">
                         <div class="control">
-                            <label>Marca</label><br>
-                            <div class="select is-small">
-                                <select disabled name="id_marca">
-                                    <option value="" selected>Seleccione una opción</option>
-                                    <?php
-                                    $datos_marca = $insLogin->seleccionarDatos("Normal", "marca", "*", 0);
-
-                                    $cc = 1;
-                                    while ($campos_marca = $datos_marca->fetch()) {
-                                        $selected = ($campos_marca['id_marca'] == $datos['id_marca']) ? 'selected' : '';
-                                        echo '<option value="' . $campos_marca['id_marca'] . '" ' . $selected . '>' . $cc . ' - ' . $campos_marca['marca_descripcion'] . '</option>';
-                                        $cc++;
-                                    }
-                                    ?>
-                                </select>
+                            <div class="full-width sale-details text-condensedLight">
+                                <div class="has-text-weight-bold">Marca</div>
+                                <span class="has-text-bold"><?php echo $datos['orden_equipo_marca']; ?></span>
                             </div>
                         </div>
 
                         <div class="control">
-                            <label>Modelo</label><br>
-                            <div class="select is-small">
-                                <select disabled name="id_modelo">
-                                    <option value="" selected>Seleccione una opción</option>
-                                    <?php
-                                    $datos_modelo = $insLogin->seleccionarDatos("Normal", "modelo", "*", 0);
-
-                                    $cc = 1;
-                                    while ($campos_modelo = $datos_modelo->fetch()) {
-                                        $selected = ($campos_modelo['id_modelo'] == $datos['id_modelo']) ? 'selected' : '';
-                                        echo '<option value="' . $campos_modelo['id_modelo'] . '" ' . $selected . '>' . $cc . ' - ' . $campos_modelo['modelo_descripcion'] . '</option>';
-                                        $cc++;
-                                    }
-                                    ?>
-                                </select>
+                            <div class="full-width sale-details text-condensedLight">
+                                <div class="has-text-weight-bold">Modelo</div>
+                                <span class="has-text-bold"><?php echo $datos['orden_equipo_modelo']; ?></span>
                             </div>
                         </div>
 
-                        <div class="control">
-                            <label for="">Falla: </label>
+                        <div class="control p-1">
+                            <label for="" class="has-text-weight-bold">Falla: </label>
                             <textarea class="textarea is-small" name="" readonly id=""><?php echo $datos['orden_falla']; ?></textarea>
                         </div>
                     </div>

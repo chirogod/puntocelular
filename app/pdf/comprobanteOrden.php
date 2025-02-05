@@ -10,7 +10,7 @@
 	use app\controllers\ordenController;
 	$ins_orden = new ordenController();
 
-	$datos_orden=$ins_orden->seleccionarDatos("Normal","orden INNER JOIN cliente ON orden.id_cliente=cliente.id_cliente INNER JOIN marca ON orden.id_marca=marca.id_marca INNER JOIN modelo ON orden.id_modelo=modelo.id_modelo INNER JOIN usuario ON orden.id_usuario=usuario.id_usuario INNER JOIN caja ON orden.id_caja=caja.id_caja WHERE (orden_codigo='$code')","*",0);
+	$datos_orden=$ins_orden->seleccionarDatos("Normal","orden INNER JOIN cliente ON orden.id_cliente=cliente.id_cliente INNER JOIN usuario ON orden.id_usuario=usuario.id_usuario INNER JOIN caja ON orden.id_caja=caja.id_caja WHERE (orden_codigo='$code')","*",0);
 
 
 	if($datos_orden->rowCount()==1){
@@ -152,8 +152,8 @@
 		
 		$pdf->SetX(10); // Ajusta la posición X para mover toda la tabla hacia la izquierda
 		//EQUIPO
-        $pdf->Cell($pageWidth/3,7,"Marca: ".$datos_orden['marca_descripcion'],'',0,'L');
-		$pdf->Cell($pageWidth/3,7,"Modelo: ".$datos_orden['modelo_descripcion'],'',0,'L');
+        $pdf->Cell($pageWidth/3,7,"Marca: ".$datos_orden['orden_equipo_marca'],'',0,'L');
+		$pdf->Cell($pageWidth/3,7,"Modelo: ".$datos_orden['orden_equipo_modelo'],'',0,'L');
 		$pdf->Cell($pageWidth/3,7,"Contrasena: ".$datos_orden['orden_equipo_contrasena'],'',0,'L');
 		
         $pdf->Ln(2);
