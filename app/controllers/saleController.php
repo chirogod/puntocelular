@@ -1048,16 +1048,14 @@
 
 			if($eliminar_venta->rowCount() == 1){
 				$alerta=[
-                    "tipo"=>"recargar",
-                    "titulo"=>"Pago registrado",
-                    "texto"=>"El pago se registro con exito",
-                    "icono"=>"success"
-                ];
+					"tipo"=>"redireccionar",
+					"url"=>APP_URL."saleList/"
+				];
             }else{
                 $alerta=[
                     "tipo"=>"simple",
                     "titulo"=>"Ocurrió un error inesperado",
-                    "texto"=>"No se pudo registrar el pago, por favor intente nuevamente",
+                    "texto"=>"No se pudo eliminar la venta, por favor intente nuevamente",
                     "icono"=>"error"
                 ];
             }
