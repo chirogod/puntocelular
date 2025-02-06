@@ -311,28 +311,7 @@
 						</div>
 						<span class="fas fa-chevron-down"></span>
 					</a>
-					<ul class="full-width menu-principal sub-menu-options">
-						<li class="full-width">
-							<a href="<?php echo APP_URL; ?>reportSales/" class="full-width">
-								<div class="navLateral-body-cl">
-									<i class="fas fa-hand-holding-usd fa-fw"></i>
-								</div>
-								<div class="navLateral-body-cr">
-									Reporte general de ventas
-								</div>
-							</a>
-						</li>
-						<li class="full-width">
-							<a href="<?php echo APP_URL; ?>reportInventory/" class="full-width">
-								<div class="navLateral-body-cl">
-									<i class="fas fa-box-open fa-fw"></i>
-								</div>
-								<div class="navLateral-body-cr">
-									Reporte general de inventario
-								</div>
-							</a>
-						</li>
-					</ul>
+					
 				</li>
 				<?php } ?>
 
@@ -375,7 +354,7 @@
 									<i class="fas fa-mobile fa-fw"></i>
 								</div>
 								<div class="navLateral-body-cr">
-									Marcas/Modelos
+									Equipos
 								</div>
 							</a>
 						</li>

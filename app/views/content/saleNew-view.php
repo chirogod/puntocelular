@@ -180,7 +180,7 @@
                             <td><?php echo $productos['venta_detalle_descripcion_producto']; ?></td>
                             <td>
                                 <div class="control">
-                                    <input readonly class="input sale_input-cant has-text-centered" value="<?php echo $productos['venta_detalle_cantidad_producto']; ?>" id="sale_input_<?php echo str_replace(" ", "_", $productos['articulo_codigo']); ?>" type="text" style="max-width: 80px;">
+                                    <input class="input sale_input-cant has-text-centered" value="<?php echo $productos['venta_detalle_cantidad_producto']; ?>" id="sale_input_<?php echo str_replace(" ", "_", $productos['articulo_codigo']); ?>" type="text" style="max-width: 80px;" oninput="actualizar_cantidad('#sale_input_<?php echo str_replace(" ", "_", $codigo); ?>','<?php echo $codigo; ?>','<?php if(isset($_SESSION['financiacion'][$codigo]['venta_detalle_financiacion_producto'])){ echo $_SESSION['financiacion'][$codigo]['venta_detalle_financiacion_producto'];} ?>')">
                                 </div>
                             </td>
                             <td>
@@ -619,40 +619,27 @@
 
 
     /* Actualizar cantidad de producto */
-    function actualizar_cantidad(id,codigo){
+    function actualizar_cantidad(id,codigo, financiacion){
         let cantidad=document.querySelector(id).value;
-
+        financiacion = financiacion.trim();
         cantidad=cantidad.trim();
         codigo.trim();
 
         if(cantidad>0){
 
-            Swal.fire({
-                title: '¿Estás seguro?',
-                text: "Desea actualizar la cantidad de articulos",
-                icon: 'question',
-                showCancelButton: true,
-                confirmButtonColor: '#3085d6',
-                cancelButtonColor: '#d33',
-                confirmButtonText: 'Si, actualizar',
-                cancelButtonText: 'No, cancelar'
-            }).then((result) => {
-                if (result.isConfirmed){
+            let datos = new FormData();
+            datos.append("articulo_codigo", codigo);
+            datos.append("articulo_cantidad", cantidad);
+            datos.append("articulo_financiacion", financiacion);
+            datos.append("modulo_venta", "actualizar_producto");
 
-                    let datos = new FormData();
-                    datos.append("articulo_codigo", codigo);
-                    datos.append("articulo_cantidad", cantidad);
-                    datos.append("modulo_venta", "actualizar_producto");
-
-                    fetch('<?php echo APP_URL; ?>app/ajax/ventaAjax.php',{
-                        method: 'POST',
-                        body: datos
-                    })
-                    .then(respuesta => respuesta.json())
-                    .then(respuesta =>{
-                        return alertas_ajax(respuesta);
-                    });
-                }
+            fetch('<?php echo APP_URL; ?>app/ajax/ventaAjax.php',{
+                method: 'POST',
+                body: datos
+            })
+            .then(respuesta => respuesta.json())
+            .then(respuesta =>{
+                return alertas_ajax(respuesta);
             });
         }else{
             Swal.fire({

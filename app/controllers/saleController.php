@@ -299,6 +299,7 @@
             /*== Recuperando codigo & cantidad del producto ==*/
             $codigo=$this->limpiarCadena($_POST['articulo_codigo']);
             $cantidad=$this->limpiarCadena($_POST['articulo_cantidad']);
+			$financiacion = $this->limpiarCadena($_POST['articulo_financiacion']);
            
 			/*== comprobando campos vacios ==*/
             if($codigo=="" || $cantidad==""){
@@ -382,7 +383,7 @@
                 $detalle_total=number_format($detalle_total,MONEDA_DECIMALES,'.','');
 
                 $_SESSION['datos_producto_venta'][$codigo]=[
-                    "id_articulo"=>$campos['articulo_id'],
+                    "id_articulo"=>$campos['id_articulo'],
 					"articulo_codigo"=>$campos['articulo_codigo'],
 					"articulo_stock_total"=>$stock_total,
 					"articulo_stock_total_old"=>$campos['articulo_stock'],
@@ -392,6 +393,16 @@
                     "venta_detalle_total"=>$detalle_total,
                     "venta_detalle_descripcion_producto"=>$campos['articulo_descripcion']
                 ];
+
+				$operacion = $this->calcularOperadorFinanciacion($financiacion);
+
+				$_SESSION['financiacion'][$codigo] = [
+					"id_articulo" => $campos['id_articulo'],
+					"articulo_codigo" => $campos['articulo_codigo'],
+					"venta_detalle_financiacion_producto" => $financiacion,
+					"venta_detalle_total" => ($_SESSION['datos_producto_venta'][$codigo]['venta_detalle_total'] * $operacion),
+					"venta_detalle_descripcion_producto" => $campos['articulo_descripcion']
+				];
 
                 $_SESSION['alerta_producto_agregado']="Se $diferencia_productos <strong>".$campos['articulo_descripcion']."</strong> a la venta. Total en carrito <strong>$detalle_cantidad</strong>";
 
@@ -410,6 +421,11 @@
 				];
 				return json_encode($alerta);
             }
+			$alerta=[
+				"tipo"=>"redireccionar",
+				"url"=>APP_URL."saleNew/"
+			];
+			return json_encode($alerta);
         }
 
 
