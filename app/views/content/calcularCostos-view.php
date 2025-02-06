@@ -40,10 +40,6 @@
     }
 </style>
 
-<?php 
-    include "./app/views/includes/admin_security.php";
-?>
-
 <div class="container is-fluid is-max-desktop pt-2">
     <h1 class="title is-4"><i class="fas fa-calculator fa-fw"></i> Calculadora de costos</h1>
 </div>

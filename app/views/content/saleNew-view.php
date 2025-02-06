@@ -625,29 +625,30 @@
         cantidad=cantidad.trim();
         codigo.trim();
 
-        if(cantidad>0){
+        if(cantidad!=0){
+            if(cantidad>0){
+                let datos = new FormData();
+                datos.append("articulo_codigo", codigo);
+                datos.append("articulo_cantidad", cantidad);
+                datos.append("articulo_financiacion", financiacion);
+                datos.append("modulo_venta", "actualizar_producto");
 
-            let datos = new FormData();
-            datos.append("articulo_codigo", codigo);
-            datos.append("articulo_cantidad", cantidad);
-            datos.append("articulo_financiacion", financiacion);
-            datos.append("modulo_venta", "actualizar_producto");
-
-            fetch('<?php echo APP_URL; ?>app/ajax/ventaAjax.php',{
-                method: 'POST',
-                body: datos
-            })
-            .then(respuesta => respuesta.json())
-            .then(respuesta =>{
-                return alertas_ajax(respuesta);
-            });
-        }else{
-            Swal.fire({
-                icon: 'error',
-                title: 'Ocurrió un error inesperado',
-                text: 'Debes de introducir una cantidad mayor a 0',
-                confirmButtonText: 'Aceptar'
-            });
+                fetch('<?php echo APP_URL; ?>app/ajax/ventaAjax.php',{
+                    method: 'POST',
+                    body: datos
+                })
+                .then(respuesta => respuesta.json())
+                .then(respuesta =>{
+                    return alertas_ajax(respuesta);
+                });
+            }else{
+                Swal.fire({
+                    icon: 'error',
+                    title: 'Ocurrió un error inesperado',
+                    text: 'Debe de introducir una cantidad mayor a cero',
+                    confirmButtonText: 'Aceptar'
+                });
+            }
         }
     }
 
