@@ -389,9 +389,6 @@
 
 			$registrar_orden = $this->guardarDatos("orden", $datos_orden);
 
-			//vaciando variable de sesion de clientes
-			unset($_SESSION['datos_cliente_orden']);
-
 			if ($registrar_orden->rowCount()==1) {
 				$alerta=[
 					"tipo"=>"redireccionar",
@@ -900,25 +897,22 @@
 				}
 				$pag_final=$contador-1;
 			}else{
-				if($total>=1){
-					$tabla.='
-						<tr class="has-text-centered" >
-			                <td colspan="7">
-			                    <a href="'.$url.'5904/" class="button is-link is-rounded is-small mt-4 mb-4">
-			                        Haga clic acá para recargar el listado
-			                    </a>
-			                </td>
-			            </tr>
-					';
-				}else{
-					$tabla.='
-						<tr class="has-text-centered" >
-			                <td colspan="7">
-			                    No hay registros en el sistema
-			                </td>
-			            </tr>
-					';
-				}
+				$tabla.='
+					<tr class="has-text-centered" >
+						<td colspan="7">
+							<a href="'.$url.'5904/" class="button is-link is-rounded is-small mt-4 mb-4">
+								Haga clic acá para recargar el listado
+							</a>
+						</td>
+					</tr>
+				';
+				$tabla.='
+					<tr class="has-text-centered" >
+						<td colspan="7">
+							No hay registros en el sistema
+						</td>
+					</tr>
+				';
 			}
 
 			$tabla.='</tbody></table></div>';
@@ -943,9 +937,6 @@
 			// Log para verificar el valor recibido
 			error_log("Valor recibido en el controlador: " . $articulo);
 
-
-
-   
 			/*== Comprobando que no este vacio el campo ==*/
 			if($articulo==""){
 				return '

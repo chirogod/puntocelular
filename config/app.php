@@ -1,6 +1,6 @@
 <?php
 
-	const APP_URL="http://localhost/puntocelular/";
+	const APP_URL="http://localhost:8080/puntocelular/";
 	const APP_NAME="GESTION";
 	const APP_SESSION_NAME="GESTION";
 

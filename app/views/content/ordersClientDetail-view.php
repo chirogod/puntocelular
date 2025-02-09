@@ -50,7 +50,6 @@
 </div>
 <div class="container is-max-desktop mt-3 mb-3">
 	<?php
-		$insOrden = new ordenController();
 		echo $insOrden->listarOrdenesClienteControlador($url[1],15,$url[0],"", $id_cliente);
 	?>
 </div>
