@@ -321,6 +321,20 @@
 						</div>
 						<span class="fas fa-chevron-down"></span>
 					</a>
+					<ul class="full-width menu-principal sub-menu-options">
+						<li class="full-width">
+							<a href="<?php echo APP_URL; ?>planifDiaria/" class="full-width">
+								<div class="navLateral-body-cl">
+									<i class="fas fa-list-check fa-fw"></i>
+								</div>
+								<div class="navLateral-body-cr">
+									Planif diaria
+								</div>
+							</a>
+						</li>
+						
+						
+					</ul>
 					
 				</li>
 				<?php } ?>

@@ -312,7 +312,7 @@ class articuloController extends mainModel{
 
         $activo = $this->limpiarCadena($_POST['articulo_activo']);
         $rubro = $this->limpiarCadena($_POST['id_rubro']);
-        $id_sucursal = $this->limpiarCadena($_POST['id_sucursal']);
+        $id_sucursal = $_SESSION['id_sucursal'];
         
         $garantia = $this->limpiarCadena($_POST['articulo_garantia']);
         $observacion = $this->limpiarCadena($_POST['articulo_observacion']);
