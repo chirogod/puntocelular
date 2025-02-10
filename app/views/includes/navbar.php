@@ -5,6 +5,10 @@
             <ul class="list-unstyle">
                 <li class="text-condensedLight noLink" >
                     <div id="dolarText" ></div>
+
+                </li>
+                <li>
+                    <?php echo $_SESSION['usd_pc']?>
                 </li>
             </ul>
         </nav>

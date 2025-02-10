@@ -846,7 +846,7 @@
 								INNER JOIN usuario ON orden.id_usuario=usuario.id_usuario 
 								INNER JOIN caja ON orden.id_caja=caja.id_caja 
 								INNER JOIN sucursal ON orden.id_sucursal=sucursal.id_sucursal
-								WHERE orden.id_sucursal = 1
+								WHERE orden.id_sucursal = $_SESSION[id_sucursal]
 								AND orden.id_cliente = $id_cliente
 								ORDER BY orden.id_orden DESC";
 

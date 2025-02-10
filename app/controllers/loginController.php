@@ -82,6 +82,11 @@
                                     $_SESSION['caja'] = $check_caja['id_caja'];
                                 }
 
+
+                                $usd_pc = $this->Consultar("SELECT valor FROM configuracion WHERE clave = 'usd_pc'");
+                                $usd_pc = $usd_pc->fetchColumn();
+                                $_SESSION['usd_pc'] = $usd_pc;
+
                                 if (headers_sent()) {
                                     echo "<script> window.location.href='".APP_URL."dashboard/' ; </script>";
                                 }else {

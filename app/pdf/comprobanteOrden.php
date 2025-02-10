@@ -26,7 +26,7 @@
 		require "./code128.php";
 
 		$pdf = new PDF_Code128('P','mm','Letter');
-		$pdf->SetMargins(17,17,17);
+		$pdf->SetMargins(17,2,17);
 		$pdf->AddPage();
 		$pdf->Ln(9);
 		
@@ -34,13 +34,13 @@
 		$pageWidth = $pdf->GetPageWidth();
 
 		// RECTANGULO PRINCIPAL
-		$pdf->Rect(10, 10, $pageWidth - 20, 52);
+		$pdf->Rect(10, 1, $pageWidth - 20, 42);
 
 		// TEXTO DEL LADO IZQUIERDO DEL RECTANGULO PRINCIPAL
 		$pdf->SetFont('Arial','',10);
 		$pdf->Ln(9);
-		$pdf->Image('../views/img/logo.png', 16, 15, 48);
-        $pdf->Image('../views/img/patron2.png', $pageWidth/2, 15, 32);
+		$pdf->Image('../views/img/logo.png', 16, 2, 48);
+        $pdf->Image('../views/img/patron2.png', $pageWidth/2, 2, 32);
 		$pdf->SetFont('Arial','B',10);
 		$pdf->Cell(150,9,"Reparaciones - Ventas - Accesorios" ,0,0,'L');
 		$pdf->Ln(5);
@@ -59,25 +59,25 @@
 
 		// TEXTO DEL LADO DERECHO DEL RECTANGULO PRINCIPAL
 		$pdf->SetFont('Arial','B',12);
-		$pdf->Text($pageWidth / 2 + 35, 23, 'Entrada: ');
+		$pdf->Text($pageWidth / 2 + 35, 10, 'Entrada: ');
 		$pdf->SetFont('Arial','',12);
-		$pdf->Text($pageWidth / 2 + 52, 23,date("d/m/Y", strtotime($datos_orden['orden_fecha']))." - ". $datos_orden['orden_hora']  );
+		$pdf->Text($pageWidth / 2 + 52, 10,date("d/m/Y", strtotime($datos_orden['orden_fecha']))." - ". $datos_orden['orden_hora']  );
 
         $pdf->SetFont('Arial','B',12);
-		$pdf->Text($pageWidth / 2 + 40, 30, 'Orden de reparacion');
+		$pdf->Text($pageWidth / 2 + 40, 20, 'Orden de reparacion');
 		$pdf->SetFont('Arial','',18);
-		$pdf->Text($pageWidth / 2 + 59, 38, $datos_orden['id_orden']);
+		$pdf->Text($pageWidth / 2 + 59, 28, $datos_orden['id_orden']);
         $pdf->SetFont('Arial','b',12);
-		$pdf->Text($pageWidth / 2 + 38, 58, 'Estado:');
+		$pdf->Text($pageWidth / 2 + 40, 40, 'Estado:');
 		$pdf->SetFont('Arial','',18);
-		$pdf->Text($pageWidth / 2 + 58, 58, $datos_orden['orden_estado']);
+		$pdf->Text($pageWidth / 2 + 56, 40, $datos_orden['orden_estado']);
 
 		$pdf->Ln(5);
 
 		
 
 		// COORDENADAS PARA DSP DEL RECTANGULO PRINCIPAL
-		$yNewRect = 62 + 5; 
+		$yNewRect = 45; 
 
 		// RECTANGULO DATOS DEL CLIENTE
 		$pdf->Rect(10, $yNewRect, 32, 5); 
@@ -140,43 +140,55 @@
 			$pdf->Text($pageWidth/2 + 42, $yNewRect +20, $datos_orden['cliente_email']);
 		}
 
-		$pdf->Ln(27);
+		$pdf->Ln(14);
 
 		// RECTANGULO DETALLE DE ARTICULOS
-		$pdf->Rect(10, $yNewRect +30, 16, 5); 
+		$pdf->Rect(10, $yNewRect +22, 16, 5); 
 		$pdf->SetFont('Arial','b',10);
 		$pdf->SetTextColor(0,0,0);
-		$pdf->Text(12, $yNewRect+34, "Equipo");
-		$pdf->Line(10, $yNewRect+35, $pageWidth-10, $yNewRect+35);
+		$pdf->Text(12, $yNewRect+26, "Equipo");
+		$pdf->Line(10, $yNewRect+27, $pageWidth-10, $yNewRect+27);
 		$pdf->Ln(2);
 		
 		$pdf->SetX(10); // Ajusta la posición X para mover toda la tabla hacia la izquierda
 		//EQUIPO
-        $pdf->Cell($pageWidth/3,7,"Marca: ".$datos_orden['orden_equipo_marca'],'',0,'L');
-		$pdf->Cell($pageWidth/3,7,"Modelo: ".$datos_orden['orden_equipo_modelo'],'',0,'L');
-		$pdf->Cell($pageWidth/3,7,"Contrasena: ".$datos_orden['orden_equipo_contrasena'],'',0,'L');
+        $pdf->Cell($pageWidth/3,1,"Marca: ".$datos_orden['orden_equipo_marca'],'',0,'L');
+		$pdf->Cell($pageWidth/3,2,"Modelo: ".$datos_orden['orden_equipo_modelo'],'',0,'L');
+		$pdf->Cell($pageWidth/3,2,"Contrasena: ".$datos_orden['orden_equipo_contrasena'],'',0,'L');
 		
         $pdf->Ln(2);
+        $pdf->Text(11, $yNewRect+40, "Falla declarada:");
+        $pdf->SetFont('Arial','',9);
+        $pdf->SetXY(38, $yNewRect+37);
+		$pdf->MultiCell(160, 4, $datos_orden['orden_falla']);
 
-        $pdf->Text(10, $yNewRect+50, "Falla declarada:");
-        $pdf->SetFont('Arial','',10);
-        $pdf->Text(10, $yNewRect+54, $datos_orden['orden_falla']);
-
-        $yNewRect = $yNewRect+50;
+        $yNewRect = $yNewRect+26;
         $pdf->Ln(2);
         $pdf->SetFont('Arial','b',10);
-        $pdf->Text(10, $yNewRect+30, "Accesorios incluidos:");
-        $pdf->SetFont('Arial','',10);
-        $pdf->Text(10, $yNewRect+35, $datos_orden['orden_accesorios']);
+        $pdf->Text(11, $yNewRect+24, "Accesorios incluidos:");
+        $pdf->SetFont('Arial','',9);
+		$pdf->SetXY(48, $yNewRect+21);
+		$pdf->MultiCell(150, 4, $datos_orden['orden_accesorios']);
 
         $pdf->Ln(2);
         $pdf->SetFont('Arial','b',10);
-        $pdf->Text(10, $yNewRect+50, "Detalles fiscos:");
-        $pdf->SetFont('Arial','',10);
-        $pdf->Text(10, $yNewRect+55, $datos_orden['orden_equipo_detalles_fisicos']);
-        $pdf->Ln(75);
-        $pdf->Line(10, $yNewRect+65, $pageWidth-10, $yNewRect+65);
-        $pdf->MultiCell($pageWidth-40, 5, "IMPORTANTE: Transcurridos los 15 dias a partir de la REPARACION y NOTIFICACION, la empresa cobrara al propietario del dispositivo un recargo sobre el presupuesto, en concepto de interes punitorio y/o moratorio. La tasa del mismo sera de un 10% quincenal. Asimismo, cumplidos los 90 dias posteriores a la REPARACION y NOTIFICACION del dipositivo, de no ser retirado, se considerara abandonado, facultando a PUNTO CELULAR a disponer del bien. En caso de no aceptar el presupuesto, luego de ingresado el dispositivo, se debera abonar $5.000 de servicio de presupuestao SIN EXCEPCION.", 0, 'L');
+        $pdf->Text(11, $yNewRect+33, "Detalles fiscos:");
+        $pdf->SetFont('Arial','',9);
+		$pdf->SetXY(38, $yNewRect+30);
+		$pdf->MultiCell(150, 4, $datos_orden['orden_equipo_detalles_fisicos']);
+
+		$pdf->Ln(2);
+        $pdf->SetFont('Arial','b',10);
+        $pdf->Text(11, $yNewRect+40, "Observaciones:");
+        $pdf->SetFont('Arial','',9);
+		$pdf->SetXY(38, $yNewRect+37);
+		$pdf->MultiCell(150, 4, $datos_orden['orden_observaciones']);
+
+        $pdf->Line(10, $yNewRect+48, $pageWidth-10, $yNewRect+48);
+		$pdf->Ln(5);
+		$pdf->SetXY(8, $pageWidth-95);
+		$pdf->SetFont('Arial','',8);
+        $pdf->MultiCell($pageWidth-15, 4, "IMPORTANTE: Transcurridos los 15 dias a partir de la REPARACION y NOTIFICACION, la empresa cobrara al propietario del dispositivo un recargo sobre el presupuesto, en concepto de interes punitorio y/o moratorio. La tasa del mismo sera de un 10% quincenal. Asimismo, cumplidos los 90 dias posteriores a la REPARACION y NOTIFICACION del dipositivo, de no ser retirado, se considerara abandonado, facultando a PUNTO CELULAR a disponer del bien. En caso de no aceptar el presupuesto, luego de ingresado el dispositivo, se debera abonar $5.000 de servicio de presupuestao SIN EXCEPCION.", 0, 'L');
 
         $pdf->Ln(5);
         $pdf->SetFont('Arial','B',10);
