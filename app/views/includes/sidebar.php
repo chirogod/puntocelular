@@ -164,6 +164,16 @@
 							</a>
 						</li>
 						<li class="full-width">
+							<a href="<?php echo APP_URL; ?>pedidoRepuestoNew/" class="full-width">
+								<div class="navLateral-body-cl">
+									<i class="fas fa-list-check fa-fw"></i>
+								</div>
+								<div class="navLateral-body-cr">
+									Repuestos
+								</div>
+							</a>
+						</li>
+						<li class="full-width">
 							<a href="<?php echo APP_URL; ?>calcularCostos/" class="full-width">
 								<div class="navLateral-body-cl">
 									<i class="fas fa-calculator fa-fw"></i>

@@ -114,7 +114,7 @@
             <div class="columns">
                 <div class="column has-text-centered">
                     <div class="control">
-                            <button type="button" class="button is-link is-light js-modal-trigger" data-target="modal-js-infTec" >
+                        <button type="button" class="button is-link is-light js-modal-trigger" data-target="modal-js-infTec" >
                             Informe tecnico
                         </button>
                         <button type="button" class="button is-link is-light js-modal-trigger" data-target="modal-js-pay" >
@@ -411,6 +411,9 @@
                             <label for="" class="has-text-weight-bold">Falla: </label>
                             <textarea class="textarea is-small" name="" readonly id=""><?php echo $datos['orden_falla']; ?></textarea>
                         </div>
+                        <button type="button" class="button is-link is-light js-modal-trigger" data-target="modal-js-repuesto" >
+                            Pedir repuesto
+                        </button>
                     </div>
 
                     <?php
@@ -454,6 +457,65 @@
                 <p class="has-text-centered">
                     <button type="submit" class="button is-link is-light is-small">Guardar</button>
                 </p>
+            </form>
+        </section>
+    </div>
+</div>
+
+<!-- Modal registrar pedido repuesto -->
+<div class="modal is-fullscreen" id="modal-js-repuesto">
+    <div class="modal-background"></div>
+    <div class="modal-card">
+        <header class="modal-card-head">
+            <p class="modal-card-title is-uppercase has-text-weight-bold is-size-5">
+                <i class="fas fa-search"></i> &nbsp; Pedir repuesto
+            </p>
+            <button class="delete" aria-label="close"></button>
+        </header>
+        <section class="modal-card-body is-size-7">
+            <form class="" action="<?php echo APP_URL; ?>app/ajax/repuestoAjax.php" method="POST" autocomplete="off" name="formsale">
+                <input class="input" name="id_orden" type="hidden" readonly value="<?php echo $datos['id_orden'] ?>">
+                <input type="hidden" name="modulo_repuesto" value="registrar_pedido">
+
+                    <div class="columns">
+                        <div class="column">
+
+                            <label>Seccion <?php echo CAMPO_OBLIGATORIO; ?></label><br>
+                            <div class="select">
+                                <select name="id_seccion" >
+                                    <option value="" selected="" >Seleccione una opción</option>
+                                    <?php
+                                        $datos_seccion=$insLogin->seleccionarDatos("Normal","seccion_repuesto","*",0);
+
+                                        $cc=1;
+                                        while($campos_seccion=$datos_seccion->fetch()){
+                                            echo '<option value="'.$campos_seccion['id_seccion_repuesto'].'">'.$cc.' - '.$campos_seccion['seccion_repuesto_descripcion'].'</option>';
+                                            $cc++;
+                                        }
+                                    ?>
+                                </select>
+                            </div>
+                        </div>
+                        <div class="column">
+                            <label>Repuesto<?php echo CAMPO_OBLIGATORIO; ?></label>
+                            <input class="input" type="text" name="repuesto_descripcion" maxlength="40" required >
+                        </div>
+                        <div class="column">
+                            <label>Color<?php echo CAMPO_OBLIGATORIO; ?></label>
+                            <input class="input" type="text" name="repuesto_color" maxlength="40" >
+                        </div>
+                    </div>     
+                            
+                    
+                    
+
+                    <p class="has-text-centered">
+                        <button type="reset" class="button is-link is-light is-rounded"><i class="fas fa-paint-roller"></i> &nbsp; Limpiar</button>
+                        <button type="submit" class="button is-info is-rounded"><i class="far fa-save"></i> &nbsp; Guardar</button>
+                    </p>
+                    <p class="has-text-centered pt-1">
+                        <small>Los campos marcados con <?php echo CAMPO_OBLIGATORIO; ?> son obligatorios</small>
+                    </p>
             </form>
         </section>
     </div>

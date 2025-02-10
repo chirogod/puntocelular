@@ -150,10 +150,10 @@
             }
 
             // Generar la tabla HTML
-            echo '<table class="table is-striped is-hoverable is-fullwidth"';
+            echo '<table class="table is-striped is-hoverable is-fullwidth">';
             echo '<thead>';
             echo '<tr>';
-            echo '<th>Seccion</th>';
+            echo '<th>Sección</th>';
             echo '<th>Pedidos</th>';
             echo '</tr>';
             echo '</thead>';
@@ -161,9 +161,13 @@
 
             foreach ($seccionRepuestos as $seccionRepuesto) {
                 echo '<tr>';
-                echo '<td>' . $seccionRepuesto['seccion'] . '</td>';
-                echo '<td>';
-                echo '<table class="table is-striped is-hoverable is-fullwidth">';
+                echo '<td colspan="2">';
+                echo '<details>';
+                echo '<summary>';
+                echo $seccionRepuesto['seccion'];
+                echo '</summary>';
+
+                echo '<table class="table is-striped is-hoverable is-fullwidth mt-3">';
                 echo '<thead>';
                 echo '<tr>';
                 echo '<th>Repuesto</th>';
@@ -174,6 +178,7 @@
                 echo '</tr>';
                 echo '</thead>';
                 echo '<tbody>';
+
                 foreach ($seccionRepuesto['pedidos'] as $pedido) {
                     echo '<tr>';
                     echo '<td>' . $pedido['pedido'] . '</td>';
@@ -183,10 +188,16 @@
                     echo '<td>' . $pedido['usuario'] . '</td>';
                     echo '</tr>';
                 }
+
                 echo '</tbody>';
                 echo '</table>';
+                echo '</details>';
                 echo '</td>';
                 echo '</tr>';
             }
+
+            echo '</tbody>';
+            echo '</table>';
+
         }
     }
