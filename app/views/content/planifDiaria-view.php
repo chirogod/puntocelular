@@ -7,12 +7,21 @@ $meses = [
     5 => 'Mayo', 6 => 'Junio', 7 => 'Julio', 8 => 'Agosto',
     9 => 'Septiembre', 10 => 'Octubre', 11 => 'Noviembre', 12 => 'Diciembre'
 ];
+$meses_abreviados = [
+    1 => 'Ene', 2 => 'Feb', 3 => 'Mar', 4 => 'Abr',
+    5 => 'May', 6 => 'Jun', 7 => 'Jul', 8 => 'Ago',
+    9 => 'Sep', 10 => 'Oct', 11 => 'Nov', 12 => 'Dic'
+];
 $mes_descripcion = $meses[$mes_actual];
+$mes_descripcion_abreviado = $meses_abreviados[$mes_actual];
 
+//select de la base de datos segun la sucursal, los objetivos etc.
+$datos_sucursal = $insLogin->seleccionarDatos("Unico", "sucursal", "id_sucursal", $_SESSION['id_sucursal']);
+$datos_sucursal = $datos_sucursal->fetch();
 // Valores iniciales de configuración (se pueden guardar en la BD en el futuro)
-$objetivo = isset($_POST['objetivo']) ? $_POST['objetivo'] : 400;
-$dias_laborales = isset($_POST['dias_laborales']) ? $_POST['dias_laborales'] : 24;
-$dias_trabajados = isset($_POST['dias_trabajados']) ? $_POST['dias_trabajados'] : 21;
+$objetivo = $datos_sucursal['sucursal_objetivo_taller'];
+$dias_laborales = $datos_sucursal['sucursal_laborales'];
+$dias_trabajados = $datos_sucursal['sucursal_trabajados'];
 
 // Consulta cantidad de órdenes en el mes
 $ordenes_mes = $insLogin->Consultar("SELECT COUNT(*) FROM orden WHERE MONTH(orden_fecha) = $mes_actual AND id_sucursal = {$_SESSION['id_sucursal']}");
@@ -32,8 +41,9 @@ function aguti($dia) {
 </div>
 
 <!-- Formulario para modificar la configuración -->
-<div class="container is-max-desktop">
-    <form method="POST">
+<div class=" container box is-max-desktop">
+    <form class="FormularioAjax" action="<?php echo APP_URL; ?>app/ajax/sucursalAjax.php" method="POST" autocomplete="off" >
+        <input type="hidden" name="modulo_sucursal" value="actualizar_taller">
         <div class="columns">
             <div class="column">
                 <label class="label">Objetivo</label>
@@ -47,22 +57,23 @@ function aguti($dia) {
                 <label class="label">Días trabajados</label>
                 <input class="input" type="number" name="dias_trabajados" value="<?php echo $dias_trabajados; ?>" required>
             </div>
-            <div class="column">
-                <button class="button is-primary" type="submit">Actualizar</button>
+            <div class="has-text-centered">
+                <button type="submit" class="button is-info is-rounded"><i class="far fa-save"></i> &nbsp; Actualizar</button>
             </div>
+            
         </div>
     </form>
 </div>
 
 <!-- Tabla de planificación -->
-<div class="container mt-5 is-max-desktop">
+<div class="container mt-5 mb-5 is-max-desktop has-text-centered">
     <table class="table is-striped is-bordered is-fullwidth">
         <thead>
             <tr>
                 <th>FECHA</th>
                 <th>INGRESO DEL DÍA</th>
                 <th>ACUMULADO</th>
-                <th>%</th>
+                <th class="has-text-centered">%</th>
                 <th>PROYECCIÓN</th>
             </tr>
         </thead>
@@ -76,7 +87,7 @@ function aguti($dia) {
                 $proyeccion = ($dias_trabajados > 0) ? ($acumulado / $dias_trabajados * $dias_laborales) : 0;
 
                 echo "<tr>
-                        <td>$i</td>
+                        <td>$i - $mes_descripcion_abreviado</td>
                         <td>$ordenes_dia</td>
                         <td>$acumulado</td>
                         <td>" . number_format($porcentaje, 2) . "%</td>

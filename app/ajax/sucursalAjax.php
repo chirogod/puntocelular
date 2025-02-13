@@ -12,12 +12,8 @@
             echo $insSucursal->registrarSucursalControlador();
         }
 
-        if ($_POST['modulo_sucursal'] == "actualizar") {
-            echo $insSucursal->actualizarSucursalControlador();
-        }
-
-        if ($_POST['modulo_sucursal'] == "eliminar") {
-            echo $insSucursal->eliminarSucursalControlador();
+        if ($_POST['modulo_sucursal'] == "actualizar_taller") {
+            echo $insSucursal->actualizarTallerControlador();
         }
 
     }else{

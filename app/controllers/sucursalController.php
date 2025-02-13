@@ -277,6 +277,75 @@
     
             return $tabla;
         }
+
+        public function actualizarTallerControlador(){
+            $objetivo = $_POST['objetivo'];
+            $dias_laborales = $_POST['dias_laborales'];
+            $dias_trabajados = $_POST['dias_trabajados'];
+
+            if($objetivo == "" || $dias_laborales == "" || $dias_trabajados == ""){
+                $alerta=[
+                    "tipo"=>"simple",
+                    "titulo"=>"Ocurrió un error inesperado",
+                    "texto"=>"No has llenado todos los campos que son obligatorios",
+                    "icono"=>"error"
+                ];
+                return json_encode($alerta);
+                exit();
+            }
+
+            if($objetivo == 0 || $dias_laborales == 0 || $dias_trabajados == 0){
+                $alerta=[
+                    "tipo"=>"simple",
+                    "titulo"=>"Ocurrió un error inesperado",
+                    "texto"=>"Los campos no pueden valer 0",
+                    "icono"=>"error"
+                ];
+                return json_encode($alerta);
+                exit();
+            }
+
+            $datos_sucursal = [
+                [
+                    "campo_nombre"=>"sucursal_objetivo_taller",
+                    "campo_marcador"=>":Objetivo",
+                    "campo_valor"=>$objetivo
+                ],
+                [
+                    "campo_nombre"=>"sucursal_laborales",
+                    "campo_marcador"=>":DiasLaborales",
+                    "campo_valor"=>$dias_laborales
+                ],
+                [
+                    "campo_nombre"=>"sucursal_trabajados",
+                    "campo_marcador"=>":DiasTrabajados",
+                    "campo_valor"=>$dias_trabajados
+                ]
+            ];
+            $condicion=[
+                "condicion_campo"=>"id_sucursal",
+                "condicion_marcador"=>":ID",
+                "condicion_valor"=>$_SESSION['id_sucursal']
+            ];
+            if($this->actualizarDatos("sucursal",$datos_sucursal,$condicion)){
+                $alerta=[
+                    "tipo"=>"recargar",
+                    "titulo"=>"Datos actualizados",
+                    "texto"=>"Los datos se actualizaron correctamente",
+                    "icono"=>"success"
+                ];
+            }else{
+                $alerta=[
+                    "tipo"=>"simple",
+                    "titulo"=>"Ocurrió un error inesperado",
+                    "texto"=>"No hemos podido actualizar los datos, por favor intente nuevamente",
+                    "icono"=>"error"
+                ];
+            }
+    
+            return json_encode($alerta);
+
+        }
     }
 
 

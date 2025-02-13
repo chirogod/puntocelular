@@ -65,6 +65,7 @@
                                     $_SESSION['sucursal_pie_nota'] = $check_sucursal['sucursal_pie_nota'];
                                     $_SESSION['sucursal_pie_comprobante'] = $check_sucursal['sucursal_pie_comprobante'];
                                     $_SESSION['sucursal_firma_email'] = $check_sucursal['sucursal_firma_email'];
+                                    $_SESSION['usd_pc'] = $check_sucursal['sucursal_usd'];
                                 }else{
                                     echo '
                                         <article class="message is-danger">
@@ -81,11 +82,6 @@
                                 if ($check_caja['id_caja']) {
                                     $_SESSION['caja'] = $check_caja['id_caja'];
                                 }
-
-
-                                $usd_pc = $this->Consultar("SELECT valor FROM configuracion WHERE clave = 'usd_pc'");
-                                $usd_pc = $usd_pc->fetchColumn();
-                                $_SESSION['usd_pc'] = $usd_pc;
 
                                 if (headers_sent()) {
                                     echo "<script> window.location.href='".APP_URL."dashboard/' ; </script>";
