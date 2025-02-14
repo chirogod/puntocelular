@@ -328,7 +328,7 @@
 									<i class="fas fa-list-check fa-fw"></i>
 								</div>
 								<div class="navLateral-body-cr">
-									Planif diaria
+									Ordenes
 								</div>
 							</a>
 						</li>
@@ -383,8 +383,6 @@
 							</a>
 						</li>
 						<?php } ?>
-						
-						
 					</ul>
 				</li>
 

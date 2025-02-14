@@ -782,7 +782,7 @@
 							<td>' . $rows['orden_codigo'] . '</td>
 							<td>' . date("d-m-Y", strtotime($rows['orden_fecha'])) . ' ' . $rows['orden_hora'] . '</td>
 							<td>' . $rows['cliente_nombre_completo'] . '</td>
-							<td>' . $rows['orden_telefonista'] . '</td>
+							<td>' . $rows['usuario_nombre_completo'] . '</td>
 							<td>' . MONEDA_SIMBOLO . number_format($rows['orden_total_lista'], MONEDA_DECIMALES, MONEDA_SEPARADOR_DECIMAL, MONEDA_SEPARADOR_MILLAR) . ' ' . MONEDA_NOMBRE . '</td>
 							<td>' . MONEDA_SIMBOLO . number_format($rows['orden_total_efectivo'], MONEDA_DECIMALES, MONEDA_SEPARADOR_DECIMAL, MONEDA_SEPARADOR_MILLAR) . ' ' . MONEDA_NOMBRE . '</td>
 						</tr>

@@ -1,6 +1,6 @@
 <div class="">
 	<?php 
-		$id = $insLogin->limpiarCadena($url[1]);
+		$codigo = $insLogin->limpiarCadena($url[1]);
         
 	?>
 
@@ -11,7 +11,7 @@
 	
 		include "./app/views/includes/btn_back.php";
 
-		$datos = $insLogin->seleccionarDatos("Unico","orden","id_orden",$id);
+		$datos = $insLogin->seleccionarDatos("Unico","orden","orden_codigo",$codigo);
         
 		if($datos->rowCount()==1){
 			$datos=$datos->fetch();
@@ -163,7 +163,7 @@
                 <div class="column is-one-third">
                     <div class="control">
                         <label>Accesorios</label>
-                        <textarea class="textarea" name="orden_accesorios"><?php echo $datos['orden_accesorios']; ?></textarea>
+                        <textarea readonly class="textarea" name="orden_accesorios"><?php echo $datos['orden_accesorios']; ?></textarea>
                     </div>
                 </div>
 
@@ -172,9 +172,7 @@
                     <div class="control">
                         <label>Detalles físicos</label>
                         <?php if($datos['orden_equipo_detalles_fisicos'] != "") {?>
-                            <textarea readonly class="textarea" name="orden_equipo_detalles_fisicos" id="">
-                                <?php echo $datos['orden_equipo_detalles_fisicos']; ?>
-                            </textarea>
+                            <textarea readonly class="textarea" name="orden_equipo_detalles_fisicos" id=""><?php echo $datos['orden_equipo_detalles_fisicos']; ?></textarea>
                         <?php } else {?>
                             <p class="textarea">No</p>
                         <?php }?>
