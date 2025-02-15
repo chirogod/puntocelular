@@ -16,6 +16,14 @@
             echo $insSucursal->actualizarTallerControlador();
         }
 
+        if ($_POST['modulo_sucursal'] == "usd_pc") {
+            echo $insSucursal->actualizarUsdControlador();
+        }
+
+        if ($_POST['modulo_sucursal'] == "costo_operativo") {
+            echo $insSucursal->actualizarCostoOperativoControlador();
+        }
+
     }else{
         session_destroy();
         header("Location: ".APP_URL."login/");

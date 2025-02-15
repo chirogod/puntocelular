@@ -346,6 +346,74 @@
             return json_encode($alerta);
 
         }
+
+        public function actualizarUsdControlador(){
+            $sucursal_usd = $_POST['sucursal_usd'];
+
+            $datos_sucursal = [
+                [
+                    "campo_nombre"=>"sucursal_usd",
+                    "campo_marcador"=>":Usd",
+                    "campo_valor"=>$sucursal_usd
+                ]
+            ];
+            $condicion=[
+                "condicion_campo"=>"id_sucursal",
+                "condicion_marcador"=>":ID",
+                "condicion_valor"=>$_SESSION['id_sucursal']
+            ];
+            if($this->actualizarDatos("sucursal",$datos_sucursal,$condicion)){
+                $alerta=[
+                    "tipo"=>"recargar",
+                    "titulo"=>"Datos actualizados",
+                    "texto"=>"Los datos se actualizaron correctamente",
+                    "icono"=>"success"
+                ];
+            }else{
+                $alerta=[
+                    "tipo"=>"simple",
+                    "titulo"=>"Ocurrió un error inesperado",
+                    "texto"=>"No hemos podido actualizar los datos, por favor intente nuevamente",
+                    "icono"=>"error"
+                ];
+            }
+            return json_encode($alerta);
+        }
+
+        public function actualizarCostoOperativoControlador(){
+            $sucursal_costo_operativo_hora = $_POST['sucursal_costo_operativo_hora'];
+
+            $datos_sucursal = [
+                [
+                    "campo_nombre"=>"sucursal_costo_operativo_hora",
+                    "campo_marcador"=>":CostoOperativoHora",
+                    "campo_valor"=>$sucursal_costo_operativo_hora
+                ]
+            ];
+            $condicion=[
+                "condicion_campo"=>"id_sucursal",
+                "condicion_marcador"=>":ID",
+                "condicion_valor"=>$_SESSION['id_sucursal']
+            ];
+            if($this->actualizarDatos("sucursal",$datos_sucursal,$condicion)){
+                $alerta=[
+                    "tipo"=>"recargar",
+                    "titulo"=>"Datos actualizados",
+                    "texto"=>"Los datos se actualizaron correctamente",
+                    "icono"=>"success"
+                ];
+            }else{
+                $alerta=[
+                    "tipo"=>"simple",
+                    "titulo"=>"Ocurrió un error inesperado",
+                    "texto"=>"No hemos podido actualizar los datos, por favor intente nuevamente",
+                    "icono"=>"error"
+                ];
+            }
+    
+            return json_encode($alerta);
+
+        }
     }
 
 

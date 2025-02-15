@@ -363,6 +363,16 @@
 							</a>
 						</li>
 						<li class="full-width">
+							<a href="<?php echo APP_URL; ?>valores/" class="full-width">
+								<div class="navLateral-body-cl">
+									<i class="fas fa-dollar-sign fa-fw"></i>
+								</div>
+								<div class="navLateral-body-cr">
+									Valores
+								</div>
+							</a>
+						</li>
+						<li class="full-width">
 							<a href="<?php echo APP_URL; ?>rubroNew/" class="full-width">
 								<div class="navLateral-body-cl">
 									<i class="fas fa-cubes fa-fw"></i>
