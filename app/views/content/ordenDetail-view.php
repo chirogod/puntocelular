@@ -471,7 +471,7 @@
             <button class="delete" aria-label="close"></button>
         </header>
         <section class="modal-card-body is-size-7">
-            <form class="" action="<?php echo APP_URL; ?>app/ajax/repuestoAjax.php" method="POST" autocomplete="off" name="formsale">
+            <form class="FormularioAjax" action="<?php echo APP_URL; ?>app/ajax/repuestoAjax.php" method="POST" autocomplete="off" name="formsale">
                 <input class="input" name="id_orden" type="hidden" readonly value="<?php echo $datos['id_orden'] ?>">
                 <input type="hidden" name="modulo_repuesto" value="registrar_pedido">
 

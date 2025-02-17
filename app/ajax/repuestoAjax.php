@@ -12,6 +12,10 @@
             echo $insRepuesto->registrarPedidoControlador();
         }
 
+        if ($_POST['modulo_repuesto'] == "ingreso_pedido") {
+            echo $insRepuesto->ingresoPedidoControlador();
+        }
+
     }else{
         session_destroy();
         header("Location: ".APP_URL."login/");

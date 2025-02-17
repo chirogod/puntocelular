@@ -125,6 +125,7 @@
 
             $seccionRepuestos = [];
             foreach ($datos as $fila) {
+                $id_pedido_repuesto = $fila['id_pedido_repuesto'];
                 $id_seccion_repuesto = $fila['id_seccion_repuesto'];
                 $seccion_repuesto_descripcion = $fila['seccion_repuesto_descripcion'];
                 $pedido_repuesto_descripcion = $fila['pedido_repuesto_descripcion'];
@@ -140,6 +141,7 @@
                 }
                 if (!empty($pedido_repuesto_descripcion)) {
                     $seccionRepuestos[$id_seccion_repuesto]['pedidos'][] = [
+                        'id'=>$id_pedido_repuesto,
                         'pedido' => $pedido_repuesto_descripcion,
                         'fecha' => $pedido_repuesto_fecha,
                         'hora' => $pedido_repuesto_hora,
@@ -153,8 +155,7 @@
             echo '<table class="table is-striped is-hoverable is-fullwidth">';
             echo '<thead>';
             echo '<tr>';
-            echo '<th>Sección</th>';
-            echo '<th>Pedidos</th>';
+            echo '<th>Pedidos de repuestos</th>';
             echo '</tr>';
             echo '</thead>';
             echo '<tbody>';
@@ -172,7 +173,6 @@
                 echo '<tr>';
                 echo '<th>Repuesto</th>';
                 echo '<th>Fecha</th>';
-                echo '<th>Hora</th>';
                 echo '<th>Orden</th>';
                 echo '<th>Usuario</th>';
                 echo '</tr>';
@@ -182,10 +182,16 @@
                 foreach ($seccionRepuesto['pedidos'] as $pedido) {
                     echo '<tr>';
                     echo '<td>' . $pedido['pedido'] . '</td>';
-                    echo '<td>' . $pedido['fecha'] . '</td>';
-                    echo '<td>' . $pedido['hora'] . '</td>';
+                    echo '<td>' . $pedido['fecha'] .' - ' . $pedido['hora'] .'</td>';
                     echo '<td>' . $pedido['orden'] . '</td>';
                     echo '<td>' . $pedido['usuario'] . '</td>';
+                    echo '<td>
+                            <form class="FormularioAjax" action="'.APP_URL.'app/ajax/repuestoAjax.php" method="POST" autocomplete="off" enctype="multipart/form-data" >
+                                <input type="hidden" name="modulo_repuesto" value="ingreso_pedido">
+                                <input type="hidden" name="id_pedido_repuesto" value="'. $pedido['id'] .'">  
+                                <input class="button" type="submit" value="ingreso">
+                            </form>
+                          </td>';
                     echo '</tr>';
                 }
 
@@ -199,5 +205,29 @@
             echo '</tbody>';
             echo '</table>';
 
+        }
+
+        public function ingresoPedidoControlador(){
+            $id_pedido_repuesto = $_POST['id_pedido_repuesto'];
+            $ingreso_pedido = $this->eliminarRegistro('pedido_repuesto', 'id_pedido_repuesto', $id_pedido_repuesto);
+            if($ingreso_pedido){
+                $alerta=[
+                    "tipo"=>"recargar",
+                    "titulo"=>"Operacion exitosa",
+                    "texto"=>"El repuesto se marco como ingresado.",
+                    "icono"=>"success"
+                ];
+                
+            }else{
+                $alerta=[
+                    "tipo"=>"recargar",
+                    "titulo"=>"Ocurrió un error inesperado",
+                    "texto"=>"No se pudo marcar como ingresado el repuesto",
+                    "icono"=>"error"
+                ];
+                return json_encode($alerta);
+                exit();
+            }
+            return json_encode($alerta);
         }
     }
