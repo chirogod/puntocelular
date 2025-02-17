@@ -347,14 +347,14 @@
                                 $clase_estado = ''; // Sin clase
                         }
                     
-                        
+                        $usd_pc = $_SESSION['usd_pc'];
                         $efectivo_usd = $rows['equipo_costo'] * 1.4;
-                        $precio = $efectivo_usd * 1.4 *USD_PC;
+                        $precio = $efectivo_usd * 1.4 * $usd_pc;
                         $efectivo = $precio * 0.75;
                         $sin_int_3 = $precio / 3;
                         $sin_int_6 = $precio / 6; 
-                        $fijas_9 = ($efectivo_usd * 1.5 * USD_PC) / 9;
-                        $fijas_12 = ($efectivo_usd * 1.6 * USD_PC) / 12;
+                        $fijas_9 = ($efectivo_usd * 1.5 * $usd_pc) / 9;
+                        $fijas_12 = ($efectivo_usd * 1.6 * $usd_pc) / 12;
                     
                         $tabla .= '
                             <tr class="' . $clase_estado . '" style="cursor: pointer;" onclick="window.location.href=\'' . APP_URL . 'equipoUpdate/' . $rows['id_equipo'] . '/\'">

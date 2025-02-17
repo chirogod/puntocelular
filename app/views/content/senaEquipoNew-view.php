@@ -1,12 +1,12 @@
 <?php 
     $id = $insLogin->limpiarCadena($url[1]);
 		$datos = $insLogin->seleccionarDatos("Unico","equipo","id_equipo",$id);
-        
+        $usd_pc = $_SESSION['usd_pc'];
         if($datos->rowCount()==1){
 			$datos=$datos->fetch();
             $id_equipo = $datos['id_equipo'];
             $efectivo_usd = $datos['equipo_costo'] * 1.4;
-            $efectivo = $efectivo_usd * USD_PC;
+            $efectivo = $efectivo_usd * $usd_pc;
             $precio = $efectivo * 1.4;
             $sin_int_3 = $precio / 3;
             $sin_int_6 = $precio / 6; 
@@ -15,7 +15,7 @@
             $pago1 = $efectivo * 1.1;
 ?>
 
-<input type="hidden" id="usd_pc" value="<?php echo USD_PC?>">
+<input type="hidden" id="usd_pc" value="<?php echo $usd_pc?>">
 
 <div class="container is-fluid mb-1">
 	<h1 class="title">Sena de equipo</h1>

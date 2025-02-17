@@ -9,12 +9,12 @@
         $id_equipo=$insLogin->limpiarCadena($url[1]);
 
 		$datos=$insLogin->seleccionarDatos("Normal","sena INNER JOIN cliente ON sena.id_cliente=cliente.id_cliente INNER JOIN equipo ON sena.id_equipo=equipo.id_equipo INNER JOIN caja ON sena.id_caja=caja.id_caja WHERE sena.id_equipo = '$id_equipo'","*",0);
-		
+		$usd_pc = $_SESSION['usd_pc'];
         if($datos->rowCount()==1){
 			$datos=$datos->fetch();
 
             $efectivo_usd = $datos['equipo_costo'] * 1.4;
-            $efectivo_ars = ($efectivo_usd * USD_PC);   
+            $efectivo_ars = ($efectivo_usd * $usd_pc);   
             $precio = $efectivo_ars * 1.4;
 
             $sin_int_3 = $precio / 3;
@@ -24,8 +24,8 @@
             $pago1 = $efectivo_ars * 1.1;
 
             $sena = 0;
-            $sena += $datos['sena_ars'] / USD_PC;
-            $sena += $datos['sena_pcp'] / USD_PC;
+            $sena += $datos['sena_ars'] / $usd_pc;
+            $sena += $datos['sena_pcp'] / $usd_pc;
             $sena_usd_ars = $datos['sena_usd'];
             $sena_pcu_ars = $datos['sena_pcu'];
             $sena += $sena_usd_ars;
@@ -37,13 +37,13 @@
             if ($suma_pagos->rowCount() >= 1) {
                 $suma_pagos = $suma_pagos->fetch();
                 $suma_pagos_value = $suma_pagos['suma_pagos'] !== NULL ? $suma_pagos['suma_pagos'] : 0;
-                $suma_pagos_value_usd = $suma_pagos_value / USD_PC;
+                $suma_pagos_value_usd = $suma_pagos_value / $usd_pc;
             } else {
                 $suma_pagos_value = 0;
             }
     ?>
 
-<input type="hidden" id="usd_pc" value="<?php echo USD_PC?>">
+<input type="hidden" id="usd_pc" value="<?php echo $usd_pc?>">
 
 <div class="container">
     
@@ -270,7 +270,7 @@
                         $saldo = $restante_usd - $suma_pagos_value_usd;
                         echo "Saldo: USD".MONEDA_SIMBOLO.number_format($saldo, MONEDA_DECIMALES, MONEDA_SEPARADOR_DECIMAL, MONEDA_SEPARADOR_MILLAR);
                         ?>
-                        <input type="hidden" name="saldo" value="<?php echo $saldo * USD_PC; ?>">
+                        <input type="hidden" name="saldo" value="<?php echo $saldo * $usd_pc; ?>">
                     </div>
                 </div>
                 <p class="has-text-centered">

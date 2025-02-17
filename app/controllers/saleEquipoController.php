@@ -6,13 +6,14 @@
 	class saleEquipoController extends mainModel{
 
 		private function calcularOperadorFinanciacion($costo, $financiacion) {
+			$usd_pc = $_SESSION['usd_pc'];
 			$efectivo_usd = $costo * 1.4;
-			$precio = $efectivo_usd * 1.4 *USD_PC;
+			$precio = $efectivo_usd * 1.4 * $usd_pc;
 			$efectivo = $precio * 0.75;
 			$sin_int_3 = $precio;
 			$sin_int_6 = $precio; 
-			$fijas_9 = ($efectivo_usd * 1.5 * USD_PC);
-			$fijas_12 = ($efectivo_usd * 1.6 * USD_PC);
+			$fijas_9 = ($efectivo_usd * 1.5 * $usd_pc);
+			$fijas_12 = ($efectivo_usd * 1.6 * $usd_pc);
 			switch ($financiacion) {
 				case "Efectivo":
 					return $efectivo;

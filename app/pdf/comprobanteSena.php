@@ -5,6 +5,7 @@
 	/*---------- Incluyendo configuraciones ----------*/
 	require_once "../../config/app.php";
     require_once "../../autoload.php";
+    require_once "../views/includes/session_start.php";
 
 	/*---------- Instancia al controlador sena ----------*/
 	use app\controllers\senaController;
@@ -12,14 +13,14 @@
 
 	$datos_sena=$ins_sena->seleccionarDatos("Normal","sena INNER JOIN equipo ON sena.id_equipo=equipo.id_equipo INNER JOIN cliente ON sena.id_cliente=cliente.id_cliente INNER JOIN caja ON sena.id_caja=caja.id_caja WHERE (id_sena='$code')","*",0);
 
-    
 	if($datos_sena->rowCount()==1){
 
+        $usd_pc = $_SESSION['usd_pc'];
 		/*---------- Datos de la sena ----------*/
 		$datos_sena=$datos_sena->fetch();
 
         $efectivo_usd = $datos_sena['equipo_costo'] * 1.4;
-        $efectivo_ars = ($efectivo_usd * USD_PC);   
+        $efectivo_ars = ($efectivo_usd * $usd_pc);   
         $precio = $efectivo_ars * 1.4;
 
         $sin_int_3 = $precio / 3;
@@ -29,15 +30,15 @@
         $pago1 = $efectivo_ars * 1.1;
 
         $sena = 0;
-        $sena += $datos_sena['sena_ars'] / USD_PC;
-        $sena += $datos_sena['sena_pcp'] / USD_PC;
+        $sena += $datos_sena['sena_ars'] / $usd_pc;
+        $sena += $datos_sena['sena_pcp'] / $usd_pc;
         $sena_usd_ars = $datos_sena['sena_usd'];
         $sena_pcu_ars = $datos_sena['sena_pcu'];
         $sena += $sena_usd_ars;
         $sena += $sena_pcu_ars;
 
         $restante_usd = $efectivo_usd - $sena;
-        $restante_efectivo_ars = ($restante_usd * USD_PC);   
+        $restante_efectivo_ars = ($restante_usd * $usd_pc);   
         $restante_precio = $restante_efectivo_ars * 1.4;
 
         $restante_sin_int_3 = $restante_precio / 3;

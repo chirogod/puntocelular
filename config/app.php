@@ -28,9 +28,6 @@
 	const MONEDA_SEPARADOR_DECIMAL=",";
 
 	/* dolar punto celular */
-	const USD_PC = 1350;
-
-	/* dolar punto celular */
 	const COSTO_OPERATIVO_HORA = 24000;
 
 	/*---------- Formas de pago ----------*/
