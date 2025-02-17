@@ -52,7 +52,7 @@
                     <thead>
                         <tr class="has-background-warning has-text-white">
                             <th>COSTO OPERATIVO POR HORA</th>
-                            <th class="has-text-right" id="costo_operativo_hora"><?php echo COSTO_OPERATIVO_HORA ?></th>
+                            <th class="has-text-right" id="costo_operativo_hora"><?php echo $_SESSION['costo_operativo_hora'] ?></th>
                         </tr>
                     </thead>
                     <tbody>
@@ -184,7 +184,7 @@
         }
 
         if (!isNaN(horasTrabajo) && !isNaN(costoRepuesto) && !isNaN(riesgo)) {
-            var cuotas_sin_interes = ((<?php echo COSTO_OPERATIVO_HORA ?> * horasTrabajo) + costoRepuesto) * multiplicadorRiesgo * 1.3;
+            var cuotas_sin_interes = ((<?php echo $_SESSION['costo_operativo_hora'] ?> * horasTrabajo) + costoRepuesto) * multiplicadorRiesgo * 1.3;
             var descuento_efectivo = cuotas_sin_interes * 0.8;
             var cuotas_6 = descuento_efectivo * 1.5;
             var cuotas_12 = descuento_efectivo * 1.9;

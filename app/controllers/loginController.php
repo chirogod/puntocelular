@@ -66,6 +66,7 @@
                                     $_SESSION['sucursal_pie_comprobante'] = $check_sucursal['sucursal_pie_comprobante'];
                                     $_SESSION['sucursal_firma_email'] = $check_sucursal['sucursal_firma_email'];
                                     $_SESSION['usd_pc'] = $check_sucursal['sucursal_usd'];
+                                    $_SESSION['costo_operativo_hora'] = $check_sucursal['sucursal_costo_operativo_hora'];
                                 }else{
                                     echo '
                                         <article class="message is-danger">
