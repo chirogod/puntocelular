@@ -205,6 +205,17 @@
 			$orden_equipo_detalles_fisicos = $_POST['orden_equipo_detalles_fisicos'];
 
 			$orden_equipo_contrasena = $_POST['orden_equipo_contrasena'];
+			if($orden_equipo_contrasena == ""){
+				$alerta=[
+					"tipo"=>"simple",
+					"titulo"=>"Ocurrió un error inesperado",
+					"texto"=>"Debe indicar la contrasena del equipo!(aunque sea un punto)",
+					"icono"=>"error"
+				];
+				return json_encode($alerta);
+		        exit();
+			}
+
 			$orden_falla = $_POST['orden_falla'];
 			if($orden_falla == ""){
 				$alerta=[
@@ -413,6 +424,7 @@
 		/*---------- Controlador actualizar orden -------- */
 		public function actualizarOrdenControlador(){
 			$orden_codigo = $_POST['orden_codigo'];
+			
 			$orden_observaciones = $this->limpiarCadena($_POST['orden_observaciones']);
 			if(!isset($orden_observaciones)){
 				$orden_observaciones = "";
@@ -423,7 +435,10 @@
 			}
 			$id_tecnico = $_POST['id_tecnico'];
 
-
+			$orden_equipo_contrasena = $_POST['orden_equipo_contrasena'];
+			if(!isset($orden_equipo_contrasena)){
+				$orden_equipo_contrasena = "";
+			}
 
 			
 			$datos = [
@@ -432,6 +447,11 @@
 					"campo_nombre"=>"orden_observaciones",
 					"campo_marcador"=>":Observaciones",
 					"campo_valor"=>$orden_observaciones
+				],
+				[
+					"campo_nombre"=>"orden_equipo_contrasena",
+					"campo_marcador"=>":Contrasena",
+					"campo_valor"=>$orden_equipo_contrasena
 				],
 				[
 					"campo_nombre"=>"orden_accesorios",

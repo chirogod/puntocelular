@@ -38,6 +38,20 @@
         padding: 10px; /* Reduce padding */
         font-size: 0.9rem; /* Reduce font size */
     }
+    /* Estilos para resaltar los precios importantes */
+    .precio{
+        font-size: 0.8rem;
+    }
+    .precio-destacado {
+        font-size: 1rem; /* Tamaño más grande */
+        font-weight: bold; /* Negrita */
+        color: #ff6600; /* Naranja llamativo */
+        background-color: #fff3cd; /* Fondo amarillo suave */
+        padding: 5px 10px;
+        border-radius: 5px;
+        display: inline-block;
+    }
+
 </style>
 
 <div class="container is-fluid is-max-desktop pt-2">
@@ -74,9 +88,9 @@
             </div>
         </div>
         <div class="column">
-            <div class="box">
-                <h2 class="subtitle is-5">Listas</h2>
-                <table class="table is-bordered is-fullwidth is-narrow has-text-centered">
+            <div class="box has-text-centered">
+                
+                <table class="table is-bordered is-fullwidth is-narrow has-text-centered is-size-7">
                     </thead>
                     <tbody>
                         <tr>
@@ -109,31 +123,31 @@
             <tbody>
                 <tr>
                     <td>3 CUOTAS SIN INTERÉS</td>
-                    <td class="has-text-right" id="cuotas_3_sin_int"></td>
-                    <td class="has-text-right" id="precio_cuota_3"></td>
+                    <td class="has-text-right"><span id="cuotas_3_sin_int" class="precio-destacado"></span></td>
+                    <td class="has-text-right"><span id="precio_cuota_3" class="precio-destacado"></span></td>
                 </tr>
                 <tr>
                     <td>20% DE DESCUENTO EN EFECTIVO</td>
-                    <td class="has-text-right" id="descuento_efectivo"></td>
+                    <td class="has-text-right"><span id="descuento_efectivo" class="precio-destacado"></span></td>
                 </tr>
                 <tr>
                     <td>6 CUOTAS</td>
-                    <td class="has-text-right" id="cuotas_6"></td>
-                    <td class="has-text-right" id="precio_cuota_6"></td>
+                    <td class="has-text-right" ><span id="cuotas_6" class="precio"></span></td>
+                    <td class="has-text-right" ><span id="precio_cuota_6" class="precio"></span></td>
                 </tr>
                 <tr>
                     <td>12 CUOTAS</td>
-                    <td class="has-text-right" id="cuotas_12"></td>
-                    <td class="has-text-right" id="precio_cuota_12"></td>
+                    <td class="has-text-right" ><span id="cuotas_12" class="precio"></span></td>
+                    <td class="has-text-right" ><span id="precio_cuota_12" class="precio"></span></td>
                 </tr>
                 <tr>
                     <td>UPSELLING EFECTIVO</td>
-                    <td class="has-text-right" id="upsel_efectivo"></td>
+                    <td class="has-text-right" ><span id="upsel_efectivo" class="precio"></span></td>
                 </tr>
                 <tr>
                     <td>UPSELLING 3 CUOTAS</td>
-                    <td class="has-text-right" id="upsel_3_cuotas"></td>
-                    <td class="has-text-right" id="precio_cuota_upsel_3"></td>
+                    <td class="has-text-right" ><span id="upsel_3_cuotas" class="precio"></span></td>
+                    <td class="has-text-right" ><span id="precio_cuota_upsel_3" class="precio"></span></td>
                 </tr>
             </tbody>
         </table>

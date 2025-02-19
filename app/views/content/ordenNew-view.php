@@ -121,8 +121,8 @@
                     </div>
 
                     <div class="control">
-                        <label>Contrasena</label>
-                        <input class="input" type="text" name="orden_equipo_contrasena">
+                        <label>Contrasena<?php echo CAMPO_OBLIGATORIO; ?></label>
+                        <input class="input" type="text" name="orden_equipo_contrasena" required>
                     </div>
 
                     <div class="control">

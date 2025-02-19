@@ -16,6 +16,10 @@
             echo $insRepuesto->ingresoPedidoControlador();
         }
 
+        if ($_POST['modulo_repuesto'] == "eliminar_pedido") {
+            echo $insRepuesto->eliminarPedidoControlador();
+        }
+
     }else{
         session_destroy();
         header("Location: ".APP_URL."login/");

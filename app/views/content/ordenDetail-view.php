@@ -30,30 +30,18 @@
         Comprobante de orden
     </button>
     <br>
-
+    <?php
+        $estado_actual = strtoupper($datos['orden_estado']);
+        $estados = ['aceptada', 'no-aceptada', 'en-espera', 'sin-reparacion', 'reparada', 'entregada'];
+    ?>
     <div class="box has-text-centered">
-        <button type="button" class="button is-link is-light js-modal-trigger" data-target="modal-js-cotizada" >
-            COTIZADA
-        </button>
-        <button type="button" class="button is-link is-light js-modal-trigger" data-target="modal-js-aceptada" >
-            ACEPTADA
-        </button>
-        <button type="button" class="button is-link is-light js-modal-trigger" data-target="modal-js-no-aceptada" >
-            NO ACEPTADA
-        </button>
-        <button type="button" class="button is-link is-light js-modal-trigger" data-target="modal-js-en-espera" >
-            EN ESPERA
-        </button>
-        <button type="button" class="button is-link is-light js-modal-trigger" data-target="modal-js-sin-reparacion" >
-            SIN REPARACION
-        </button>
-        <button type="button" class="button is-link is-light js-modal-trigger" data-target="modal-js-reparada" >
-            REPARADA
-        </button>
-        <button type="button" class="button is-link is-light js-modal-trigger" data-target="modal-js-entregada" >
-            ENTREGADA
-        </button>
+        <?php foreach ($estados as $estado): ?>
+            <button type="button" class="button is-link <?php echo ($estado_actual == strtoupper(str_replace('-', ' ', $estado))) ? 'is-primary' : 'is-light'; ?> js-modal-trigger" data-target="modal-js-<?php echo $estado; ?>">
+                <?php echo ucfirst(str_replace('-', ' ', $estado)); ?>
+            </button>
+        <?php endforeach; ?>
     </div>
+
 	<form class="FormularioAjax" action="<?php echo APP_URL; ?>app/ajax/ordenAjax.php" method="POST" autocomplete="off" >
 		<input type="hidden" name="modulo_orden" value="actualizar_orden">
 		<input type="hidden" name="orden_codigo" value="<?php echo $datos['orden_codigo']; ?>">
@@ -153,8 +141,8 @@
 
                     <div class="control">
                         <div class="full-width sale-details text-condensedLight">
-                            <div class="has-text-weight-bold">Contrasena</div>
-                            <span class="has-text-bold"><?php echo $datos['orden_equipo_contrasena']; ?></span>
+                            <div class="has-text-weight-bold mr-5">Contrasena</div>
+                            <input class="has-text-bold input is-small" type="text" name="orden_equipo_contrasena" value="<?php echo $datos['orden_equipo_contrasena']; ?>">
                         </div>
                     </div>
                 </div>
