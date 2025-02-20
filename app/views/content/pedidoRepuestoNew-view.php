@@ -114,6 +114,12 @@
                                 <input class="input" type="text" name="repuesto_otro_modelo">
                             </div>
                         </div>
+
+                        <div class="column">
+                            <label>Responsable<?php echo CAMPO_OBLIGATORIO; ?></label>
+                            <input class="input" type="text" name="pedido_repuesto_responsable" maxlength="40" required >
+
+                        </div>
                         
                     </div>      
                             

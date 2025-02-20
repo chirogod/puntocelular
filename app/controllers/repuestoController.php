@@ -62,7 +62,7 @@
             }
             $pedido_repuesto_hora = date("H:i:s");
             $pedido_repuesto_fecha = date("Y-m-d");
-            $id_usuario = $_SESSION['id_usuario'];
+            $pedido_repuesto_responsable = $_POST['pedido_repuesto_responsable'];
             $id_sucursal = $_SESSION['id_sucursal'];
 
             if($id_seccion == "" || $repuesto_descripcion == "" || $id_orden == ""){
@@ -115,9 +115,9 @@
                     "campo_valor"=>$pedido_repuesto_hora
                 ],
                 [
-                    "campo_nombre"=>"id_usuario",
-                    "campo_marcador"=>":Usuario",
-                    "campo_valor"=>$id_usuario
+                    "campo_nombre"=>"pedido_repuesto_responsable",
+                    "campo_marcador"=>":Responsable",
+                    "campo_valor"=>$pedido_repuesto_responsable
                 ],
                 [
                     "campo_nombre"=>"id_sucursal",
@@ -156,12 +156,9 @@
                 pedido_repuesto.id_seccion_repuesto,
                 seccion_repuesto.id_seccion_repuesto,  
                 seccion_repuesto.seccion_repuesto_descripcion,
-                pedido_repuesto.id_usuario,
-                usuario.id_usuario,
-                usuario.usuario_nombre_completo,
+                pedido_repuesto.pedido_repuesto_responsable,
                 pedido_repuesto.pedido_estado
                 FROM pedido_repuesto 
-                INNER JOIN usuario ON pedido_repuesto.id_usuario = usuario.id_usuario 
                 INNER JOIN orden ON pedido_repuesto.id_orden = orden.id_orden
                 INNER JOIN seccion_repuesto ON pedido_repuesto.id_seccion_repuesto = seccion_repuesto.id_seccion_repuesto
                 INNER JOIN sucursal ON pedido_repuesto.id_sucursal = sucursal.id_sucursal
@@ -179,7 +176,7 @@
                 $pedido_repuesto_fecha = $fila['pedido_repuesto_fecha'];
                 $pedido_repuesto_hora = $fila['pedido_repuesto_hora'];
                 $id_orden = $fila['id_orden'];
-                $usuario_nombre_completo = $fila['usuario_nombre_completo'];
+                $pedido_repuesto_responsable = $fila['pedido_repuesto_responsable'];
                 $pedido_estado = $fila['pedido_estado'];
                 if (!isset($seccionRepuestos[$id_seccion_repuesto])) {
                     $seccionRepuestos[$id_seccion_repuesto] = [
@@ -194,7 +191,7 @@
                         'fecha' => $pedido_repuesto_fecha,
                         'hora' => $pedido_repuesto_hora,
                         'orden' => $id_orden,
-                        'usuario' => $usuario_nombre_completo,
+                        'responsable' => $pedido_repuesto_responsable,
                         'estado' => $pedido_estado
                     ];
                 }
@@ -223,7 +220,7 @@
                 echo '<th>Repuesto</th>';
                 echo '<th>Fecha</th>';
                 echo '<th>Orden</th>';
-                echo '<th>Usuario</th>';
+                echo '<th>Responsable</th>';
                 echo '</tr>';
                 echo '</thead>';
                 echo '<tbody>';
@@ -237,7 +234,7 @@
                     echo '<td>' . $pedido['pedido'] . '</td>';
                     echo '<td>' . $pedido['fecha'] .' - ' . $pedido['hora'] .'</td>';
                     echo '<td>' . $pedido['orden'] . '</td>';
-                    echo '<td>' . $pedido['usuario'] . '</td>';
+                    echo '<td>' . $pedido['responsable'] . '</td>';
                     echo '<td>
                             <form class="FormularioAjax" action="'.APP_URL.'app/ajax/repuestoAjax.php" method="POST" autocomplete="off" enctype="multipart/form-data" >
                                 <input type="hidden" name="modulo_repuesto" value="ingreso_pedido">

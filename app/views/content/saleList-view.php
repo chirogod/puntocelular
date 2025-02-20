@@ -1,5 +1,5 @@
 
-<div class="container is-fluid mb-6 is-max-desktop">
+<div class="container is-fluid mb-2 is-max-desktop">
 	<h1 class="title">Ventas</h1>
 </div>
 <div class="container is-max-desktop pb-1 pt-1">

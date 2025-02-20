@@ -1158,8 +1158,6 @@
 		        <table class="table is-bordered is-striped is-narrow is-hoverable is-fullwidth">
 		            <thead>
 		                <tr>
-		                    <th class="has-text-centered">NRO.</th>
-		                    <th class="has-text-centered">Codigo</th>
 		                    <th class="has-text-centered">Fecha</th>
 		                    <th class="has-text-centered">Cliente</th>
 		                    <th class="has-text-centered">Vendedor</th>
@@ -1175,8 +1173,6 @@
 				foreach($datos as $rows){
 					$tabla.='
 						<tr class="has-text-centered" style="cursor: pointer;" onclick="window.location.href=\'' . APP_URL . 'saleDetail/' . $rows['venta_codigo'] . '/\'">
-							<td>'.$rows['id_venta'].'</td>
-							<td>'.$rows['venta_codigo'].'</td>
 							<td>'.date("d-m-Y", strtotime($rows['venta_fecha'])).' '.$rows['venta_hora'].'</td>
 							<td>'.$rows['cliente_nombre_completo'].'</td>
 							<td>'.$rows['usuario_nombre_completo'].'</td>
