@@ -70,7 +70,7 @@
 		$pdf->Text($pageWidth / 2 + 59, 28, $datos_orden['id_orden']);
         $pdf->SetFont('Arial','b',12);
 		$pdf->Text($pageWidth / 2 + 40, 40, 'Estado:');
-		$pdf->SetFont('Arial','',18);
+		$pdf->SetFont('Arial','',16);
 		$pdf->Text($pageWidth / 2 + 56, 40, $datos_orden['orden_estado']);
 
 		$pdf->Ln(5);
