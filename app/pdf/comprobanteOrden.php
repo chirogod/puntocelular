@@ -5,6 +5,7 @@
 	/*---------- Incluyendo configuraciones ----------*/
 	require_once "../../config/app.php";
     require_once "../../autoload.php";
+	require_once "../views/includes/session_start.php";
 
 	/*---------- Instancia al controlador orden ----------*/
 	use app\controllers\ordenController;

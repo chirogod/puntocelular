@@ -475,7 +475,7 @@
 
                                         $cc=1;
                                         while($campos_seccion=$datos_seccion->fetch()){
-                                            echo '<option value="'.$campos_seccion['id_seccion_repuesto'].'">'.$cc.' - '.$campos_seccion['seccion_repuesto_descripcion'].'</option>';
+                                            echo '<option value="'.$campos_seccion['id_seccion_repuesto'].'">'.$campos_seccion['seccion_repuesto_descripcion'].'</option>';
                                             $cc++;
                                         }
                                     ?>
@@ -483,14 +483,50 @@
                             </div>
                         </div>
                         <div class="column">
-                            <label>Repuesto<?php echo CAMPO_OBLIGATORIO; ?></label>
-                            <input class="input" type="text" name="repuesto_descripcion" maxlength="40" required >
+                            <label>Marca <?php echo CAMPO_OBLIGATORIO; ?></label><br>
+                            <div class="select">
+                                <select name="id_marca" id="select_marca" onchange="cargarModelos(this.value)">
+                                    <option value="" selected="">Seleccione una opción</option>
+                                    <?php
+                                        // Obtener las marcas de la base de datos
+                                        $datos_marca = $insLogin->seleccionarDatos("Normal", "marca", "*", 0);
+                                        while ($campos_marca = $datos_marca->fetch()) {
+                                            echo '<option value="' . $campos_marca['id_marca'] . '">' . $campos_marca['marca_descripcion'] . '</option>';
+                                        }
+                                    ?>
+                                </select>
+                            </div>
+                        </div>
+                        <div class="column">
+                            <label>Modelo <?php echo CAMPO_OBLIGATORIO; ?></label><br>
+                            <div class="select">
+                                <select name="id_modelo" id="select_modelo">
+                                    <option value="" selected="">Seleccione una opción</option>
+                                    <!-- Los modelos se llenarán aquí -->
+                                </select>
+                            </div>
                         </div>
                         <div class="column">
                             <label>Color<?php echo CAMPO_OBLIGATORIO; ?></label>
                             <input class="input" type="text" name="repuesto_color" maxlength="40" >
                         </div>
-                    </div>     
+                    </div> 
+                    <div class="columns">
+                        <div class="column">
+                            <label class="radio">
+                                <input type="radio" name="orden_equipo_otro" value="Otro" onclick="otroEquipo(true)">
+                                Otra marca/modelo
+                            </label>
+                            <!-- Input de  prometida que estará oculto inicialmente -->
+                            <div class="field" id="otro_equipo_field" style="display: none;">
+                                <label class="label">Marca</label>
+                                <input class="input" type="text" name="repuesto_otra_marca">
+                                <label class="label">Modelo</label>
+                                <input class="input" type="text" name="repuesto_otro_modelo">
+                            </div>
+                        </div>
+                        
+                    </div>        
                             
                     
                     
@@ -1010,6 +1046,41 @@
         const nuevoSaldo = nuevoTotal - sumaPagos;
         saldo.innerText = `${nuevoSaldo.toFixed(2)} <?php echo MONEDA_NOMBRE; ?>`;
         saldoInput.value = nuevoSaldo;
+    }
+
+    //si se marca prometido para en la fecha se activa un input date
+    function otroEquipo(show) {
+        const dateField = document.getElementById('otro_equipo_field');
+        if (show) {
+            dateField.style.display = 'block';
+        } else {
+            dateField.style.display = 'none';
+        }
+    }
+
+    function cargarModelos(marcaId) {
+        const modeloSelect = document.getElementById('select_modelo');
+        modeloSelect.innerHTML = '<option value="" selected="">Seleccione una opción</option>'; // Resetea el select de modelos
+
+        if (marcaId) {
+            let datos = new FormData();
+            datos.append("marca_id", marcaId);
+            datos.append("modulo_orden", "cargar_modelos");
+
+            fetch('<?php echo APP_URL; ?>app/ajax/ordenAjax.php', {
+                method: 'POST',
+                body: datos
+            })
+            .then(respuesta => respuesta.json())
+            .then(modelos => {
+                modelos.forEach(modelo => {
+                    modeloSelect.innerHTML += `<option value="${modelo.id_modelo}">${modelo.modelo_descripcion}</option>`;
+                });
+            })
+            .catch(error => {
+                console.error('Error al cargar los modelos:', error);
+            });
+        }
     }
 
 </script>
