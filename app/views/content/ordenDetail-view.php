@@ -1,10 +1,6 @@
-<div class="">
-	<?php 
-		$codigo = $insLogin->limpiarCadena($url[1]);
-        
-	?>
-
-</div>
+<?php 
+    $codigo = $insLogin->limpiarCadena($url[1]);
+?>
 
 <div class="container is-fluid" >
 	<?php
@@ -32,7 +28,7 @@
     <br>
     <?php
         $estado_actual = strtoupper($datos['orden_estado']);
-        $estados = ['aceptada', 'no-aceptada', 'en-espera', 'sin-reparacion', 'reparada', 'entregada'];
+        $estados = ['aceptada', 'no-aceptada', 'en-espera','reparar', 'sin-reparacion', 'verificar' , 'reparada', 'ensamblar' ,'entregada'];
     ?>
     <div class="box has-text-centered">
         <?php foreach ($estados as $estado): ?>
@@ -73,18 +69,19 @@
                         <div class="full-width sale-details text-condensedLight">
                             <label class="has-text-weight-bold">Tecnico asignado</label><br>
                             <div class="select">
-                                <select name="id_tecnico" >
-                                    <option value="" selected="" >Seleccione una opción</option>
-                                    <?php
-                                        $datos_tecnico=$insLogin->seleccionarDatos("Normal","tecnico","*",0);
-                                        $cc=1;
-                                        while($campos_tecnico=$datos_tecnico->fetch()){
-                                            $selected = ($campos_tecnico['id_tecnico'] == $datos['id_tecnico']) ? 'selected' : '';
-                                            echo '<option value="'.$campos_tecnico['id_tecnico'].'" '.$selected.'>'.$campos_tecnico['tecnico_descripcion'].'</option>';
-                                            $cc++;
-                                        }
-                                    ?>
-                                </select>
+                            <select name="orden_tecnico_asignado">
+                                <option value="" selected>Seleccione una opción</option>
+                                <?php
+                                    // Obtener los técnicos
+                                    $datos_tecnico = $insLogin->seleccionarDatos("Unico", "usuario", "usuario_rol", "Tecnico");
+                                    while ($campos_tecnico = $datos_tecnico->fetch()) {
+                                        // Comparar el nombre completo del técnico con el valor de orden_tecnico_asignado
+                                        $selected = ($campos_tecnico['usuario_nombre_completo'] == $datos['orden_tecnico_asignado']) ? 'selected' : '';
+                                        echo '<option value="' . $campos_tecnico['usuario_nombre_completo'] . '" ' . $selected . '>' . $campos_tecnico['usuario_nombre_completo'] . '</option>';
+                                    }
+                                ?>
+                            </select>
+
                             </div>
                         </div>
                         
@@ -160,7 +157,7 @@
                     <div class="control">
                         <label>Detalles físicos</label>
                         <?php if($datos['orden_equipo_detalles_fisicos'] != "") {?>
-                            <textarea readonly class="textarea" name="orden_equipo_detalles_fisicos" id=""><?php echo $datos['orden_equipo_detalles_fisicos']; ?></textarea>
+                            <textarea readonly class="textarea" name="orden_equipo_detalles_fisicos"><?php echo $datos['orden_equipo_detalles_fisicos']; ?></textarea>
                         <?php } else {?>
                             <p class="textarea">No</p>
                         <?php }?>
@@ -395,10 +392,13 @@
 
                         <div class="control p-1">
                             <label for="" class="has-text-weight-bold">Falla: </label>
-                            <textarea class="textarea is-small" name="" readonly id=""><?php echo $datos['orden_falla']; ?></textarea>
+                            <textarea class="textarea is-small" name="" readonly><?php echo $datos['orden_falla']; ?></textarea>
                         </div>
                         <button type="button" class="button is-link is-light js-modal-trigger" data-target="modal-js-repuesto" >
                             Pedir repuesto
+                        </button>
+                        <button type="button" class="button is-link is-light js-modal-trigger" data-target="modal-js-registrar-verificacion" >
+                            Verificar
                         </button>
                     </div>
 
@@ -547,6 +547,138 @@
     </div>
 </div>
 
+<!-- Modal registrar verificacion -->
+<div class="modal is-fullscreen" id="modal-js-registrar-verificacion">
+    <div class="modal-background"></div>
+    <div class="modal-card">
+        <header class="modal-card-head">
+            <p class="modal-card-title is-uppercase has-text-weight-bold is-size-5">
+                <i class="fas fa-search"></i> &nbsp; Verificar equipo
+            </p>
+            <button class="delete" aria-label="close"></button>
+        </header>
+        <section class="modal-card-body is-size-7">
+            <form class="FormularioAjax" action="<?php echo APP_URL; ?>app/ajax/OrdenAjax.php" method="POST" autocomplete="off" name="formsale">
+                <input class="input" name="orden_codigo" type="hidden" readonly value="<?php echo $datos['orden_codigo'] ?>">
+                <input class="input" name="verificacion_responsable" type="hidden" readonly value="<?php echo $_SESSION['usuario_nombre'] ?>">
+                <input type="hidden" name="modulo_orden" value="registrar_verificacion">
+                <div class="columns">
+                    <div class="column">
+                        <div class="control">
+                            <label class="has-text-weight-bold">Hora de inicio:<?php echo CAMPO_OBLIGATORIO; ?></label>
+                            <input required type="time" id="hora_inicio" class="input" name="verificacion_hora_inicio">
+                        </div>
+                        <div class="control">
+                            <label class="has-text-weight-bold">Estado de la verificacion <?php echo CAMPO_OBLIGATORIO; ?></label><br>
+                            <div class="select">
+                                <select name="verificacion_estado" required>
+                                    <option value="">Seleccione una opción</option>
+                                    <option value="OK">OK</option>
+                                    <option value="NO">NO</option>
+                                </select>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="column">
+                        <div class="control">
+                            <label class="has-text-weight-bold">Siguiente estacion <?php echo CAMPO_OBLIGATORIO; ?></label><br>
+                            <div class="select">
+                                <select name="verificacion_estacion_sig" required>
+                                    <option value="">Seleccione una opción</option>
+                                    <option value="Reparar">Reparar</option>
+                                    <option value="Ensamblar">Ensamblar</option>
+                                    <option value="Reparada">Reparada</option>
+                                </select>
+                            </div>
+                        </div>
+                        <div class="control">
+                            <label class="has-text-weight-bold">Tecnico asignado</label><br>
+                            <div class="select">
+                                <select name="verificacion_tecnico_asignado">
+                                    <option value="" selected>Seleccione una opción</option>
+                                    <?php
+                                        // Obtener los técnicos
+                                        $datos_tecnico = $insLogin->seleccionarDatos("Unico", "usuario", "usuario_rol", "Tecnico");
+                                        while ($campos_tecnico = $datos_tecnico->fetch()) {
+                                            // Comparar el nombre completo del técnico con el valor de verificacion_tecnico_asignado
+                                            $selected = ($campos_tecnico['usuario_nombre_completo'] == $datos['verificacion_tecnico_asignado']) ? 'selected' : '';
+                                            echo '<option value="' . $campos_tecnico['usuario_nombre_completo'] . '" ' . $selected . '>' . $campos_tecnico['usuario_nombre_completo'] . '</option>';
+                                        }
+                                    ?>
+                                </select>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="column">
+                        <label class="has-text-weight-bold">Detalles</label><br>
+                        <textarea class="textarea" name="verificacion_detalles" id="textarea-verificacion"></textarea>
+                    </div>
+                </div>
+                    
+                                        
+                <p class="has-text-centered">
+                    <button type="reset" class="button is-link is-light is-rounded"><i class="fas fa-paint-roller"></i> &nbsp; Limpiar</button>
+                    <button type="submit" class="button is-info is-rounded"><i class="far fa-save"></i> &nbsp; Guardar</button>
+                </p>
+                <p class="has-text-centered pt-1">
+                    <small>Los campos marcados con <?php echo CAMPO_OBLIGATORIO; ?> son obligatorios</small>
+                </p>
+            </form>
+            <script>
+                // Preseleccionar la hora actual en "Hora de inicio"
+                document.addEventListener("DOMContentLoaded", () => {
+                    const horaInicioInput = document.getElementById("hora_inicio");
+                    const ahora = new Date();
+                    const hora = ahora.getHours().toString().padStart(2, "0");
+                    const minutos = ahora.getMinutes().toString().padStart(2, "0");
+                    horaInicioInput.value = `${hora}:${minutos}`;
+                });
+            </script>
+        </section>
+        <div class="table-container is-size-7">
+            <table class="table is-bordered is-striped is-narrow is-hoverable is-fullwidth">
+                <thead>
+                    <tr>
+                        <th class="has-text-centered">Fecha</th>
+                        <th class="has-text-centered">Inicio</th>
+                        <th class="has-text-centered">Duracion</th>
+                        <th class="has-text-centered">Fin</th>
+                        <th class="has-text-centered">Estado</th>
+                        <th class="has-text-centered">Estacion sig</th>
+                        <th class="has-text-centered">Tecnico asig</th>
+                        <th class="has-text-centered">Responsable</th>
+                        <th class="has-text-centered">Detalles</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <?php 
+                        $verificaciones = $insLogin->seleccionarDatos("Unico", "verificacion", "orden_codigo", $datos['orden_codigo']);
+                        foreach ($verificaciones as $rows) {
+                            ?>
+                            <tr class="has-text-centered">
+                                <td><?php echo $rows['verificacion_fecha']?></td>
+                                <td><?php echo $rows['verificacion_hora_inicio']?></td>
+                                <td><?php echo $rows['verificacion_duracion']?>min</td>
+                                <td><?php echo $rows['verificacion_hora_fin']?></td>
+                                <td><?php echo $rows['verificacion_estado']?></td>
+                                <td><?php echo $rows['verificacion_estacion_sig']?></td>
+                                <td><?php echo $rows['verificacion_tecnico_asignado']?></td>
+                                <td><?php echo $rows['verificacion_responsable']?></td>
+                                <td><?php echo $rows['verificacion_detalles']?></td>
+                            </tr>
+                            <?php
+                        }
+                    ?>
+                    <tr class="has-text-centered">
+
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
+
 
 
 <!-- Modal registrar pago -->
@@ -650,11 +782,11 @@
                     <div class="columns">
                         <div class="column">
                             <label for="" class="label">Fecha aceptada: </label>
-                            <input class="input" type="date" name="orden_fecha_aceptada" id="" value="<?php echo date("Y-m-d"); ?>">
+                            <input class="input" type="date" name="orden_fecha_aceptada" value="<?php echo date("Y-m-d"); ?>">
                         </div>
                         <div class="column">
                             <label for="" class="label">Fecha prometida: </label>
-                            <input class="input" type="date" name="orden_fecha_prometida" id="">
+                            <input class="input" type="date" name="orden_fecha_prometida">
                         </div>
                     </div>
                     <p class="has-text-centered">
@@ -741,6 +873,81 @@
     </div>
 </div>
 
+<!-- ORDEN reparar -->
+<div class="modal" id="modal-js-reparar">
+    <div class="modal-background"></div>
+        <div class="modal-card">
+            <header class="modal-card-head">
+                <p class="modal-card-title is-uppercase"><i class="fas fa-search"></i> &nbsp; A REPARAR</p>
+                <button class="delete" aria-label="close"></button>
+            </header>
+            <section class="modal-card-body">
+                <form class="FormularioAjax" action="<?php echo APP_URL; ?>app/ajax/ordenAjax.php" method="POST" autocomplete="off" name="formsale" >
+                    <input type="hidden" name="modulo_orden" value="cambiar_estado_orden">
+                    <input type="hidden" name="orden_codigo" id="orden_codigo" value="<?php echo $datos['orden_codigo']; ?>">
+                    <input type="hidden" name="orden_estado" value="A REPARAR">
+                    <p class="has-text-centered">
+                        ESTAS SEGURO QUE QUIERES ESTABLECER LA ORDEN COMO 'A REPARAR'?
+                    </p>
+                    <p class="has-text-centered">
+                        <button type="submit" class="button is-link is-light">Aceptar</button>
+                    </p>
+                </form>
+            </section>
+        </div>
+    </div>
+</div>
+
+<!-- ORDEN ensamblar -->
+<div class="modal" id="modal-js-ensamblar">
+    <div class="modal-background"></div>
+        <div class="modal-card">
+            <header class="modal-card-head">
+                <p class="modal-card-title is-uppercase"><i class="fas fa-search"></i> &nbsp; A ENSAMBLAR</p>
+                <button class="delete" aria-label="close"></button>
+            </header>
+            <section class="modal-card-body">
+                <form class="FormularioAjax" action="<?php echo APP_URL; ?>app/ajax/ordenAjax.php" method="POST" autocomplete="off" name="formsale" >
+                    <input type="hidden" name="modulo_orden" value="cambiar_estado_orden">
+                    <input type="hidden" name="orden_codigo" id="orden_codigo" value="<?php echo $datos['orden_codigo']; ?>">
+                    <input type="hidden" name="orden_estado" value="A ENSAMBLAR">
+                    <p class="has-text-centered">
+                        ESTAS SEGURO QUE QUIERES ESTABLECER LA ORDEN COMO 'A ENSAMBLAR'?
+                    </p>
+                    <p class="has-text-centered">
+                        <button type="submit" class="button is-link is-light">Aceptar</button>
+                    </p>
+                </form>
+            </section>
+        </div>
+    </div>
+</div>
+
+<!-- ORDEN verificar -->
+<div class="modal" id="modal-js-verificar">
+    <div class="modal-background"></div>
+        <div class="modal-card">
+            <header class="modal-card-head">
+                <p class="modal-card-title is-uppercase"><i class="fas fa-search"></i> &nbsp; A VERIFICAR</p>
+                <button class="delete" aria-label="close"></button>
+            </header>
+            <section class="modal-card-body">
+                <form class="FormularioAjax" action="<?php echo APP_URL; ?>app/ajax/ordenAjax.php" method="POST" autocomplete="off" name="formsale" >
+                    <input type="hidden" name="modulo_orden" value="cambiar_estado_orden">
+                    <input type="hidden" name="orden_codigo" id="orden_codigo" value="<?php echo $datos['orden_codigo']; ?>">
+                    <input type="hidden" name="orden_estado" value="VERIFICAR">
+                    <p class="has-text-centered">
+                        ESTAS SEGURO QUE QUIERES ESTABLECER LA ORDEN COMO 'VERIFICAR'?
+                    </p>
+                    <p class="has-text-centered">
+                        <button type="submit" class="button is-link is-light">Aceptar</button>
+                    </p>
+                </form>
+            </section>
+        </div>
+    </div>
+</div>
+
 <!-- ORDEN reparada -->
 <div class="modal" id="modal-js-reparada">
     <div class="modal-background"></div>
@@ -781,7 +988,7 @@
                     <div class="columns">
                         <div class="column">
                             <label for="" class="label">Fecha entregada: </label>
-                            <input class="input" type="date" name="orden_fecha_entregada" id="" value="<?php echo date("Y-m-d"); ?>">
+                            <input class="input" type="date" name="orden_fecha_entregada" value="<?php echo date("Y-m-d"); ?>">
                         </div>
                         <div class="column">
                             <label for="" class="label">Garantia hasta: </label>
@@ -874,23 +1081,23 @@
         });
 
         textarea.addEventListener("keydown", function (event) {
-        if (event.key === "Enter") {
-            event.preventDefault(); // Evita el comportamiento predeterminado de Enter
+            if (event.key === "Enter") {
+                event.preventDefault(); // Evita el comportamiento predeterminado de Enter
 
-            // Obtener la posición actual del cursor
-            const startPos = textarea.selectionStart;
-            const endPos = textarea.selectionEnd;
+                // Obtener la posición actual del cursor
+                const startPos = textarea.selectionStart;
+                const endPos = textarea.selectionEnd;
 
-            // Insertar un salto de línea seguido de seis espacios
-            const textBefore = textarea.value.substring(0, startPos);
-            const textAfter = textarea.value.substring(endPos, textarea.value.length);
-            const newText = textBefore + "\n      " + textAfter;
-            textarea.value = newText;
+                // Insertar un salto de línea seguido de seis espacios
+                const textBefore = textarea.value.substring(0, startPos);
+                const textAfter = textarea.value.substring(endPos, textarea.value.length);
+                const newText = textBefore + "\n      " + textAfter;
+                textarea.value = newText;
 
-            // Mover el cursor a la posición después de los seis espacios
-            textarea.setSelectionRange(startPos + 7, startPos + 7);
-        }
-    });
+                // Mover el cursor a la posición después de los seis espacios
+                textarea.setSelectionRange(startPos + 7, startPos + 7);
+            }
+        });
     });
 
     function financiarProducto(codigo, financiacion) {

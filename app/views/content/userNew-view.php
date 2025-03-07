@@ -75,6 +75,7 @@
                         <option value="Empleado">Empleado</option>
 						<option value="Tecnico">Tecnico</option>
                         <option value="Vendedor">Vendedor</option>
+						<option value="Verificacion">Verificacion</option>
 				  	</select>
 				</div>
 		  	</div>

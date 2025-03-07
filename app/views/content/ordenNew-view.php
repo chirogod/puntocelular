@@ -4,7 +4,7 @@
 
 <div class="container pb-6 pt-1 is-max-desktop">
 
-	<form class="FormularioAjax" action="<?php echo APP_URL; ?>app/ajax/ordenAjax.php" method="POST" autocomplete="off" >
+	<form class="" action="<?php echo APP_URL; ?>app/ajax/ordenAjax.php" method="POST" autocomplete="off" >
 
 		<input type="hidden" name="modulo_orden" value="registrar_orden">
 		<div class="box">
@@ -182,14 +182,14 @@
                     <div class="control">
                         <label>Tecnico asignado <?php echo CAMPO_OBLIGATORIO; ?></label><br>
                         <div class="select">
-                            <select name="id_tecnico" >
+                            <select name="orden_tecnico_asignado" >
                                 <option value="" selected="" >Seleccione una opción</option>
                                 <?php
-                                    $datos_tecnico=$insLogin->seleccionarDatos("Normal","tecnico","*",0);
+                                    $datos_tecnico=$insLogin->seleccionarDatos("Unico","usuario","usuario_rol","Tecnico");
 
                                     $cc=1;
                                     while($campos_tecnico=$datos_tecnico->fetch()){
-                                        echo '<option value="'.$campos_tecnico['id_tecnico'].'">'.$campos_tecnico['tecnico_descripcion'].'</option>';
+                                        echo '<option value="'.$campos_tecnico['id_usuario'].'">'.$campos_tecnico['usuario_nombre_completo'].'</option>';
                                         $cc++;
                                     }
                                 ?>
@@ -203,7 +203,7 @@
                             <select name="orden_telefonista" >
                                 <option value="" selected="" >Seleccione una opción</option>
                                 <?php
-                                    $datos_usuario=$insLogin->seleccionarDatos("Normal","usuario","*",0);
+                                    $datos_usuario=$insLogin->seleccionarDatos("Unico","usuario","usuario_rol","Vendedor");
 
                                     $cc=1;
                                     while($campos_usuario=$datos_usuario->fetch()){

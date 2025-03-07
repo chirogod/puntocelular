@@ -332,12 +332,47 @@
 								</div>
 							</a>
 						</li>
-						
+						<li class="full-width">
+							<a href="<?php echo APP_URL; ?>controlEquipos/" class="full-width">
+								<div class="navLateral-body-cl">
+									<i class="fas fa-check fa-fw"></i>
+								</div>
+								<div class="navLateral-body-cr">
+									Control Equipos
+								</div>
+							</a>
+						</li>
 						
 					</ul>
 					
 				</li>
 				<?php } ?>
+
+				<li class="full-width">
+					<a href="#" class="full-width btn-subMenu">
+						<div class="navLateral-body-cl">
+							<i class="fa-solid fa-toolbox fa-fw"></i> 
+						</div>
+						<div class="navLateral-body-cr">
+							TALLER
+						</div>
+						<span class="fas fa-chevron-down"></span>
+					</a>
+					<ul class="full-width menu-principal sub-menu-options">
+						<li class="full-width">
+							<a href="<?php echo APP_URL; ?>controlEquipos/" class="full-width">
+								<div class="navLateral-body-cl">
+									<i class="fas fa-check fa-fw"></i>
+								</div>
+								<div class="navLateral-body-cr">
+									Control Equipos
+								</div>
+							</a>
+						</li>
+						
+					</ul>
+					
+				</li>
 
 
 				<li class="full-width">

@@ -256,8 +256,11 @@
 			}elseif ($orden_tipo == "Prometida") {
 				$fecha_prometida = $_POST['orden_fecha_prometida'];
 			}
-			$id_tecnico = $_POST['id_tecnico'];
-			if($id_tecnico == ""){
+			$id_usuario_tecnico = $_POST['orden_tecnico_asignado'];
+			$datos_usuarios_tecnicos = $this->seleccionarDatos("Unico", "usuario", "id_usuario", $id_usuario_tecnico);
+			$datos_usuarios_tecnicos = $datos_usuarios_tecnicos->fetch();
+			$orden_tecnico_asignado = $datos_usuarios_tecnicos['usuario_nombre_completo'];
+			if($id_usuario_tecnico == "" || $datos_usuarios_tecnicos == "" || $orden_tecnico_asignado == ""){
 				$alerta=[
 					"tipo"=>"simple",
 					"titulo"=>"Ocurrió un error inesperado",
@@ -344,9 +347,9 @@
 					"campo_valor"=>$orden_accesorios
 				],
 				[
-					"campo_nombre"=>"id_tecnico",
+					"campo_nombre"=>"orden_tecnico_asignado",
 					"campo_marcador"=>":Tecnico",
-					"campo_valor"=>$id_tecnico
+					"campo_valor"=>$orden_tecnico_asignado
 				],
 				[
 					"campo_nombre"=>"orden_telefonista",
@@ -433,7 +436,7 @@
 			if(!isset($orden_accesorios)){
 				$orden_accesorios = "";
 			}
-			$id_tecnico = $_POST['id_tecnico'];
+			$orden_tecnico_asignado = $_POST['orden_tecnico_asignado'];
 
 			$orden_equipo_contrasena = $_POST['orden_equipo_contrasena'];
 			if(!isset($orden_equipo_contrasena)){
@@ -459,9 +462,9 @@
 					"campo_valor"=>$orden_accesorios
 				],
 				[
-					"campo_nombre"=>"id_tecnico",
+					"campo_nombre"=>"orden_tecnico_asignado",
 					"campo_marcador"=>":Tecnico",
-					"campo_valor"=>$id_tecnico
+					"campo_valor"=>$orden_tecnico_asignado
 				]
 			];
 
@@ -721,7 +724,7 @@
 							  orden.orden_equipo_modelo, 
 							  orden.orden_accesorios,
 							  orden.orden_telefonista, 
-							  orden.id_tecnico, 
+							  orden.orden_tecnico_asignado, 
 							  usuario.id_usuario,
 							  usuario.usuario_nombre_completo, 
 							  cliente.id_cliente, 
@@ -1546,6 +1549,232 @@
 			return json_encode($alerta);
 			exit();
         }
+
+		public function buscarOrdenControlador() {
+			$where = "";
+			$tecnico = "";
+			$where_estado = "";
+			$where_fecha = "";
+		
+			// Si viene la sucursal, aplicamos el filtro
+			if (isset($_POST['sucursal']) && !empty($_POST['sucursal'])) {
+				$id_sucursal = intval($this->limpiarCadena($_POST['sucursal']));
+				$where = "WHERE o.id_sucursal = '$id_sucursal'";
+			}
+		
+			// Si viene el técnico, aplicamos el filtro
+			if (isset($_POST['tecnico']) && !empty($_POST['tecnico'])) {
+				$id_usuario = $this->limpiarCadena($_POST['tecnico']);
+				$datos_usuario = $this->seleccionarDatos("Unico", "usuario", "id_usuario", $id_usuario);
+				$datos_usuario = $datos_usuario->fetch();
+				$nombre_completo_tecnico = $datos_usuario['usuario_nombre_completo'];
+				$tecnico = "AND o.orden_tecnico_asignado = '$nombre_completo_tecnico'";
+			}
+		
+			// Si viene el estado, aplicamos el filtro
+			if (isset($_POST['estado']) && !empty($_POST['estado'])) {
+				$estado = $this->limpiarCadena($_POST['estado']);
+				$where_estado = "AND o.orden_estado = '$estado'";
+			}
+		
+			// Si vienen las fechas, aplicamos el filtro
+			if (isset($_POST['fecha_inicio']) && !empty($_POST['fecha_inicio']) && isset($_POST['fecha_fin']) && !empty($_POST['fecha_fin'])) {
+				$fecha_inicio = $this->limpiarCadena($_POST['fecha_inicio']);
+				$fecha_fin = $this->limpiarCadena($_POST['fecha_fin']);
+				$where_fecha = "AND o.orden_fecha BETWEEN '$fecha_inicio' AND '$fecha_fin'";
+			}
+		
+			// Consulta optimizada con JOIN para evitar múltiples consultas
+			$consulta_datos = "
+				SELECT o.*, 
+					   c.cliente_nombre_completo, 
+					   s.sucursal_descripcion
+				FROM orden o
+				JOIN cliente c ON o.id_cliente = c.id_cliente
+				JOIN sucursal s ON o.id_sucursal = s.id_sucursal
+				$where $tecnico $where_estado $where_fecha
+				ORDER BY o.id_orden DESC
+			";
+		
+			$datos_orden = $this->ejecutarConsulta($consulta_datos);
+		
+			if ($datos_orden->rowCount() >= 1) {
+				$datos_orden = $datos_orden->fetchAll();
+		
+				$tabla = '<div class="table-container is-size-7" style="border-collapse: collapse;">
+					<table class="table is-striped is-narrow is-hoverable is-fullwidth">
+					<thead>
+						<tr>
+							<th style="border: 1px solid black;">Nro. orden</th>
+							<th style="border: 1px solid black;">Fecha</th>
+							<th style="border: 1px solid black;">Cliente</th>
+							<th style="border: 1px solid black;">Equipo</th>
+							<th style="border: 1px solid black;">Costo Rpto</th>
+							<th style="border: 1px solid black;">Técnico</th>
+							<th style="border: 1px solid black;">Estado</th>
+							<th style="border: 1px solid black;">Verific.</th>
+							<th style="border: 1px solid black;">Sucursal</th>
+						</tr>
+					</thead>
+					<tbody>';
+		
+				foreach ($datos_orden as $orden) {
+					$datos_verificacion = $this->seleccionarDatos("Unico", "verificacion", "orden_codigo", $orden['orden_codigo']);
+					$datos_verificacion = $datos_verificacion->fetchAll();
+					$verificada = "No verif";
+					if($datos_verificacion){
+						$verificada = "Verif";
+					}
+					$tabla .= '
+						<tr style="cursor: pointer;" onclick="window.location.href=\'' . APP_URL . 'ordenDetail/' . $orden['orden_codigo'] . '/\'">
+							<td class="has-text-centered" style="border: 1px solid black;">' . htmlspecialchars($orden['orden_codigo']) . '</td>
+							<td class="has-text-centered" style="border: 1px solid black;">' . htmlspecialchars($orden['orden_fecha']) . '</td>
+							<td class="has-text-centered" style="border: 1px solid black;">' . htmlspecialchars($orden['cliente_nombre_completo']) . '</td>
+							<td class="has-text-centered" style="border: 1px solid black;">' . htmlspecialchars($orden['orden_equipo_marca']) . ' '.htmlspecialchars($orden['orden_equipo_modelo']).'</td>
+							<td class="has-text-centered" style="border: 1px solid black;">COSTO RPTO</td>
+							<td class="has-text-centered" style="border: 1px solid black;">' . htmlspecialchars($orden['orden_tecnico_asignado']) . '</td>
+							<td class="has-text-centered" style="border: 1px solid black;">' . htmlspecialchars($orden['orden_estado']) . '</td>
+							<td class="has-text-centered" style="border: 1px solid black;">' . $verificada . '</td>
+							<td class="has-text-centered" style="border: 1px solid black;">' . htmlspecialchars($orden['sucursal_descripcion']) . '</td>
+						</tr>';
+				}
+		
+				$tabla .= '</tbody></table></div>';
+				echo $tabla;
+		
+			} else {
+				echo '<p class="notification is-warning">No hay equipos registrados.</p>';
+			}
+		}	
+
+		/*---------- Controlador registrar orden ----------*/
+		public function registrarVerificacionControlador(){
+			$orden_codigo = $_POST['orden_codigo'];
+			$verificacion_fecha = date("Y-m-d");
+			$verificacion_hora_inicio = $_POST['verificacion_hora_inicio'];
+			$verificacion_hora_fin = date("H:i"); // Captura la hora actual como hora de finalización\
+			// Calcula la duración en minutos
+			$horaInicio = strtotime($verificacion_hora_inicio);
+			$horaFin = strtotime($verificacion_hora_fin);
+			$verificacion_duracion = round(($horaFin - $horaInicio) / 60);
+
+			$ornde_codigo = $_POST['orden_codigo'];
+
+			$verificacion_estado = $this->limpiarCadena($_POST['verificacion_estado']);
+			$verificacion_estacion_sig = $this->limpiarCadena($_POST['verificacion_estacion_sig']);
+			$verificacion_responsable = $this->limpiarCadena($_POST['verificacion_responsable']);
+			$verificacion_tecnico_asignado = "";
+			if(isset($_POST['verificacion_tecnico_asignado'])){
+				$verificacion_tecnico_asignado = $this->limpiarCadena($_POST['verificacion_tecnico_asignado']);
+			}
+			if(($verificacion_estacion_sig == "Reparar" ||  $verificacion_estacion_sig == "Ensamblar") && $verificacion_tecnico_asignado == ""){
+				$alerta=[
+					"tipo"=>"simple",
+					"titulo"=>"Ocurrió un error inesperado",
+					"texto"=>"Debe indicar el tecnico, por favor intente nuevamente",
+					"icono"=>"error"
+				];
+				return json_encode($alerta);
+				exit();
+			}
+
+			$verificacion_detalles = $_POST['verificacion_detalles'];
+
+
+			$datos_verificacion = [
+				//datos
+				[
+					"campo_nombre"=>"verificacion_responsable",
+					"campo_marcador"=>":Responsabl",
+					"campo_valor"=>$verificacion_responsable
+				],
+				[
+					"campo_nombre"=>"orden_codigo",
+					"campo_marcador"=>":Orden",
+					"campo_valor"=>$orden_codigo
+				],
+				[
+					"campo_nombre"=>"verificacion_fecha",
+					"campo_marcador"=>":Fecha",
+					"campo_valor"=>$verificacion_fecha
+				],
+				[
+					"campo_nombre"=>"verificacion_hora_inicio",
+					"campo_marcador"=>":HoraInicio",
+					"campo_valor"=>$verificacion_hora_inicio
+				],
+				[
+					"campo_nombre" => "verificacion_hora_fin",
+					"campo_marcador" => ":HoraFin", 
+					"campo_valor" => $verificacion_hora_fin
+				],
+				[
+					"campo_nombre" => "verificacion_duracion", 
+					"campo_marcador" => ":Duracion", 
+					"campo_valor" => $verificacion_duracion],
+				[
+					"campo_nombre"=>"verificacion_estado",
+					"campo_marcador"=>":Estado",
+					"campo_valor"=>$verificacion_estado
+				],
+				[
+					"campo_nombre"=>"verificacion_estacion_sig",
+					"campo_marcador"=>":EstacionSig",
+					"campo_valor"=>$verificacion_estacion_sig
+				],
+				[
+					"campo_nombre"=>"verificacion_tecnico_asignado",
+					"campo_marcador"=>":Tecnico",
+					"campo_valor"=>$verificacion_tecnico_asignado
+				],
+				[
+					"campo_nombre"=>"verificacion_detalles",
+					"campo_marcador"=>":Detalles",
+					"campo_valor"=>$verificacion_detalles
+				]
+			];
+
+			$registrar_verificacion = $this->guardarDatos("verificacion", $datos_verificacion);
+
+			if ($registrar_verificacion->rowCount()==1) {
+				$alerta=[
+					"tipo"=>"redireccionar",
+					"url"=>APP_URL."ordenDetail/".$orden_codigo
+				];
+			}else{
+				$alerta=[
+					"tipo"=>"simple",
+					"titulo"=>"Ocurrió un error inesperado",
+					"texto"=>"No se pudo registrar la verificacion, por favor intente nuevamente",
+					"icono"=>"error"
+				];
+				return json_encode($alerta);
+				exit();
+			}
+
+			//actualizar datos del estado de la orden, reparar / ensamblar / reparada
+			$datos_estado = [
+				[
+					"campo_nombre"=>"orden_estado",
+					"campo_marcador"=>":Estado",
+					"campo_valor"=>$verificacion_estacion_sig
+				],
+
+			];
+			$condicion=[
+				"condicion_campo"=>"orden_codigo",
+				"condicion_marcador"=>":CodigoOrden",
+				"condicion_valor"=>$orden_codigo
+			];
+
+			$this->actualizarDatos("orden", $datos_estado, $condicion);
+		
+			
+			//retornamos el json 
+			return json_encode($alerta);
+		}
+
+
 
 	}
 

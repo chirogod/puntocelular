@@ -16,9 +16,6 @@
             echo $insUsuario->actualizarUsuarioControlador();
         }
 
-        if ($_POST['modulo_usuario'] == "registrar_tecnico") {
-            echo $insUsuario->registrarTecnicoControlador();
-        }
 
     }else{
         session_destroy();

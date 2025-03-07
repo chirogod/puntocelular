@@ -86,6 +86,14 @@
 			echo json_encode($modelos);
 			exit;
 		}
+
+		if ($_POST['modulo_orden'] == "buscar_orden") {
+            echo $insOrden->buscarOrdenControlador();
+        }
+
+		if ($_POST['modulo_orden'] == "registrar_verificacion") {
+            echo $insOrden->registrarVerificacionControlador();
+        }
 		
 	}else{
 		session_destroy();
