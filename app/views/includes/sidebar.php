@@ -271,6 +271,17 @@
 								</div>
 							</a>
 						</li>
+
+						<li class="full-width">
+							<a href="<?php echo APP_URL; ?>pedidoEquipoNew/" class="full-width">
+								<div class="navLateral-body-cl">
+									<i class="fas fa-plus fa-fw"></i>
+								</div>
+								<div class="navLateral-body-cr">
+									Pedir equipo
+								</div>
+							</a>
+						</li>
 					</ul>
 				</li>
 
@@ -339,6 +350,16 @@
 								</div>
 								<div class="navLateral-body-cr">
 									Control Equipos
+								</div>
+							</a>
+						</li>
+						<li class="full-width">
+							<a href="<?php echo APP_URL; ?>pedidoRepuestoList/" class="full-width">
+								<div class="navLateral-body-cl">
+									<i class="fas fa-list fa-fw"></i>
+								</div>
+								<div class="navLateral-body-cr">
+									Pedido Repuestos
 								</div>
 							</a>
 						</li>

@@ -542,5 +542,131 @@
             
         }
 
+        public function registrarPedidoEquipoControlador(){
+            $pedido_equipo_modulo = $this->limpiarCadena($_POST['pedido_equipo_modulo']);
+
+            $id_marca = $this->limpiarCadena($_POST['id_marca']);
+            $check_marca = $this->ejecutarConsulta("SELECT * FROM marca WHERE id_marca = '$id_marca'");
+            if ($check_marca->rowCount() > 0) {
+                // si ya existe generar otro
+                $marca=$check_marca->fetch();
+                $pedido_equipo_marca = $marca['marca_descripcion'];
+            }
+            
+            $id_modelo = $this->limpiarCadena($_POST['id_modelo']);
+            $check_modelo = $this->ejecutarConsulta("SELECT * FROM modelo WHERE id_modelo = '$id_modelo'");
+            if ($check_modelo->rowCount() > 0) {
+                // si ya existe generar otro
+                $modelo=$check_modelo->fetch();
+                $pedido_equipo_modelo = $modelo['modelo_descripcion'];
+            }
+
+            $pedido_equipo_almacenamiento = $this->limpiarCadena($_POST['pedido_equipo_almacenamiento']);
+            $pedido_equipo_color = $this->limpiarCadena($_POST['pedido_equipo_color']);
+
+            if($pedido_equipo_modulo == "iphone"){
+                $pedido_equipo_ram = "-";
+                
+            }else{
+                $pedido_equipo_ram = $this->limpiarCadena($_POST['pedido_equipo_ram']);
+            }
+
+            if($pedido_equipo_modulo == "iphone" || $pedido_equipo_modulo == "android_reac"){
+                $pedido_equipo_bateria = $this->limpiarCadena($_POST['pedido_equipo_bateria']);
+            }else{
+                $pedido_equipo_bateria = "-";
+            }
+
+            $pedido_equipo_estado = 'espera';
+
+            $pedido_equipo_hora = date("H:i:s");
+            $pedido_equipo_fecha = date("Y-m-d");
+            $pedido_equipo_responsable = $_POST['pedido_equipo_responsable'];
+            
+            $id_sucursal = $_SESSION['id_sucursal'];
+    
+            $datos_equipo = [
+                [
+                    "campo_nombre"=>"pedido_equipo_estado",
+                    "campo_marcador"=>":Estado",
+                    "campo_valor"=>$pedido_equipo_estado
+                ],
+                [
+                    "campo_nombre"=>"pedido_equipo_marca",
+                    "campo_marcador"=>":Marca",
+                    "campo_valor"=>$pedido_equipo_marca
+                ],
+                [
+                    "campo_nombre"=>"pedido_equipo_modelo",
+                    "campo_marcador"=>":Modelo",
+                    "campo_valor"=>$pedido_equipo_modelo
+                ],
+                [
+                    "campo_nombre"=>"pedido_equipo_almacenamiento",
+                    "campo_marcador"=>":Almacenamiento",
+                    "campo_valor"=>$pedido_equipo_almacenamiento
+                ],
+                [
+                    "campo_nombre"=>"pedido_equipo_ram",
+                    "campo_marcador"=>":Ram",
+                    "campo_valor"=>$pedido_equipo_ram
+                ],
+                [
+                    "campo_nombre"=>"pedido_equipo_bateria",
+                    "campo_marcador"=>":Bateria",
+                    "campo_valor"=>$pedido_equipo_bateria
+                ],
+                [
+                    "campo_nombre"=>"pedido_equipo_color",
+                    "campo_marcador"=>":Color",
+                    "campo_valor"=>$pedido_equipo_color
+                ],
+                [
+                    "campo_nombre"=>"id_sucursal",
+                    "campo_marcador"=>":Sucursal",
+                    "campo_valor"=>$id_sucursal
+                ],
+                [
+                    "campo_nombre"=>"pedido_equipo_modulo",
+                    "campo_marcador"=>":Modulo",
+                    "campo_valor"=>$pedido_equipo_modulo
+                ],
+                [
+                    "campo_nombre"=>"pedido_equipo_fecha",
+                    "campo_marcador"=>":Fecha",
+                    "campo_valor"=>$pedido_equipo_fecha
+                ],
+                [
+                    "campo_nombre"=>"pedido_equipo_hora",
+                    "campo_marcador"=>":Hora",
+                    "campo_valor"=>$pedido_equipo_hora
+                ],
+                [
+                    "campo_nombre"=>"pedido_equipo_responsable",
+                    "campo_marcador"=>":Responsable",
+                    "campo_valor"=>$pedido_equipo_responsable
+                ]
+            ];
+    
+            $registrar_equipo = $this->guardarDatos("pedido_equipo", $datos_equipo);
+            if ($registrar_equipo->rowCount()==1) {
+                $alerta=[
+                    "tipo"=>"limpiar",
+                    "titulo"=>"Pedido de equipo registrado",
+                    "texto"=>"El pedido se registro con exito",
+                    "icono"=>"success"
+                ];
+            }else{
+                $alerta=[
+                    "tipo"=>"simple",
+                    "titulo"=>"Ocurrió un error inesperado",
+                    "texto"=>"No se pudo registrar el pedido, por favor intente nuevamente",
+                    "icono"=>"error"
+                ];
+            }
+            //retornamos el json 
+            return json_encode($alerta);
+        }
+
     }
 ?>

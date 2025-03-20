@@ -28,7 +28,9 @@
             echo $insEquipo->registrarModeloControlador();
         }
 
-
+        if ($_POST['modulo_equipo'] == "registrar_pedido_equipo") {
+            echo $insEquipo->registrarPedidoEquipoControlador();
+        }
     }else{
         session_destroy();
         header("Location: ".APP_URL."login/");
