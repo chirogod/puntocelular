@@ -115,6 +115,11 @@
                     "campo_valor"=>$pedido_repuesto_hora
                 ],
                 [
+                    "campo_nombre"=>"pedido_estado",
+                    "campo_marcador"=>":Estado",
+                    "campo_valor"=>'espera'
+                ],
+                [
                     "campo_nombre"=>"pedido_repuesto_responsable",
                     "campo_marcador"=>":Responsable",
                     "campo_valor"=>$pedido_repuesto_responsable
@@ -157,12 +162,14 @@
                 seccion_repuesto.id_seccion_repuesto,  
                 seccion_repuesto.seccion_repuesto_descripcion,
                 pedido_repuesto.pedido_repuesto_responsable,
+                pedido_repuesto.pedido_estado,
                 pedido_repuesto.pedido_estado
                 FROM pedido_repuesto 
                 INNER JOIN orden ON pedido_repuesto.id_orden = orden.id_orden
                 INNER JOIN seccion_repuesto ON pedido_repuesto.id_seccion_repuesto = seccion_repuesto.id_seccion_repuesto
                 INNER JOIN sucursal ON pedido_repuesto.id_sucursal = sucursal.id_sucursal
-                WHERE pedido_repuesto.id_sucursal = '".$_SESSION['id_sucursal']."'
+                WHERE pedido_repuesto.pedido_estado != 'eliminado'
+                AND pedido_repuesto.id_sucursal = '".$_SESSION['id_sucursal']."'
                 ORDER BY pedido_repuesto.id_pedido_repuesto DESC")
             ;
         
@@ -304,14 +311,27 @@
             return json_encode($alerta);
         }
 
+        //se le elimina de la lista al pasar al estado 'eliminado'. No se elimina de la base de datos
         public function eliminarPedidoControlador(){
             $id_pedido_repuesto = $_POST['id_pedido_repuesto'];
-            $ingreso_pedido = $this->eliminarRegistro('pedido_repuesto', 'id_pedido_repuesto', $id_pedido_repuesto);
-            if($ingreso_pedido){
+            $datos=[
+                [
+                    "campo_nombre"=>"pedido_estado",
+                    "campo_marcador"=>":Estado",
+                    "campo_valor"=>"eliminado"
+                ]
+            ];
+            $condicion=[
+				"condicion_campo"=>"id_pedido_repuesto",
+				"condicion_marcador"=>":Id",
+				"condicion_valor"=>$id_pedido_repuesto
+			];
+            $actualizar = $this->actualizarDatos('pedido_repuesto', $datos, $condicion);
+            if($actualizar){
                 $alerta=[
                     "tipo"=>"recargar",
                     "titulo"=>"Operacion exitosa",
-                    "texto"=>"El repuesto se elimino de la list.",
+                    "texto"=>"El repuesto se elimino de la lista.",
                     "icono"=>"success"
                 ];
                 
@@ -319,12 +339,118 @@
                 $alerta=[
                     "tipo"=>"recargar",
                     "titulo"=>"Ocurrió un error inesperado",
-                    "texto"=>"No se pudo eliminar el repuesto de la lista",
+                    "texto"=>"No se pudo marcar el repuesto como eliminado",
                     "icono"=>"error"
                 ];
                 return json_encode($alerta);
                 exit();
             }
             return json_encode($alerta);
+        }
+
+        public function buscarPedidoControlador() {
+            $where = "";
+            $where_estado = "";
+            $where_fecha = "";
+            // Si viene la sucursal, aplicamos el filtro
+			if (isset($_POST['sucursal']) && !empty($_POST['sucursal'])) {
+				$id_sucursal = intval($this->limpiarCadena($_POST['sucursal']));
+				$where = "WHERE pedido_repuesto.id_sucursal = '$id_sucursal'";
+			}
+		
+			// Si viene el estado, aplicamos el filtro
+			if (isset($_POST['estado']) && !empty($_POST['estado'])) {
+				$estado = $this->limpiarCadena($_POST['estado']);
+				$where_estado = "AND pedido_repuesto.pedido_estado = '$estado'";
+			}
+		
+			// Si vienen las fechas, aplicamos el filtro
+			if (isset($_POST['fecha_inicio']) && !empty($_POST['fecha_inicio']) && isset($_POST['fecha_fin']) && !empty($_POST['fecha_fin'])) {
+				$fecha_inicio = $this->limpiarCadena($_POST['fecha_inicio']);
+				$fecha_fin = $this->limpiarCadena($_POST['fecha_fin']);
+				$where_fecha = "AND pedido_repuesto.pedido_repuesto_fecha BETWEEN '$fecha_inicio' AND '$fecha_fin'";
+			}
+
+            $consulta = "SELECT 
+                pedido_repuesto.id_pedido_repuesto, 
+                pedido_repuesto.pedido_repuesto_descripcion, 
+                pedido_repuesto.pedido_repuesto_fecha, 
+                pedido_repuesto.pedido_repuesto_hora, 
+                pedido_repuesto.id_orden,
+                pedido_repuesto.id_sucursal,
+                sucursal.id_sucursal,
+                sucursal.sucursal_descripcion,
+                pedido_repuesto.id_seccion_repuesto,
+                seccion_repuesto.id_seccion_repuesto,  
+                seccion_repuesto.seccion_repuesto_descripcion,
+                pedido_repuesto.pedido_repuesto_responsable,
+                pedido_repuesto.pedido_estado
+            FROM pedido_repuesto 
+            INNER JOIN orden ON pedido_repuesto.id_orden = orden.id_orden
+            INNER JOIN seccion_repuesto ON pedido_repuesto.id_seccion_repuesto = seccion_repuesto.id_seccion_repuesto
+            INNER JOIN sucursal ON pedido_repuesto.id_sucursal = sucursal.id_sucursal
+            $where $where_estado $where_fecha 
+            ORDER BY pedido_repuesto.pedido_repuesto_fecha DESC";
+        
+            $datos_pedido = $this->ejecutarConsulta($consulta);
+        
+            $seccionRepuestos = [];
+            foreach ($datos_pedido as $fila) {
+                $id_seccion_repuesto = $fila['id_seccion_repuesto'];
+                if (!isset($seccionRepuestos[$id_seccion_repuesto])) {
+                    $seccionRepuestos[$id_seccion_repuesto] = [
+                        'seccion' => $fila['seccion_repuesto_descripcion'],
+                        'pedidos' => []
+                    ];
+                }
+        
+                $seccionRepuestos[$id_seccion_repuesto]['pedidos'][] = [
+                    'id' => $fila['id_pedido_repuesto'],
+                    'pedido' => $fila['pedido_repuesto_descripcion'],
+                    'fecha' => $fila['pedido_repuesto_fecha'],
+                    'hora' => $fila['pedido_repuesto_hora'],
+                    'orden' => $fila['id_orden'],
+                    'responsable' => $fila['pedido_repuesto_responsable'],
+                    'estado' => $fila['pedido_estado'],
+                    'sucursal'=> $fila['sucursal_descripcion']
+                ];
+            }
+        
+            echo '<table class="table is-striped is-hoverable is-fullwidth">';
+            echo '<thead><tr><th class="has-text-left">Pedidos de Repuestos</th></tr></thead>';
+            echo '<tbody>';
+        
+            foreach ($seccionRepuestos as $seccion) {
+                echo '<tr><td colspan="5"><details>';
+                echo '<summary class="has-text-left is-clickable">' . htmlspecialchars($seccion['seccion']) . '</summary>';
+                echo '<table class="table is-striped is-hoverable is-fullwidth mt-3">';
+                echo '<thead>
+                        <tr>
+                            <th>Repuesto</th>
+                            <th>Fecha</th>
+                            <th>Orden</th>
+                            <th>Responsable</th>
+                            <th>Estado</th>
+                            <th>Sucursal</th>
+                        </tr>
+                    </thead>';
+                echo '<tbody>';
+        
+                foreach ($seccion['pedidos'] as $pedido) {
+                    $estadoClass = $pedido['estado'] == "ingreso" ? "tachado" : "";
+                    echo '<tr class="' . $estadoClass . '">';
+                    echo '<td>' . htmlspecialchars($pedido['pedido']) . '</td>';
+                    echo '<td>' . htmlspecialchars($pedido['fecha']) . ' - ' . htmlspecialchars($pedido['hora']) . '</td>';
+                    echo '<td>' . htmlspecialchars($pedido['orden']) . '</td>';
+                    echo '<td>' . htmlspecialchars($pedido['responsable']) . '</td>';
+                    echo '<td>' . htmlspecialchars(ucfirst($pedido['estado'])) . '</td>';
+                    echo '<td>' . htmlspecialchars($pedido['sucursal']) . '</td>';
+                    echo '</tr>';
+                }
+        
+                echo '</tbody></table></details></td></tr>';
+            }
+        
+            echo '</tbody></table>';
         }
     }

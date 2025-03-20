@@ -120,12 +120,8 @@
                             <input class="input" type="text" name="pedido_repuesto_responsable" maxlength="40" required >
 
                         </div>
-                        
                     </div>      
                             
-                    
-                    
-
                     <p class="has-text-centered">
                         <button type="reset" class="button is-link is-light is-rounded"><i class="fas fa-paint-roller"></i> &nbsp; Limpiar</button>
                         <button type="submit" class="button is-info is-rounded"><i class="far fa-save"></i> &nbsp; Guardar</button>

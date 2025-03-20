@@ -20,6 +20,10 @@
             echo $insRepuesto->eliminarPedidoControlador();
         }
 
+        if ($_POST['modulo_repuesto'] == "buscar_pedido") {
+            echo $insRepuesto->buscarPedidoControlador();
+        }
+
     }else{
         session_destroy();
         header("Location: ".APP_URL."login/");

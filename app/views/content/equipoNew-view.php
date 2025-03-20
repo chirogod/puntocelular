@@ -17,13 +17,12 @@
 					<div class="select">
 						<select name="equipo_modulo" id="" required>
 							<option>Seleccione una opción</option>
-							<option value="android_nuevo">Android Nuevo</option>
-                            <option value="iphone_nuevo">Iphone nuevo</option>
-                            <option value="android_reac">Android reac</option>
-                            <option value="iphone_reac">Iphone reac</option>
-                            <option value="android">Android</option>
-                            <option value="iphone">Iphone</option>
-                            <option value="Prestamo">Prestamo</option>
+							<option value="android_nuevo">Stock Android Nuevo</option>
+                            <option value="android_reac">Stock Android Reac.</option>
+							<option value="iphone">Stock iPhone</option>
+							<option value="android_prev">Android Preventa</option>
+                            <option value="apple_nuevo_prev">Apple Nuevo Preventa</option>
+                            <option value="apple_reac_prev">Apple Reac. Preventa</option>
 						</select>
 					</div>
 				</div>
@@ -129,7 +128,7 @@
                 ramField.style.display = 'none';
                 bateriaField.style.display = 'none';
             } else if (
-                selectedValue === 'android' ||
+                selectedValue === 'android_prev' ||
                 selectedValue === 'android_nuevo' ||
                 selectedValue === 'android_reac'
             ) {

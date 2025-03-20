@@ -252,23 +252,20 @@
                 case 'android_nuevo':
                     $orderBy = " AND equipo_modulo = 'android_nuevo'";
                     break;
-                case 'iphone_nuevo':
-                    $orderBy = " AND equipo_modulo = 'iphone_nuevo'";
+                case 'iphone':
+                    $orderBy = " AND equipo_modulo = 'iphone'";
                     break;
                 case 'android_reac':
                     $orderBy = " AND equipo_modulo = 'android_reac'";
                     break;
-                case 'iphone_reac':
-                    $orderBy = " AND equipo_modulo = 'iphone_reac'";
+                case 'apple_nuevo_prev':
+                    $orderBy = " AND equipo_modulo = 'apple_nuevo_prev'";
                     break;
-                case 'android':
-                    $orderBy = " AND equipo_modulo = 'android'";
+                case 'apple_reac_prev':
+                    $orderBy = " AND equipo_modulo = 'apple_reac_prev'";
                     break;
-                case 'iphone':
-                    $orderBy = " AND equipo_modulo = 'iphone'";
-                    break;
-                case 'prestamo':
-                    $orderBy = " AND equipo_modulo = 'prestamo'";
+                case 'android_prev':
+                    $orderBy = " AND equipo_modulo = 'android_prev'";
                     break;
                 default:
                     $orderBy = " ";
@@ -356,8 +353,12 @@
                         $fijas_9 = ($efectivo_usd * 1.5 * $usd_pc) / 9;
                         $fijas_12 = ($efectivo_usd * 1.6 * $usd_pc) / 12;
                     
+                        $update = "";
+                        if($_SESSION['usuario_rol'] == "Administrador"){
+                            $update = '"onclick="window.location.href=\'' . APP_URL . 'equipoUpdate/' . $rows['id_equipo'] . '/\'"';
+                        }
                         $tabla .= '
-                            <tr class="' . $clase_estado . '" style="cursor: pointer;" onclick="window.location.href=\'' . APP_URL . 'equipoUpdate/' . $rows['id_equipo'] . '/\'">
+                            <tr class="' . $clase_estado . '" style="cursor: pointer; '. $update .'">
                                 <td class="has-text-centered" style="border: 1px solid black;">' . htmlspecialchars($rows['equipo_estado']) . '</td>
                                 <td class="has-text-centered" style="border: 1px solid black;">' . htmlspecialchars($rows['equipo_marca']) . '</td>
                                 <td class="has-text-centered" style="border: 1px solid black;">' . htmlspecialchars($rows['equipo_modelo']) . '</td>

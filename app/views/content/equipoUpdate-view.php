@@ -43,15 +43,14 @@
 				<div class="column">
 					<label for="">Modulo</label>
 					<div class="select">
-						<select name="equipo_modulo" id="">
+						<select name="equipo_modulo" id="" required>
 							<option>Seleccione una opción</option>
-							<option value="android_nuevo" <?php if($datos['equipo_modulo'] == "android_nuevo"){?>selected<?php } ?>>Android Nuevo</option>
-                            <option value="iphone_nuevo" <?php if($datos['equipo_modulo'] == "iphone_nuevo"){?>selected<?php } ?>>Iphone Nuevo</option>
-                            <option value="android_reac" <?php if($datos['equipo_modulo'] == "android_reac"){?>selected<?php } ?>>Android reac</option>
-                            <option value="iphone_reac" <?php if($datos['equipo_modulo'] == "iphone_reac"){?>selected<?php } ?>>Iphone reac</option>
-                            <option value="android" <?php if($datos['equipo_modulo'] == "android"){?>selected<?php } ?>>Android</option>
-                            <option value="iphone" <?php if($datos['equipo_modulo'] == "iphone"){?>selected<?php } ?>>Iphone</option>
-                            <option value="Prestamo" <?php if($datos['equipo_modulo'] == "prestamo"){?>selected<?php } ?>>Prestamo</option>
+							<option value="android_nuevo">Stock Android Nuevo</option>
+                            <option value="android_reac">Stock Android Reac.</option>
+							<option value="iphone">Stock iPhone</option>
+							<option value="android_prev">Android Preventa</option>
+                            <option value="apple_nuevo_prev">Apple Nuevo Preventa</option>
+                            <option value="apple_reac_prev">Apple Reac. Preventa</option>
 						</select>
 					</div>
 				</div>
@@ -78,6 +77,7 @@
                             <option value="Disponible" <?php if($datos['equipo_estado'] == "Disponible"){?>selected<?php } ?>>Disponible</option>
                             <option value="Reservado" <?php if($datos['equipo_estado'] == "Reservado"){?>selected<?php } ?>>Reservado</option>
                             <option value="Vendido" <?php if($datos['equipo_estado'] == "Vendido"){?>selected<?php } ?>>Vendido</option>
+							<option value="Pausado" <?php if($datos['equipo_estado'] == "Pausado"){?>selected<?php } ?>>Pausado</option>
                         </select>
                     </div>
 					
