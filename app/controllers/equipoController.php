@@ -668,5 +668,101 @@
             return json_encode($alerta);
         }
 
+        public function listarPedidosEquiposControlador(){
+            $datos = $this->ejecutarConsulta("SELECT 
+                pedido_equipo.id_pedido_equipo, 
+                pedido_equipo.pedido_equipo_fecha, 
+                pedido_equipo.pedido_equipo_hora,
+                pedido_equipo.pedido_equipo_marca,
+                pedido_equipo.pedido_equipo_modelo, 
+                pedido_equipo.pedido_equipo_almacenamiento,
+                pedido_equipo.pedido_equipo_ram,
+                pedido_equipo.pedido_equipo_color,
+                pedido_equipo.pedido_equipo_estado,
+                pedido_equipo.pedido_equipo_bateria,
+                pedido_equipo.id_sucursal,
+                pedido_equipo.pedido_equipo_responsable,
+                pedido_equipo.pedido_equipo_modulo
+                FROM pedido_equipo
+                INNER JOIN sucursal ON pedido_equipo.id_sucursal = sucursal.id_sucursal
+                WHERE pedido_equipo.pedido_equipo_estado != 'eliminado'
+                AND pedido_equipo.id_sucursal = '".$_SESSION['id_sucursal']."'
+                ORDER BY pedido_equipo.id_pedido_equipo DESC"
+            );
+
+            echo '<table class="table is-striped is-hoverable is-fullwidth">';
+            echo '<thead>';
+            echo '<tr>';
+            echo '<th>Pedidos de equipos</th>';
+            echo '</tr>';
+            echo '</thead>';
+            echo '<tbody>';
+        
+            $modulos = []; // Agrupar pedidos por módulo
+            foreach ($datos as $dato) {
+                $modulo = $dato['pedido_equipo_modulo'];
+                $modulos[$modulo][] = $dato;
+            }
+        
+            foreach ($modulos as $modulo => $pedidos) {
+                echo '<tr>';
+                echo '<td colspan="2">';
+                echo '<details>';
+                echo '<summary class="is-clickable">' . htmlspecialchars($modulo) . '</summary>';
+        
+                echo '<table class="table is-striped is-hoverable is-fullwidth mt-3">';
+                echo '<thead>';
+                echo '<tr>';
+                echo '<th>Marca</th>';
+                echo '<th>Marca</th>';
+                echo '<th>Fecha</th>';
+                echo '<th>Responsable</th>';
+                echo '<th>Ingreso</th>';
+                echo '<th>Eliminar</th>';
+                echo '</tr>';
+                echo '</thead>';
+                echo '<tbody>';
+        
+                foreach ($pedidos as $pedido) {
+                    $pedido_estado = ($pedido['pedido_equipo_estado'] === "ingreso") ? "tachado" : "";
+                    echo '<tr class="'. $pedido_estado .'">';
+                    echo '<td>' . htmlspecialchars($pedido['pedido_equipo_marca']) . '</td>';
+                    echo '<td>' . htmlspecialchars($pedido['pedido_equipo_modelo']) . '</td>';
+                    echo '<td>' . htmlspecialchars($pedido['pedido_equipo_fecha']) . ' - ' . htmlspecialchars($pedido['pedido_equipo_hora']) . '</td>';
+                    echo '<td>' . htmlspecialchars($pedido['pedido_equipo_responsable']) . '</td>';
+        
+                    // Formulario para ingreso
+                    echo '<td>
+                            <form class="FormularioAjax" action="'.APP_URL.'app/ajax/repuestoAjax.php" method="POST" autocomplete="off">
+                                <input type="hidden" name="modulo_repuesto" value="ingreso_pedido">
+                                <input type="hidden" name="id_pedido_repuesto" value="'. htmlspecialchars($pedido['id_pedido_equipo']) .'">
+                                <button type="submit" class="button is-success is-rounded is-small">Ingreso</button>
+                            </form>
+                          </td>';
+        
+                    // Formulario para eliminar
+                    echo '<td>
+                            <form class="FormularioAjax" action="'.APP_URL.'app/ajax/repuestoAjax.php" method="POST" autocomplete="off">
+                                <input type="hidden" name="modulo_repuesto" value="eliminar_pedido">
+                                <input type="hidden" name="id_pedido_repuesto" value="'. htmlspecialchars($pedido['id_pedido_equipo']) .'">
+                                <button type="submit" class="button is-danger is-rounded is-small">
+                                    <i class="fas fa-trash-restore"></i>
+                                </button>
+                            </form>
+                          </td>';
+                    echo '</tr>';
+                }
+        
+                echo '</tbody>';
+                echo '</table>';
+                echo '</details>';
+                echo '</td>';
+                echo '</tr>';
+            }
+        
+            echo '</tbody>';
+            echo '</table>';
+        }
+
     }
 ?>

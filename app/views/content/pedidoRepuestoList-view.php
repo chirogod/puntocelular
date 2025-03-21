@@ -1,3 +1,33 @@
+<style>
+    summary {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        padding: 10px;
+        background-color: #f5f5f5;
+        font-weight: bold;
+        font-size: 1.1rem;
+        cursor: pointer;
+        border-radius: 5px;
+        transition: background-color 0.2s;
+    }
+    summary:hover {
+        background-color: #e3e3e3;
+    }
+    summary::before {
+        content: "➤";
+        margin-right: 10px;
+        transition: transform 0.3s ease;
+    }
+    details[open] summary::before {
+        transform: rotate(90deg);
+    }
+    .tachado{
+        text-decoration: line-through;
+        color: gray;
+    }
+</style>
+
 <div class="container is-fluid">
     <h1 class="title is-3">Repuestos</h1>
     <h2 class="subtitle is-5">

@@ -1,3 +1,33 @@
+<style>
+    summary {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        padding: 10px;
+        background-color: #f5f5f5;
+        font-weight: bold;
+        font-size: 1.1rem;
+        cursor: pointer;
+        border-radius: 5px;
+        transition: background-color 0.2s;
+    }
+    summary:hover {
+        background-color: #e3e3e3;
+    }
+    summary::before {
+        content: "➤";
+        margin-right: 10px;
+        transition: transform 0.3s ease;
+    }
+    details[open] summary::before {
+        transform: rotate(90deg);
+    }
+    .tachado{
+        text-decoration: line-through;
+        color: gray;
+    }
+</style>
+
 <?php
     use app\controllers\equipoController;
     $insEquipo = new equipoController();
@@ -8,7 +38,7 @@
 	<h1 class="title">Pedido de equipos</h1>
 </div>
 
-<div class="container pb-6 is-max-desktop">
+<div class="container pb-1 is-max-desktop">
     <div class="columns">
         <div class="column">
             <form class="FormularioAjax" action="<?php echo APP_URL; ?>app/ajax/equipoAjax.php" method="POST" autocomplete="off" >
@@ -112,7 +142,7 @@
 
 <div class="container is-max-desktop pb-4">
     <?php
-       // echo $insPedido->listarPedidosEquiposControlador();
+       echo $insEquipo->listarPedidosEquiposControlador();
     ?>
 </div>
 
