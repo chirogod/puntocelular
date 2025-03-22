@@ -363,7 +363,16 @@
 								</div>
 							</a>
 						</li>
-						
+						<li class="full-width">
+							<a href="<?php echo APP_URL; ?>pedidoEquipoList/" class="full-width">
+								<div class="navLateral-body-cl">
+									<i class="fas fa-list fa-fw"></i>
+								</div>
+								<div class="navLateral-body-cr">
+									Pedido equipos
+								</div>
+							</a>
+						</li>
 					</ul>
 					
 				</li>

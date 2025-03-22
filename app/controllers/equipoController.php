@@ -846,5 +846,104 @@
             }
             return json_encode($alerta);
         }
+
+        public function buscarPedidoControlador() {
+            $where = "";
+            $where_estado = "";
+            $where_fecha = "";
+            // Si viene la sucursal, aplicamos el filtro
+			if (isset($_POST['sucursal']) && !empty($_POST['sucursal'])) {
+				$id_sucursal = intval($this->limpiarCadena($_POST['sucursal']));
+				$where = "WHERE pedido_equipo.id_sucursal = '$id_sucursal'";
+			}
+		
+			// Si viene el estado, aplicamos el filtro
+			if (isset($_POST['estado']) && !empty($_POST['estado'])) {
+				$estado = $this->limpiarCadena($_POST['estado']);
+				$where_estado = "AND pedido_equipo.pedido_equipo_estado = '$estado'";
+			}
+		
+			// Si vienen las fechas, aplicamos el filtro
+			if (isset($_POST['fecha_inicio']) && !empty($_POST['fecha_inicio']) && isset($_POST['fecha_fin']) && !empty($_POST['fecha_fin'])) {
+				$fecha_inicio = $this->limpiarCadena($_POST['fecha_inicio']);
+				$fecha_fin = $this->limpiarCadena($_POST['fecha_fin']);
+				$where_fecha = "AND pedido_equipo.pedido_equipo_fecha BETWEEN '$fecha_inicio' AND '$fecha_fin'";
+			}
+
+            $consulta = "SELECT 
+                pedido_equipo.id_pedido_equipo, 
+                pedido_equipo.pedido_equipo_fecha, 
+                pedido_equipo.pedido_equipo_hora, 
+                pedido_equipo.pedido_equipo_modulo, 
+                pedido_equipo.pedido_equipo_modelo, 
+                pedido_equipo.pedido_equipo_marca,
+                pedido_equipo.pedido_equipo_color,
+                pedido_equipo.pedido_equipo_ram,
+                pedido_equipo.pedido_equipo_almacenamiento, 
+                pedido_equipo.id_sucursal,
+                sucursal.id_sucursal,
+                sucursal.sucursal_descripcion,
+                pedido_equipo.pedido_equipo_responsable,
+                pedido_equipo.pedido_equipo_estado
+            FROM pedido_equipo 
+            INNER JOIN sucursal ON pedido_equipo.id_sucursal = sucursal.id_sucursal
+            $where $where_estado $where_fecha 
+            ORDER BY pedido_equipo.pedido_equipo_fecha DESC";
+        
+            $datos = $this->ejecutarConsulta($consulta);
+        
+            echo '<table class="table is-striped is-hoverable is-fullwidth">';
+            echo '<thead>';
+            echo '<tr>';
+            echo '<th>Pedidos de equipos</th>';
+            echo '</tr>';
+            echo '</thead>';
+            echo '<tbody>';
+        
+            $modulos = []; // Agrupar pedidos por módulo
+            foreach ($datos as $dato) {
+                $modulo = $dato['pedido_equipo_modulo'];
+                $modulos[$modulo][] = $dato;
+            }
+        
+            foreach ($modulos as $modulo => $pedidos) {
+                echo '<tr>';
+                echo '<td colspan="2">';
+                echo '<details>';
+                echo '<summary class="is-clickable">' . htmlspecialchars($modulo) . '</summary>';
+        
+                echo '<table class="table is-striped is-hoverable is-fullwidth mt-3">';
+                echo '<thead>
+                        <tr>
+                            <th>Equipo</th>
+                            <th>Fecha</th>
+                            <th>Responsable</th>
+                            <th>Estado</th>
+                            <th>Sucursal</th>
+                        </tr>
+                    </thead>';
+                echo '<tbody>';
+        
+                foreach ($pedidos as $pedido) {
+                    $pedido_estado = ($pedido['pedido_equipo_estado'] === "ingreso") ? "tachado" : "";
+                    echo '<tr class="'. $pedido_estado .'">';
+                    echo '<td>' . htmlspecialchars($pedido['pedido_equipo_marca']) . ' - ' . htmlspecialchars($pedido['pedido_equipo_modelo']) . ' - ' . htmlspecialchars($pedido['pedido_equipo_color']) . ' - ' . htmlspecialchars($pedido['pedido_equipo_ram']) . ' - ' . htmlspecialchars($pedido['pedido_equipo_almacenamiento']) . '</td>';
+                    echo '<td>' . htmlspecialchars($pedido['pedido_equipo_fecha']) . ' - ' . htmlspecialchars($pedido['pedido_equipo_hora']) . '</td>';
+                    echo '<td>' . htmlspecialchars($pedido['pedido_equipo_responsable']) . '</td>';
+                    echo '<td>' . htmlspecialchars($pedido['pedido_equipo_estado']) . '</td>';
+                    echo '<td>' . htmlspecialchars($pedido['sucursal_descripcion']) . '</td>';
+                    echo '</tr>';
+                }
+        
+                echo '</tbody>';
+                echo '</table>';
+                echo '</details>';
+                echo '</td>';
+                echo '</tr>';
+            }
+        
+            echo '</tbody>';
+            echo '</table>';
+        }
     }
 ?>

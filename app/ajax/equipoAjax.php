@@ -39,6 +39,10 @@
         if ($_POST['modulo_equipo'] == "eliminar_pedido") {
             echo $insEquipo->eliminarPedidoControlador();
         }
+
+        if ($_POST['modulo_equipo'] == "buscar_pedido_equipo") {
+            echo $insEquipo->buscarPedidoControlador();
+        }
     }else{
         session_destroy();
         header("Location: ".APP_URL."login/");
