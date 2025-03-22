@@ -121,10 +121,10 @@
             const selectedValue = moduloSelect.value;
 
             // Ocultar/Mosstrar campos según el módulo seleccionado
-            if (selectedValue === 'iphone_reac') {
+            if (selectedValue === 'iphone' || selectedValue === 'apple_reac_prev') {
                 ramField.style.display = 'none';
                 bateriaField.style.display = '';
-            } else if (selectedValue === 'iphone' || selectedValue === 'iphone_nuevo') {
+            } else if (selectedValue === 'iphone' || selectedValue === 'iphone_nuevo' || selectedValue === 'apple_nuevo_prev' || selectedValue === 'apple_reac_prev') {
                 ramField.style.display = 'none';
                 bateriaField.style.display = 'none';
             } else if (

@@ -33,8 +33,11 @@
                 $modelo=$check_modelo->fetch();
                 $equipo_modelo = $modelo['modelo_descripcion'];
             }
-
-            $equipo_estado = "Disponible";
+            $equipo_estado = "Disponible"; 
+            if($equipo_modulo == 'android_prev' || $equipo_modulo == 'apple_reac_prev' || $equipo_modulo == 'apple_nuevo_prev'){
+                $equipo_estado = "Preventa";
+            }
+            
             $equipo_almacenamiento = $this->limpiarCadena($_POST['equipo_almacenamiento']);
             $equipo_color = $this->limpiarCadena($_POST['equipo_color']);
 
@@ -383,7 +386,14 @@
                                 <td class="has-text-centered" style="border: 1px solid black;">' . htmlspecialchars($rows['equipo_imei']) . '</td>
                             ';
 
-                            if($rows['equipo_estado'] == "Disponible"){
+                            if($rows['equipo_estado'] == "Disponible" ||  $rows['equipo_estado'] == "Preventa" && ($rows['equipo_modulo'] != 'iphone' || $rows['equipo_modulo'] == 'android_nuevo' || $rows['equipo_modulo'] == 'android_reac')){
+                                $tabla .= '
+
+                                <td class="has-text-centered" style="border: 1px solid black;" onclick="event.stopPropagation(); window.location.href=\'' . APP_URL . 'senaEquipoNew/' . $rows['id_equipo'] . '/\'">
+                                    <i class="fas fa-file fa-fw"></i>
+                                </td>
+                            </tr>';
+                            }elseif($rows['equipo_estado'] == "Disponible"){
                                 $tabla .= '
                                 <td class="has-text-centered" style="border: 1px solid black;" onclick="event.stopPropagation(); window.location.href=\'' . APP_URL . 'saleEquipoNew/' . $rows['id_equipo'] . '/\'">
                                     <i class="fas fa-cart-plus fa-fw"></i>
@@ -733,18 +743,18 @@
         
                     // Formulario para ingreso
                     echo '<td>
-                            <form class="FormularioAjax" action="'.APP_URL.'app/ajax/repuestoAjax.php" method="POST" autocomplete="off">
-                                <input type="hidden" name="modulo_repuesto" value="ingreso_pedido">
-                                <input type="hidden" name="id_pedido_repuesto" value="'. htmlspecialchars($pedido['id_pedido_equipo']) .'">
+                            <form class="FormularioAjax" action="'.APP_URL.'app/ajax/equipoAjax.php" method="POST" autocomplete="off">
+                                <input type="hidden" name="modulo_equipo" value="ingreso_pedido">
+                                <input type="hidden" name="id_pedido_equipo" value="'. htmlspecialchars($pedido['id_pedido_equipo']) .'">
                                 <button type="submit" class="button is-success is-rounded is-small">Ingreso</button>
                             </form>
                           </td>';
         
                     // Formulario para eliminar
                     echo '<td>
-                            <form class="FormularioAjax" action="'.APP_URL.'app/ajax/repuestoAjax.php" method="POST" autocomplete="off">
-                                <input type="hidden" name="modulo_repuesto" value="eliminar_pedido">
-                                <input type="hidden" name="id_pedido_repuesto" value="'. htmlspecialchars($pedido['id_pedido_equipo']) .'">
+                            <form class="FormularioAjax" action="'.APP_URL.'app/ajax/equipoAjax.php" method="POST" autocomplete="off">
+                                <input type="hidden" name="modulo_equipo" value="eliminar_pedido">
+                                <input type="hidden" name="id_pedido_equipo" value="'. htmlspecialchars($pedido['id_pedido_equipo']) .'">
                                 <button type="submit" class="button is-danger is-rounded is-small">
                                     <i class="fas fa-trash-restore"></i>
                                 </button>
@@ -764,5 +774,77 @@
             echo '</table>';
         }
 
+        public function ingresoPedidoControlador(){
+            $id_pedido_equipo = $_POST['id_pedido_equipo'];
+            $datos=[
+                [
+                    "campo_nombre"=>"pedido_equipo_estado",
+                    "campo_marcador"=>":Estado",
+                    "campo_valor"=>"ingreso"
+                ]
+            ];
+            $condicion=[
+				"condicion_campo"=>"id_pedido_equipo",
+				"condicion_marcador"=>":Id",
+				"condicion_valor"=>$id_pedido_equipo
+			];
+            $actualizar = $this->actualizarDatos('pedido_equipo', $datos, $condicion);
+            if($actualizar){
+                $alerta=[
+                    "tipo"=>"recargar",
+                    "titulo"=>"Operacion exitosa",
+                    "texto"=>"El equipo se marco como ingresado.",
+                    "icono"=>"success"
+                ];
+                
+            }else{
+                $alerta=[
+                    "tipo"=>"recargar",
+                    "titulo"=>"Ocurrió un error inesperado",
+                    "texto"=>"No se pudo marcar el equipo como ingresado",
+                    "icono"=>"error"
+                ];
+                return json_encode($alerta);
+                exit();
+            }
+            return json_encode($alerta);
+        }
+
+        //se le elimina de la lista al pasar al estado 'eliminado'. No se elimina de la base de datos
+        public function eliminarPedidoControlador(){
+            $id_pedido_equipo = $_POST['id_pedido_equipo'];
+            $datos=[
+                [
+                    "campo_nombre"=>"pedido_equipo_estado",
+                    "campo_marcador"=>":Estado",
+                    "campo_valor"=>"eliminado"
+                ]
+            ];
+            $condicion=[
+				"condicion_campo"=>"id_pedido_equipo",
+				"condicion_marcador"=>":Id",
+				"condicion_valor"=>$id_pedido_equipo
+			];
+            $actualizar = $this->actualizarDatos('pedido_equipo', $datos, $condicion);
+            if($actualizar){
+                $alerta=[
+                    "tipo"=>"recargar",
+                    "titulo"=>"Operacion exitosa",
+                    "texto"=>"El equipo se elimino de la lista.",
+                    "icono"=>"success"
+                ];
+                
+            }else{
+                $alerta=[
+                    "tipo"=>"recargar",
+                    "titulo"=>"Ocurrió un error inesperado",
+                    "texto"=>"No se pudo marcar el equipo como eliminado",
+                    "icono"=>"error"
+                ];
+                return json_encode($alerta);
+                exit();
+            }
+            return json_encode($alerta);
+        }
     }
 ?>

@@ -31,6 +31,14 @@
         if ($_POST['modulo_equipo'] == "registrar_pedido_equipo") {
             echo $insEquipo->registrarPedidoEquipoControlador();
         }
+
+        if ($_POST['modulo_equipo'] == "ingreso_pedido") {
+            echo $insEquipo->ingresoPedidoControlador();
+        }
+
+        if ($_POST['modulo_equipo'] == "eliminar_pedido") {
+            echo $insEquipo->eliminarPedidoControlador();
+        }
     }else{
         session_destroy();
         header("Location: ".APP_URL."login/");

@@ -136,7 +136,7 @@ class senaController extends mainModel{
     public function registrarSenaControlador(){
         $id_equipo = $this->limpiarCadena($_POST['id_equipo']);
         /*== Comprobando equipo en la DB ==*/
-        $equipo = $this->seleccionarDatos("Normal", "equipo", "id_equipo", $id_equipo);
+        $equipo = $this->seleccionarDatos("Unico", "equipo", "id_equipo", $id_equipo);
         $equipo = $equipo->fetch();
 
         /*== Comprobando cliente en la DB ==*/
@@ -272,9 +272,89 @@ class senaController extends mainModel{
                 "campo_valor"=>$caja
             ]
         ];
-
         /*== Agregando sena ==*/
         $agregar_sena=$this->guardarDatos("sena",$datos_sena_equipo);
+
+        // SI LA SENIA ES DE UN EQUIPO DE PREVENTA, QUE SE LISTE EN PEDIDO DE EQUIPOS.
+
+        $pedido_equipo_estado = 'espera';
+        $pedido_equipo_marca = $equipo['equipo_marca'];
+        $pedido_equipo_modelo = $equipo['equipo_modelo'];
+        $pedido_equipo_almacenamiento = $equipo['equipo_almacenamiento'];
+        $pedido_equipo_ram = $equipo['equipo_ram'];
+        $pedido_equipo_bateria = $equipo['equipo_bateria'];
+        $pedido_equipo_color = $equipo['equipo_color'];
+        $pedido_equipo_modulo = $equipo['equipo_modulo'];
+        $pedido_equipo_hora = date("H:i:s");
+        $pedido_equipo_fecha = date("Y-m-d");
+        $pedido_equipo_responsable = $sena_vendedor;
+
+        if($equipo['equipo_modulo'] == 'android_prev' || $equipo['equipo_modulo'] == 'apple_nuevo_prev' || $equipo['equipo_modulo'] == 'apple_reac_prev'){
+            $datos_equipo = [
+                [
+                    "campo_nombre"=>"pedido_equipo_estado",
+                    "campo_marcador"=>":Estado",
+                    "campo_valor"=>$pedido_equipo_estado
+                ],
+                [
+                    "campo_nombre"=>"pedido_equipo_marca",
+                    "campo_marcador"=>":Marca",
+                    "campo_valor"=>$pedido_equipo_marca
+                ],
+                [
+                    "campo_nombre"=>"pedido_equipo_modelo",
+                    "campo_marcador"=>":Modelo",
+                    "campo_valor"=>$pedido_equipo_modelo
+                ],
+                [
+                    "campo_nombre"=>"pedido_equipo_almacenamiento",
+                    "campo_marcador"=>":Almacenamiento",
+                    "campo_valor"=>$pedido_equipo_almacenamiento
+                ],
+                [
+                    "campo_nombre"=>"pedido_equipo_ram",
+                    "campo_marcador"=>":Ram",
+                    "campo_valor"=>$pedido_equipo_ram
+                ],
+                [
+                    "campo_nombre"=>"pedido_equipo_bateria",
+                    "campo_marcador"=>":Bateria",
+                    "campo_valor"=>$pedido_equipo_bateria
+                ],
+                [
+                    "campo_nombre"=>"pedido_equipo_color",
+                    "campo_marcador"=>":Color",
+                    "campo_valor"=>$pedido_equipo_color
+                ],
+                [
+                    "campo_nombre"=>"id_sucursal",
+                    "campo_marcador"=>":Sucursal",
+                    "campo_valor"=>$_SESSION['id_sucursal']
+                ],
+                [
+                    "campo_nombre"=>"pedido_equipo_modulo",
+                    "campo_marcador"=>":Modulo",
+                    "campo_valor"=>$pedido_equipo_modulo
+                ],
+                [
+                    "campo_nombre"=>"pedido_equipo_fecha",
+                    "campo_marcador"=>":Fecha",
+                    "campo_valor"=>$pedido_equipo_fecha
+                ],
+                [
+                    "campo_nombre"=>"pedido_equipo_hora",
+                    "campo_marcador"=>":Hora",
+                    "campo_valor"=>$pedido_equipo_hora
+                ],
+                [
+                    "campo_nombre"=>"pedido_equipo_responsable",
+                    "campo_marcador"=>":Responsable",
+                    "campo_valor"=>$pedido_equipo_responsable
+                ]
+            ];
+    
+            $registrar_equipo = $this->guardarDatos("pedido_equipo", $datos_equipo);
+        }
 
         if($agregar_sena->rowCount()==1){
             /* PONER EL EQUIPO EN ESTADO DE VENDIDO */
