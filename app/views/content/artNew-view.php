@@ -10,6 +10,7 @@
 		<input type="hidden" name="modulo_articulo" value="registrar">
 		
 		<div class="box">
+			<h2 class="subtitle">Articulo</h2>
 			<div class="columns">
 				<div class="column">
 					<div class="control">
@@ -58,6 +59,7 @@
 		</div>
 
 		<div class="box">
+			<h2 class="subtitle">Precio</h2>
 			<div class="columns">
 				<div class="column">
 					<div class="control">
@@ -91,6 +93,7 @@
 			</div>
 		</div>
 		<div class="box">
+			<h2 class="subtitle">Stock</h2>
 			<div class="columns">
 				<div class="column">
 					<div class="control">
@@ -110,9 +113,16 @@
 						<input class="input" type="number" name="articulo_stock_max" pattern="^[0-9]+$" >
 					</div>
 				</div>
+				<div class="column">
+					<div class="control">
+						<label>Stock critico</label>
+						<input class="input" type="number" name="articulo_stock_critico" pattern="^[0-9]+$" >
+					</div>
+				</div>
 			</div>
 		</div>
 		<div class="box">
+			<h2 class="subtitle">Detalles</h2>
 			<div class="columns">
 				<div class="column">
 					<div class="control">

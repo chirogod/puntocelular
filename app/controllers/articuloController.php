@@ -8,6 +8,7 @@ class articuloController extends mainModel{
     public function registrarArticuloControlador(){
         $articulo_descripcion = $this->limpiarCadena($_POST['articulo_descripcion']);
         $articulo_stock = $this->limpiarCadena($_POST['articulo_stock']);
+        $articulo_stock_critico = $this->limpiarCadena($_POST['articulo_stock_critico']);
         $articulo_stock_min = $this->limpiarCadena($_POST['articulo_stock_min']);
         $articulo_stock_max = $this->limpiarCadena($_POST['articulo_stock_max']);
         $id_rubro = $this->limpiarCadena($_POST['id_rubro']);
@@ -199,6 +200,11 @@ class articuloController extends mainModel{
                 "campo_nombre"=>"articulo_stock_max",
                 "campo_marcador"=>":ArticuloStockMax",
                 "campo_valor"=>$articulo_stock_max
+            ],
+            [
+                "campo_nombre"=>"articulo_stock_critico",
+                "campo_marcador"=>":ArticuloStockCritico",
+                "campo_valor"=>$articulo_stock_critico
             ],
             [
                 "campo_nombre"=>"id_rubro",
@@ -689,8 +695,9 @@ class articuloController extends mainModel{
         $articulo = $this->limpiarCadena($_POST['buscar_articulo']);
         $estado = $this->limpiarCadena($_POST['estado']);
         $orden = $this->limpiarCadena($_POST['orden']);
-        $sucursal = $_SESSION['id_sucursal'];
-    
+        $sucursal = $this->limpiarCadena($_POST['sucursal']);
+        $stock = $this->limpiarCadena($_POST['stock']);
+        var_dump($stock);
         $where = "WHERE id_sucursal = '$sucursal'";
         
         if($articulo != ""){
@@ -701,6 +708,10 @@ class articuloController extends mainModel{
             $where .= " AND articulo_activo = 'SI'";
         } elseif($estado == "inactivo"){
             $where .= " AND articulo_activo = 'NO'";
+        }
+
+        if($stock == "critico"){
+            $where .= " AND articulo_stock <= articulo_stock_critico";
         }
     
         switch($orden){
