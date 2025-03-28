@@ -482,16 +482,25 @@
                                 </select>
                             </div>
                         </div>
+                        <?php
+                            // Obtener las marcas de la base de datos
+                            $datos_marca = $insLogin->seleccionarDatos("Unico", "marca", "marca_descripcion", $datos['orden_equipo_marca']);
+                            $datos_marca = $datos_marca->fetch();
+                            $datos_modelo = $insLogin->seleccionarDatos("Unico", "modelo", "modelo_descripcion", $datos['orden_equipo_modelo']);
+                            $datos_modelo = $datos_modelo->fetch();
+                        ?>
+                        <input type="hidden" name="id_marca" id="hidden_id_marca" value="<?php echo $datos_marca['id_marca']; ?>">
+                        <input type="hidden" name="id_modelo" id="hidden_id_modelo" value="<?php echo $datos_modelo['id_modelo']; ?>">
                         <div class="column">
                             <label>Marca <?php echo CAMPO_OBLIGATORIO; ?></label><br>
                             <div class="select">
-                                <select name="id_marca" id="select_marca" onchange="cargarModelos(this.value)">
+                                <select disabled>
                                     <option value="" selected="">Seleccione una opción</option>
                                     <?php
                                         // Obtener las marcas de la base de datos
-                                        $datos_marca = $insLogin->seleccionarDatos("Normal", "marca", "*", 0);
+                                        $datos_marca = $insLogin->seleccionarDatos("Unico", "marca", "marca_descripcion", $datos['orden_equipo_marca']);
                                         while ($campos_marca = $datos_marca->fetch()) {
-                                            echo '<option value="' . $campos_marca['id_marca'] . '">' . $campos_marca['marca_descripcion'] . '</option>';
+                                            echo '<option selected value="' . $campos_marca['id_marca'] . '">' . $campos_marca['marca_descripcion'] . '</option>';
                                         }
                                     ?>
                                 </select>
@@ -500,30 +509,23 @@
                         <div class="column">
                             <label>Modelo <?php echo CAMPO_OBLIGATORIO; ?></label><br>
                             <div class="select">
-                                <select name="id_modelo" id="select_modelo">
+                                <select disabled>
                                     <option value="" selected="">Seleccione una opción</option>
-                                    <!-- Los modelos se llenarán aquí -->
+                                    <?php
+                                        // Obtener las marcas de la base de datos
+                                        $datos_modelo = $insLogin->seleccionarDatos("Unico", "modelo", "modelo_descripcion", $datos['orden_equipo_modelo']);
+                                        while ($campos_modelo = $datos_modelo->fetch()) {
+                                            echo '<option selected value="' . $campos_modelo['id_modelo'] . '">' . $campos_modelo['modelo_descripcion'] . '</option>';
+                                        }
+                                    ?>
                                 </select>
                             </div>
-                        </div>
-                        <div class="column">
-                            <label>Color<?php echo CAMPO_OBLIGATORIO; ?></label>
-                            <input class="input" type="text" name="repuesto_color" maxlength="40" >
                         </div>
                     </div> 
                     <div class="columns">
                         <div class="column">
-                            <label class="radio">
-                                <input type="radio" name="orden_equipo_otro" value="Otro" onclick="otroEquipo(true)">
-                                Otra marca/modelo
-                            </label>
-                            <!-- Input de  prometida que estará oculto inicialmente -->
-                            <div class="field" id="otro_equipo_field" style="display: none;">
-                                <label class="label">Marca</label>
-                                <input class="input" type="text" name="repuesto_otra_marca">
-                                <label class="label">Modelo</label>
-                                <input class="input" type="text" name="repuesto_otro_modelo">
-                            </div>
+                            <label>Color<?php echo CAMPO_OBLIGATORIO; ?></label>
+                            <input class="input" type="text" name="repuesto_color" maxlength="40" >
                         </div>
                         <div class="column">
                             <label>Responsable<?php echo CAMPO_OBLIGATORIO; ?></label>
@@ -532,9 +534,6 @@
                         </div>
                     </div>        
                             
-                    
-                    
-
                     <p class="has-text-centered">
                         <button type="reset" class="button is-link is-light is-rounded"><i class="fas fa-paint-roller"></i> &nbsp; Limpiar</button>
                         <button type="submit" class="button is-info is-rounded"><i class="far fa-save"></i> &nbsp; Guardar</button>
@@ -548,25 +547,61 @@
 </div>
 
 <!-- Modal registrar verificacion -->
+<?php
+    $verificaciones = $insLogin->seleccionarDatos("Unico", "verificacion", "orden_codigo", $datos['orden_codigo']);
+    $verificaciones = $verificaciones->fetch();
+?>
 <div class="modal is-fullscreen" id="modal-js-registrar-verificacion">
     <div class="modal-background"></div>
     <div class="modal-card">
         <header class="modal-card-head">
             <p class="modal-card-title is-uppercase has-text-weight-bold is-size-5">
-                <i class="fas fa-search"></i> &nbsp; Verificar equipo
+                <i class="fas fa-search"></i> &nbsp; Iniciar verificacion
             </p>
             <button class="delete" aria-label="close"></button>
         </header>
         <section class="modal-card-body is-size-7">
+            <?php 
+                if($verificaciones['verificacion_vida'] == "" || $verificaciones['verificacion_vida'] == "finalizo"){
+            ?>
             <form class="FormularioAjax" action="<?php echo APP_URL; ?>app/ajax/OrdenAjax.php" method="POST" autocomplete="off" name="formsale">
                 <input class="input" name="orden_codigo" type="hidden" readonly value="<?php echo $datos['orden_codigo'] ?>">
                 <input class="input" name="verificacion_responsable" type="hidden" readonly value="<?php echo $_SESSION['usuario_nombre'] ?>">
-                <input type="hidden" name="modulo_orden" value="registrar_verificacion">
+                <input type="hidden" name="modulo_orden" value="iniciar_verificacion">
+
                 <div class="columns">
                     <div class="column">
                         <div class="control">
-                            <label class="has-text-weight-bold">Hora de inicio:<?php echo CAMPO_OBLIGATORIO; ?></label>
+                            <label class="has-text-weight-bold">Hora inicio:<?php echo CAMPO_OBLIGATORIO; ?></label>
                             <input required type="time" id="hora_inicio" class="input" name="verificacion_hora_inicio">
+                        </div>
+                    </div>
+                    <div class="column">
+                        <label class="has-text-weight-bold">Detalles</label><br>
+                        <textarea class="textarea" name="verificacion_detalles" id="textarea-verificacion"></textarea>
+                    </div>
+                </div>
+                     
+                <p class="has-text-centered">
+                    <button type="reset" class="button is-link is-light is-rounded"><i class="fas fa-paint-roller"></i> &nbsp; Limpiar</button>
+                    <button type="submit" class="button is-info is-rounded"><i class="far fa-clock"></i> &nbsp; Iniciar</button>
+                </p>
+                <p class="has-text-centered pt-1">
+                    <small>Los campos marcados con <?php echo CAMPO_OBLIGATORIO; ?> son obligatorios</small>
+                </p>
+
+            </form>
+            <?php }else{?>
+            <form class="FormularioAjax" action="<?php echo APP_URL; ?>app/ajax/OrdenAjax.php" method="POST" autocomplete="off" name="formsale">
+                <input class="input" name="orden_codigo" type="hidden" readonly value="<?php echo $datos['orden_codigo'] ?>">
+                <input class="input" name="verificacion_responsable" type="hidden" readonly value="<?php echo $_SESSION['usuario_nombre'] ?>">
+                <input type="hidden" name="modulo_orden" value="finalizar_verificacion">
+
+                <div class="columns">
+                    <div class="column">
+                        <div class="control">
+                            <label class="has-text-weight-bold">Hora fin:<?php echo CAMPO_OBLIGATORIO; ?></label>
+                            <input required type="time" id="hora_inicio" class="input" name="verificacion_hora_fin">
                         </div>
                         <div class="control">
                             <label class="has-text-weight-bold">Estado de la verificacion <?php echo CAMPO_OBLIGATORIO; ?></label><br>
@@ -579,7 +614,7 @@
                             </div>
                         </div>
                     </div>
-
+                    
                     <div class="column">
                         <div class="control">
                             <label class="has-text-weight-bold">Siguiente estacion <?php echo CAMPO_OBLIGATORIO; ?></label><br>
@@ -610,21 +645,24 @@
                             </div>
                         </div>
                     </div>
+
                     <div class="column">
                         <label class="has-text-weight-bold">Detalles</label><br>
                         <textarea class="textarea" name="verificacion_detalles" id="textarea-verificacion"></textarea>
                     </div>
-                </div>
                     
+                </div>
+                
                                         
                 <p class="has-text-centered">
                     <button type="reset" class="button is-link is-light is-rounded"><i class="fas fa-paint-roller"></i> &nbsp; Limpiar</button>
-                    <button type="submit" class="button is-info is-rounded"><i class="far fa-save"></i> &nbsp; Guardar</button>
+                    <button type="submit" class="button is-info is-rounded"><i class="far fa-check"></i> &nbsp; Finalizar</button>                    
                 </p>
                 <p class="has-text-centered pt-1">
                     <small>Los campos marcados con <?php echo CAMPO_OBLIGATORIO; ?> son obligatorios</small>
                 </p>
             </form>
+            <?php } ?>
             <script>
                 // Preseleccionar la hora actual en "Hora de inicio"
                 document.addEventListener("DOMContentLoaded", () => {

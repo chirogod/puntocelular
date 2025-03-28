@@ -91,8 +91,12 @@
             echo $insOrden->buscarOrdenControlador();
         }
 
-		if ($_POST['modulo_orden'] == "registrar_verificacion") {
-            echo $insOrden->registrarVerificacionControlador();
+		if ($_POST['modulo_orden'] == "iniciar_verificacion") {
+            echo $insOrden->iniciarVerificacionControlador();
+        }
+
+		if ($_POST['modulo_orden'] == "finalizar_verificacion") {
+            echo $insOrden->finalizarVerificacionControlador();
         }
 		
 	}else{

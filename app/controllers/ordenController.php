@@ -1663,41 +1663,15 @@
 		}	
 
 		/*---------- Controlador registrar orden ----------*/
-		public function registrarVerificacionControlador(){
+		public function iniciarVerificacionControlador(){
 			$orden_codigo = $_POST['orden_codigo'];
 			$verificacion_fecha = date("Y-m-d");
 			$verificacion_hora_inicio = $_POST['verificacion_hora_inicio'];
-			$verificacion_hora_fin = date("H:i"); // Captura la hora actual como hora de finalización\
-			// Calcula la duración en minutos
-			$horaInicio = strtotime($verificacion_hora_inicio);
-			$horaFin = strtotime($verificacion_hora_fin);
-			$verificacion_duracion = round(($horaFin - $horaInicio) / 60);
-
-			$ornde_codigo = $_POST['orden_codigo'];
-
-			$verificacion_estado = $this->limpiarCadena($_POST['verificacion_estado']);
-			$verificacion_estacion_sig = $this->limpiarCadena($_POST['verificacion_estacion_sig']);
 			$verificacion_responsable = $this->limpiarCadena($_POST['verificacion_responsable']);
-			$verificacion_tecnico_asignado = "";
-			if(isset($_POST['verificacion_tecnico_asignado'])){
-				$verificacion_tecnico_asignado = $this->limpiarCadena($_POST['verificacion_tecnico_asignado']);
-			}
-			if(($verificacion_estacion_sig == "Reparar" ||  $verificacion_estacion_sig == "Ensamblar") && $verificacion_tecnico_asignado == ""){
-				$alerta=[
-					"tipo"=>"simple",
-					"titulo"=>"Ocurrió un error inesperado",
-					"texto"=>"Debe indicar el tecnico, por favor intente nuevamente",
-					"icono"=>"error"
-				];
-				return json_encode($alerta);
-				exit();
-			}
-
 			$verificacion_detalles = $_POST['verificacion_detalles'];
 
 
 			$datos_verificacion = [
-				//datos
 				[
 					"campo_nombre"=>"verificacion_responsable",
 					"campo_marcador"=>":Responsabl",
@@ -1714,33 +1688,14 @@
 					"campo_valor"=>$verificacion_fecha
 				],
 				[
+					"campo_nombre"=>"verificacion_vida",
+					"campo_marcador"=>":Vida",
+					"campo_valor"=>"inicio"
+				],
+				[
 					"campo_nombre"=>"verificacion_hora_inicio",
 					"campo_marcador"=>":HoraInicio",
 					"campo_valor"=>$verificacion_hora_inicio
-				],
-				[
-					"campo_nombre" => "verificacion_hora_fin",
-					"campo_marcador" => ":HoraFin", 
-					"campo_valor" => $verificacion_hora_fin
-				],
-				[
-					"campo_nombre" => "verificacion_duracion", 
-					"campo_marcador" => ":Duracion", 
-					"campo_valor" => $verificacion_duracion],
-				[
-					"campo_nombre"=>"verificacion_estado",
-					"campo_marcador"=>":Estado",
-					"campo_valor"=>$verificacion_estado
-				],
-				[
-					"campo_nombre"=>"verificacion_estacion_sig",
-					"campo_marcador"=>":EstacionSig",
-					"campo_valor"=>$verificacion_estacion_sig
-				],
-				[
-					"campo_nombre"=>"verificacion_tecnico_asignado",
-					"campo_marcador"=>":Tecnico",
-					"campo_valor"=>$verificacion_tecnico_asignado
 				],
 				[
 					"campo_nombre"=>"verificacion_detalles",
@@ -1772,7 +1727,100 @@
 				[
 					"campo_nombre"=>"orden_estado",
 					"campo_marcador"=>":Estado",
+					"campo_valor"=>"Verificando"
+				],
+
+			];
+			$condicion=[
+				"condicion_campo"=>"orden_codigo",
+				"condicion_marcador"=>":CodigoOrden",
+				"condicion_valor"=>$orden_codigo
+			];
+
+			$this->actualizarDatos("orden", $datos_estado, $condicion);
+		
+			
+			//retornamos el json 
+			return json_encode($alerta);
+		}
+
+
+		public function finalizarVerificacionControlador(){
+			$orden_codigo = $_POST['orden_codigo'];
+			$verificacion_hora_fin = $_POST['verificacion_hora_fin'];
+			$verificacion_estacion_sig = $this->limpiarCadena($_POST['verificacion_estacion_sig']);
+			$verificacion_tecnico_asignado = $this->limpiarCadena($_POST['verificacion_tecnico_asignado']);
+			$verificacion_detalles = $_POST['verificacion_detalles'];
+			$verificacion_estado = $_POST['verificacion_estado'];
+			$verificacion_duracion = "";
+
+			$datos_verificacion = [
+				[
+					"campo_nombre"=>"verificacion_vida",
+					"campo_marcador"=>":Vida",
+					"campo_valor"=>"finalizo"
+				],
+				[
+					"campo_nombre"=>"verificacion_hora_fin",
+					"campo_marcador"=>":HoraInicio",
+					"campo_valor"=>$verificacion_hora_fin
+				],
+				[
+					"campo_nombre"=>"verificacion_estado",
+					"campo_marcador"=>":Estado",
+					"campo_valor"=>$verificacion_estado
+				],
+				[
+					"campo_nombre"=>"verificacion_estacion_sig",
+					"campo_marcador"=>":EstacionSig",
 					"campo_valor"=>$verificacion_estacion_sig
+				],
+				[
+					"campo_nombre"=>"verificacion_tecnico_asignado",
+					"campo_marcador"=>":TecnicoAsig",
+					"campo_valor"=>$verificacion_tecnico_asignado
+				],
+				[
+					"campo_nombre"=>"verificacion_duracion",
+					"campo_marcador"=>":Duracion",
+					"campo_valor"=>$verificacion_duracion
+				],
+				[
+					"campo_nombre"=>"verificacion_detalles",
+					"campo_marcador"=>":Detalles",
+					"campo_valor"=>$verificacion_detalles
+				]
+			];
+
+			$condicion_ve=[
+				"condicion_campo"=>"orden_codigo",
+				"condicion_marcador"=>":CodigoOrden",
+				"condicion_valor"=>$orden_codigo
+			];
+			$registrar_verificacion = $this->actualizarDatos("verificacion", $datos_verificacion, $condicion_ve);
+
+			if ($registrar_verificacion->rowCount()==1) {
+				$alerta=[
+					"tipo"=>"redireccionar",
+					"url"=>APP_URL."ordenDetail/".$orden_codigo
+				];
+			}else{
+				$alerta=[
+					"tipo"=>"simple",
+					"titulo"=>"Ocurrió un error inesperado",
+					"texto"=>"No se pudo registrar la verificacion, por favor intente nuevamente",
+					"icono"=>"error"
+				];
+				return json_encode($alerta);
+				exit();
+			}
+
+			//actualizar datos del estado de la orden, reparar / ensamblar / reparada
+			$datos_estado = [
+				[
+					"campo_nombre"=>"orden_estado",
+					"campo_marcador"=>":Estado",
+					"campo_valor"=>"Verificando"
 				],
 
 			];

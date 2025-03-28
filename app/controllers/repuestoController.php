@@ -12,6 +12,8 @@
 			$orden_otro_modelo = "";
             $repuesto_descripcion = "";
 
+            
+
 			if (isset($_POST['id_marca']) && $_POST['id_marca'] !== "") {
 				$id_marca = $this->limpiarCadena($_POST['id_marca']);
 				$datos_marca = $this->seleccionarDatos("Unico", "marca", "id_marca", $id_marca);
