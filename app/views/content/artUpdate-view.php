@@ -141,6 +141,12 @@
 						<input class="input" type="number" name="articulo_stock_max" pattern="^[0-9]+$" value="<?php echo $datos['articulo_stock_max']; ?>">
 					</div>
 				</div>
+				<div class="column">
+					<div class="control">
+						<label>Stock critico</label>
+						<input class="input" type="number" name="articulo_stock_critico" pattern="^[0-9]+$" value="<?php echo $datos['articulo_stock_critico']; ?>">
+					</div>
+				</div>
 			</div>
 		</div>
 		<div class="box">

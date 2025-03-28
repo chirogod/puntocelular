@@ -548,8 +548,23 @@
 
 <!-- Modal registrar verificacion -->
 <?php
-    $verificaciones = $insLogin->seleccionarDatos("Unico", "verificacion", "orden_codigo", $datos['orden_codigo']);
+    $consulta = "SELECT * FROM verificacion WHERE orden_codigo = $datos[orden_codigo] ORDER BY id_verificacion DESC LIMIT 1";
+    $verificaciones = $insLogin->Consultar($consulta);
     $verificaciones = $verificaciones->fetch();
+    if (!$verificaciones) {
+        $verificaciones = [
+            'verificacion_vida' => '', 
+            'verificacion_fecha' => '', 
+            'verificacion_hora_inicio' => '', 
+            'verificacion_duracion' => '',
+            'verificacion_hora_fin' => '', 
+            'verificacion_estado' => '',
+            'verificacion_estacion_sig' => '', 
+            'verificacion_tecnico_asignado' => '',
+            'verificacion_responsable' => '',
+            'verificacion_detalles' => ''
+        ];
+    }
 ?>
 <div class="modal is-fullscreen" id="modal-js-registrar-verificacion">
     <div class="modal-background"></div>
@@ -578,7 +593,7 @@
                     </div>
                     <div class="column">
                         <label class="has-text-weight-bold">Detalles</label><br>
-                        <textarea class="textarea" name="verificacion_detalles" id="textarea-verificacion"></textarea>
+                        <textarea class="textarea" name="verificacion_detalles" id="textarea-verificacion"><?php echo $verificaciones['verificacion_detalles'] ?></textarea>
                     </div>
                 </div>
                      
@@ -596,6 +611,7 @@
                 <input class="input" name="orden_codigo" type="hidden" readonly value="<?php echo $datos['orden_codigo'] ?>">
                 <input class="input" name="verificacion_responsable" type="hidden" readonly value="<?php echo $_SESSION['usuario_nombre'] ?>">
                 <input type="hidden" name="modulo_orden" value="finalizar_verificacion">
+                <input class="input" name="id_verificacion" type="hidden" readonly value="<?php echo $verificaciones['id_verificacion'] ?>">
 
                 <div class="columns">
                     <div class="column">
@@ -648,7 +664,7 @@
 
                     <div class="column">
                         <label class="has-text-weight-bold">Detalles</label><br>
-                        <textarea class="textarea" name="verificacion_detalles" id="textarea-verificacion"></textarea>
+                        <textarea class="textarea" name="verificacion_detalles" id="textarea-verificacion"><?php echo $verificaciones['verificacion_detalles'] ?></textarea>
                     </div>
                     
                 </div>

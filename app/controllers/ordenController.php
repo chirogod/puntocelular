@@ -1753,7 +1753,7 @@
 			$verificacion_detalles = $_POST['verificacion_detalles'];
 			$verificacion_estado = $_POST['verificacion_estado'];
 			$verificacion_duracion = "";
-
+			$id_verificacion = $_POST['id_verificacion'];
 			$datos_verificacion = [
 				[
 					"campo_nombre"=>"verificacion_vida",
@@ -1793,9 +1793,9 @@
 			];
 
 			$condicion_ve=[
-				"condicion_campo"=>"orden_codigo",
-				"condicion_marcador"=>":CodigoOrden",
-				"condicion_valor"=>$orden_codigo
+				"condicion_campo"=>"id_verificacion",
+				"condicion_marcador"=>":idVerificacion",
+				"condicion_valor"=>$id_verificacion
 			];
 			$registrar_verificacion = $this->actualizarDatos("verificacion", $datos_verificacion, $condicion_ve);
 

@@ -315,6 +315,7 @@ class articuloController extends mainModel{
         $stock=$this->limpiarCadena($_POST['articulo_stock']);
         $stock_minimo=$this->limpiarCadena($_POST['articulo_stock_min']);
         $stock_maximo=$this->limpiarCadena($_POST['articulo_stock_max']);
+        $stock_critico=$this->limpiarCadena($_POST['articulo_stock_critico']);
 
         $activo = $this->limpiarCadena($_POST['articulo_activo']);
         $rubro = $this->limpiarCadena($_POST['id_rubro']);
@@ -487,6 +488,11 @@ class articuloController extends mainModel{
                 "campo_nombre"=>"articulo_stock",
                 "campo_marcador"=>":Stock",
                 "campo_valor"=>$stock
+            ],
+            [
+                "campo_nombre"=>"articulo_stock_critico",
+                "campo_marcador"=>":StockCritico",
+                "campo_valor"=>$stock_critico
             ],
             [
                 "campo_nombre"=>"articulo_stock_min",
@@ -697,7 +703,6 @@ class articuloController extends mainModel{
         $orden = $this->limpiarCadena($_POST['orden']);
         $sucursal = $this->limpiarCadena($_POST['sucursal']);
         $stock = $this->limpiarCadena($_POST['stock']);
-        var_dump($stock);
         $where = "WHERE id_sucursal = '$sucursal'";
         
         if($articulo != ""){
