@@ -108,10 +108,9 @@
 
                     <div class="field">
                         <label class="radio">
-                            <input type="radio" name="orden_equipo_otro" value="Otro" onclick="otroEquipo(true)">
+                            <input type="radio" name="orden_equipo_otro" value="Otro" onclick="toggleOtroEquipo(this)">
                             Otro
                         </label>
-                        <!-- Input de  prometida que estará oculto inicialmente -->
                         <div class="field" id="otro_equipo_field" style="display: none;">
                             <label class="label">Marca</label>
                             <input class="input" type="text" name="orden_otra_marca">
@@ -446,12 +445,16 @@
         }
     }
 
-    function otroEquipo(show) {
-        const dateField = document.getElementById('otro_equipo_field');
-        if (show) {
-            dateField.style.display = 'block';
+    function toggleOtroEquipo(radio) {
+        const field = document.getElementById('otro_equipo_field');
+        
+        if (radio.dataset.selected === "true") {
+            radio.checked = false;
+            radio.dataset.selected = "false";
+            field.style.display = 'none';
         } else {
-            dateField.style.display = 'none';
+            radio.dataset.selected = "true";
+            field.style.display = 'block';
         }
     }
 

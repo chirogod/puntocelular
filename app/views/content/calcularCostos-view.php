@@ -90,7 +90,7 @@
         <div class="column">
             <div class="box has-text-centered">
                 
-                <table class="table is-bordered is-fullwidth is-narrow has-text-centered is-size-7">
+                <table class="table is-bordered is-fullwidth is-narrow has-text-centered is-size-6">
                     </thead>
                     <tbody>
                         <tr>
@@ -101,9 +101,6 @@
                         </tr>
                         <tr>
                             <td><a target="_blank" href="https://docs.google.com/spreadsheets/d/1u2r_noapAWubYyhA0e8UsJZec05kkY94ZHMs5_wL8CM/edit?pli=1#gid=0">MD</a></td>
-                        </tr>
-                        <tr>
-                            <td><a target="_blank" href="https://docs.google.com/spreadsheets/d/18zJJq5KVlIl-K9KfpTQtK3HmofQwzO9O962ShspKSWg/edit#gid=0">MD ALTERNATIVOS</a></td>
                         </tr>
                         <tr>
                         <td><a target="_blank" href="https://docs.google.com/spreadsheets/d/1UqA3Ly6AJR7hTTl1pmRul0hz7fS_IOd7/edit?gid=1266385039#gid=1266385039">MASTERCELL</a></td>

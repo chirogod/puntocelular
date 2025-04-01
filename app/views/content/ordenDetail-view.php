@@ -521,18 +521,13 @@
                                 </select>
                             </div>
                         </div>
-                    </div> 
-                    <div class="columns">
                         <div class="column">
                             <label>Color<?php echo CAMPO_OBLIGATORIO; ?></label>
                             <input class="input" type="text" name="repuesto_color" maxlength="40" >
                         </div>
-                        <div class="column">
-                            <label>Responsable<?php echo CAMPO_OBLIGATORIO; ?></label>
-                            <input class="input" type="text" name="pedido_repuesto_responsable" maxlength="40" required >
-
-                        </div>
-                    </div>        
+                    </div> 
+                    
+                    <input class="input" type="hidden" name="pedido_repuesto_responsable" value="<?php echo $_SESSION['usuario_nombre'] ?>">  
                             
                     <p class="has-text-centered">
                         <button type="reset" class="button is-link is-light is-rounded"><i class="fas fa-paint-roller"></i> &nbsp; Limpiar</button>

@@ -439,8 +439,14 @@
                 echo '<tbody>';
         
                 foreach ($seccion['pedidos'] as $pedido) {
-                    $estadoClass = $pedido['estado'] == "ingreso" ? "tachado" : "";
-                    echo '<tr class="' . $estadoClass . '">';
+                    $pedido_estado = "";
+    
+                    if ($pedido['estado'] === "ingreso") {
+                        $pedido_estado = "tachado"; // Clase para tachar el texto
+                    } elseif ($pedido['estado'] === "eliminado") {
+                        $pedido_estado = "eliminado"; // Clase para tachar y fondo rojo tenue
+                    }
+                    echo '<tr class="' . $pedido_estado . '">';
                     echo '<td>' . htmlspecialchars($pedido['pedido']) . '</td>';
                     echo '<td>' . htmlspecialchars($pedido['fecha']) . ' - ' . htmlspecialchars($pedido['hora']) . '</td>';
                     echo '<td>' . htmlspecialchars($pedido['orden']) . '</td>';

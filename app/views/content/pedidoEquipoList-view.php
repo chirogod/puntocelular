@@ -26,6 +26,11 @@
         text-decoration: line-through;
         color: gray;
     }
+    .eliminado {
+        text-decoration: line-through; /* Texto tachado */
+        background-color: rgba(255, 0, 0, 0.2); /* Rojo tenue */
+        color: red; /* Texto en rojo */
+    }
 </style>
 
 <div class="container is-fluid">

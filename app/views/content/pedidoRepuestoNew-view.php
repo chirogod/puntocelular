@@ -31,7 +31,6 @@
     use app\controllers\repuestoController;
 
     $insRepuesto = new repuestoController();
-
 ?>
 
 <div class="container is-fluid mb-4">
@@ -46,7 +45,7 @@
                 <form class="FormularioAjax" action="<?php echo APP_URL; ?>app/ajax/repuestoAjax.php" method="POST" autocomplete="off" enctype="multipart/form-data" >
 
                     <input type="hidden" name="modulo_repuesto" value="registrar_pedido">
-
+                    <input type="hidden" name="pedido_repuesto_responsable" value="<?php echo $_SESSION['usuario_nombre'] ?>">  
                     <div class="columns">
                         <div class="column">
 
@@ -113,12 +112,6 @@
                                 <label class="label">Modelo</label>
                                 <input class="input" type="text" name="repuesto_otro_modelo">
                             </div>
-                        </div>
-
-                        <div class="column">
-                            <label>Responsable<?php echo CAMPO_OBLIGATORIO; ?></label>
-                            <input class="input" type="text" name="pedido_repuesto_responsable" maxlength="40" required >
-
                         </div>
                     </div>      
                             

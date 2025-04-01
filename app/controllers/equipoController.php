@@ -925,7 +925,13 @@
                 echo '<tbody>';
         
                 foreach ($pedidos as $pedido) {
-                    $pedido_estado = ($pedido['pedido_equipo_estado'] === "ingreso") ? "tachado" : "";
+                    $pedido_estado = "";
+    
+                    if ($pedido['pedido_equipo_estado'] === "ingreso") {
+                        $pedido_estado = "tachado"; // Clase para tachar el texto
+                    } elseif ($pedido['pedido_equipo_estado'] === "eliminado") {
+                        $pedido_estado = "eliminado"; // Clase para tachar y fondo rojo tenue
+                    }
                     echo '<tr class="'. $pedido_estado .'">';
                     echo '<td>' . htmlspecialchars($pedido['pedido_equipo_marca']) . ' - ' . htmlspecialchars($pedido['pedido_equipo_modelo']) . ' - ' . htmlspecialchars($pedido['pedido_equipo_color']) . ' - ' . htmlspecialchars($pedido['pedido_equipo_ram']) . ' - ' . htmlspecialchars($pedido['pedido_equipo_almacenamiento']) . '</td>';
                     echo '<td>' . htmlspecialchars($pedido['pedido_equipo_fecha']) . ' - ' . htmlspecialchars($pedido['pedido_equipo_hora']) . '</td>';
