@@ -162,6 +162,9 @@
 			$orden_equipo_marca = "";
 			$orden_otro_modelo = "";
 
+			$orden_equipo_email = $_POST['orden_equipo_email'];
+			$orden_equipo_pass = $_POST['orden_equipo_pass'];
+
 			//agregar equipo
 			// Check if an existing brand is selected or a new brand is entered
 			if (isset($_POST['id_marca']) && $_POST['id_marca'] !== "") {
@@ -353,8 +356,16 @@
 					"campo_marcador"=>":Falla",
 					"campo_valor"=>$orden_falla
 				],
-				
-
+				[
+					"campo_nombre"=>"orden_equipo_email",
+					"campo_marcador"=>":EmailIcloud",
+					"campo_valor"=>$orden_equipo_email
+				],
+				[
+					"campo_nombre"=>"orden_equipo_pass",
+					"campo_marcador"=>":PassIcloud",
+					"campo_valor"=>$orden_equipo_pass
+				],
 				//detalles
 				[
 					"campo_nombre"=>"orden_accesorios",
@@ -1820,7 +1831,7 @@
 				[
 					"campo_nombre"=>"orden_estado",
 					"campo_marcador"=>":Estado",
-					"campo_valor"=>"Verificando"
+					"campo_valor"=>$verificacion_estacion_sig
 				],
 
 			];

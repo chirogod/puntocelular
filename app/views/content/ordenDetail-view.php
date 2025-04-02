@@ -129,6 +129,26 @@
                         </div>
                     </div>
 
+                   <?php
+                   if($datos['orden_equipo_marca']=='Apple'){
+                    ?>
+                    <div class="control">
+                        <div class="full-width sale-details text-condensedLight">
+                            <div class="has-text-weight-bold">Email iCloud</div>
+                            <span class="has-text-bold"><?php echo $datos['orden_equipo_email']; ?></span>
+                        </div>
+                    </div>
+                    <div class="control">
+                        <div class="full-width sale-details text-condensedLight">
+                            <div class="has-text-weight-bold">Pass iCloud</div>
+                            <span class="has-text-bold"><?php echo $datos['orden_equipo_pass']; ?></span>
+                        </div>
+                    </div>
+                    
+                    <?php
+                   }
+                   ?>
+
                     <div class="control">
                         <div class="full-width sale-details text-condensedLight">
                             <div class="has-text-weight-bold">Ingresa</div>
@@ -538,6 +558,36 @@
                     </p>
             </form>
         </section>
+        <div class="table-container is-size-7">
+            <table class="table is-bordered is-striped is-narrow is-hoverable is-fullwidth">
+                <thead>
+                    <tr>
+                        <th class="has-text-centered">Repuesto</th>
+                        <th class="has-text-centered">Fecha</th>
+                        <th class="has-text-centered">Responsable</th>
+                        <th class="has-text-centered">Estado</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <?php 
+                        $repuestos = $insLogin->seleccionarDatos("Unico", "pedido_repuesto", "id_orden", $datos['orden_codigo']);
+                        foreach ($repuestos as $rows) {
+                            ?>
+                            <tr class="has-text-centered">
+                                <td><?php echo $rows['pedido_repuesto_descripcion'].'-'. $rows['pedido_repuesto_descripcion']?></td>
+                                <td><?php echo $rows['pedido_repuesto_fecha'].'-'. $rows['pedido_repuesto_hora']?></td>
+                                <td><?php echo $rows['pedido_repuesto_responsable']?></td>
+                                <td><?php echo $rows['pedido_estado']?></td>
+                            </tr>
+                            <?php
+                        }
+                    ?>
+                    <tr class="has-text-centered">
+
+                    </tr>
+                </tbody>
+            </table>
+        </div>
     </div>
 </div>
 

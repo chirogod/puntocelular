@@ -83,13 +83,13 @@
                     <div class="control">
                         <label>Marca <?php echo CAMPO_OBLIGATORIO; ?></label><br>
                         <div class="select">
-                            <select name="id_marca" id="select_marca" onchange="cargarModelos(this.value)">
+                            <select name="id_marca" id="select_marca" onchange="cargarModelos(this.value); mostrarInputIcloud(this)">
                                 <option value="" selected="">Seleccione una opción</option>
                                 <?php
                                     // Obtener las marcas de la base de datos
                                     $datos_marca = $insLogin->seleccionarDatos("Normal", "marca", "*", 0);
                                     while ($campos_marca = $datos_marca->fetch()) {
-                                        echo '<option value="' . $campos_marca['id_marca'] . '">' . $campos_marca['marca_descripcion'] . '</option>';
+                                        echo '<option value="' . $campos_marca['id_marca'] . '" data-marca="' . $campos_marca['marca_descripcion'] . '">' . $campos_marca['marca_descripcion'] . '</option>';
                                     }
                                 ?>
                             </select>
@@ -103,6 +103,18 @@
                                 <option value="" selected="">Seleccione una opción</option>
                                 <!-- Los modelos se llenarán aquí -->
                             </select>
+                        </div>
+                    </div>
+
+                    <!-- Campo oculto para la contraseña de iCloud -->
+                    <div id="icloudContainer" style="display: none; margin-top: 10px;">
+                        <div class="control">
+                            <label for="icloudPassword">Email de iCloud:</label>
+                            <input class="input" type="email" name="orden_equipo_email" id="icloudPassword">
+                        </div>
+                        <div class="control">
+                            <label for="icloudPassword">Contrasena de iCloud:</label>
+                            <input class="input" type="text" name="orden_equipo_pass" id="icloudPassword">
                         </div>
                     </div>
 
@@ -491,6 +503,17 @@
             .catch(error => {
                 console.error('Error al cargar los modelos:', error);
             });
+        }
+    }
+    function mostrarInputIcloud(select) {
+        let selectedOption = select.options[select.selectedIndex];
+        let marca = selectedOption.getAttribute("data-marca");
+        let icloudContainer = document.getElementById("icloudContainer");
+
+        if (marca === "Apple") {
+            icloudContainer.style.display = "block";
+        } else {
+            icloudContainer.style.display = "none";
         }
     }
 </script>
