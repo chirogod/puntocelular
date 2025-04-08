@@ -259,6 +259,19 @@
 				return json_encode($alerta);
 		        exit();
 			}
+
+			$orden_ubicacion_fisica = $_POST['orden_ubicacion_fisica'];
+			if($orden_ubicacion_fisica == ""){
+				$alerta=[
+					"tipo"=>"simple",
+					"titulo"=>"Ocurrió un error inesperado",
+					"texto"=>"Debe indicar la ubicacion!",
+					"icono"=>"error"
+				];
+				return json_encode($alerta);
+		        exit();
+			}
+
 			$orden_estado = "Pendiente";
 			$orden_tipo = $_POST['orden_tipo'];
 			$fecha_prometida = '';
@@ -274,11 +287,9 @@
 			}elseif ($orden_tipo == "Prometida") {
 				$fecha_prometida = $_POST['orden_fecha_prometida'];
 			}
-			$id_usuario_tecnico = $_POST['orden_tecnico_asignado'];
-			$datos_usuarios_tecnicos = $this->seleccionarDatos("Unico", "usuario", "id_usuario", $id_usuario_tecnico);
-			$datos_usuarios_tecnicos = $datos_usuarios_tecnicos->fetch();
-			$orden_tecnico_asignado = $datos_usuarios_tecnicos['usuario_nombre_completo'];
-			if($id_usuario_tecnico == "" || $datos_usuarios_tecnicos == "" || $orden_tecnico_asignado == ""){
+
+			$orden_tecnico_asignado = $_POST['orden_tecnico_asignado'];
+			if($orden_tecnico_asignado == ""){
 				$alerta=[
 					"tipo"=>"simple",
 					"titulo"=>"Ocurrió un error inesperado",
@@ -382,7 +393,11 @@
 					"campo_marcador"=>":Telefonista",
 					"campo_valor"=>$orden_telefonista
 				],
-				
+				[
+					"campo_nombre"=>"orden_ubicacion_fisica",
+					"campo_marcador"=>":UbicDisica",
+					"campo_valor"=>$orden_ubicacion_fisica
+				],
 				[
 					"campo_nombre"=>"orden_estado",
 					"campo_marcador"=>":Estado",
@@ -463,6 +478,7 @@
 				$orden_accesorios = "";
 			}
 			$orden_tecnico_asignado = $_POST['orden_tecnico_asignado'];
+			$orden_ubicacion_fisica = $_POST['orden_ubicacion_fisica'];
 
 			$orden_equipo_contrasena = $_POST['orden_equipo_contrasena'];
 			if(!isset($orden_equipo_contrasena)){

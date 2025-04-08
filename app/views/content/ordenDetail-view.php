@@ -69,22 +69,54 @@
                         <div class="full-width sale-details text-condensedLight">
                             <label class="has-text-weight-bold">Tecnico asignado</label><br>
                             <div class="select">
-                            <select name="orden_tecnico_asignado">
-                                <option value="" selected>Seleccione una opción</option>
-                                <?php
-                                    // Obtener los técnicos
-                                    $datos_tecnico = $insLogin->seleccionarDatos("Unico", "usuario", "usuario_rol", "Tecnico");
-                                    while ($campos_tecnico = $datos_tecnico->fetch()) {
-                                        // Comparar el nombre completo del técnico con el valor de orden_tecnico_asignado
-                                        $selected = ($campos_tecnico['usuario_nombre_completo'] == $datos['orden_tecnico_asignado']) ? 'selected' : '';
-                                        echo '<option value="' . $campos_tecnico['usuario_nombre_completo'] . '" ' . $selected . '>' . $campos_tecnico['usuario_nombre_completo'] . '</option>';
-                                    }
-                                ?>
-                            </select>
-
+                                <select name="orden_tecnico_asignado">
+                                    <option value="Sin Asignar" selected>Sin Asignar</option>
+                                    <?php
+                                        // Obtener los técnicos
+                                        $datos_tecnico = $insLogin->seleccionarDatos("Unico", "usuario", "usuario_rol", "Tecnico");
+                                        while ($campos_tecnico = $datos_tecnico->fetch()) {
+                                            // Comparar el nombre completo del técnico con el valor de orden_tecnico_asignado
+                                            $selected = ($campos_tecnico['usuario_nombre_completo'] == $datos['orden_tecnico_asignado']) ? 'selected' : '';
+                                            echo '<option value="' . $campos_tecnico['usuario_nombre_completo'] . '" ' . $selected . '>' . $campos_tecnico['usuario_nombre_completo'] . '</option>';
+                                        }
+                                    ?>
+                                </select>
                             </div>
                         </div>
-                        
+                    </div>
+                    <div class="control">
+                        <div class="full-width sale-details text-condensedLight has-text-centered">
+                            <label class="has-text-weight-bold">Ubicacion fisica</label><br>
+                            <div class="select">
+                                <select name="orden_ubicacion_fisica" >
+                                    <option value="Sin Asignar" selected>Sin asignar</option>
+                                    <option value="Mesa Luka">Mesa Luka</option>
+                                    <option value="Mesa Sebastian">Mesa Sebastian</option>
+                                    <option value="Mesa Tomas">Mesa Tomas</option>
+                                    <option value="Mesa Nahuel">Mesa Nahuel</option>
+                                    <option value="Mesa Anabela">Mesa Anabela</option>
+                                    <option value="Mesa Augusto">Mesa Augusto</option>
+                                    <option value="Mesa PC">Mesa PC</option>
+                                    <option value="Verificacion">Verificacion</option>
+                                    <option value="Reparar">Reparar</option>
+                                    <option value="Esperando Rptos">Esperando Repuestos</option>
+                                    <option value="Presupuestado Central">Presupuestado Central</option>
+                                    <option value="Presupuestado San Martin">Presupuestado San Martin</option>
+                                    <option value="Presupuestado Chang Mas">Presupuestado Chang Mas</option>
+                                    <option value="Equipos Nuestros">Equipos Nuestros</option>
+                                    <option value="Equipos para Prestar">Equipos para Prestar</option>
+                                    <option value="Reparado">Presupuestado Central</option>
+                                    <option value="Derivar Chango Mas">Derivar Chango Mas</option>
+                                    <option value="Derivar San Martin">Derivar San Martin</option>
+                                    <option value="No Va">No Va</option>
+                                    <option value="No Va Tablet">No Va Tablet</option>
+                                    <option value="A Reparar PC">A Reparar PC</option>
+                                    <option value="Presupuestado PC">Presupuestado PC</option>
+                                    <option value="Esperando repuestos PC">Esperando repuestos PC</option>
+                                    <option value="Verificacion PC">Verificacion PC</option>
+                                </select>
+                            </div>
+                        </div>
                     </div>
                 </div>
                 

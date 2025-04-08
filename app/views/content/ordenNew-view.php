@@ -191,16 +191,16 @@
                 </div>   
                 <div class="column">
                     <div class="control">
-                        <label>Tecnico asignado <?php echo CAMPO_OBLIGATORIO; ?></label><br>
+                        <label>Tecnico asignado</label><br>
                         <div class="select">
                             <select name="orden_tecnico_asignado" >
-                                <option value="" selected="" >Seleccione una opción</option>
+                                <option value="Sin Asignar" selected="" >Sin Asignar</option>
                                 <?php
                                     $datos_tecnico=$insLogin->seleccionarDatos("Unico","usuario","usuario_rol","Tecnico");
 
                                     $cc=1;
                                     while($campos_tecnico=$datos_tecnico->fetch()){
-                                        echo '<option value="'.$campos_tecnico['id_usuario'].'">'.$campos_tecnico['usuario_nombre_completo'].'</option>';
+                                        echo '<option value="'.$campos_tecnico['usuario_nombre_completo'].'">'.$campos_tecnico['usuario_nombre_completo'].'</option>';
                                         $cc++;
                                     }
                                 ?>
@@ -229,6 +229,39 @@
                                         $cc++;
                                     }
                                 ?>
+                            </select>
+                        </div>
+                    </div>
+
+                    <div class="control">
+                        <label>Ubicacion fisica</label><br>
+                        <div class="select">
+                            <select name="orden_ubicacion_fisica" >
+                                <option value="Sin Asignar" selected>Sin asignar</option>
+                                <option value="Mesa Luka">Mesa Luka</option>
+                                <option value="Mesa Sebastian">Mesa Sebastian</option>
+                                <option value="Mesa Tomas">Mesa Tomas</option>
+                                <option value="Mesa Nahuel">Mesa Nahuel</option>
+                                <option value="Mesa Anabela">Mesa Anabela</option>
+                                <option value="Mesa Augusto">Mesa Augusto</option>
+                                <option value="Mesa PC">Mesa PC</option>
+                                <option value="Verificacion">Verificacion</option>
+                                <option value="Reparar">Reparar</option>
+                                <option value="Esperando Rptos">Esperando Repuestos</option>
+                                <option value="Presupuestado Central">Presupuestado Central</option>
+                                <option value="Presupuestado San Martin">Presupuestado San Martin</option>
+                                <option value="Presupuestado Chang Mas">Presupuestado Chang Mas</option>
+                                <option value="Equipos Nuestros">Equipos Nuestros</option>
+                                <option value="Equipos para Prestar">Equipos para Prestar</option>
+                                <option value="Reparado">Presupuestado Central</option>
+                                <option value="Derivar Chango Mas">Derivar Chango Mas</option>
+                                <option value="Derivar San Martin">Derivar San Martin</option>
+                                <option value="No Va">No Va</option>
+                                <option value="No Va Tablet">No Va Tablet</option>
+                                <option value="A Reparar PC">A Reparar PC</option>
+                                <option value="Presupuestado PC">Presupuestado PC</option>
+                                <option value="Esperando repuestos PC">Esperando repuestos PC</option>
+                                <option value="Verificacion PC">Verificacion PC</option>
                             </select>
                         </div>
                     </div>
