@@ -661,7 +661,7 @@
             $registrar_equipo = $this->guardarDatos("pedido_equipo", $datos_equipo);
             if ($registrar_equipo->rowCount()==1) {
                 $alerta=[
-                    "tipo"=>"limpiar",
+                    "tipo"=>"recargar",
                     "titulo"=>"Pedido de equipo registrado",
                     "texto"=>"El pedido se registro con exito",
                     "icono"=>"success"
