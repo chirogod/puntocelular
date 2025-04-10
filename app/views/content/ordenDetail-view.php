@@ -28,7 +28,7 @@
     <br>
     <?php
         $estado_actual = strtoupper($datos['orden_estado']);
-        $estados = ['aceptada', 'no-aceptada', 'en-espera','reparar', 'sin-reparacion', 'verificar' , 'reparada', 'ensamblar' ,'entregada'];
+        $estados = ['a-reparar', 'presupuestado', 'verificar' , 'sin-reparacion', 'reparada' ,'entregada'];
     ?>
     <div class="box has-text-centered">
         <?php foreach ($estados as $estado): ?>

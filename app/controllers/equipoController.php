@@ -591,7 +591,7 @@
 
             $pedido_equipo_hora = date("H:i:s");
             $pedido_equipo_fecha = date("Y-m-d");
-            $pedido_equipo_responsable = $_POST['pedido_equipo_responsable'];
+            $pedido_equipo_responsable = $_SESSION['usuario_nombre'];
             
             $id_sucursal = $_SESSION['id_sucursal'];
     

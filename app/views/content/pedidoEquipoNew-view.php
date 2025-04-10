@@ -52,9 +52,8 @@
                             <div class="select">
                                 <select name="pedido_equipo_modulo" id="" required>
                                     <option>Seleccione una opción</option>
-                                    <option value="android_nuevo">Stock Android Nuevo</option>
-                                    <option value="android_reac">Stock Android Reac.</option>
-                                    <option value="iphone">Stock iPhone</option>
+                                    <option value="Android">Android</option>
+                                    <option value="iPhone">iPhone</option>
                                 </select>
                             </div>
                         </div>
@@ -122,10 +121,6 @@
                             <label for="">Color</label>
                             <input class="input" type="text" name="pedido_equipo_color" id="">
                         </div>
-                        <div class="column">
-                            <label for="">Responsable</label>
-                            <input class="input" type="text" name="pedido_equipo_responsable" id="">
-                        </div>
                     </div>
                 </div>
                 <p class="has-text-centered">
@@ -156,18 +151,9 @@
             const selectedValue = moduloSelect.value;
 
             // Ocultar/Mosstrar campos según el módulo seleccionado
-            if (selectedValue === 'iphone') {
+            if (selectedValue === 'iPhone') {
                 ramField.style.display = 'none';
-            }else if (selectedValue === 'android_nuevo'){
-                ramField.style.display = '';
-                bateriaField.style.display = 'none';
-            }else if (selectedValue === 'android_reac'){
-                ramField.style.display = '';
-                bateriaField.style.display = '';
-            }else {
-                // Por defecto, mostrar ambos
-                ramField.style.display = '';
-                bateriaField.style.display = '';
+
             }
         };
 
