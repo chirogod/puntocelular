@@ -274,31 +274,7 @@
 
 			$orden_estado = "Pendiente";
 			$orden_tipo = $_POST['orden_tipo'];
-			$fecha_prometida = '';
-			if($orden_tipo == ""){
-				$alerta=[
-					"tipo"=>"simple",
-					"titulo"=>"Ocurrió un error inesperado",
-					"texto"=>"Debe indicar el tipo de orden!",
-					"icono"=>"error"
-				];
-				return json_encode($alerta);
-		        exit();
-			}elseif ($orden_tipo == "Prometida") {
-				$fecha_prometida = $_POST['orden_fecha_prometida'];
-			}
-
-			$orden_tecnico_asignado = $_POST['orden_tecnico_asignado'];
-			if($orden_tecnico_asignado == ""){
-				$alerta=[
-					"tipo"=>"simple",
-					"titulo"=>"Ocurrió un error inesperado",
-					"texto"=>"Debe indicar el tecnico a quien se le asigna!",
-					"icono"=>"error"
-				];
-				return json_encode($alerta);
-		        exit();
-			}
+			$fecha_prometida = $_POST['orden_fecha_prometida'];
 			                                                                                                                                                                                                                                                                                        
 			$orden_total_lista = $_POST['orden_total_lista'];
 			$orden_total_efectivo = $_POST['orden_total_efectivo'];
@@ -382,11 +358,6 @@
 					"campo_nombre"=>"orden_accesorios",
 					"campo_marcador"=>":Accesorios",
 					"campo_valor"=>$orden_accesorios
-				],
-				[
-					"campo_nombre"=>"orden_tecnico_asignado",
-					"campo_marcador"=>":Tecnico",
-					"campo_valor"=>$orden_tecnico_asignado
 				],
 				[
 					"campo_nombre"=>"orden_telefonista",
@@ -477,7 +448,6 @@
 			if(!isset($orden_accesorios)){
 				$orden_accesorios = "";
 			}
-			$orden_tecnico_asignado = $_POST['orden_tecnico_asignado'];
 			$orden_ubicacion_fisica = $_POST['orden_ubicacion_fisica'];
 
 			$orden_equipo_contrasena = $_POST['orden_equipo_contrasena'];
@@ -504,9 +474,9 @@
 					"campo_valor"=>$orden_accesorios
 				],
 				[
-					"campo_nombre"=>"orden_tecnico_asignado",
-					"campo_marcador"=>":Tecnico",
-					"campo_valor"=>$orden_tecnico_asignado
+					"campo_nombre"=>"orden_ubicacion_fisica",
+					"campo_marcador"=>":UbicacionFisica",
+					"campo_valor"=>$orden_ubicacion_fisica
 				]
 			];
 
@@ -767,6 +737,7 @@
 							  orden.orden_accesorios,
 							  orden.orden_telefonista, 
 							  orden.orden_tecnico_asignado, 
+							  orden.orden_ubicacion_fisica, 
 							  usuario.id_usuario,
 							  usuario.usuario_nombre_completo, 
 							  cliente.id_cliente, 
@@ -1674,7 +1645,7 @@
 							<td class="has-text-centered" style="border: 1px solid black;">' . htmlspecialchars($orden['cliente_nombre_completo']) . '</td>
 							<td class="has-text-centered" style="border: 1px solid black;">' . htmlspecialchars($orden['orden_equipo_marca']) . ' '.htmlspecialchars($orden['orden_equipo_modelo']).'</td>
 							<td class="has-text-centered" style="border: 1px solid black;">COSTO RPTO</td>
-							<td class="has-text-centered" style="border: 1px solid black;">' . htmlspecialchars($orden['orden_tecnico_asignado']) . '</td>
+							<td class="has-text-centered" style="border: 1px solid black;">' . htmlspecialchars($orden['orden_ubicacion_fisica']) . '</td>
 							<td class="has-text-centered" style="border: 1px solid black;">' . htmlspecialchars($orden['orden_estado']) . '</td>
 							<td class="has-text-centered" style="border: 1px solid black;">' . $verificada . '</td>
 							<td class="has-text-centered" style="border: 1px solid black;">' . htmlspecialchars($orden['sucursal_descripcion']) . '</td>

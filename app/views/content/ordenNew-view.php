@@ -191,25 +191,7 @@
                 </div>   
                 <div class="column">
                     <div class="control">
-                        <label>Tecnico asignado</label><br>
-                        <div class="select">
-                            <select name="orden_tecnico_asignado" >
-                                <option value="Sin Asignar" selected="" >Sin Asignar</option>
-                                <?php
-                                    $datos_tecnico=$insLogin->seleccionarDatos("Unico","usuario","usuario_rol","Tecnico");
-
-                                    $cc=1;
-                                    while($campos_tecnico=$datos_tecnico->fetch()){
-                                        echo '<option value="'.$campos_tecnico['usuario_nombre_completo'].'">'.$campos_tecnico['usuario_nombre_completo'].'</option>';
-                                        $cc++;
-                                    }
-                                ?>
-                            </select>
-                        </div>
-                    </div>
-
-                    <div class="control">
-                        <label>Telefonista <?php echo CAMPO_OBLIGATORIO; ?></label><br>
+                        <label>Telefonista/Operador<?php echo CAMPO_OBLIGATORIO; ?></label><br>
                         <div class="select">
                             <select name="orden_telefonista" >
                                 <option value="" selected="" >Seleccione una opción</option>
@@ -232,7 +214,7 @@
                             </select>
                         </div>
                     </div>
-
+                    <br>
                     <div class="control">
                         <label>Ubicacion fisica</label><br>
                         <div class="select">
@@ -271,14 +253,14 @@
                         <label class="label">Tipo de orden <?php echo CAMPO_OBLIGATORIO; ?></label>
                             <div class="field">
                                 <label class="radio">
-                                    <input type="radio" name="orden_tipo" value="presupuestar">
+                                    <input type="radio" name="orden_tipo" value="Presupuestar" onclick="toggleDateInput(true)">
                                     A presupuestar
                                 </label>
                             </div>
                             
                             <div class="field">
                                 <label class="radio">
-                                    <input type="radio" name="orden_tipo" value="garantia">
+                                    <input type="radio" name="orden_tipo" value="Garantia" onclick="toggleDateInput(true)">
                                     Garantia
                                 </label>
                             </div>
@@ -286,11 +268,11 @@
                             <div class="field">
                                 <label class="radio">
                                     <input type="radio" name="orden_tipo" value="Prometida" onclick="toggleDateInput(true)">
-                                    Reparación prometido para:
+                                    Prometida
                                 </label>
                                 <!-- Input de  prometida que estará oculto inicialmente -->
                                 <div class="field" id="fecha_reparacion_field" style="display: none;">
-                                    <label class="label">Fecha Prometida</label>
+                                    <label class="label">Prometido para</label>
                                     <input class="input" type="date" name="orden_fecha_prometida">
                                 </div>
                             </div>
@@ -307,14 +289,14 @@
             <div class="columns">
                 <div class="column">
                     <div class="control">
-                        <h3>Importe lista</h3>
-                        <input type="number" class="input" name="orden_total_lista" id="" value="0">
+                        <h3>Importe</h3>
+                        <input type="number" class="input" name="orden_total_lista" id="orden_total_lista" value="0" onkeyup="calcularDctoEfectivo()">
                     </div>
                 </div>
                 <div class="column">
                     <div class="control">
-                        <h3>Importe efectivo</h3>
-                        <input type="number" class="input" name="orden_total_efectivo" id="" value="0"> 
+                        <h3>Dcto efectivo</h3>
+                        <input type="number" class="input" name="orden_total_efectivo" id="orden_total_efectivo" value="0"> 
                     </div>
                 </div>
             </div>
@@ -548,5 +530,13 @@
         } else {
             icloudContainer.style.display = "none";
         }
+    }
+
+    /* CALCULAR AUTOMATICAMENTE IMPORTE EN EFECTIVO */
+    function calcularDctoEfectivo(){
+        const importeLista = document.getElementById('orden_total_lista').value;
+        const dctoEfectivo = importeLista * 0.2;
+        const finalEfectivo = importeLista - dctoEfectivo;
+        document.getElementById('orden_total_efectivo').value = finalEfectivo.toFixed(2);
     }
 </script>

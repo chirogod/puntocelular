@@ -66,25 +66,6 @@
                         </div>
                     </div>
                     <div class="control">
-                        <div class="full-width sale-details text-condensedLight">
-                            <label class="has-text-weight-bold">Tecnico asignado</label><br>
-                            <div class="select">
-                                <select name="orden_tecnico_asignado">
-                                    <option value="Sin Asignar" selected>Sin Asignar</option>
-                                    <?php
-                                        // Obtener los técnicos
-                                        $datos_tecnico = $insLogin->seleccionarDatos("Unico", "usuario", "usuario_rol", "Tecnico");
-                                        while ($campos_tecnico = $datos_tecnico->fetch()) {
-                                            // Comparar el nombre completo del técnico con el valor de orden_tecnico_asignado
-                                            $selected = ($campos_tecnico['usuario_nombre_completo'] == $datos['orden_tecnico_asignado']) ? 'selected' : '';
-                                            echo '<option value="' . $campos_tecnico['usuario_nombre_completo'] . '" ' . $selected . '>' . $campos_tecnico['usuario_nombre_completo'] . '</option>';
-                                        }
-                                    ?>
-                                </select>
-                            </div>
-                        </div>
-                    </div>
-                    <div class="control">
                         <div class="full-width sale-details text-condensedLight has-text-centered">
                             <label class="has-text-weight-bold">Ubicacion fisica</label><br>
                             <div class="select">
@@ -474,17 +455,17 @@
                         <div class="columns is-centered is-mobile">
                             <div class="column is-half">
                                 <div class="field">
-                                    <label class="label has-text-centered is-size-7">P. Lista</label>
+                                    <label class="label has-text-centered is-size-7">Importe</label>
                                     <div class="control">
-                                        <input class="input is-small" type="text" value="<?php echo $datos['orden_total_lista']; ?>" name="orden_total_lista">
+                                        <input class="input is-small" type="text" value="<?php echo $datos['orden_total_lista']; ?>" name="orden_total_lista" id="orden_total_lista" onkeyup="calcularDcto()">
                                     </div>
                                 </div>
                             </div>
                             <div class="column is-half">
                                 <div class="field">
-                                    <label class="label has-text-centered is-size-7">P. Efectivo</label>
+                                    <label class="label has-text-centered is-size-7">Dcto efectivo</label>
                                     <div class="control">
-                                        <input class="input is-small" type="text" value="<?php echo $datos['orden_total_efectivo']; ?>" name="orden_total_efectivo">
+                                        <input class="input is-small" type="text" value="<?php echo $datos['orden_total_efectivo']; ?>" name="orden_total_efectivo" id="orden_total_efectivo">
                                     </div>
                                 </div>
                             </div>
@@ -1425,4 +1406,10 @@
         }
     }
 
+    function calcularDcto(){
+        const importe = document.getElementById('orden_total_lista').value;
+        const dcto = importe * 0.2;
+        const final = importe - dcto;
+        document.getElementById('orden_total_efectivo').value = final.toFixed(2);
+    }
 </script>

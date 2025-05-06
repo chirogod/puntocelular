@@ -69,9 +69,14 @@
 		$pdf->SetFont('Arial','',18);
 		$pdf->Text($pageWidth / 2 + 59, 28, $datos_orden['id_orden']);
         $pdf->SetFont('Arial','b',12);
-		$pdf->Text($pageWidth / 2 + 40, 40, 'Estado:');
-		$pdf->SetFont('Arial','',16);
-		$pdf->Text($pageWidth / 2 + 56, 40, $datos_orden['orden_estado']);
+		$pdf->Text($pageWidth / 2 + 40, 35, 'Estado:');
+		$pdf->SetFont('Arial','',12);
+		$pdf->Text($pageWidth / 2 + 56, 35, $datos_orden['orden_estado']);
+		$pdf->SetFont('Arial','b',12);
+		$pdf->Text($pageWidth / 2 + 25, 40, 'Tipo:');
+		$pdf->SetFont('Arial','',12);
+		$pdf->Text($pageWidth / 2 + 36, 40, $datos_orden['orden_tipo']);
+		$pdf->Text($pageWidth / 2 + 63, 40, "para: ".$datos_orden['orden_fecha_prometida']);
 
 		$pdf->Ln(5);
 
