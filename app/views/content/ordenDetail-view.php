@@ -644,12 +644,6 @@
 
                 <div class="columns">
                     <div class="column">
-                        <div class="control">
-                            <label class="has-text-weight-bold">Hora inicio:<?php echo CAMPO_OBLIGATORIO; ?></label>
-                            <input required type="time" id="hora_inicio" class="input" name="verificacion_hora_inicio">
-                        </div>
-                    </div>
-                    <div class="column">
                         <label class="has-text-weight-bold">Detalles</label><br>
                         <textarea class="textarea" name="verificacion_detalles" id="textarea-verificacion"><?php echo $verificaciones['verificacion_detalles'] ?></textarea>
                     </div>
@@ -730,7 +724,7 @@
                                         
                 <p class="has-text-centered">
                     <button type="reset" class="button is-link is-light is-rounded"><i class="fas fa-paint-roller"></i> &nbsp; Limpiar</button>
-                    <button type="submit" class="button is-info is-rounded"><i class="far fa-check"></i> &nbsp; Finalizar</button>                    
+                    <button type="submit" class="button is-info is-rounded"><i class="fa-solid fa-check"></i> &nbsp; Finalizar</button>                    
                 </p>
                 <p class="has-text-centered pt-1">
                     <small>Los campos marcados con <?php echo CAMPO_OBLIGATORIO; ?> son obligatorios</small>

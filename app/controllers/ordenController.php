@@ -1664,7 +1664,7 @@
 		public function iniciarVerificacionControlador(){
 			$orden_codigo = $_POST['orden_codigo'];
 			$verificacion_fecha = date("Y-m-d");
-			$verificacion_hora_inicio = $_POST['verificacion_hora_inicio'];
+			$verificacion_hora_inicio = date("H:i");
 			$verificacion_responsable = $this->limpiarCadena($_POST['verificacion_responsable']);
 			$verificacion_detalles = $_POST['verificacion_detalles'];
 
