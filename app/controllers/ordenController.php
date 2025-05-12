@@ -165,6 +165,15 @@
 			$orden_equipo_email = $_POST['orden_equipo_email'];
 			$orden_equipo_pass = $_POST['orden_equipo_pass'];
 
+			if(isset($_POST['orden_descripcion'])){
+				$orden_descripcion = $this->limpiarCadena($_POST['orden_descripcion']);
+				if($orden_descripcion === "otro" && !empty($_POST['orden_descripcion_otro'])){
+					$orden_descripcion_otro = $this->limpiarCadena($_POST['orden_descripcion_otro']);
+					// Aquí podrías usar $orden_descripcion_otro como valor final
+					$orden_descripcion = $orden_descripcion_otro;
+				}
+			}
+
 			//agregar equipo
 			// Check if an existing brand is selected or a new brand is entered
 			if (isset($_POST['id_marca']) && $_POST['id_marca'] !== "") {
@@ -290,6 +299,11 @@
 					"campo_nombre"=>"orden_codigo",
 					"campo_marcador"=>":Codigo",
 					"campo_valor"=>$orden_codigo
+				],
+				[
+					"campo_nombre"=>"orden_descripcion",
+					"campo_marcador"=>":Descripcion",
+					"campo_valor"=>$orden_descripcion
 				],
 				[
 					"campo_nombre"=>"id_cliente",
@@ -520,6 +534,9 @@
 			
 			$orden_total_lista_anterior = $orden['orden_total_lista'];			
 			$orden_total_efectivo_anterior = $orden['orden_total_efectivo'];
+
+			$orden_fecha_aceptada = $_POST['orden_fecha_aceptada'] ?? "";
+			$orden_fecha_prometida = $_POST['orden_fecha_prometida'] ?? "";
 			
 			$datos =[
 				[
@@ -536,6 +553,16 @@
 					"campo_nombre"=>"orden_total_efectivo",
 					"campo_marcador"=>":Efectivo",
 					"campo_valor"=>$orden_total_efectivo
+				],
+				[
+					"campo_nombre"=>"orden_fecha_aceptada",
+					"campo_marcador"=>":FechaAceptada",
+					"campo_valor"=>$orden_fecha_aceptada
+				],
+				[
+					"campo_nombre"=>"orden_fecha_prometida",
+					"campo_marcador"=>":FechaPrometida",
+					"campo_valor"=>$orden_fecha_prometida
 				],
 			];
 

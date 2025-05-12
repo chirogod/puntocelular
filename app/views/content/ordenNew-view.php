@@ -48,7 +48,7 @@
                                         ];
                                     }
                             ?>
-                            <div class="field has-addons mb-5">
+                            <div class="field has-addons mb-1">
                                 <div class="control">
                                     <input class="input" type="text" readonly id="orden_cliente" value="<?php echo $_SESSION['datos_cliente_orden']['cliente_nombre_completo']; ?>" >
                                 </div>
@@ -61,9 +61,22 @@
                         <?php } ?>
                     </div>
                 
-                    <div class="control">
+                    <div class="control mb-1">
                         <label>Fecha <?php echo CAMPO_OBLIGATORIO; ?></label>
                         <input class="input" type="date" value="<?php echo date("Y-m-d"); ?>" >
+                    </div>
+
+                    <div class="control">
+                        <label>Se presupuesta <?php echo CAMPO_OBLIGATORIO; ?></label><br>
+                        <div class="select">
+                            <select name="orden_descripcion" onchange="ordenDescripcion()">
+                                <option value="" selected="">Seleccione una opción</option>
+                                <option value="Cambio modulo">Cambio modulo</option>
+                                <option value="Cambio bateria">Cambio bateria</option>
+                                <option value="otro">Otro</option>
+                            </select>
+                        </div>
+                        
                     </div>
                 </div>
 
@@ -538,5 +551,24 @@
         const dctoEfectivo = importeLista * 0.2;
         const finalEfectivo = importeLista - dctoEfectivo;
         document.getElementById('orden_total_efectivo').value = finalEfectivo.toFixed(2);
+    }
+
+    function ordenDescripcion(){
+        const select = document.querySelector('select[name="orden_descripcion"]');
+        const selectedOption = select.options[select.selectedIndex];
+        const selectedValue = selectedOption.value;
+        if(selectedValue === "otro"){
+            const input = document.createElement("input");
+            input.type = "text";
+            input.name = "orden_descripcion_otro";
+            input.placeholder = "Especificar otro";
+            input.className = "input";
+            select.parentNode.appendChild(input);
+        }else{
+            const input = select.parentNode.querySelector('input[name="orden_descripcion_otro"]');
+            if(input){
+                select.parentNode.removeChild(input);
+            }
+        }
     }
 </script>

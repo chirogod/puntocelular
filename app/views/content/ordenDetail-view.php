@@ -400,7 +400,7 @@
             <p class="modal-card-title is-uppercase has-text-weight-bold is-size-5">
                 <i class="fas fa-search"></i> &nbsp; Informe técnico
             </p>
-            <button class="delete" aria-label="close"></button>
+            <button class="delete safedelete" type="button" aria-label="close"></button>
         </header>
         <section class="modal-card-body is-size-7">
             <form class="FormularioAjax" action="<?php echo APP_URL; ?>app/ajax/ordenAjax.php" method="POST" autocomplete="off" name="formsale">
@@ -467,6 +467,27 @@
                                     <div class="control">
                                         <input class="input is-small" type="text" value="<?php echo $datos['orden_total_efectivo']; ?>" name="orden_total_efectivo" id="orden_total_efectivo">
                                     </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="columns is-vcentered is-centered">
+                    <div class="column has-text-centered">
+                        <div class="columns is-centered is-mobile">
+                            <div class="column is-half">
+                                <div class="field">
+                                    <div class="control">
+                                        <label for="" class="label">Fecha aceptada: </label>
+                                        <input class="input" type="date" name="orden_fecha_aceptada" value="<?php echo $datos['orden_fecha_aceptada']; ?>">
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="column is-half">
+                                <div class="field">
+                                    <label for="" class="label">Fecha prometida: </label>
+                                    <input class="input" type="date" name="orden_fecha_prometida" value="<?php echo $datos['orden_fecha_prometida']; ?>">
                                 </div>
                             </div>
                         </div>
