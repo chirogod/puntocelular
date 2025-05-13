@@ -526,11 +526,12 @@
 		public function registrarInformeTecnicoOrdenControlador(){
 			$orden_codigo = $_POST['orden_codigo'];
 			$orden_informe_tecnico = $_POST['orden_informe_tecnico'];
-			$orden_informe_tecnico .= "\n \n";
 			$orden_total_lista = $_POST['orden_total_lista'];
 			$orden_total_efectivo = $_POST['orden_total_efectivo'];
 			$orden = $this->ejecutarConsulta("SELECT * FROM orden WHERE orden_codigo='$orden_codigo'");
 			$orden = $orden->fetch();
+
+			$orden_informe_tecnico_completo = $orden['orden_informe_tecnico'].  "\n".$_SESSION['usuario_nombre']." - ".date("d-m-Y")." - ".date("H:i")."\n"."    -". $orden_informe_tecnico ."\n";
 			
 			$orden_total_lista_anterior = $orden['orden_total_lista'];			
 			$orden_total_efectivo_anterior = $orden['orden_total_efectivo'];
@@ -542,7 +543,7 @@
 				[
 					"campo_nombre"=>"orden_informe_tecnico",
 					"campo_marcador"=>":InformeTecnico",
-					"campo_valor"=>$orden_informe_tecnico
+					"campo_valor"=>$orden_informe_tecnico_completo
 				],
 				[
 					"campo_nombre"=>"orden_total_lista",

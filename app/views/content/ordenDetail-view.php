@@ -440,13 +440,24 @@
                     $fecha_actual = date('Y-m-d'); 
                     $hora_actual = date('H:i:s'); 
                     ?>
-
+                    <!--
                     <div class="column"> 
                         <div class="control">
                             <label for="" class="label">Informe técnico: </label>
                             <textarea class="textarea is-small" spellcheck="true" style="height: 200px;" name="orden_informe_tecnico" id="orden_informe_tecnico"><?php echo $datos['orden_informe_tecnico']; ?></textarea>
                         </div>
-                    </div>  
+                    </div>  -->
+                    <div class="column"> 
+                        <div class="control">
+                            <label for="" class="label">Informe técnico: </label>
+                            <textarea class="textarea is-small" spellcheck="true" style="height: 180px;" name="orden_informe_tecnico"></textarea>
+                        </div>
+                        <div class="control">
+                            <button type="button" class="button is-link is-light js-modal-trigger" data-target="modal-js-infTecCompleto" >
+                                Informe tecnico completo
+                            </button>
+                        </div>
+                    </div>
                 </div>
 
                 <div class="columns is-vcentered is-centered">
@@ -495,10 +506,28 @@
                 </div>
 
                 <p class="has-text-centered">
-                    <button type="submit" class="button is-link is-light is-small">Guardar</button>
+                    <button type="submit" class="button is-link is-success">Guardar</button>
                 </p>
             </form>
         </section>
+    </div>
+</div>
+
+<!-- modal inf tec complet -->
+<div class="modal" id="modal-js-infTecCompleto">
+    <div class="modal-background"></div>
+        <div class="modal-card">
+            <header class="modal-card-head">
+                <p class="modal-card-title is-uppercase"><i class="fas fa-search"></i> &nbsp; Rechazar orden</p>
+                <button class="delete" aria-label="close"></button>
+            </header>
+            <section class="modal-card-body">
+                <div class="control">
+                    <label for="" class="label">Informe técnico: </label>
+                    <textarea disabled class="textarea is-small" spellcheck="true" style="height: 200px;" name="orden_informe_tecnico" id="orden_informe_tecnico"><?php echo $datos['orden_informe_tecnico']; ?></textarea>
+                </div>
+            </section>
+        </div>
     </div>
 </div>
 
@@ -756,10 +785,12 @@
                 // Preseleccionar la hora actual en "Hora de inicio"
                 document.addEventListener("DOMContentLoaded", () => {
                     const horaInicioInput = document.getElementById("hora_inicio");
-                    const ahora = new Date();
-                    const hora = ahora.getHours().toString().padStart(2, "0");
-                    const minutos = ahora.getMinutes().toString().padStart(2, "0");
-                    horaInicioInput.value = `${hora}:${minutos}`;
+                    if (horaInicioInput) {
+                        const ahora = new Date();
+                        const hora = ahora.getHours().toString().padStart(2, "0");
+                        const minutos = ahora.getMinutes().toString().padStart(2, "0");
+                        horaInicioInput.value = `${hora}:${minutos}`;
+                    }
                 });
             </script>
         </section>
@@ -975,7 +1006,7 @@
     </div>
 </div>
 
-<!-- ORDEN en espera -->
+<!-- ORDEN sin reparacion-->
 <div class="modal" id="modal-js-sin-reparacion">
     <div class="modal-background"></div>
         <div class="modal-card">
@@ -1001,7 +1032,7 @@
 </div>
 
 <!-- ORDEN reparar -->
-<div class="modal" id="modal-js-reparar">
+<div class="modal" id="modal-js-a-reparar">
     <div class="modal-background"></div>
         <div class="modal-card">
             <header class="modal-card-head">
@@ -1015,6 +1046,31 @@
                     <input type="hidden" name="orden_estado" value="A REPARAR">
                     <p class="has-text-centered">
                         ESTAS SEGURO QUE QUIERES ESTABLECER LA ORDEN COMO 'A REPARAR'?
+                    </p>
+                    <p class="has-text-centered">
+                        <button type="submit" class="button is-link is-light">Aceptar</button>
+                    </p>
+                </form>
+            </section>
+        </div>
+    </div>
+</div>
+
+<!-- ORDEN PRESUPUESTAR -->
+<div class="modal" id="modal-js-presupuestado">
+    <div class="modal-background"></div>
+        <div class="modal-card">
+            <header class="modal-card-head">
+                <p class="modal-card-title is-uppercase"><i class="fas fa-search"></i> &nbsp; PRESUPUESTADA</p>
+                <button class="delete" aria-label="close"></button>
+            </header>
+            <section class="modal-card-body">
+                <form class="FormularioAjax" action="<?php echo APP_URL; ?>app/ajax/ordenAjax.php" method="POST" autocomplete="off" name="formsale" >
+                    <input type="hidden" name="modulo_orden" value="cambiar_estado_orden">
+                    <input type="hidden" name="orden_codigo" id="orden_codigo" value="<?php echo $datos['orden_codigo']; ?>">
+                    <input type="hidden" name="orden_estado" value="PRESUPUESTADO">
+                    <p class="has-text-centered">
+                        ESTAS SEGURO QUE QUIERES ESTABLECER LA ORDEN COMO 'PRESUPUESTADA'?
                     </p>
                     <p class="has-text-centered">
                         <button type="submit" class="button is-link is-light">Aceptar</button>
