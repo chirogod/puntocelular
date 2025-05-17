@@ -400,7 +400,7 @@
             <p class="modal-card-title is-uppercase has-text-weight-bold is-size-5">
                 <i class="fas fa-search"></i> &nbsp; Informe técnico
             </p>
-            <button class="delete safedelete" type="button" aria-label="close"></button>
+            <button id="cerrarModal" class="safedelete" type="button" aria-label="close"></button>
         </header>
         <section class="modal-card-body is-size-7">
             <form class="FormularioAjax" action="<?php echo APP_URL; ?>app/ajax/ordenAjax.php" method="POST" autocomplete="off" name="formsale">

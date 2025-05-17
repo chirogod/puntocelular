@@ -66,6 +66,30 @@ document.addEventListener('DOMContentLoaded', () => {
     });
   });
 
+  (document.querySelectorAll('.modal-background, .modal-close, .modal-card-head .safedelete, .modal-card-foot .button') || []).forEach(($close) => {
+  const $target = $close.closest('.modal');
+
+  $close.addEventListener('click', (event) => {
+    event.preventDefault(); // Previene el cierre inmediato
+
+    Swal.fire({
+      title: '¿Estás seguro que querés cerrar el modal?',
+      text: "Se perderán los cambios no guardados.",
+      icon: 'question',
+      showCancelButton: true,
+      confirmButtonColor: '#3085d6',
+      cancelButtonColor: '#d33',
+      confirmButtonText: 'Sí, cerrar',
+      cancelButtonText: 'Cancelar'
+    }).then((result) => {
+      if (result.isConfirmed) {
+        closeModal($target); // Solo cierra si el usuario confirma
+      }
+      // Si no confirma, simplemente no hacemos nada y el modal queda abierto
+    });
+  });
+});
+
   // Add a keyboard event to close all modals
   document.addEventListener('keydown', (event) => {
     if (event.code === 'Escape') {

@@ -876,6 +876,210 @@
 				exit();
 			}
         }
+
+		public function registrarClienteGuardarSesionControlador(){
+            //almacenar datos del nuevo cliente
+            $cliente_nombre_completo = $this->limpiarCadena($_POST['cliente_nombre_completo']);
+            $cliente_email = $this->limpiarCadena($_POST['cliente_email']);
+            $cliente_telefono_1 = $this->limpiarCadena($_POST['cliente_telefono_1']);
+            $cliente_telefono_2 = $this->limpiarCadena($_POST['cliente_telefono_2']);
+            $cliente_domicilio = $this->limpiarCadena($_POST['cliente_domicilio']);
+            $cliente_localidad = $this->limpiarCadena($_POST['cliente_localidad']);
+            $cliente_provincia = $this->limpiarCadena($_POST['cliente_provincia']);
+            $cliente_pais = $this->limpiarCadena($_POST['cliente_pais']);
+            $cliente_tipo_doc = $this->limpiarCadena($_POST['cliente_tipo_doc']);
+            $cliente_documento = $this->limpiarCadena($_POST['cliente_documento']);
+            $cliente_nacimiento = $this->limpiarCadena($_POST['cliente_nacimiento']);
+
+            //verificar campos obligatorios
+            if ($cliente_nombre_completo == "" || $cliente_documento == ""){
+                $alerta=[
+					"tipo"=>"simple",
+					"titulo"=>"Ocurrió un error inesperado",
+					"texto"=>"No has llenado todos los campos que son obligatorios (nombre y documento)",
+					"icono"=>"error"
+				];
+				return json_encode($alerta);
+		        exit();
+            }
+
+            //verificar integridad datos
+            if ($this->verificarDatos("[a-zA-ZáéíóúÁÉÍÓÚñÑ ]{3,40}", $cliente_nombre_completo)) {
+                $alerta=[
+					"tipo"=>"simple",
+					"titulo"=>"Ocurrió un error inesperado",
+					"texto"=>"El nombre no cumple con el formato solicitado",
+					"icono"=>"error"
+				];
+				return json_encode($alerta);
+		        exit();
+            }
+            if ($this->verificarDatos("[0-9]{7,30}", $cliente_documento)) {
+                $alerta=[
+					"tipo"=>"simple",
+					"titulo"=>"Ocurrió un error inesperado",
+					"texto"=>"El documento no cumple con el formato solicitado",
+					"icono"=>"error"
+				];
+				return json_encode($alerta);
+		        exit();
+            }
+            //chequear domicilio
+            if ($cliente_nacimiento != "") {
+                if ($this->verificarDatos("[a-zA-Z0-9áéíóúÁÉÍÓÚñÑ().,#\- ]{4,70}", $cliente_domicilio)) {
+                    $alerta=[
+                        "tipo"=>"simple",
+                        "titulo"=>"Ocurrió un error inesperado",
+                        "texto"=>"El domicilio no cumple con el formato solicitado",
+                        "icono"=>"error"
+                    ];
+                    return json_encode($alerta);
+                    exit();
+                }
+            }
+            //verificar si el email no existe ya
+            if($cliente_email!=""){
+				if(filter_var($cliente_email, FILTER_VALIDATE_EMAIL)){
+					$check_email=$this->ejecutarConsulta("SELECT cliente_email FROM cliente WHERE cliente_email='$cliente_email'");
+					if($check_email->rowCount()>0){
+						$alerta=[
+							"tipo"=>"simple",
+							"titulo"=>"Ocurrió un error inesperado",
+							"texto"=>"El EMAIL que acaba de ingresar ya se encuentra registrado en el sistema, por favor verifique e intente nuevamente",
+							"icono"=>"error"
+						];
+						return json_encode($alerta);
+						exit();
+					}
+				}else{
+					$alerta=[
+						"tipo"=>"simple",
+						"titulo"=>"Ocurrió un error inesperado",
+						"texto"=>"Ha ingresado un correo electrónico no valido",
+						"icono"=>"error"
+					];
+					return json_encode($alerta);
+					exit();
+				}
+            }
+
+            //verificar cliente por nombre
+            $check_cliente_nombre =$this->ejecutarConsulta("SELECT * FROM cliente WHERE cliente_nombre_completo = '$cliente_nombre_completo'");
+            if ($check_cliente_nombre->rowCount() > 0) {
+                $alerta=[
+                    "tipo"=>"simple",
+                    "titulo"=>"Ocurrió un error inesperado",
+                    "texto"=>"El cliente ya existe",
+                    "icono"=>"error"
+                ];
+                return json_encode($alerta);
+                exit();
+            }
+
+            //verificar cliente por documento a ver si ya esta registrado
+            if ($cliente_documento != "") {
+                $check_cliente_documento =$this->ejecutarConsulta("SELECT * FROM cliente WHERE cliente_documento = '$cliente_documento'");
+                if ($check_cliente_documento->rowCount() > 0) {
+                    $alerta=[
+                        "tipo"=>"simple",
+                        "titulo"=>"Ocurrió un error inesperado",
+                        "texto"=>"El cliente con dni ''$cliente_documento'' ya existe",
+                        "icono"=>"error"
+                    ];
+                    return json_encode($alerta);
+                    exit();
+                }
+            }
+
+
+            //almacenar los datos en un arreglo para guardarlos
+            $datos_cliente = [
+                [
+                    "campo_nombre"=>"cliente_nombre_completo",
+                    "campo_marcador"=>":NombreCompleto",
+                    "campo_valor"=>$cliente_nombre_completo
+                ],
+                [
+                    "campo_nombre"=>"cliente_email",
+                    "campo_marcador"=>":Email",
+                    "campo_valor"=>$cliente_email
+                ],
+                [
+                    "campo_nombre"=>"cliente_telefono_1",
+                    "campo_marcador"=>":Telefono1",
+                    "campo_valor"=>$cliente_telefono_1
+                ],
+                [
+                    "campo_nombre"=>"cliente_telefono_2",
+                    "campo_marcador"=>":Telefono2",
+                    "campo_valor"=>$cliente_telefono_2
+                ],
+                [
+                    "campo_nombre"=>"cliente_domicilio",
+                    "campo_marcador"=>":Domicilio",
+                    "campo_valor"=>$cliente_domicilio
+                ],
+                [
+                    "campo_nombre"=>"cliente_localidad",
+                    "campo_marcador"=>":Localidad",
+                    "campo_valor"=>$cliente_localidad
+                ],
+                [
+                    "campo_nombre"=>"cliente_provincia",
+                    "campo_marcador"=>":Provincia",
+                    "campo_valor"=>$cliente_provincia
+                ],
+                [
+                    "campo_nombre"=>"cliente_pais",
+                    "campo_marcador"=>":Pais",
+                    "campo_valor"=>$cliente_pais
+                ],
+                [
+                    "campo_nombre"=>"cliente_tipo_doc",
+                    "campo_marcador"=>":TipoDoc",
+                    "campo_valor"=>$cliente_tipo_doc
+                ],
+                [
+                    "campo_nombre"=>"cliente_documento",
+                    "campo_marcador"=>":Documento",
+                    "campo_valor"=>$cliente_documento
+                ],
+                [
+                    "campo_nombre"=>"cliente_nacimiento",
+                    "campo_marcador"=>":Nacimiento",
+                    "campo_valor"=>$cliente_nacimiento
+                ]
+            ];
+
+            $registrar_cliente = $this->guardarDatos("cliente", $datos_cliente);
+            if ($registrar_cliente->rowCount()==1) {
+				$campos = $this->ejecutarConsulta("SELECT * FROM cliente WHERE cliente_documento = '$cliente_documento'");
+				$campos = $campos->fetch();
+				if($_SESSION['datos_cliente_orden']['id_cliente']==1){
+					$_SESSION['datos_cliente_orden']=[
+						"id_cliente"=>$campos['id_cliente'],
+						"cliente_tipo_doc"=>$campos['cliente_tipo_doc'],
+						"cliente_documento"=>$campos['cliente_documento'],
+						"cliente_nombre_completo"=>$campos['cliente_nombre_completo']
+					];
+					$alerta=[
+						"tipo"=>"recargar",
+						"titulo"=>"Cliente registrado con exito",
+						"texto"=>"El cliente " .$cliente_nombre_completo. " se registro con exito y se agrego a la orden",
+						"icono"=>"success"
+					];
+				}
+            }else{
+                $alerta=[
+					"tipo"=>"simple",
+					"titulo"=>"Ocurrió un error inesperado",
+					"texto"=>"No se pudo registrar el cliente, por favor intente nuevamente",
+					"icono"=>"error"
+				];
+            }
+            //retornamos el json 
+            return json_encode($alerta);
+        }
     } 
   
 ?>

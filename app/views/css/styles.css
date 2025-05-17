@@ -387,3 +387,88 @@ body,html{
 textarea{
     resize: none !important;
 }
+
+
+/* estilos para la el boton del modal safe delete */
+.safedelete {
+  --bulma-delete-dimensions: 1.25rem;
+  --bulma-delete-background-l: 0%;
+  --bulma-delete-background-alpha: 0.5;
+  --bulma-delete-color: var(--bulma-white);
+  appearance: none;
+  background-color: hsla(var(--bulma-scheme-h), var(--bulma-scheme-s), var(--bulma-delete-background-l), var(--bulma-delete-background-alpha));
+  border: none;
+  border-radius: var(--bulma-radius-rounded);
+  cursor: pointer;
+  pointer-events: auto;
+  display: inline-flex;
+  flex-grow: 0;
+  flex-shrink: 0;
+  font-size: 1em;
+  height: var(--bulma-delete-dimensions);
+  max-height: var(--bulma-delete-dimensions);
+  max-width: var(--bulma-delete-dimensions);
+  min-height: var(--bulma-delete-dimensions);
+  min-width: var(--bulma-delete-dimensions);
+  outline: none;
+  position: relative;
+  vertical-align: top;
+  width: var(--bulma-delete-dimensions);
+}
+.safedelete::before, .safedelete::after {
+  background-color: var(--bulma-delete-color);
+  content: "";
+  display: block;
+  left: 50%;
+  position: absolute;
+  top: 50%;
+  transform: translateX(-50%) translateY(-50%) rotate(45deg);
+  transform-origin: center center;
+}
+.safedelete::before {
+  height: 2px;
+  width: 50%;
+}
+.safedelete::after {
+  height: 50%;
+  width: 2px;
+}
+.safedelete:hover, .safedelete:focus {
+  --bulma-delete-background-alpha: 0.4;
+}
+.safedelete:active {
+  --bulma-delete-background-alpha: 0.5;
+}
+.safedelete.is-small {
+  --bulma-delete-dimensions: 1rem;
+}
+.safedelete.is-medium {
+  --bulma-delete-dimensions: 1.5rem;
+}
+.safedelete.is-large {
+  --bulma-delete-dimensions: 2rem;
+}
+
+.notification > .safedelete {
+  position: absolute;
+  inset-inline-end: 1rem;
+  top: 1rem;
+}
+
+.tag .safedelete {
+  margin-inline-start: 0.25rem;
+  margin-inline-end: -0.375rem;
+}
+
+.message-header .safedelete {
+  flex-grow: 0;
+  flex-shrink: 0;
+  margin-inline-start: 0.75em;
+}
+
+.is-skeleton.safedelete {
+  border-radius: var(--bulma-radius-rounded);
+}
+.is-skeleton.safedelete::before, .is-skeleton.safedelete::after {
+  display: none;
+}

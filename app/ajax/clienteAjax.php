@@ -21,6 +21,11 @@
 			echo $insCliente->buscarClienteControlador();
 		}
 
+        /* registrar cliente y guardar en sesion para compra o orden */
+        if ($_POST['modulo_cliente'] == "registrarGuardarSesion") {
+            echo $insCliente->registrarClienteGuardarSesionControlador();
+        }
+
     }else{
         session_destroy();
         header("Location: ".APP_URL."login/");

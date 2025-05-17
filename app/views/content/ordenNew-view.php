@@ -82,7 +82,7 @@
 
                 <div class="column">
                     <h3>Observaciones</h3>
-                    <textarea class="textarea"  name="orden_observaciones" id=""></textarea>
+                    <textarea class="textarea" name="orden_observaciones" id="orden_observaciones"></textarea>
                 </div>
 
             </div>
@@ -122,8 +122,8 @@
                     <!-- Campo oculto para la contraseña de iCloud -->
                     <div id="icloudContainer" style="display: none; margin-top: 10px;">
                         <div class="control">
-                            <label for="icloudPassword">Email de iCloud:</label>
-                            <input class="input" type="email" name="orden_equipo_email" id="icloudPassword">
+                            <label for="icloudEmail">Email de iCloud:</label>
+                            <input class="input" type="email" name="orden_equipo_email" id="icloudEmail">
                         </div>
                         <div class="control">
                             <label for="icloudPassword">Contrasena de iCloud:</label>
@@ -172,7 +172,7 @@
                     <div class="control">
                         <label>Detalles fisicos
                             <div class="field">
-                                <textarea name="orden_equipo_detalles_fisicos" class="textarea" id=""></textarea>
+                                <textarea name="orden_equipo_detalles_fisicos" id="orden_equipo_detalles_fisicos" class="textarea"></textarea>
                             </div>
                         </label>
                     </div>
@@ -180,7 +180,7 @@
 
                 <div class="column">
                     <h3>Falla/Problema <?php echo CAMPO_OBLIGATORIO; ?></h3>
-                    <textarea class="textarea"  name="orden_falla" id="" required></textarea>
+                    <textarea class="textarea"  name="orden_falla" required id="orden_falla"></textarea>
                 </div>
 
                 <!-- Estilo del textarea -->
@@ -199,7 +199,7 @@
                 <div class="column">
                     <div class="control">
                         <h3>Accesorios incluidos</h3>
-                        <textarea class="textarea" name="orden_accesorios" id=""></textarea>
+                        <textarea class="textarea" name="orden_accesorios" id="orden_accesorios"></textarea>
                     </div>
                 </div>   
                 <div class="column">
@@ -343,7 +343,134 @@
                 </div>
             </div>
             <div class="container" id="tabla_clientes"></div>
+            <div class="control">
+                <a class="button is-info js-modal-trigger" data-target="modal-js-new-client" title="Agregar nuevo cliente" id="btn_add_new_client" >
+                    Nuevo Cliente <i class="fas fa-user-plus fa-fw"></i>
+                </a>
+            </div>
         </section>
+        
+    </div>
+</div>
+
+<!-- Modal buscar cliente -->
+<div class="modal" id="modal-js-new-client">
+    <div class="modal-background"></div>
+    <div class="modal-card">
+        <header class="modal-card-head">
+          <p class="modal-card-title is-uppercase"><i class="fas fa-search"></i> &nbsp; Agregar  nuevo cliente</p>
+          <button class="delete" aria-label="close"></button>
+        </header>
+        <section class="modal-card-body">
+            <form class="FormularioAjax" action="<?php echo APP_URL; ?>app/ajax/clienteAjax.php" method="POST" autocomplete="off" >
+                <input type="hidden" name="modulo_cliente" value="registrarGuardarSesion">
+                <div class="columns">
+                    <div class="column">
+                        <div class="control">
+                            <label>Tipo de documento <?php echo CAMPO_OBLIGATORIO; ?></label><br>
+                            <div class="select">
+                                <select name="cliente_tipo_doc">
+                                    <option value="" selected="" >Seleccione una opción</option>
+                                    <?php
+                                        echo $insLogin->generarSelect(DOCUMENTOS,"VACIO");
+                                    ?>
+                                </select>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="column">
+                        <div class="control">
+                            <label>Numero de documento <?php echo CAMPO_OBLIGATORIO; ?></label>
+                            <input class="input" type="number" name="cliente_documento" pattern="[0-9]{7,30}" maxlength="30" required >
+                        </div>
+                    </div>
+                </div>
+                <div class="columns">
+                    <div class="column">
+                        <div class="control">
+                            <label>Nombre completo <?php echo CAMPO_OBLIGATORIO; ?></label>
+                            <input class="input" type="text" name="cliente_nombre_completo" pattern="[a-zA-ZáéíóúÁÉÍÓÚñÑ ]{3,40}" maxlength="40" required >
+                        </div>
+                    </div>
+                    <div class="column">
+                        <div class="control">
+                            <label>Email</label>
+                            <input class="input" type="email" name="cliente_email" maxlength="70" >
+                        </div>
+                    </div>
+                </div>
+                <div class="columns">
+                        <div class="column">
+                            <div class="control">
+                                <label>Provincia</label><br>
+                                <div class="select">
+                                    <select name="cliente_provincia">
+                                        <option value="" selected="" >Seleccione una opción</option>
+                                        <?php
+                                            echo $insLogin->generarSelect(PROVINCIAS,"VACIO");
+                                        ?>
+                                    </select>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="column">
+                            <div class="control">
+                                <label>Localidad</label><br>
+                                <div class="select">
+                                    <select name="cliente_localidad">
+                                        <option value="" selected="" >Seleccione una opción</option>
+                                        <?php
+                                            echo $insLogin->generarSelect(LOCALIDADES,"VACIO");
+                                        ?>
+                                    </select>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="column">
+                            <div class="control">
+                                <label>Domicilio</label>
+                                <input class="input" type="text" name="cliente_domicilio" pattern="[a-zA-Z0-9áéíóúÁÉÍÓÚñÑ().,#\- ]{4,70}" maxlength="70">
+                            </div>
+                        </div>
+                </div>
+                <div class="columns">
+                    <div class="column">
+                        <div class="control">
+                            <label>Teléfono 1 <?php echo CAMPO_OBLIGATORIO; ?></label>
+                            <input class="input" type="text" name="cliente_telefono_1" pattern="[\d\+\(\)]{8,20}" maxlength="20" >
+                        </div>
+                    </div>
+                    <div class="column">
+                        <div class="control">
+                            <label>Teléfono 2</label>
+                            <input class="input" type="text" name="cliente_telefono_2" pattern="[\d\+\(\)]{8,20}" maxlength="20" >
+                        </div>
+                    </div>
+                </div>
+                <div class="columns">
+                    <div class="column">
+                        <div class="control">
+                            <label>Pais</label>
+                            <input class="input" type="text" name="cliente_pais" pattern="[a-zA-ZáéíóúÁÉÍÓÚñÑ ]{3,30}" maxlength="20" >
+                        </div>
+                    </div>
+                    <div class="column">
+                        <div class="control">
+                            <label>Nacimiento</label>
+                            <input class="input" type="date" name="cliente_nacimiento">
+                        </div>
+                    </div>
+                </div>
+                <p class="has-text-centered">
+                    <button type="reset" class="button is-link is-light is-rounded"><i class="fas fa-paint-roller"></i> &nbsp; Limpiar</button>
+                    <button type="submit" class="button is-info is-rounded"><i class="far fa-save"></i> &nbsp; Guardar</button>
+                </p>
+                <p class="has-text-centered">
+                    <small>Los campos marcados con <?php echo CAMPO_OBLIGATORIO; ?> son obligatorios</small>
+                </p>
+            </form>
+        </section>
+        
     </div>
 </div>
 
