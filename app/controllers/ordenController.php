@@ -1700,7 +1700,7 @@
 			$datos_verificacion = [
 				[
 					"campo_nombre"=>"verificacion_responsable",
-					"campo_marcador"=>":Responsabl",
+					"campo_marcador"=>":Responsable",
 					"campo_valor"=>$verificacion_responsable
 				],
 				[
@@ -1729,6 +1729,10 @@
 					"campo_valor"=>$verificacion_detalles
 				]
 			];
+
+			$datos_orden = $this->seleccionarDatos("Unico", "orden", "orden_codigo", $orden_codigo);
+			$datos_orden = $datos_orden->fetch();
+			$nuevo_informe = $datos_orden['orden_informe_tecnico'].  "\n".$_SESSION['usuario_nombre']." - ".date("d-m-Y")." - ".date("H:i")."\n"."    -". $verificacion_detalles ."\n";
 
 			$registrar_verificacion = $this->guardarDatos("verificacion", $datos_verificacion);
 
@@ -1764,6 +1768,36 @@
 			];
 
 			$this->actualizarDatos("orden", $datos_estado, $condicion);
+
+			$datos =[
+				[
+					"campo_nombre"=>"orden_informe_tecnico",
+					"campo_marcador"=>":InformeTecnico",
+					"campo_valor"=>$nuevo_informe
+				]
+			];
+
+			$condicion=[
+				"condicion_campo"=>"orden_codigo",
+				"condicion_marcador"=>":CODIGO",
+				"condicion_valor"=>$orden_codigo
+			];
+	
+			if($this->actualizarDatos("orden",$datos,$condicion)){
+				$alerta=[
+					"tipo"=>"recargar",
+					"titulo"=>"Orden actualizada",
+					"texto"=>"El informe tecnico se registro correctamente",
+					"icono"=>"success"
+				];
+			}else{
+				$alerta=[
+					"tipo"=>"simple",
+					"titulo"=>"Ocurrió un error inesperado",
+					"texto"=>"No hemos podido actualizar el informe tecnico, por favor intente nuevamente",
+					"icono"=>"error"
+				];
+			}
 		
 			
 			//retornamos el json 
@@ -1773,13 +1807,39 @@
 
 		public function finalizarVerificacionControlador(){
 			$orden_codigo = $_POST['orden_codigo'];
+			$datos_orden = $this->seleccionarDatos("Unico", "orden", "orden_codigo", $orden_codigo);
+			$datos_orden = $datos_orden->fetch();
+			$datos_verif = $this->ejecutarConsulta("SELECT * FROM verificacion WHERE orden_codigo = '$orden_codigo' AND verificacion_vida = 'inicio' ORDER BY id_verificacion DESC LIMIT 1");
+			$datos_verif = $datos_verif->fetch();
+			$verificacion_hora_inicio = $datos_verif['verificacion_hora_inicio'];
 			$verificacion_hora_fin = $_POST['verificacion_hora_fin'];
+
+			// de aqui hasta
+			$inicio = \DateTime::createFromFormat('H:i', $verificacion_hora_inicio);
+			$fin = \DateTime::createFromFormat('H:i', $verificacion_hora_fin);
+
+			// Si la hora de fin es menor que la hora de inicio, sumamos 1 día al fin
+			if ($fin <= $inicio) {
+				$fin->modify('+1 day');
+			}
+
+			$intervalo = $inicio->diff($fin);
+
+			$horas = $intervalo->h;
+			$minutos = $intervalo->i;
+			$totalMinutos = ($horas * 60) + $minutos;
+
+			$duracion_formato = $intervalo->format('%H:%i');
+			$verificacion_duracion = $duracion_formato;
+
+			//aqui no guarda sino hasta recargar manualmente la pagina 
+
 			$verificacion_estacion_sig = $this->limpiarCadena($_POST['verificacion_estacion_sig']);
 			$verificacion_tecnico_asignado = $this->limpiarCadena($_POST['verificacion_tecnico_asignado']);
 			$verificacion_detalles = $_POST['verificacion_detalles'];
 			$verificacion_estado = $_POST['verificacion_estado'];
-			$verificacion_duracion = "";
 			$id_verificacion = $_POST['id_verificacion'];
+
 			$datos_verificacion = [
 				[
 					"campo_nombre"=>"verificacion_vida",
@@ -1857,6 +1917,40 @@
 			];
 
 			$this->actualizarDatos("orden", $datos_estado, $condicion);
+
+
+			
+			$nuevo_informe = $datos_orden['orden_informe_tecnico'].  "\n".$_SESSION['usuario_nombre']." - ".date("d-m-Y")." - ".date("H:i")."\n"."    -". $verificacion_detalles ."\n";
+			$datos =[
+				[
+					"campo_nombre"=>"orden_informe_tecnico",
+					"campo_marcador"=>":InformeTecnico",
+					"campo_valor"=>$nuevo_informe
+				]
+			];
+
+			$condicion=[
+				"condicion_campo"=>"orden_codigo",
+				"condicion_marcador"=>":CODIGO",
+				"condicion_valor"=>$orden_codigo
+			];
+	
+			if($this->actualizarDatos("orden",$datos,$condicion)){
+				$alerta=[
+					"tipo"=>"recargar",
+					"titulo"=>"Orden actualizada",
+					"texto"=>"El informe tecnico se registro correctamente",
+					"icono"=>"success"
+				];
+			}else{
+				$alerta=[
+					"tipo"=>"simple",
+					"titulo"=>"Ocurrió un error inesperado",
+					"texto"=>"No hemos podido actualizar el informe tecnico, por favor intente nuevamente",
+					"icono"=>"error"
+				];
+			}
+			
 		
 			
 			//retornamos el json 

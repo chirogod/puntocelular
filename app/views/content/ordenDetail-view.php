@@ -679,7 +679,7 @@
     <div class="modal-card">
         <header class="modal-card-head">
             <p class="modal-card-title is-uppercase has-text-weight-bold is-size-5">
-                <i class="fas fa-search"></i> &nbsp; Iniciar verificacion
+                <i class="fas fa-search"></i> &nbsp; Verificacion
             </p>
             <button class="delete" aria-label="close"></button>
         </header>
@@ -695,7 +695,7 @@
                 <div class="columns">
                     <div class="column">
                         <label class="has-text-weight-bold">Detalles</label><br>
-                        <textarea class="textarea" name="verificacion_detalles" id="textarea-verificacion"><?php echo $verificaciones['verificacion_detalles'] ?></textarea>
+                        <textarea class="textarea" name="verificacion_detalles" id="textarea-verificacion"></textarea>
                     </div>
                 </div>
                      
@@ -766,7 +766,7 @@
 
                     <div class="column">
                         <label class="has-text-weight-bold">Detalles</label><br>
-                        <textarea class="textarea" name="verificacion_detalles" id="textarea-verificacion"><?php echo $verificaciones['verificacion_detalles'] ?></textarea>
+                        <textarea class="textarea" name="verificacion_detalles" id="textarea-verificacion"></textarea>
                     </div>
                     
                 </div>
@@ -806,7 +806,6 @@
                         <th class="has-text-centered">Estacion sig</th>
                         <th class="has-text-centered">Tecnico asig</th>
                         <th class="has-text-centered">Responsable</th>
-                        <th class="has-text-centered">Detalles</th>
                     </tr>
                 </thead>
                 <tbody>
@@ -823,7 +822,6 @@
                                 <td><?php echo $rows['verificacion_estacion_sig']?></td>
                                 <td><?php echo $rows['verificacion_tecnico_asignado']?></td>
                                 <td><?php echo $rows['verificacion_responsable']?></td>
-                                <td><?php echo $rows['verificacion_detalles']?></td>
                             </tr>
                             <?php
                         }
@@ -1211,6 +1209,8 @@
         </section>
     </div>
 </div>
+
+
 
 <?php
     include "./app/views/includes/print_invoice_script.php";
