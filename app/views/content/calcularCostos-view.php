@@ -137,6 +137,7 @@
                     <td class="has-text-right" ><span id="cuotas_12" class="precio"></span></td>
                     <td class="has-text-right" ><span id="precio_cuota_12" class="precio"></span></td>
                 </tr>
+                <?php if($_SESSION['usuario_rol'] != 'Vendedor' ){?>
                 <tr>
                     <td>UPSELLING EFECTIVO</td>
                     <td class="has-text-right" ><span id="upsel_efectivo" class="precio"></span></td>
@@ -146,6 +147,7 @@
                     <td class="has-text-right" ><span id="upsel_3_cuotas" class="precio"></span></td>
                     <td class="has-text-right" ><span id="precio_cuota_upsel_3" class="precio"></span></td>
                 </tr>
+                <?php }?>
             </tbody>
         </table>
     </div>

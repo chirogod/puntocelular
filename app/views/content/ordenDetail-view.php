@@ -70,31 +70,31 @@
                             <label class="has-text-weight-bold">Ubicacion fisica</label><br>
                             <div class="select">
                                 <select name="orden_ubicacion_fisica" >
-                                    <option value="Sin Asignar" selected>Sin asignar</option>
-                                    <option value="Mesa Luka">Mesa Luka</option>
-                                    <option value="Mesa Sebastian">Mesa Sebastian</option>
-                                    <option value="Mesa Tomas">Mesa Tomas</option>
-                                    <option value="Mesa Nahuel">Mesa Nahuel</option>
-                                    <option value="Mesa Anabela">Mesa Anabela</option>
-                                    <option value="Mesa Augusto">Mesa Augusto</option>
-                                    <option value="Mesa PC">Mesa PC</option>
-                                    <option value="Verificacion">Verificacion</option>
-                                    <option value="Reparar">Reparar</option>
-                                    <option value="Esperando Rptos">Esperando Repuestos</option>
-                                    <option value="Presupuestado Central">Presupuestado Central</option>
-                                    <option value="Presupuestado San Martin">Presupuestado San Martin</option>
-                                    <option value="Presupuestado Chang Mas">Presupuestado Chang Mas</option>
-                                    <option value="Equipos Nuestros">Equipos Nuestros</option>
-                                    <option value="Equipos para Prestar">Equipos para Prestar</option>
-                                    <option value="Reparado">Presupuestado Central</option>
-                                    <option value="Derivar Chango Mas">Derivar Chango Mas</option>
-                                    <option value="Derivar San Martin">Derivar San Martin</option>
-                                    <option value="No Va">No Va</option>
-                                    <option value="No Va Tablet">No Va Tablet</option>
-                                    <option value="A Reparar PC">A Reparar PC</option>
-                                    <option value="Presupuestado PC">Presupuestado PC</option>
-                                    <option value="Esperando repuestos PC">Esperando repuestos PC</option>
-                                    <option value="Verificacion PC">Verificacion PC</option>
+                                    <option value="Sin Asignar" <?= $datos['orden_ubicacion_fisica'] == 'Sin Asignar' ? 'selected' : '' ?>>Sin asignar</option>
+                                    <option value="Mesa Luka" <?= $datos['orden_ubicacion_fisica'] == 'Mesa Luka' ? 'selected' : '' ?>>Mesa Luka</option>
+                                    <option value="Mesa Sebastian" <?= $datos['orden_ubicacion_fisica'] == 'Mesa Sebastian' ? 'selected' : '' ?>>Mesa Sebastian</option>
+                                    <option value="Mesa Tomas" <?= $datos['orden_ubicacion_fisica'] == 'Mesa Tomas' ? 'selected' : '' ?>>Mesa Tomas</option>
+                                    <option value="Mesa Nahuel" <?= $datos['orden_ubicacion_fisica'] == 'Mesa Nahuel' ? 'selected' : '' ?>>Mesa Nahuel</option>
+                                    <option value="Mesa Anabela" <?= $datos['orden_ubicacion_fisica'] == 'Mesa Anabela' ? 'selected' : '' ?>>Mesa Anabela</option>
+                                    <option value="Mesa Augusto" <?= $datos['orden_ubicacion_fisica'] == 'Mesa Augusto' ? 'selected' : '' ?>>Mesa Augusto</option>
+                                    <option value="Mesa PC" <?= $datos['orden_ubicacion_fisica'] == 'Mesa PC' ? 'selected' : '' ?>>Mesa PC</option>
+                                    <option value="Verificacion" <?= $datos['orden_ubicacion_fisica'] == 'Verificacion' ? 'selected' : '' ?>>Verificacion</option>
+                                    <option value="Reparar" <?= $datos['orden_ubicacion_fisica'] == 'Reparar' ? 'selected' : '' ?>>Reparar</option>
+                                    <option value="Esperando Rptos" <?= $datos['orden_ubicacion_fisica'] == 'Esperando Rptos' ? 'selected' : '' ?>>Esperando Repuestos</option>
+                                    <option value="Presupuestado Central" <?= $datos['orden_ubicacion_fisica'] == 'Presupuestado Central' ? 'selected' : '' ?>>Presupuestado Central</option>
+                                    <option value="Presupuestado San Martin" <?= $datos['orden_ubicacion_fisica'] == 'Presupuestado San Martin' ? 'selected' : '' ?>>Presupuestado San Martin</option>
+                                    <option value="Presupuestado Chang Mas" <?= $datos['orden_ubicacion_fisica'] == 'Presupuestado Chang Mas' ? 'selected' : '' ?>>Presupuestado Chang Mas</option>
+                                    <option value="Equipos Nuestros" <?= $datos['orden_ubicacion_fisica'] == 'Equipos Nuestros' ? 'selected' : '' ?>>Equipos Nuestros</option>
+                                    <option value="Equipos para Prestar" <?= $datos['orden_ubicacion_fisica'] == 'Equipos para Prestar' ? 'selected' : '' ?>>Equipos para Prestar</option>
+                                    <option value="Reparado" <?= $datos['orden_ubicacion_fisica'] == 'Reparado' ? 'selected' : '' ?>>Presupuestado Central</option>
+                                    <option value="Derivar Chango Mas" <?= $datos['orden_ubicacion_fisica'] == 'Derivar Chango Mas' ? 'selected' : '' ?>>Derivar Chango Mas</option>
+                                    <option value="Derivar San Martin" <?= $datos['orden_ubicacion_fisica'] == 'Derivar San Martin' ? 'selected' : '' ?>>Derivar San Martin</option>
+                                    <option value="No Va" <?= $datos['orden_ubicacion_fisica'] == 'No Va' ? 'selected' : '' ?>>No Va</option>
+                                    <option value="No Va Tablet" <?= $datos['orden_ubicacion_fisica'] == 'No Va Tablet' ? 'selected' : '' ?>>No Va Tablet</option>
+                                    <option value="A Reparar PC" <?= $datos['orden_ubicacion_fisica'] == 'A Reparar PC' ? 'selected' : '' ?>>A Reparar PC</option>
+                                    <option value="Presupuestado PC" <?= $datos['orden_ubicacion_fisica'] == 'Presupuestado PC' ? 'selected' : '' ?>>Presupuestado PC</option>
+                                    <option value="Esperando repuestos PC" <?= $datos['orden_ubicacion_fisica'] == 'Esperando repuestos PC' ? 'selected' : '' ?>>Esperando repuestos PC</option>
+                                    <option value="Verificacion PC" <?= $datos['orden_ubicacion_fisica'] == 'Verificacion PC' ? 'selected' : '' ?>>Verificacion PC</option>
                                 </select>
                             </div>
                         </div>
@@ -687,7 +687,7 @@
             <?php 
                 if($verificaciones['verificacion_vida'] == "" || $verificaciones['verificacion_vida'] == "finalizo"){
             ?>
-            <form class="FormularioAjax" action="<?php echo APP_URL; ?>app/ajax/OrdenAjax.php" method="POST" autocomplete="off" name="formsale">
+            <form class="FormularioAjax" action="<?php echo APP_URL; ?>app/ajax/ordenAjax.php" method="POST" autocomplete="off" name="formsale">
                 <input class="input" name="orden_codigo" type="hidden" readonly value="<?php echo $datos['orden_codigo'] ?>">
                 <input class="input" name="verificacion_responsable" type="hidden" readonly value="<?php echo $_SESSION['usuario_nombre'] ?>">
                 <input type="hidden" name="modulo_orden" value="iniciar_verificacion">
@@ -709,7 +709,7 @@
 
             </form>
             <?php }else{?>
-            <form class="FormularioAjax" action="<?php echo APP_URL; ?>app/ajax/OrdenAjax.php" method="POST" autocomplete="off" name="formsale">
+            <form class="FormularioAjax" action="<?php echo APP_URL; ?>app/ajax/ordenAjax.php" method="POST" autocomplete="off" name="formsale">
                 <input class="input" name="orden_codigo" type="hidden" readonly value="<?php echo $datos['orden_codigo'] ?>">
                 <input class="input" name="verificacion_responsable" type="hidden" readonly value="<?php echo $_SESSION['usuario_nombre'] ?>">
                 <input type="hidden" name="modulo_orden" value="finalizar_verificacion">

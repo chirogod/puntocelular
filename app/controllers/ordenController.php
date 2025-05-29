@@ -380,7 +380,7 @@
 				],
 				[
 					"campo_nombre"=>"orden_ubicacion_fisica",
-					"campo_marcador"=>":UbicDisica",
+					"campo_marcador"=>":UbicFisica",
 					"campo_valor"=>$orden_ubicacion_fisica
 				],
 				[
