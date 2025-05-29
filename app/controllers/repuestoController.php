@@ -170,7 +170,7 @@
                 INNER JOIN orden ON pedido_repuesto.id_orden = orden.id_orden
                 INNER JOIN seccion_repuesto ON pedido_repuesto.id_seccion_repuesto = seccion_repuesto.id_seccion_repuesto
                 INNER JOIN sucursal ON pedido_repuesto.id_sucursal = sucursal.id_sucursal
-                WHERE pedido_repuesto.pedido_estado != 'eliminado'
+                WHERE pedido_repuesto.pedido_estado != 'ingreso'
                 AND pedido_repuesto.id_sucursal = '".$_SESSION['id_sucursal']."'
                 ORDER BY pedido_repuesto.id_pedido_repuesto DESC")
             ;
@@ -236,7 +236,7 @@
 
                 foreach ($seccionRepuesto['pedidos'] as $pedido) {
                     $pedido_estado ="";
-                    if($pedido['estado'] == "ingreso"){
+                    if($pedido['estado'] == "pedido"){
                         $pedido_estado = "tachado";
                     }
                     echo '<tr class="'.$pedido_estado.'">';
@@ -249,7 +249,7 @@
                                 <input type="hidden" name="modulo_repuesto" value="ingreso_pedido">
                                 <input type="hidden" name="id_pedido_repuesto" value="'. $pedido['id'] .'">  
                                 <button type="submit" class="button is-success is-rounded is-small" title="Remover producto">
-                                    <p>Ingreso</p>
+                                    <p>Pedido</p>
                                 </button>
                             </form>
                           </td>';
@@ -257,8 +257,8 @@
                             <form class="FormularioAjax" action="'.APP_URL.'app/ajax/repuestoAjax.php" method="POST" autocomplete="off" enctype="multipart/form-data" >
                                 <input type="hidden" name="modulo_repuesto" value="eliminar_pedido">
                                 <input type="hidden" name="id_pedido_repuesto" value="'. $pedido['id'] .'">  
-                                <button type="submit" class="button is-danger is-rounded is-small" title="Remover producto">
-                                    <i class="fas fa-trash-restore fa-fw"></i>
+                                <button type="submit" class="button is-danger is-rounded is-small" title="Ya ingreso">
+                                    Ingreso<i class="fas fa-trash-restore fa-fw"></i>
                                 </button>
                             </form>
                            </td>';
@@ -283,7 +283,7 @@
                 [
                     "campo_nombre"=>"pedido_estado",
                     "campo_marcador"=>":Estado",
-                    "campo_valor"=>"ingreso"
+                    "campo_valor"=>"pedido"
                 ]
             ];
             $condicion=[
@@ -296,7 +296,7 @@
                 $alerta=[
                     "tipo"=>"recargar",
                     "titulo"=>"Operacion exitosa",
-                    "texto"=>"El repuesto se marco como ingresado.",
+                    "texto"=>"El repuesto se marco como pedido.",
                     "icono"=>"success"
                 ];
                 
@@ -313,14 +313,14 @@
             return json_encode($alerta);
         }
 
-        //se le elimina de la lista al pasar al estado 'eliminado'. No se elimina de la base de datos
+        //se le elimina de la lista al pasar al estado 'ingreso'. No se elimina de la base de datos
         public function eliminarPedidoControlador(){
             $id_pedido_repuesto = $_POST['id_pedido_repuesto'];
             $datos=[
                 [
                     "campo_nombre"=>"pedido_estado",
                     "campo_marcador"=>":Estado",
-                    "campo_valor"=>"eliminado"
+                    "campo_valor"=>"ingreso"
                 ]
             ];
             $condicion=[
@@ -333,7 +333,7 @@
                 $alerta=[
                     "tipo"=>"recargar",
                     "titulo"=>"Operacion exitosa",
-                    "texto"=>"El repuesto se elimino de la lista.",
+                    "texto"=>"El repuesto se elimino de la lista, se marco como que ingreso.",
                     "icono"=>"success"
                 ];
                 
@@ -341,7 +341,7 @@
                 $alerta=[
                     "tipo"=>"recargar",
                     "titulo"=>"Ocurrió un error inesperado",
-                    "texto"=>"No se pudo marcar el repuesto como eliminado",
+                    "texto"=>"No se pudo marcar el repuesto como ingresado",
                     "icono"=>"error"
                 ];
                 return json_encode($alerta);
@@ -441,9 +441,9 @@
                 foreach ($seccion['pedidos'] as $pedido) {
                     $pedido_estado = "";
     
-                    if ($pedido['estado'] === "ingreso") {
+                    if ($pedido['estado'] === "pedido") {
                         $pedido_estado = "tachado"; // Clase para tachar el texto
-                    } elseif ($pedido['estado'] === "eliminado") {
+                    } elseif ($pedido['estado'] === "ingreso") {
                         $pedido_estado = "eliminado"; // Clase para tachar y fondo rojo tenue
                     }
                     echo '<tr class="' . $pedido_estado . '">';

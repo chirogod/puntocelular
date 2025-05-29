@@ -62,7 +62,7 @@
         </div>        
 
         <?php
-        $estados = ['ingreso', 'espera', 'eliminado'];
+        $estados = ['pedido', 'espera', 'ingreso'];
         ?>
 
         <div class="column is-narrow">
