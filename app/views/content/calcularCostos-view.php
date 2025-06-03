@@ -93,18 +93,17 @@
                 <table class="table is-bordered is-fullwidth is-narrow has-text-centered is-size-6">
                     </thead>
                     <tbody>
-                        <tr>
-                            <td><a class="is-clickable"  target="_blank" href="https://docs.google.com/spreadsheets/d/1OnEQ-rxLO9OG5HOeZrrq6NjfWxt67PVKBojKVqPen2A/edit#gid=1597786750">TANETE</a></td>
-                        </tr>
-                        <tr>
-                            <td><a target="_blank" href="https://docs.google.com/spreadsheets/d/1kkeR2En-TAFazcPBlKXA6zXmAjfuUVCqvzSobazKZnM/edit#gid=805420923">JV</a></td>
-                        </tr>
-                        <tr>
-                            <td><a target="_blank" href="https://docs.google.com/spreadsheets/d/1u2r_noapAWubYyhA0e8UsJZec05kkY94ZHMs5_wL8CM/edit?pli=1#gid=0">MD</a></td>
-                        </tr>
-                        <tr>
-                        <td><a target="_blank" href="https://docs.google.com/spreadsheets/d/1UqA3Ly6AJR7hTTl1pmRul0hz7fS_IOd7/edit?gid=1266385039#gid=1266385039">MASTERCELL</a></td>
-                        </tr>
+                        <?php
+                            $datos_distribuidor = $insLogin->seleccionarDatosEspecificos("distribuidor", "distribuidor_mostrar", "SI");
+                            while ($campos_distribuidor = $datos_distribuidor->fetch()) {
+                                echo "
+                                    <tr>
+                                        <td><a class='is-clickable' target='_blank' href='{$campos_distribuidor['distribuidor_link']}'>{$campos_distribuidor['distribuidor_descripcion']}</a></td>
+                                    </tr>
+                                ";
+                            }
+                        ?>
+                        
                     </tbody>
                 </table>
                 <button type="button" class="button is-link is-light js-modal-trigger has-text-centered" data-target="modal-js-info" >
@@ -113,6 +112,8 @@
             </div>
         </div>
     </div>
+
+    
 
     <div class="box">
         <h2 class="subtitle is-5">Precios</h2>

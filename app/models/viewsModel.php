@@ -53,7 +53,9 @@
                 "controlEquipos",
                 "pedidoRepuestoList",
                 "pedidoEquipoNew",
-                "pedidoEquipoList"
+                "pedidoEquipoList",
+                "distribuidorNew",
+                "distribuidorDetail",
             ];
             //si la $vista esta en el array de las vistas que existe
             if (in_array($vista,$listaBlanca)){

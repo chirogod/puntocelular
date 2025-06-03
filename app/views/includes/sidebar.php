@@ -457,6 +457,16 @@
 								</div>
 							</a>
 						</li>
+						<li class="full-width">
+							<a href="<?php echo APP_URL; ?>distribuidorNew/" class="full-width">
+								<div class="navLateral-body-cl">
+									<i class="fas fa-male fa-fw"></i>
+								</div>
+								<div class="navLateral-body-cr">
+									Distribuidores
+								</div>
+							</a>
+						</li>
 						<?php } ?>
 					</ul>
 				</li>
