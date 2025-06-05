@@ -243,6 +243,9 @@
 		        exit();
 			}
 
+			
+			$orden_equipo_patron = $_POST['orden_equipo_patron'];
+
 			$orden_falla = $_POST['orden_falla'];
 			if($orden_falla == ""){
 				$alerta=[
@@ -351,6 +354,11 @@
 					"campo_nombre"=>"orden_equipo_contrasena",
 					"campo_marcador"=>":Contrasena",
 					"campo_valor"=>$orden_equipo_contrasena
+				],
+				[
+					"campo_nombre"=>"orden_equipo_patron",
+					"campo_marcador"=>":Patron",
+					"campo_valor"=>$orden_equipo_patron
 				],
 				[
 					"campo_nombre"=>"orden_falla",

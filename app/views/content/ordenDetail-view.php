@@ -175,6 +175,12 @@
                             <input class="has-text-bold input is-small" type="text" name="orden_equipo_contrasena" value="<?php echo $datos['orden_equipo_contrasena']; ?>">
                         </div>
                     </div>
+
+                    <div class="control">
+                        <a class="button is-info js-modal-trigger" data-target="modal-js-patron" title="patron" >
+                            PATRON
+                        </a>
+                    </div>
                 </div>
 
                 <!-- Columna central: Accesorios -->
@@ -1210,6 +1216,38 @@
     </div>
 </div>
 
+<!-- Modal patron -->
+<div class="modal" id="modal-js-patron">
+    <div class="modal-background"></div>
+    <div class="modal-card">
+        <header class="modal-card-head">
+            <p class="modal-card-title is-uppercase"><i class="fas fa-search"></i> &nbsp; Pagos de la orden: </p>
+            <button class="delete" aria-label="close"></button>
+        </header>
+        <section class="modal-card-body">
+            <svg class="patternlock" id="lock" viewBox="0 0 300 100" xmlns="http://www.w3.org/2000/svg">
+                <g class="lock-actives"></g>
+                <g class="lock-lines"></g>
+                <g class="lock-dots">
+                <circle cx="20" cy="20" r="2" />
+                <circle cx="50" cy="20" r="2" />
+                <circle cx="80" cy="20" r="2" />
+                <circle cx="20" cy="50" r="2" />
+                <circle cx="50" cy="50" r="2" />
+                <circle cx="80" cy="50" r="2" />
+                <circle cx="20" cy="80" r="2" />
+                <circle cx="50" cy="80" r="2" />
+                <circle cx="80" cy="80" r="2" />
+                </g>
+            </svg>
+            <div>
+                <h3>SECUENCIA PATRON: <strong> <?php echo $datos['orden_equipo_patron']; ?></strong></h3>
+                <input type="hidden" value="<?php echo $datos['orden_equipo_patron']; ?>" class="input is-small" id="patronGuardado" readonly>
+            </div>
+        </section>
+    </div>
+</div>
+
 
 
 <?php
@@ -1217,6 +1255,82 @@
 ?>
 
 <script>
+
+    const patronGuardado = document.getElementById('patronGuardado').value;
+    $(function () {
+        var lock = new PatternLock("#lock", {
+        onPattern: function (result) {
+            // No debería poder usarse si está desactivado
+            this.error();
+        },
+        allowRepeat: false,
+        hideLine: false,
+        checkMin: true,
+        checkMax: true,
+        min: 2,
+        max: 9
+        });
+
+        reproducirPatron(lock, patronGuardado, 1000);
+
+        // Desactivar entrada del usuario
+        $('#lock').off('mousedown touchstart').css('pointer-events', 'none');
+    });
+
+    function reproducirPatron(lock, patternString, delay = 1000) {
+        const pattern = patternString.split('').map(n => parseInt(n));
+        const $dots = $('#lock .lock-dots circle');
+        const $linesGroup = $('#lock .lock-lines');
+        const $activesGroup = $('#lock .lock-actives');
+
+        lock.clear(); // limpiar visualmente
+        $linesGroup.empty();
+        $activesGroup.empty();
+
+        let prevCoords = null;
+        let i = 0;
+
+        const interval = setInterval(() => {
+        if (i < pattern.length) {
+            const index = pattern[i] - 1;
+            const $dot = $dots.eq(index);
+
+            // Activar el punto
+            const cx = parseFloat($dot.attr('cx'));
+            const cy = parseFloat($dot.attr('cy'));
+
+            // Dibuja línea desde el anterior
+            if (prevCoords) {
+            const line = document.createElementNS("http://www.w3.org/2000/svg", "line");
+            $(line).attr({
+                x1: prevCoords.cx,
+                y1: prevCoords.cy,
+                x2: cx,
+                y2: cy,
+                stroke: "green",
+                "stroke-width": 1.5
+            });
+            $linesGroup.append(line);
+            }
+
+            // Activar el punto visual
+            const circle = document.createElementNS("http://www.w3.org/2000/svg", "circle");
+            $(circle).attr({
+            cx: cx,
+            cy: cy,
+            r: 4,
+            fill: "green"
+            });
+            $activesGroup.append(circle);
+
+            prevCoords = { cx, cy };
+            i++;
+        } else {
+            clearInterval(interval);
+            lock.success(); // opcional: marcar como válido visualmente
+        }
+        }, delay);
+    }
 
     document.addEventListener('DOMContentLoaded', function () {
         const btnSaldar = document.getElementById('btnSaldar');

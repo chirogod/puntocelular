@@ -10,5 +10,11 @@
     <link rel="stylesheet" href="<?php echo APP_URL ?>app/views/css/sweetalert2.css">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
 
+    <link rel="stylesheet" href="<?php echo APP_URL ?>app/views/pattern/node_modules/@garyliao/pattern-lock-js-advanced/dist/patternlock.min.css" />
+
+    <script src="<?php echo APP_URL ?>app/views/pattern/node_modules/jquery/dist/jquery.js" charset="utf-8"></script>
+
+    <script src="<?php echo APP_URL ?>app/views/pattern/node_modules/@garyliao/pattern-lock-js-advanced/dist/patternlock.min.js" charset="utf-8"></script>
+
     <script src="<?php echo APP_URL ?>app/views/js/sweetalert2.all.js"></script>
 </head>

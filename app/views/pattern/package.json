@@ -1,0 +1,5 @@
+{
+  "dependencies": {
+    "@garyliao/pattern-lock-js-advanced": "^1.0.1"
+  }
+}

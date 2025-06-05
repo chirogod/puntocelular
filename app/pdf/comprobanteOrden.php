@@ -41,7 +41,16 @@
 		$pdf->SetFont('Arial','',10);
 		$pdf->Ln(9);
 		$pdf->Image('../views/img/logo.png', 16, 2, 48);
-        $pdf->Image('../views/img/patron2.png', $pageWidth/2, 2, 32);
+        // Patrón obtenido desde la base de datos (ejemplo)
+		if(!empty($datos_orden['orden_equipo_patron']) && $datos_orden['orden_equipo_patron'] != '0'){
+			$patron = $datos_orden['orden_equipo_patron'];
+			// Convertir "12345" a "1-2-3-4-5"
+			$patron_con_guiones = implode('-', str_split($patron));
+			$pdf->dibujarPatron($patron_con_guiones);
+			$pdf->Text($pageWidth / 2 - 10, 33, "Secuencia: ".$patron_con_guiones);
+		}
+		$pdf->SetDrawColor(0, 0, 0);
+		$pdf->SetLineWidth(0.5);
 		$pdf->SetFont('Arial','B',10);
 		$pdf->Cell(150,9,"Reparaciones - Ventas - Accesorios" ,0,0,'L');
 		$pdf->Ln(5);

@@ -4,9 +4,10 @@
 
 <div class="container pb-6 pt-1 is-max-desktop">
 
-	<form class="FormularioAjax" action="<?php echo APP_URL; ?>app/ajax/ordenAjax.php" method="POST" autocomplete="off" >
+	<form class="" action="<?php echo APP_URL; ?>app/ajax/ordenAjax.php" method="POST" autocomplete="off" >
 
 		<input type="hidden" name="modulo_orden" value="registrar_orden">
+        <input type="hidden" value="0" id="orden_equipo_patron" name="orden_equipo_patron">
 		<div class="box">
             <h3 class="subtitle">Datos de la orden</h3>
             <div class="columns">
@@ -147,6 +148,12 @@
                     <div class="control">
                         <label>Contrasena<?php echo CAMPO_OBLIGATORIO; ?></label>
                         <input class="input" type="text" name="orden_equipo_contrasena" required>
+                    </div>
+
+                    <div class="control">
+                        <a class="button is-info js-modal-trigger" data-target="modal-js-patron" title="Agregar patron" >
+                            PATRON
+                        </a>
                     </div>
 
                     <div class="control">
@@ -350,6 +357,34 @@
             </div>
         </section>
         
+    </div>
+</div>
+
+<!-- Modal agregar patron -->
+<div class="modal" id="modal-js-patron">
+    <div class="modal-background"></div>
+    <div class="modal-card">
+        <header class="modal-card-head">
+            <p class="modal-card-title is-uppercase"><i class="fas fa-search"></i> &nbsp; Pagos de la orden: </p>
+            <button class="delete" aria-label="close"></button>
+        </header>
+        <section class="modal-card-body">
+            <svg class="patternlock" id="lock" viewBox="0 0 300 100" xmlns="http://www.w3.org/2000/svg">
+                <g class="lock-actives"></g>
+                <g class="lock-lines"></g>
+                <g class="lock-dots">
+                <circle cx="20" cy="20" r="2" />
+                <circle cx="50" cy="20" r="2" />
+                <circle cx="80" cy="20" r="2" />
+                <circle cx="20" cy="50" r="2" />
+                <circle cx="50" cy="50" r="2" />
+                <circle cx="80" cy="50" r="2" />
+                <circle cx="20" cy="80" r="2" />
+                <circle cx="50" cy="80" r="2" />
+                <circle cx="80" cy="80" r="2" />
+                </g>
+            </svg>
+        </section>
     </div>
 </div>
 
@@ -698,4 +733,32 @@
             }
         }
     }
+
+    $(function() {
+      var lock = new PatternLock("#lock", {
+        onPattern: function(result) {
+          console.log("rspCode:", result.rspCode);
+          if (result.rspCode === "0000") {
+            console.log("Patrón correcto:", result.pattern);
+            document.getElementById("orden_equipo_patron").value = result.pattern;
+            this.success();
+          } else if (result.rspCode === "1001") {
+            console.log("Demasiado corto, mínimo 2 puntos.");
+            this.error();
+          } else if (result.rspCode === "1002") {
+            console.log("Demasiado largo, máximo 9 puntos.");
+            this.error();
+          } else {
+            this.error();
+          }
+        },
+        allowRepeat: false,
+        hideLine: false,
+        checkMin: true,
+        checkMax: true,
+        min: 2,
+        max: 9
+      });
+    });
+  </script>
 </script>

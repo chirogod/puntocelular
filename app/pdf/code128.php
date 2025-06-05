@@ -12,18 +12,18 @@
 * 1.0       2008-05-20  First release
 *
 * Code128($x, $y, $code, $w, $h)
-*     $x,$y :     angle supérieur gauche du code à barre
+*     $x,$y :     angle supï¿½rieur gauche du code ï¿½ barre
 *                 upper left corner of the barcode
-*     $code :     le code à créer
+*     $code :     le code ï¿½ crï¿½er
 *                 ascii text to convert to barcode
-*     $w :        largeur hors tout du code dans l'unité courante
-*                 (prévoir 5 à 15 mm de blanc à droite et à gauche)
+*     $w :        largeur hors tout du code dans l'unitï¿½ courante
+*                 (prï¿½voir 5 ï¿½ 15 mm de blanc ï¿½ droite et ï¿½ gauche)
 *                 barcode total width (current unit)
 *                 (keep 5 to 15 mm white on left and right sides)
-*     $h :        hauteur hors tout du code dans l'unité courante
+*     $h :        hauteur hors tout du code dans l'unitï¿½ courante
 *                 barcode total height (current unit)
 *
-* Commutation des jeux ABC automatique et optimisée
+* Commutation des jeux ABC automatique et optimisï¿½e
 * Automatic and optimized A/B/C sets selection and switching
 *
 *
@@ -44,21 +44,21 @@ require('fpdf.php');
 class PDF_Code128 extends FPDF {
 
 protected $T128;                                         // Tableau des codes 128
-protected $ABCset = "";                                  // jeu des caractères éligibles au C128
-protected $Aset = "";                                    // Set A du jeu des caractères éligibles
-protected $Bset = "";                                    // Set B du jeu des caractères éligibles
-protected $Cset = "";                                    // Set C du jeu des caractères éligibles
+protected $ABCset = "";                                  // jeu des caractï¿½res ï¿½ligibles au C128
+protected $Aset = "";                                    // Set A du jeu des caractï¿½res ï¿½ligibles
+protected $Bset = "";                                    // Set B du jeu des caractï¿½res ï¿½ligibles
+protected $Cset = "";                                    // Set C du jeu des caractï¿½res ï¿½ligibles
 protected $SetFrom;                                      // Convertisseur source des jeux vers le tableau
 protected $SetTo;                                        // Convertisseur destination des jeux vers le tableau
-protected $JStart = array("A"=>103, "B"=>104, "C"=>105); // Caractères de sélection de jeu au début du C128
-protected $JSwap = array("A"=>101, "B"=>100, "C"=>99);   // Caractères de changement de jeu
+protected $JStart = array("A"=>103, "B"=>104, "C"=>105); // Caractï¿½res de sï¿½lection de jeu au dï¿½but du C128
+protected $JSwap = array("A"=>101, "B"=>100, "C"=>99);   // Caractï¿½res de changement de jeu
 
 //____________________________ Extension du constructeur _______________________
 function __construct($orientation='P', $unit='mm', $format='A4') {
 
 	parent::__construct($orientation,$unit,$format);
 
-	$this->T128[] = array(2, 1, 2, 2, 2, 2);           //0 : [ ]               // composition des caractères
+	$this->T128[] = array(2, 1, 2, 2, 2, 2);           //0 : [ ]               // composition des caractï¿½res
 	$this->T128[] = array(2, 2, 2, 1, 2, 2);           //1 : [!]
 	$this->T128[] = array(2, 2, 2, 2, 2, 1);           //2 : ["]
 	$this->T128[] = array(1, 2, 1, 2, 2, 3);           //3 : [#]
@@ -167,7 +167,7 @@ function __construct($orientation='P', $unit='mm', $format='A4') {
 	$this->T128[] = array(2, 3, 3, 1, 1, 1);           //106 : [STOP]
 	$this->T128[] = array(2, 1);                       //107 : [END BAR]
 
-	for ($i = 32; $i <= 95; $i++) {                                            // jeux de caractères
+	for ($i = 32; $i <= 95; $i++) {                                            // jeux de caractï¿½res
 		$this->ABCset .= chr($i);
 	}
 	$this->Aset = $this->ABCset;
@@ -194,7 +194,7 @@ function __construct($orientation='P', $unit='mm', $format='A4') {
 		@$this->SetTo["A"] .= chr(($i < 32) ? $i+64 : $i-32);
 		@$this->SetTo["B"] .= chr($i);
 	}
-	for ($i=96; $i<107; $i++) {                                                 // contrôle des jeux A & B
+	for ($i=96; $i<107; $i++) {                                                 // contrï¿½le des jeux A & B
 		@$this->SetFrom["A"] .= chr($i + 104);
 		@$this->SetFrom["B"] .= chr($i + 104);
 		@$this->SetTo["A"] .= chr($i);
@@ -204,7 +204,7 @@ function __construct($orientation='P', $unit='mm', $format='A4') {
 
 //________________ Fonction encodage et dessin du code 128 _____________________
 function Code128($x, $y, $code, $w, $h) {
-	$Aguid = "";                                                                      // Création des guides de choix ABC
+	$Aguid = "";                                                                      // Crï¿½ation des guides de choix ABC
 	$Bguid = "";
 	$Cguid = "";
 	for ($i=0; $i < strlen($code); $i++) {
@@ -220,15 +220,15 @@ function Code128($x, $y, $code, $w, $h) {
 	$crypt = "";
 	while ($code > "") {
                                                                                     // BOUCLE PRINCIPALE DE CODAGE
-		$i = strpos($Cguid,$SminiC);                                                // forçage du jeu C, si possible
+		$i = strpos($Cguid,$SminiC);                                                // forï¿½age du jeu C, si possible
 		if ($i!==false) {
 			$Aguid [$i] = "N";
 			$Bguid [$i] = "N";
 		}
 
 		if (substr($Cguid,0,$IminiC) == $SminiC) {                                  // jeu C
-			$crypt .= chr(($crypt > "") ? $this->JSwap["C"] : $this->JStart["C"]);  // début Cstart, sinon Cswap
-			$made = strpos($Cguid,"N");                                             // étendu du set C
+			$crypt .= chr(($crypt > "") ? $this->JSwap["C"] : $this->JStart["C"]);  // dï¿½but Cstart, sinon Cswap
+			$made = strpos($Cguid,"N");                                             // ï¿½tendu du set C
 			if ($made === false) {
 				$made = strlen($Cguid);
 			}
@@ -240,35 +240,35 @@ function Code128($x, $y, $code, $w, $h) {
 			}
 			$jeu = "C";
 		} else {
-			$madeA = strpos($Aguid,"N");                                            // étendu du set A
+			$madeA = strpos($Aguid,"N");                                            // ï¿½tendu du set A
 			if ($madeA === false) {
 				$madeA = strlen($Aguid);
 			}
-			$madeB = strpos($Bguid,"N");                                            // étendu du set B
+			$madeB = strpos($Bguid,"N");                                            // ï¿½tendu du set B
 			if ($madeB === false) {
 				$madeB = strlen($Bguid);
 			}
-			$made = (($madeA < $madeB) ? $madeB : $madeA );                         // étendu traitée
+			$made = (($madeA < $madeB) ? $madeB : $madeA );                         // ï¿½tendu traitï¿½e
 			$jeu = (($madeA < $madeB) ? "B" : "A" );                                // Jeu en cours
 
-			$crypt .= chr(($crypt > "") ? $this->JSwap[$jeu] : $this->JStart[$jeu]); // début start, sinon swap
+			$crypt .= chr(($crypt > "") ? $this->JSwap[$jeu] : $this->JStart[$jeu]); // dï¿½but start, sinon swap
 
 			$crypt .= strtr(substr($code, 0,$made), $this->SetFrom[$jeu], $this->SetTo[$jeu]); // conversion selon jeu
 
 		}
-		$code = substr($code,$made);                                           // raccourcir légende et guides de la zone traitée
+		$code = substr($code,$made);                                           // raccourcir lï¿½gende et guides de la zone traitï¿½e
 		$Aguid = substr($Aguid,$made);
 		$Bguid = substr($Bguid,$made);
 		$Cguid = substr($Cguid,$made);
 	}                                                                          // FIN BOUCLE PRINCIPALE
 
-	$check = ord($crypt[0]);                                                   // calcul de la somme de contrôle
+	$check = ord($crypt[0]);                                                   // calcul de la somme de contrï¿½le
 	for ($i=0; $i<strlen($crypt); $i++) {
 		$check += (ord($crypt[$i]) * $i);
 	}
 	$check %= 103;
 
-	$crypt .= chr($check) . chr(106) . chr(107);                               // Chaine cryptée complète
+	$crypt .= chr($check) . chr(106) . chr(107);                               // Chaine cryptï¿½e complï¿½te
 
 	$i = (strlen($crypt) * 11) - 8;                                            // calcul de la largeur du module
 	$modul = $w/$i;
@@ -281,5 +281,80 @@ function Code128($x, $y, $code, $w, $h) {
 		}
 	}
 }
+
+// MÃ©todo para dibujar un cÃ­rculo, no viene en FPDF por defecto
+    function Circle($x, $y, $r)
+    {
+        $this->Ellipse($x, $y, $r, $r);
+    }
+
+    // MÃ©todo para dibujar una elipse (adaptado de implementaciones comunes)
+    function Ellipse($x, $y, $rx, $ry)
+    {
+        $lx = 4 / 3 * (sqrt(2) - 1) * $rx;
+        $ly = 4 / 3 * (sqrt(2) - 1) * $ry;
+
+        $k = $this->k;
+        $h = $this->h;
+
+        $this->_out(sprintf('%.2F %.2F m', ($x + $rx) * $k, ($h - $y) * $k));
+        $this->_CurveTo(($x + $rx), ($y - $ly), ($x + $lx), ($y - $ry), $x, ($y - $ry), $k, $h);
+        $this->_CurveTo(($x - $lx), ($y - $ry), ($x - $rx), ($y - $ly), ($x - $rx), $y, $k, $h);
+        $this->_CurveTo(($x - $rx), ($y + $ly), ($x - $lx), ($y + $ry), $x, ($y + $ry), $k, $h);
+        $this->_CurveTo(($x + $lx), ($y + $ry), ($x + $rx), ($y + $ly), ($x + $rx), $y, $k, $h);
+        $this->_out('s');
+    }
+
+    // FunciÃ³n auxiliar para dibujar curvas BÃ©zier
+    function _CurveTo($x1, $y1, $x2, $y2, $x3, $y3, $k, $h)
+    {
+        $this->_out(sprintf('%.2F %.2F %.2F %.2F %.2F %.2F c', $x1 * $k, ($h - $y1) * $k,
+            $x2 * $k, ($h - $y2) * $k, $x3 * $k, ($h - $y3) * $k));
+    }
+
+    // MÃ©todo para dibujar el patrÃ³n celular (grilla 3x3 y lÃ­neas segÃºn patrÃ³n)
+    function dibujarPatron($patron)
+    {
+        $radio = 3; // Radio del cÃ­rculo
+        $espacio = 8; // Espacio entre puntos
+        $inicioX = 110; // PosiciÃ³n X donde empieza la grilla
+        $inicioY = 10; // PosiciÃ³n Y donde empieza la grilla
+
+        // Generar las coordenadas de los 9 puntos (1 a 9)
+        $puntos = [];
+        $n = 1;
+        for ($fila = 0; $fila < 3; $fila++) {
+            for ($col = 0; $col < 3; $col++) {
+                $x = $inicioX + $col * $espacio;
+                $y = $inicioY + $fila * $espacio;
+                $puntos[$n] = ['x' => $x, 'y' => $y];
+
+                // Dibujar cÃ­rculo vacÃ­o (punto)
+                $this->SetDrawColor(0, 0, 0);
+                $this->Circle($x, $y, $radio);
+                $n++;
+            }
+        }
+
+        // Dibujar lÃ­neas entre puntos segÃºn el patrÃ³n
+        $secuencia = explode('-', $patron);
+        $this->SetDrawColor(0, 0, 0); // Color rojo para las lÃ­neas
+        $this->SetLineWidth(0.6);
+
+        for ($i = 0; $i < count($secuencia) - 1; $i++) {
+            $p1 = $puntos[intval($secuencia[$i])];
+            $p2 = $puntos[intval($secuencia[$i + 1])];
+            $this->Line($p1['x'], $p1['y'], $p2['x'], $p2['y']);
+        }
+
+        // Opcional: marcar los puntos del patrÃ³n con relleno
+        $this->SetFillColor(255, 0, 0);
+        foreach ($secuencia as $pos) {
+            $p = $puntos[intval($pos)];
+            $this->Circle($p['x'], $p['y'], $radio - 1);
+            $this->SetFillColor(255, 0, 0);
+            $this->Ellipse($p['x'], $p['y'], $radio - 1, $radio - 1);
+        }
+    }
 }                                                                              // FIN DE CLASSE
 ?>
