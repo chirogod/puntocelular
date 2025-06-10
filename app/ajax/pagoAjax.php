@@ -16,6 +16,11 @@
 		}
 
 		/*--------- Registrar pago ---------*/
+		if ($_POST['modulo_pago'] == "registrar_pago_mixto_venta") {
+			echo $insPago->registrarPagoMixtoVentaControlador();	
+		}
+
+		/*--------- Registrar pago ---------*/
 		if ($_POST['modulo_pago'] == "registrar_pago_venta_equipo") {
 			echo $insPago->registrarPagoVentaEquipoControlador();	
 		}

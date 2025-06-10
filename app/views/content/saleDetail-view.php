@@ -15,7 +15,7 @@
 		if($datos->rowCount()==1){
 			$datos_venta=$datos->fetch();
 	?>
-	<h2 class="title has-text-centered ">Datos de la venta <?php echo " (".$code.")"; ?></h2>
+	<h2 class="title has-text-centered ">Datos de la venta</h2>
 	<div class="columns pb-1 pt-2">
 		<div class="column">
 
@@ -163,6 +163,13 @@
 			?>
 		</p>
 		<p class="has-text-centered full-width">
+			<?php
+			echo '<button type="button" class="button is-link is-light is-medium" onclick="print_invoice(\''.APP_URL.'app/pdf/ticketeraVenta.php?code='.$datos_venta['venta_codigo'].'\')" title="Imprimir comprobante Nro. '.$datos_venta['id_venta'].'" >
+			<i class="fas fa-file-invoice-dollar fa-fw"></i> &nbsp; Ticket de venta
+			</button> &nbsp;&nbsp;'
+			?>
+		</p>
+		<p class="has-text-centered full-width">
 			<form class="FormularioAjax" action="<?php echo APP_URL; ?>app/ajax/ventaAjax.php" method="POST" autocomplete="off" name="formsale">
 				<input type="hidden" name="modulo_venta" value="eliminar_venta">
 				<input type="hidden" name="venta_codigo" value="<?php echo $datos_venta['venta_codigo']; ?>">
@@ -187,28 +194,19 @@
 	?>
 </div>
 
-<!-- Modal registrar pago -->
+<!-- Modal registrar pago 
 <div class="modal" id="modal-js-pay">
     <div class="modal-background"></div>
     <div class="modal-card">
         <header class="modal-card-head">
-            <p class="modal-card-title is-uppercase"><i class="fas fa-search"></i> &nbsp; Pagos de la venta: </p>
+            <p class="modal-card-title is-uppercase"><i class="fas fa-search"></i> &nbsp; Registrar pago: </p>
             <button class="delete" aria-label="close"></button>
         </header>
         <section class="modal-card-body">
             <form class="FormularioAjax" action="<?php echo APP_URL; ?>app/ajax/pagoAjax.php" method="POST" autocomplete="off" name="formsale">
                 <input type="hidden" name="modulo_pago" value="registrar_pago_venta">
-                <input type="hidden" name="venta_codigo" id="venta_codigo">
-                <div class="columns">
-                    <div class="column">
-                        <label for="" class="label">Venta código: </label>
-                        <input readonly name="venta_codigo" class="input" type="text" value="<?php echo $datos_venta['venta_codigo']; ?>">
-                    </div>
-                    <div class="column">
-                        <label for="" class="label">Fecha: </label>
-                        <input name="venta_pago_fecha" class="input" type="date" value="<?php echo date("Y-m-d"); ?>">
-                    </div>
-                </div>
+                <input type="hidden" name="venta_codigo" id="venta_codigo" value="<?php echo $datos_venta['venta_codigo']; ?>">
+
                 <div class="columns">
                     <div class="column">
                         <label for="" class="label">Forma de pago: </label>
@@ -255,6 +253,81 @@
                 <p class="has-text-centered">
 					<button type="submit" class="button is-link is-light" id="btnEnviar">Registrar pago</button>
 					<button type="button" class="button is-link is-light" id="btnSaldar">Saldar total</button>
+					<button type="button" class="button is-link is-success js-modal-trigger" data-target="modal-js-mixPay" >Registrar pago mixto</button>
+				</p>
+            </form>
+        </section>
+    </div>
+</div>
+-->
+
+<!-- Modal registrar pago simple o mixto-->
+<div class="modal" id="modal-js-pay">
+    <div class="modal-background"></div>
+    <div class="modal-card">
+        <header class="modal-card-head">
+            <p class="modal-card-title is-uppercase"><i class="fas fa-search"></i> &nbsp; Registrar pago mixto: </p>
+            <button class="delete" aria-label="close"></button>
+        </header>
+        <section class="modal-card-body">
+            <form class="FormularioAjax" action="<?php echo APP_URL; ?>app/ajax/pagoAjax.php" method="POST" autocomplete="off" name="formsale">
+                <input type="hidden" name="modulo_pago" value="registrar_pago_mixto_venta">
+                <input type="hidden" name="venta_codigo" id="venta_codigo" value="<?php echo $datos_venta['venta_codigo']; ?>">
+                
+				
+				<div id="contenedorPagos">
+					<div class="columns pago-item">
+						<div class="columns">
+							<div class="column">
+								<label for="" class="label">Forma de pago: </label>
+								<div class="select">
+									<select required name="venta_pago_forma[]">
+										<option value="" selected="" >Seleccione una opción</option>
+										<?php
+											echo $insLogin->generarSelect(FORMAS_PAGO,"VACIO");
+										?>
+									</select>
+								</div>
+							</div>
+							<div class="column">
+								<label for="" class="label">Importe: </label>
+								<input class="input" type="number" name="venta_pago_importe[]" id="venta_pago_importe">
+							</div>
+							<div class="column">
+								<label for="" class="label">Detalle: </label>
+								<input class="input" type="text" name="venta_pago_detalle[]">
+							</div>
+						</div>
+					</div>
+				</div>
+				<button type="button" class="button is-small is-info mt-5 mb-5" id="btnAgregarPago">
+					<i class="fas fa-plus"></i> Agregar otro pago
+				</button>
+                <div class="columns">
+                    <div class="column">Total de la venta: <?php echo MONEDA_SIMBOLO.number_format($datos_venta['venta_importe'], MONEDA_DECIMALES, MONEDA_SEPARADOR_DECIMAL, MONEDA_SEPARADOR_MILLAR); ?></div>
+                    <div class="column">
+                        <?php
+                        $suma_pagos = $insLogin->seleccionarDatos("Normal", "pago_venta WHERE venta_codigo = '".$datos_venta['venta_codigo']."'", "SUM(venta_pago_importe) as suma_pagos", 0);
+                        if ($suma_pagos->rowCount() >= 1) {
+                            $suma_pagos = $suma_pagos->fetch();
+                            $suma_pagos_value = $suma_pagos['suma_pagos'] !== NULL ? $suma_pagos['suma_pagos'] : 0;
+                        } else {
+                            $suma_pagos_value = 0;
+                        }
+                        echo "Suma de sus pagos: ".MONEDA_SIMBOLO.number_format($suma_pagos_value, MONEDA_DECIMALES, MONEDA_SEPARADOR_DECIMAL, MONEDA_SEPARADOR_MILLAR)." ".MONEDA_NOMBRE;
+                        ?>
+                    </div>
+                    <div class="column">
+                        <?php
+                        $saldo = $datos_venta['venta_importe'] - $suma_pagos_value;
+                        echo "Saldo: ".MONEDA_SIMBOLO.number_format($saldo, MONEDA_DECIMALES, MONEDA_SEPARADOR_DECIMAL, MONEDA_SEPARADOR_MILLAR)." ".MONEDA_NOMBRE;
+                        ?>
+                        <input type="hidden" name="saldo" value="<?php echo $saldo; ?>">
+                    </div>
+                </div>
+                <p class="has-text-centered">
+					<button type="submit" class="button is-link is-light" id="btnEnviar">Registrar pago</button>
+					<button type="button" class="button is-link is-light" id="btnSaldar">Saldar total</button>
 				</p>
             </form>
         </section>
@@ -273,5 +346,23 @@
 
 	// Simular clic en el botón "Registrar pago" (submit)
 	document.getElementById('btnEnviar').click();
+	});
+
+
+
+	//mas pagos
+	document.addEventListener("DOMContentLoaded", () => {
+		const btnAgregar = document.getElementById("btnAgregarPago");
+		const contenedor = document.getElementById("contenedorPagos");
+
+		btnAgregar.addEventListener("click", () => {
+			const original = contenedor.querySelector(".pago-item");
+			const clon = original.cloneNode(true);
+
+			// Limpiar los valores del clon
+			clon.querySelectorAll("input, select").forEach(el => el.value = "");
+
+			contenedor.appendChild(clon);
+		});
 	});
 </script>

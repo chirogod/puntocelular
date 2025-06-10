@@ -13,6 +13,20 @@
         <!-- Filtros -->
         <div class="column is-narrow">
             <div class="field">
+                <label class="label">Sucursal:</label>
+                <div class="control">
+                    <div class="select is-small">
+                        <select id="filter_sucursal">
+							<option value="1">Central</option>
+                            <option value="2">San Martin</option>
+							<option value="3">Chango Mas</option>
+						</select>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="column is-narrow">
+            <div class="field">
                 <label class="label">Lista:</label>
                 <div class="control">
                     <div class="select is-small">
@@ -72,17 +86,20 @@
     const filterEstado = document.querySelector('#filter_estado');
     const filterModulo = document.querySelector('#filter_modulo');
     const filterPrecio = document.querySelector('#filter_precio');
+    const filterSucursal = document.querySelector('#filter_sucursal');
 
     const buscarCodigo = () => {
         let estado = filterEstado.value;
         let modulo = filterModulo.value;
         let precio = filterPrecio.value;
+        let sucursal = filterSucursal.value;
 
         let datos = new FormData();
         datos.append("modulo_equipo", "buscar_equipo");
         datos.append("estado", estado);
         datos.append("modulo", modulo);
         datos.append("precio", precio);
+        datos.append("sucursal", sucursal);
 
         fetch('<?php echo APP_URL; ?>app/ajax/equipoAjax.php', {
             method: 'POST',
@@ -99,6 +116,7 @@
     filterEstado.addEventListener('change', buscarCodigo);
     filterModulo.addEventListener('change', buscarCodigo);
     filterPrecio.addEventListener('change', buscarCodigo);
+    filterSucursal.addEventListener('change', buscarCodigo);
 
     // Cargar artículos al iniciar
     buscarCodigo();

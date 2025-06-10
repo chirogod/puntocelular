@@ -235,7 +235,7 @@
             $estado = $this->limpiarCadena($_POST['estado']);
             $modulo = $this->limpiarCadena($_POST['modulo']);
             $precio = $this->limpiarCadena($_POST['precio']);
-            $sucursal = $_SESSION['id_sucursal'];
+            $sucursal = $this->limpiarCadena($_POST['sucursal']);
         
             $where = "WHERE id_sucursal = '$sucursal'";
         
